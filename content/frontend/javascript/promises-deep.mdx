@@ -37,7 +37,15 @@ fetch("/api/user/1")
 
 ## Static Methods
 
-<Tabs><TabsList><TabsTrigger value="all">all</TabsTrigger><TabsTrigger value="settled">allSettled</TabsTrigger><TabsTrigger value="race">race</TabsTrigger><TabsTrigger value="any">any</TabsTrigger></TabsList><TabsContent value="all">
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="all">all</TabsTrigger>
+    <TabsTrigger value="settled">allSettled</TabsTrigger>
+    <TabsTrigger value="race">race</TabsTrigger>
+    <TabsTrigger value="any">any</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="all">
 
 ```javascript
 // Rejects on first rejection
@@ -47,28 +55,35 @@ const [users, posts] = await Promise.all([
 ])
 ```
 
-</TabsContent><TabsContent value="settled">
+  </TabsContent>
+
+  <TabsContent value="settled">
 
 ```javascript
 // Never rejects — array of {status, value|reason}
 const r = await Promise.allSettled([fetch("/api/a")])
 ```
 
-</TabsContent><TabsContent value="race">
+  </TabsContent>
+
+  <TabsContent value="race">
 
 ```javascript
 // First settled wins (fulfill or reject)
 await Promise.race([fetch(url), new Promise((_, rej) => setTimeout(() => rej("timeout"), 5000))])
 ```
 
-</TabsContent><TabsContent value="any">
+  </TabsContent>
+
+  <TabsContent value="any">
 
 ```javascript
 // First fulfillment wins, only rejects if ALL reject
 await Promise.any([fetch("/api/us-east"), fetch("/api/eu-west")])
 ```
 
-</TabsContent></Tabs>
+  </TabsContent>
+</Tabs>
 
 ## Promise.withResolvers()
 

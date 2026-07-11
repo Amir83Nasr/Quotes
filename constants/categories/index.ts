@@ -1,44 +1,9 @@
 import type { Category } from "@/types/content"
 
-export const CATEGORY_ICONS: Record<string, string> = {
-  html: "FileCode",
-  css: "Palette",
-  javascript: "FileJson",
-  typescript: "FileType",
-  react: "Atom",
-  nextjs: "FolderOpen",
-  tailwind: "Wind",
-  shadcn: "Box",
-  "state-management": "GitBranch",
-  forms: "FileInput",
-  performance: "Zap",
-  accessibility: "Accessibility",
-  "design-patterns": "Layers",
-  testing: "TestTube",
-  "use-ref": "Focus",
-  "custom-hooks": "Code",
-  context: "Share2",
-  backend: "Server",
-  authentication: "Shield",
-  databases: "Database",
-  deployment: "Rocket",
-  practice: "Code",
-  gallery: "Images",
-}
-
-export const CATEGORY_COLORS: Record<string, string> = {
-  html: "from-orange-500 to-red-500",
-  css: "from-blue-500 to-cyan-500",
-  javascript: "from-yellow-500 to-amber-500",
-  typescript: "from-blue-600 to-indigo-600",
-  react: "from-cyan-500 to-blue-500",
-  nextjs: "from-neutral-800 to-neutral-600",
-  tailwind: "from-teal-500 to-cyan-500",
-  shadcn: "from-neutral-700 to-neutral-500",
-  advanced: "from-purple-500 to-violet-500",
-  fullstack: "from-emerald-500 to-teal-500",
-  practice: "from-rose-500 to-pink-500",
-}
+// Re-export focused config modules so `@/constants/categories` stays the
+// single import surface for category/sidebar/icon data.
+export { CATEGORY_ICONS, CATEGORY_COLORS } from "./icons"
+export { SIDEBAR_LABELS, SIDEBAR_SECTIONS } from "./sidebar"
 
 export const CATEGORIES: Category[] = [
   {
@@ -251,38 +216,6 @@ export const CATEGORY_ORDER: Record<string, number> = {
   fullstack: 8,
   practice: 9,
 }
-
-/**
- * Friendly sidebar labels for directory slugs.
- * Falls back to node.title (which is derived from frontmatter or capitalized dir name).
- */
-export const SIDEBAR_LABELS: Record<string, string> = {
-  frontend: "Frontend Fundamentals",
-  advanced: "Advanced Concepts",
-  fullstack: "Full Stack",
-  practice: "Practice Projects",
-  gallery: "Component Gallery",
-  hooks: "Hooks",
-  // Proper casing for tech names
-  html: "HTML",
-  css: "CSS",
-  javascript: "JavaScript",
-  typescript: "TypeScript",
-  nextjs: "Next.js",
-  shadcn: "shadcn/ui",
-}
-
-/**
- * Group top-level categories into labeled sections with dividers.
- * Lower order = renders first in the sidebar.
- */
-export const SIDEBAR_SECTIONS: { label: string; order: number; categories: string[] }[] = [
-  { label: "Foundations", order: 1, categories: ["html", "css", "javascript", "typescript"] },
-  { label: "Styling & UI", order: 2, categories: ["tailwind", "shadcn", "gallery"] },
-  { label: "Core Framework", order: 3, categories: ["react", "nextjs"] },
-  { label: "Advanced", order: 4, categories: ["advanced", "fullstack"] },
-  { label: "Projects", order: 5, categories: ["practice"] },
-]
 
 /** Map of content directories to route prefixes */
 export const CATEGORY_ROUTES: Record<string, string> = {

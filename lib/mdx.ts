@@ -3,6 +3,31 @@ import remarkGfm from "remark-gfm"
 import type { MDXComponents } from "mdx/types"
 import type { Frontmatter } from "@/types/content"
 /**
+ * Tiny remark plugin: drop the lesson's leading H1.
+ *
+ * Every lesson page already renders `frontmatter.title` as an <h1> in the page
+ * header, but ~90 MDX files also open with a `# Title` line — so the heading
+ * shows up twice. This strips that redundant top-of-body H1 at compile time,
+ * so we don't have to edit every content file.
+ *
+ * mdast heading nodes look like: { type: "heading", depth: 1, children: [...] }
+ * The `tree` is the document root; `tree.children` is the ordered list of
+ * top-level block nodes (headings, paragraphs, code, etc).
+ */
+function remarkStripLeadingH1() {
+  return (tree: any) => {
+    const nodes: any[] = tree.children ?? []
+    // Only strip an H1 that is the very first block node — the redundant
+    // `# Title` that mirrors frontmatter.title. A mid-article h1 (rare, but
+    // possible) is left untouched, and at most one node is ever removed.
+    const first = nodes[0]
+    if (first && first.type === "heading" && first.depth === 1) {
+      nodes.shift()
+    }
+  }
+}
+
+/**
  * Tiny rehype plugin: add `id` to heading elements so ToC links work.
  * Avoids a dependency on rehype-slug.
  */
@@ -53,7 +78,7 @@ export async function compileMdx<TFrontmatter extends Frontmatter = Frontmatter>
     options: {
       parseFrontmatter: true,
       mdxOptions: {
-        remarkPlugins: [remarkGfm],
+        remarkPlugins: [remarkGfm, remarkStripLeadingH1],
         rehypePlugins: [rehypeSlugify],
         format: "mdx" as const,
       },

@@ -15,22 +15,53 @@ let _css: import("@codemirror/state").Extension | null = null
 
 async function loadCodeMirror() {
   if (_EV) return
-  const [view, state, setup, dark, jsMod, htmlMod, cssMod] = await Promise.all([
+
+  // Import individual packages (all @6.x, avoids version conflicts from basic-setup@0.20.0)
+  const [view, state, dark, jsMod, htmlFn, cssFn, lang, cmds, ac] = await Promise.all([
     import("@codemirror/view"),
     import("@codemirror/state"),
-    import("@codemirror/basic-setup").then((m) => m.basicSetup as import("@codemirror/state").Extension),
     import("@codemirror/theme-one-dark").then((m) => m.oneDark as import("@codemirror/state").Extension),
     import("@codemirror/lang-javascript"),
-    import("@codemirror/lang-html").then((m) => m.html() as import("@codemirror/state").Extension),
-    import("@codemirror/lang-css").then((m) => m.css() as import("@codemirror/state").Extension),
+    import("@codemirror/lang-html"),
+    import("@codemirror/lang-css"),
+    import("@codemirror/language"),
+    import("@codemirror/commands"),
+    import("@codemirror/autocomplete"),
   ])
+
   _EV = view.EditorView
   _ES = state.EditorState
-  _setup = setup
   _oneDark = dark
   _js = (cfg) => jsMod.javascript(cfg) as import("@codemirror/state").Extension
-  _html = htmlMod
-  _css = cssMod
+  _html = htmlFn.html() as import("@codemirror/state").Extension
+  _css = cssFn.css() as import("@codemirror/state").Extension
+
+  // Compose basicSetup from individual 6.x packages (replaces @codemirror/basic-setup@0.20.0)
+  _setup = [
+    view.lineNumbers(),
+    view.highlightActiveLineGutter(),
+    view.highlightSpecialChars(),
+    cmds.history(),
+    lang.foldGutter(),
+    view.drawSelection(),
+    view.dropCursor(),
+    state.EditorState.allowMultipleSelections.of(true),
+    lang.indentOnInput(),
+    lang.syntaxHighlighting(lang.defaultHighlightStyle, { fallback: true }),
+    lang.bracketMatching(),
+    ac.closeBrackets(),
+    ac.autocompletion(),
+    view.rectangularSelection(),
+    view.crosshairCursor(),
+    view.highlightActiveLine(),
+    view.keymap.of([
+      ...ac.closeBracketsKeymap,
+      ...cmds.defaultKeymap,
+      ...cmds.historyKeymap,
+      ...lang.foldKeymap,
+      ...ac.completionKeymap,
+    ]),
+  ]
 }
 
 interface CodeMirrorEditorProps {

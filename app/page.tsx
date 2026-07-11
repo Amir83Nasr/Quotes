@@ -90,7 +90,7 @@ export default function HomePage() {
         </section>
 
         {/* ── Learning Path Steps ── */}
-        <section className="border-b bg-muted/20">
+        <section className="border-b bg-muted">
           <div className="mx-auto max-w-6xl px-4 py-12 md:px-6 md:py-16">
             <h2 className="mb-2 text-2xl font-bold tracking-tight">Your Learning Path</h2>
             <p className="mb-10 text-muted-foreground">
@@ -206,7 +206,7 @@ export default function HomePage() {
         </section>
 
         {/* ── Final CTA ── */}
-        <section className="border-t bg-muted/50">
+        <section className="border-t bg-muted">
           <div className="mx-auto max-w-6xl px-4 py-12 text-center md:px-6 md:py-16">
             <h2 className="mb-2 text-2xl font-bold tracking-tight">
               Ready to start your journey?

@@ -40,7 +40,13 @@ n.every(x => x > 0)           // true — all match?
 
 ## Method Chaining
 
-<Tabs><TabsList><TabsTrigger value="i">Imperative</TabsTrigger><TabsTrigger value="d">Declarative</TabsTrigger></TabsList><TabsContent value="i">
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="i">Imperative</TabsTrigger>
+    <TabsTrigger value="d">Declarative</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="i">
 
 ```javascript
 const orders = [{ item:"Laptop", price:1200, qty:1 }, { item:"Mouse", price:25, qty:3 }, { item:"Kb", price:80, qty:0 }]
@@ -49,7 +55,9 @@ for (const o of orders) { if (o.qty > 0 && o.price > 50) r.push({ item: o.item, 
 r.sort((a, b) => b.total - a.total)
 ```
 
-</TabsContent><TabsContent value="d">
+  </TabsContent>
+
+  <TabsContent value="d">
 
 ```javascript
 orders.filter(o => o.qty > 0 && o.price > 50)
@@ -57,9 +65,10 @@ orders.filter(o => o.qty > 0 && o.price > 50)
   .sort((a, b) => b.total - a.total)
 ```
 
-</TabsContent></Tabs>
+  </TabsContent>
+</Tabs>
 
-<Alert><Lightbulb /><AlertTitle>Performance</AlertTitle><AlertDescription>Chaining creates intermediate arrays. Fine <10K items. For huge data use single-pass reduce.</AlertDescription></Alert>
+<Alert><Lightbulb /><AlertTitle>Performance</AlertTitle><AlertDescription>Chaining creates intermediate arrays. Fine for `<10K` items. For huge data use single-pass reduce.</AlertDescription></Alert>
 
 ## Immutable vs Mutable
 

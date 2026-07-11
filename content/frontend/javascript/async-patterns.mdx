@@ -32,7 +32,13 @@ fetchUser(id).catch(err => { console.error(err); return null })
 
 ## Sequential vs Parallel
 
-<Tabs><TabsList><TabsTrigger value="s">Sequential</TabsTrigger><TabsTrigger value="p">Parallel</TabsTrigger></TabsList><TabsContent value="s">
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="s">Sequential</TabsTrigger>
+    <TabsTrigger value="p">Parallel</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="s">
 
 ```javascript
 // Each needs previous result
@@ -41,7 +47,9 @@ const posts = await fetchPosts(user) // 200ms (needs user)
 // Total: ~300ms
 ```
 
-</TabsContent><TabsContent value="p">
+  </TabsContent>
+
+  <TabsContent value="p">
 
 ```javascript
 // Independent — run concurrently
@@ -52,7 +60,8 @@ const [users, posts] = await Promise.all([
 // Total: ~200ms
 ```
 
-</TabsContent></Tabs>
+  </TabsContent>
+</Tabs>
 
 ### Mixed
 

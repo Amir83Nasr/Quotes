@@ -21,6 +21,7 @@ import {
 import { cn } from "@/lib/utils"
 import { LiveEditor } from "./LiveEditor"
 import { SandboxPreview } from "./SandboxPreview"
+import { Checklist, difficultyColors } from "../shared/Checklist"
 
 interface InteractiveChallengeProps {
   title: string
@@ -34,12 +35,6 @@ interface InteractiveChallengeProps {
   previewHtml?: string
   previewCss?: string
   className?: string
-}
-
-const difficultyColors = {
-  easy: "bg-green-500/10 text-green-600 dark:text-green-400",
-  medium: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
-  hard: "bg-red-500/10 text-red-600 dark:text-red-400",
 }
 
 const difficultyEmoji = {
@@ -121,36 +116,12 @@ export function InteractiveChallenge({
       </CardHeader>
 
       <CardContent className="space-y-4 pt-4">
-        {/* Requirements checklist */}
-        <div>
-          <h4 className="mb-2 text-sm font-medium">Requirements:</h4>
-          <ul className="space-y-1.5">
-            {requirements.map((req, i) => {
-              const done = completed.includes(req)
-              return (
-                <li key={i}>
-                  <button
-                    onClick={() => toggleRequirement(req)}
-                    className={cn(
-                      "flex w-full items-start gap-2 rounded-md px-2 py-1 text-left text-sm transition-colors hover:bg-accent/50",
-                      done && "text-muted-foreground line-through",
-                    )}
-                    aria-checked={done}
-                    role="checkbox"
-                  >
-                    <CheckCircle2
-                      className={cn(
-                        "mt-0.5 h-4 w-4 shrink-0",
-                        done ? "text-green-500" : "text-muted-foreground/30",
-                      )}
-                    />
-                    {req}
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
+        <Checklist
+          title="Requirements:"
+          items={requirements}
+          completed={completed}
+          onToggle={toggleRequirement}
+        />
 
         {/* Live editor */}
         <div>

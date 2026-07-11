@@ -11,11 +11,11 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { CodeBlock } from "./CodeBlock"
+import { CodeBlock } from "../shared/CodeBlock"
 import { Lightbulb, CheckCircle2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-interface ExerciseCardProps {
+interface StaticExerciseProps {
   title: string
   description: string
   starterCode: string
@@ -24,14 +24,14 @@ interface ExerciseCardProps {
   className?: string
 }
 
-export function ExerciseCard({
+export function StaticExercise({
   title,
   description,
   starterCode,
   solution,
   hints,
   className,
-}: ExerciseCardProps) {
+}: StaticExerciseProps) {
   const [showHint, setShowHint] = useState(false)
   const [showSolution, setShowSolution] = useState(false)
   const [hintIndex, setHintIndex] = useState(0)

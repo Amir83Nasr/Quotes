@@ -69,21 +69,30 @@ export function unused() {}  // eliminated
 
 ## CommonJS vs ESM
 
-<Tabs><TabsList><TabsTrigger value="c">CJS</TabsTrigger><TabsTrigger value="e">ESM</TabsTrigger></TabsList><TabsContent value="c">
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="c">CJS</TabsTrigger>
+    <TabsTrigger value="e">ESM</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="c">
 
 ```javascript
 const { PI } = require("./math.cjs")
 // Sync, runtime, no tree-shaking, no top-level await
 ```
 
-</TabsContent><TabsContent value="e">
+  </TabsContent>
+
+  <TabsContent value="e">
 
 ```javascript
 import { PI } from "./math.js"
 // Async, parse-time, tree-shaking, top-level await
 ```
 
-</TabsContent></Tabs>
+  </TabsContent>
+</Tabs>
 
 | Feature | CJS | ESM |
 |---------|-----|-----|

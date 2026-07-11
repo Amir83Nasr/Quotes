@@ -1,21 +1,48 @@
-import type { ComponentProps, HTMLAttributes, TdHTMLAttributes, ThHTMLAttributes } from "react"
+import type {
+  ComponentProps,
+  HTMLAttributes,
+  TdHTMLAttributes,
+  ThHTMLAttributes,
+} from "react"
+import type { MDXComponents } from "mdx/types"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Info, AlertTriangle, Lightbulb } from "lucide-react"
-import { InteractiveExercise } from "./InteractiveExercise"
-import { InteractiveChallenge } from "./InteractiveChallenge"
-import { Quiz } from "./Quiz"
-import { LearningObjectives } from "./LearningObjectives"
-import { LessonSummary } from "./LessonSummary"
-import { LiveEditor } from "./LiveEditor"
-import { SandboxPreview } from "./SandboxPreview"
-import { PreWithCopy } from "./PreWithCopy"
+// Playground demos
+import { Playground } from "@/components/playground/Playground"
+import { CounterExample } from "@/components/playground/CounterExample"
+import { GalleryDemo } from "@/components/playground/GalleryDemo"
+// Shared lesson primitives
+import { CodeBlock } from "./shared/CodeBlock"
+import { PreWithCopy } from "./shared/PreWithCopy"
+import { Quiz } from "./shared/Quiz"
+import { LearningObjectives } from "./shared/LearningObjectives"
+import { LessonSummary } from "./shared/LessonSummary"
+// Static (non-interactive) lesson widgets
+import { StaticExercise } from "./static/StaticExercise"
+import { StaticChallenge } from "./static/StaticChallenge"
+// Interactive lesson widgets
+import { InteractiveExercise } from "./interactive/InteractiveExercise"
+import { InteractiveChallenge } from "./interactive/InteractiveChallenge"
+import { LiveEditor } from "./interactive/LiveEditor"
+import { SandboxPreview } from "./interactive/SandboxPreview"
 
-export type MdxComponentMap = Record<string, React.ComponentType>
-
-/** Custom MDX components used inside lesson content */
-export const mdxComponents: MdxComponentMap = {
+/**
+ * Single source of truth for the MDX component map.
+ *
+ * Combines three things:
+ *  1. UI primitives + lesson widgets addressable by name inside MDX
+ *     (e.g. `<Quiz>`, `<InteractiveExercise>`, `<Tabs>`).
+ *  2. Raw HTML element overrides (`table`, `pre`, `code`, `a`, …) so plain
+ *     Markdown renders with the site's styling.
+ *
+ * Keys used by content must stay stable — `InteractiveExercise`, `Quiz`,
+ * `LearningObjectives`, `LessonSummary`, `SandboxPreview`, `GalleryDemo`,
+ * `Playground`, `CounterExample` all appear in `.mdx` files.
+ */
+export const lessonMdxComponents: MDXComponents = {
+  // UI primitives
   Tabs: Tabs as React.ComponentType,
   TabsContent: TabsContent as React.ComponentType,
   TabsList: TabsList as React.ComponentType,
@@ -27,13 +54,29 @@ export const mdxComponents: MdxComponentMap = {
   Info: Info as React.ComponentType,
   AlertTriangle: AlertTriangle as React.ComponentType,
   Lightbulb: Lightbulb as React.ComponentType,
-  InteractiveExercise: InteractiveExercise as React.ComponentType,
-  InteractiveChallenge: InteractiveChallenge as React.ComponentType,
+
+  // Playground demos
+  Playground: Playground as React.ComponentType,
+  CounterExample: CounterExample as React.ComponentType,
+  GalleryDemo: GalleryDemo as React.ComponentType,
+
+  // Shared lesson widgets
+  CodeBlock: CodeBlock as React.ComponentType,
   Quiz: Quiz as React.ComponentType,
   LearningObjectives: LearningObjectives as React.ComponentType,
   LessonSummary: LessonSummary as React.ComponentType,
+
+  // Static (non-interactive) widgets
+  StaticExercise: StaticExercise as React.ComponentType,
+  StaticChallenge: StaticChallenge as React.ComponentType,
+
+  // Interactive widgets
+  InteractiveExercise: InteractiveExercise as React.ComponentType,
+  InteractiveChallenge: InteractiveChallenge as React.ComponentType,
   LiveEditor: LiveEditor as React.ComponentType,
   SandboxPreview: SandboxPreview as React.ComponentType,
+
+  // Raw HTML element overrides
   table: ({ children, ...props }: HTMLAttributes<HTMLTableElement>) => (
     <div className="my-6 w-full overflow-y-auto">
       <table className="w-full text-sm" {...props}>
@@ -83,4 +126,16 @@ export const mdxComponents: MdxComponentMap = {
       {children}
     </a>
   ),
+}
+
+/**
+ * Return components for MDX rendering, optionally injecting page-specific ones.
+ */
+export function getLessonMdxComponents(
+  extra?: Record<string, React.ComponentType>,
+): MDXComponents {
+  return {
+    ...lessonMdxComponents,
+    ...extra,
+  }
 }

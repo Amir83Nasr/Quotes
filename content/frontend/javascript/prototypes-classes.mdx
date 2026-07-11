@@ -48,7 +48,13 @@ class Dog extends Animal {
 new Dog("Rex", "Husky") instanceof Animal // true
 ```
 
-<Tabs><TabsList><TabsTrigger value="p">Prototype</TabsTrigger><TabsTrigger value="c">Class</TabsTrigger></TabsList><TabsContent value="p">
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="p">Prototype</TabsTrigger>
+    <TabsTrigger value="c">Class</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="p">
 
 ```javascript
 function Dog(name, breed) { Animal.call(this, name); this.breed = breed }
@@ -56,7 +62,9 @@ Dog.prototype = Object.create(Animal.prototype)
 Dog.prototype.speak = function () { return this.name + ' barks' }
 ```
 
-</TabsContent><TabsContent value="c">
+  </TabsContent>
+
+  <TabsContent value="c">
 
 ```javascript
 class Dog extends Animal {
@@ -65,7 +73,8 @@ class Dog extends Animal {
 }
 ```
 
-</TabsContent></Tabs>
+  </TabsContent>
+</Tabs>
 
 ## Static & Private
 

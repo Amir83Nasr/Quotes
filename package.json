@@ -4,16 +4,16 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --port 4000",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "validate:content": "node scripts/validate-content.mjs"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.3",
-    "@codemirror/basic-setup": "^0.20.0",
     "@codemirror/commands": "^6.10.4",
     "@codemirror/lang-css": "^6.3.1",
     "@codemirror/lang-html": "^6.4.11",
@@ -34,8 +34,6 @@
     "radix-ui": "^1.6.2",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-intersection-observer": "^10.0.3",
-    "reading-time": "^1.5.0",
     "remark-gfm": "^4.0.1",
     "shadcn": "^4.13.0",
     "tailwind-merge": "^3.6.0",

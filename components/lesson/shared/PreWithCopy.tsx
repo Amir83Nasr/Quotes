@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useCallback, useRef } from "react"
+import { useRef } from "react"
 import { Check, Copy } from "lucide-react"
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
 
 /**
  * Wraps MDX <pre> code blocks with a copy-to-clipboard button.
@@ -12,16 +13,13 @@ export function PreWithCopy({
   className,
   ...props
 }: React.HTMLAttributes<HTMLPreElement>) {
-  const [copied, setCopied] = useState(false)
+  const { copied, copy } = useCopyToClipboard()
   const preRef = useRef<HTMLPreElement>(null)
 
-  const handleCopy = useCallback(() => {
+  const handleCopy = () => {
     const code = preRef.current?.querySelector("code")
-    const text = code?.textContent ?? ""
-    navigator.clipboard.writeText(text)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }, [])
+    copy(code?.textContent ?? "")
+  }
 
   return (
     <div className="group relative my-4">
@@ -37,7 +35,7 @@ export function PreWithCopy({
         aria-label={copied ? "Copied" : "Copy code"}
       >
         {copied ? (
-          <Check className="size-3.5 text-green-400" />
+          <Check className="size-3.5 text-green-500 dark:text-green-400" />
         ) : (
           <Copy className="size-3.5" />
         )}
@@ -45,10 +43,9 @@ export function PreWithCopy({
       <pre
         ref={preRef}
         className={
-          "overflow-x-auto rounded-lg border border-[#ffffff1a] p-4 text-sm " +
+          "code-surface overflow-x-auto rounded-lg border p-4 text-sm shadow-sm " +
           (className ?? "")
         }
-        style={{ backgroundColor: "#1e1e2e", color: "#e4e4e7" }}
         {...props}
       >
         {children}

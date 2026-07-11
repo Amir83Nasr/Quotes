@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useCallback, useRef, useEffect } from "react"
+import { useRef, useEffect } from "react"
 import { Check, Copy } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
 import { cn } from "@/lib/utils"
-import "highlight.js/styles/github-dark-dimmed.css"
 
 interface CodeBlockProps {
   code: string
@@ -51,15 +51,11 @@ export function CodeBlock({
   showLineNumbers = false,
   className,
 }: CodeBlockProps) {
-  const [copied, setCopied] = useState(false)
+  const { copied, copy } = useCopyToClipboard()
   const codeRef = useRef<HTMLElement>(null)
   const lang = language ? LANG_MAP[language] || language : undefined
 
-  const handleCopy = useCallback(async () => {
-    await navigator.clipboard.writeText(code)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }, [code])
+  const handleCopy = () => copy(code)
 
   useEffect(() => {
     let dead = false
@@ -82,7 +78,7 @@ export function CodeBlock({
   const lines = code.split("\n")
 
   return (
-    <div className={cn("my-4 overflow-hidden rounded-lg border", className)}>
+    <div className={cn("my-4 overflow-hidden rounded-lg border shadow-sm", className)}>
       {(title || language) && (
         <div className="flex items-center justify-between border-b bg-muted px-4 py-2">
           <div className="flex items-center gap-2">
@@ -108,7 +104,7 @@ export function CodeBlock({
       )}
 
       <div className="relative">
-        <pre className="overflow-x-auto p-4 text-sm" style={{ backgroundColor: '#1e1e2e', color: '#e4e4e7' }}>
+        <pre className="code-surface overflow-x-auto p-4 text-sm">
           <code ref={codeRef} className={lang ? `language-${lang}` : undefined}>
             {lines.map((line, i) => (
               <span key={i} className="flex">

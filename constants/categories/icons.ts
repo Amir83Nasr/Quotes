@@ -1,0 +1,41 @@
+/** Lucide icon name per category slug. */
+export const CATEGORY_ICONS: Record<string, string> = {
+  html: "FileCode",
+  css: "Palette",
+  javascript: "FileJson",
+  typescript: "FileType",
+  react: "Atom",
+  nextjs: "FolderOpen",
+  tailwind: "Wind",
+  shadcn: "Box",
+  "state-management": "GitBranch",
+  forms: "FileInput",
+  performance: "Zap",
+  accessibility: "Accessibility",
+  "design-patterns": "Layers",
+  testing: "TestTube",
+  "use-ref": "Focus",
+  "custom-hooks": "Code",
+  context: "Share2",
+  backend: "Server",
+  authentication: "Shield",
+  databases: "Database",
+  deployment: "Rocket",
+  practice: "Code",
+  gallery: "Images",
+}
+
+/** Gradient color pair per category slug. */
+export const CATEGORY_COLORS: Record<string, string> = {
+  html: "from-orange-500 to-red-500",
+  css: "from-blue-500 to-cyan-500",
+  javascript: "from-yellow-500 to-amber-500",
+  typescript: "from-blue-600 to-indigo-600",
+  react: "from-cyan-500 to-blue-500",
+  nextjs: "from-neutral-800 to-neutral-600",
+  tailwind: "from-teal-500 to-cyan-500",
+  shadcn: "from-neutral-700 to-neutral-500",
+  advanced: "from-purple-500 to-violet-500",
+  fullstack: "from-emerald-500 to-teal-500",
+  practice: "from-rose-500 to-pink-500",
+}

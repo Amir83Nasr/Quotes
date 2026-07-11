@@ -1,6 +1,8 @@
 "use client"
 
+import { Suspense } from "react"
 import { Sidebar } from "@/components/docs/Sidebar"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
 
 interface DocsLayoutProps {
   children: React.ReactNode
@@ -14,8 +16,12 @@ interface DocsLayoutProps {
 export function DocsLayout({ children, groups }: DocsLayoutProps) {
   return (
     <div className="flex w-full">
-      <Sidebar groups={groups} />
-      <main className="min-w-0 flex-1">{children}</main>
+      <Suspense fallback={<div className="w-64 shrink-0 border-r" />}>
+        <Sidebar groups={groups} />
+      </Suspense>
+      <main className="min-w-0 flex-1">
+        <ErrorBoundary>{children}</ErrorBoundary>
+      </main>
     </div>
   )
 }

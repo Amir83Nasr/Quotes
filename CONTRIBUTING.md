@@ -16,19 +16,19 @@ This project follows **Conventional Commits** for all commit messages.
 
 ### Types
 
-| Type       | Usage                                        |
-|------------|----------------------------------------------|
-| `feat`     | New feature                                  |
-| `fix`      | Bug fix                                      |
-| `docs`     | Documentation only                           |
-| `style`    | Formatting, missing semicolons, etc.         |
-| `refactor` | Code change that neither fixes nor adds      |
-| `perf`     | Performance improvement                      |
-| `test`     | Adding or correcting tests                   |
-| `build`    | Build system or external deps                |
-| `ci`       | CI configuration                             |
-| `chore`    | Maintenance, tooling, config                 |
-| `revert`   | Revert a previous commit                     |
+| Type       | Usage                                   |
+| ---------- | --------------------------------------- |
+| `feat`     | New feature                             |
+| `fix`      | Bug fix                                 |
+| `docs`     | Documentation only                      |
+| `style`    | Formatting, missing semicolons, etc.    |
+| `refactor` | Code change that neither fixes nor adds |
+| `perf`     | Performance improvement                 |
+| `test`     | Adding or correcting tests              |
+| `build`    | Build system or external deps           |
+| `ci`       | CI configuration                        |
+| `chore`    | Maintenance, tooling, config            |
+| `revert`   | Revert a previous commit                |
 
 ### Scope (optional)
 
@@ -48,7 +48,7 @@ refactor(api): extract validation middleware
 1. **Imperative present tense** — "add" not "added" or "adds"
 2. **No period** at end of description line
 3. **Description** lowercase after type/scope
-4. **Body** explains *what* and *why*, not *how*
+4. **Body** explains _what_ and _why_, not _how_
 5. Breaking changes: append `!` after type/scope and add `BREAKING CHANGE:` footer
 
 ### Why

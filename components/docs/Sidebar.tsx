@@ -12,6 +12,7 @@ import { useState, useCallback, useEffect } from "react"
 import type { NavItem } from "@/types/navigation"
 import { ProgressBadge } from "./ProgressBadge"
 import { useProgress } from "@/hooks/use-progress"
+import { useResizableSidebar } from "@/hooks/use-resizable-sidebar"
 
 interface SidebarProps {
   groups: { label: string; items: NavItem[] }[]
@@ -112,6 +113,7 @@ export function Sidebar({ groups }: SidebarProps) {
   const pathname = usePathname()
   const { state, close } = useSidebar()
   const { isCompleted } = useProgress()
+  const { width, isResizing, handleMouseDown } = useResizableSidebar()
 
   // Enrich server-provided items with client-side active/expanded state
   const enriched = groups.map((g) => ({
@@ -121,30 +123,41 @@ export function Sidebar({ groups }: SidebarProps) {
 
   return (
     <>
-      {/* Desktop sidebar — sticky, scrolls independently from main content */}
+      {/* Desktop sidebar — sticky, scrolls independently */}
       <aside
         className={cn(
-          "sticky top-14 self-start hidden w-64 shrink-0 border-r bg-background md:block max-h-[calc(100vh-3.5rem)]",
+          "relative hidden shrink-0 grow-0 border-r bg-background md:block",
+          "sticky top-0 h-screen overflow-y-auto",
           !state.isOpen && "md:hidden",
         )}
+        style={{ width }}
       >
-        <ScrollArea className="h-[calc(100vh-3.5rem)] py-4">
-          <nav className="space-y-0.5 px-2" role="navigation">
-            {enriched.map((group) => (
-              <div key={group.label} className="mb-3">
-                <div className="flex items-center gap-2 px-3 pb-1 pt-2">
-                  <span className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/60">
-                    {group.label}
-                  </span>
-                  <div className="h-px flex-1 bg-border/50" />
-                </div>
-                {group.items.map((item, i) => (
-                  <SidebarLink key={item.href + i} item={item} isCompleted={isCompleted} />
-                ))}
+        <nav className="space-y-0.5 px-2 py-4" role="navigation">
+          {enriched.map((group) => (
+            <div key={group.label} className="mb-3">
+              <div className="flex items-center gap-2 px-3 pb-1 pt-2">
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/60">
+                  {group.label}
+                </span>
+                <div className="h-px flex-1 bg-border/50" />
               </div>
-            ))}
-          </nav>
-        </ScrollArea>
+              {group.items.map((item, i) => (
+                <SidebarLink key={item.href + i} item={item} isCompleted={isCompleted} />
+              ))}
+            </div>
+          ))}
+        </nav>
+
+        {/* Drag resize handle */}
+        <div
+          className={cn(
+            "absolute right-0 top-0 z-10 h-full w-1.5 translate-x-1/2 cursor-col-resize transition-colors",
+            isResizing
+              ? "bg-primary/40"
+              : "hover:bg-border",
+          )}
+          onMouseDown={handleMouseDown}
+        />
       </aside>
 
       {/* Mobile sheet backdrop */}

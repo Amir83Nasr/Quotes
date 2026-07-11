@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation"
+import { Suspense } from "react"
 import { compileMdx } from "@/lib/mdx"
 import { getMdxSource, getContentNode, extractToc, buildBreadcrumbs, buildLessonNavigation } from "@/lib/content"
-import { getLessonMdxComponents } from "@/components/lesson/lesson-components"
+import { getLessonMdxComponents } from "@/components/lesson/mdx-registry"
 import { Breadcrumb } from "@/components/docs/Breadcrumb"
 import { TableOfContents } from "@/components/docs/TableOfContents"
 import { CategoryIndex } from "@/components/docs/CategoryIndex"
@@ -85,7 +86,9 @@ export default async function LessonPage({ params }: PageProps) {
 
       {/* Table of Contents — desktop only */}
       <aside className="hidden xl:block xl:w-56 xl:shrink-0 xl:mr-4 2xl:mr-8">
-        <TableOfContents headings={toc} />
+        <Suspense fallback={null}>
+          <TableOfContents headings={toc} />
+        </Suspense>
       </aside>
     </div>
   )
