@@ -1,0 +1,148 @@
+---
+title: TypeScript Introduction
+description: Type-safe JavaScript for scalable applications
+order: 1
+---
+
+# TypeScript Introduction
+
+TypeScript is a typed superset of JavaScript that compiles to plain JavaScript. It adds static type checking to catch errors before runtime.
+
+## Why TypeScript?
+
+- Catch bugs at compile time, not runtime
+- Better IDE support with autocomplete and refactoring
+- Self-documenting code through type annotations
+- Scales well for large codebases
+
+## Basic Types
+
+```typescript
+// Primitive types
+const name: string = "React"
+const count: number = 42
+const isReady: boolean = true
+
+// Arrays
+const items: string[] = ["a", "b", "c"]
+const numbers: Array<number> = [1, 2, 3]
+
+// Tuples
+const pair: [string, number] = ["age", 30]
+
+// Union types
+const id: string | number = "abc123" // or 123
+```
+
+## Interfaces and Types
+
+```typescript
+// Interface (preferred for objects)
+interface User {
+  id: string
+  name: string
+  email: string
+  age?: number // Optional property
+}
+
+// Type alias
+type Status = "active" | "inactive" | "pending"
+
+// Using interfaces together
+interface Admin extends User {
+  role: "admin"
+  permissions: string[]
+}
+
+function greetUser(user: User): string {
+  return `Hello, ${user.name}!`
+}
+```
+
+## Functions
+
+```typescript
+// Parameter types and return type
+function add(a: number, b: number): number {
+  return a + b
+}
+
+// Arrow function with type
+const multiply = (a: number, b: number): number => a * b
+
+// Optional and default params
+function greet(name: string, greeting = "Hello"): string {
+  return `${greeting}, ${name}!`
+}
+```
+
+## Generics
+
+Generics let you write reusable, type-safe code:
+
+```typescript
+// Generic function
+function firstElement<T>(arr: T[]): T | undefined {
+  return arr[0]
+}
+
+const first = firstElement([1, 2, 3]) // type: number | undefined
+
+// Generic interface
+interface ApiResponse<T> {
+  data: T
+  status: number
+  error?: string
+}
+
+const userResponse: ApiResponse<User> = {
+  data: { id: "1", name: "Alice", email: "alice@example.com" },
+  status: 200,
+}
+```
+
+## Type Narrowing
+
+```typescript
+function process(value: string | number): string {
+  if (typeof value === "string") {
+    return value.toUpperCase() // TypeScript knows it's string here
+  }
+  return value.toFixed(2) // TypeScript knows it's number here
+}
+```
+
+## Utility Types
+
+```typescript
+interface Todo {
+  title: string
+  description: string
+  completed: boolean
+}
+
+// Pick — select specific properties
+type TodoPreview = Pick<Todo, "title" | "completed">
+
+// Omit — exclude specific properties
+type TodoWithoutDesc = Omit<Todo, "description">
+
+// Partial — make all properties optional
+type PartialTodo = Partial<Todo>
+
+// Record — key-value map
+type PageMap = Record<string, Todo>
+```
+
+## Best Practices
+
+- Use `interface` for object shapes, `type` for unions and primitives
+- Enable `strict: true` in tsconfig.json
+- Avoid `any` — use `unknown` when the type is uncertain
+- Prefer type inference where the type is obvious from context
+- Use generics for reusable utilities
+
+## Next Steps
+
+- [Advanced Types](/frontend/typescript/advanced) — Deep dive into TypeScript
+- [React with TypeScript](/react/intro) — Use TS with React

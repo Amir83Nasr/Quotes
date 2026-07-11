@@ -1,0 +1,64 @@
+---
+title: TypeScript Types and Interfaces
+description: Defining types and interfaces in TypeScript
+order: 2
+---
+
+# Types and Interfaces
+
+TypeScript offers two primary ways to define object shapes.
+
+## Interface
+
+```typescript
+interface User {
+  id: string
+  name: string
+  email: string
+  readonly createdAt: Date  // Can't be modified after creation
+}
+
+interface Admin extends User {
+  role: "admin"
+  permissions: string[]
+}
+
+const user: User = { id: "1", name: "Alice", email: "alice@example.com", createdAt: new Date() }
+```
+
+## Type Alias
+
+```typescript
+type Status = "active" | "inactive" | "pending"
+
+type Point = {
+  x: number
+  y: number
+}
+
+// Union types
+type Result<T> = { success: true; data: T } | { success: false; error: string }
+```
+
+## Interface vs Type
+
+| Aspect | Interface | Type |
+|--------|-----------|------|
+| Extending | `extends` | `&` intersection |
+| Declaration merging | Yes | No |
+| Union types | No | Yes |
+| Performance | Better | Good |
+
+## Utility Types
+
+```typescript
+type Partial<T> = { [P in keyof T]?: T[P] }  // All optional
+type Required<T> = { [P in keyof T]-?: T[P] }  // All required
+type Pick<T, K extends keyof T> = { [P in K]: T[P] }  // Subset
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>  // Exclude
+```
+
+## Next Steps
+
+- [Generics](/frontend/typescript/generics)
+- [Advanced Types](/frontend/typescript/advanced)

@@ -1,0 +1,78 @@
+---
+title: Tailwind CSS Grid
+description: Build complex layouts with CSS Grid in Tailwind
+order: 3
+---
+
+# CSS Grid
+
+CSS Grid is a two-dimensional layout system that handles rows and columns simultaneously. Tailwind provides utilities for every Grid property.
+
+## Basic Grid
+
+```html
+<div class="grid grid-cols-3 gap-4">
+  <div class="bg-blue-100 p-4">Item 1</div>
+  <div class="bg-blue-100 p-4">Item 2</div>
+  <div class="bg-blue-100 p-4">Item 3</div>
+  <div class="bg-blue-100 p-4">Item 4</div>
+  <div class="bg-blue-100 p-4">Item 5</div>
+  <div class="bg-blue-100 p-4">Item 6</div>
+</div>
+```
+
+## Column Spans
+
+```html
+<div class="grid grid-cols-3 gap-4">
+  <div class="col-span-2 bg-blue-100 p-4">Wide (spans 2 columns)</div>
+  <div class="bg-blue-100 p-4">Normal</div>
+  <div class="col-span-3 bg-blue-100 p-4">Full width</div>
+</div>
+```
+
+## Responsive Grid
+
+```html
+<!-- 1 column on mobile, 2 on tablet, 3 on desktop -->
+<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+  <div class="bg-blue-100 p-4">Card</div>
+  <div class="bg-blue-100 p-4">Card</div>
+  <div class="bg-blue-100 p-4">Card</div>
+  <div class="bg-blue-100 p-4">Card</div>
+</div>
+```
+
+## Auto-fit / Auto-fill
+
+```html
+<!-- Responsive without breakpoints -->
+<div class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
+  <div class="bg-blue-100 p-4">Card</div>
+  <div class="bg-blue-100 p-4">Card</div>
+  <div class="bg-blue-100 p-4">Card</div>
+  <div class="bg-blue-100 p-4">Card</div>
+</div>
+```
+
+## Grid Template Areas
+
+```html
+<div class="grid grid-rows-[auto_1fr_auto] h-screen">
+  <header class="bg-gray-100 p-4">Header</header>
+  <main class="p-4">Main Content</main>
+  <footer class="bg-gray-100 p-4">Footer</footer>
+</div>
+```
+
+## Best Practices
+
+- Use **Grid** for two-dimensional layouts (rows + columns)
+- Use **Flexbox** for one-dimensional layouts (single row or column)
+- Use `auto-fit` / `minmax` for truly responsive grids
+- Combine with Tailwind breakpoints for adaptive layouts
+
+## Next Steps
+
+- [Flexbox](/tailwind/flexbox) — One-dimensional layouts
+- [Practice Projects](/practice/todo-app) — Apply your skills

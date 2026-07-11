@@ -1,0 +1,467 @@
+---
+title: Real-Time Features
+description: WebSockets, Server-Sent Events, and real-time data patterns
+order: 7
+---
+
+# Real-Time Features
+
+<LearningObjectives
+  objectives={[
+    "Choose the right real-time strategy: polling, SSE, or WebSockets",
+    "Stream data from Next.js Route Handlers using Server-Sent Events",
+    "Set up WebSocket connections with socket.io",
+    "Implement optimistic updates for instant UI feedback",
+    "Identify when real-time is actually necessary",
+  ]}
+/>
+
+## Polling vs SSE vs WebSocket
+
+<Tabs>
+<TabsList>
+<TabsTrigger value="polling">Polling</TabsTrigger>
+<TabsTrigger value="sse">SSE</TabsTrigger>
+<TabsTrigger value="ws">WebSocket</TabsTrigger>
+</TabsList>
+<TabsContent value="polling">
+
+- **Direction**: Client → Server (pull)
+- **Protocol**: HTTP (standard fetch)
+- **Latency**: Poll interval (e.g., 5-30s)
+- **Infrastructure**: Nothing extra — just an API route
+- **Best for**: Low-frequency updates (dashboard metrics every 30s, notification badge counts)
+- **Cost**: Wastes bandwidth on empty responses; server load scales with polling clients
+- **Next.js**: Standard Route Handler, works everywhere including Edge
+
+</TabsContent>
+<TabsContent value="sse">
+
+- **Direction**: Server → Client (push)
+- **Protocol**: HTTP (one long-lived connection)
+- **Latency**: Sub-second (server decides when to send)
+- **Infrastructure**: Standard HTTP server; works through most proxies
+- **Best for**: One-way data streams (live feed, notifications, status updates, AI token streaming)
+- **Cost**: One TCP connection per client; automatic reconnection built into EventSource API
+- **Next.js**: Route Handler streaming response — no extra packages
+
+</TabsContent>
+<TabsContent value="ws">
+
+- **Direction**: Bidirectional (push/pull)
+- **Protocol**: WebSocket (upgraded HTTP)
+- **Latency**: Near-zero
+- **Infrastructure**: WebSocket server (socket.io, ws); may need sticky sessions for scale
+- **Best for**: Two-way interaction (chat, collaborative editing, multiplayer games, real-time forms)
+- **Cost**: Persistent TCP connection each way; heavier than SSE for one-direction use cases
+- **Next.js**: Requires a custom server or external WebSocket service (Pusher, Ably, Liveblocks)
+
+</TabsContent>
+</Tabs>
+
+<Alert>
+  <AlertTitle>Tip</AlertTitle>
+  <AlertDescription>
+    SSE is often the right default for Next.js apps. It uses plain HTTP, works with serverless functions, and handles one-direction streaming without WebSocket infrastructure overhead. Reach for WebSocket when the client needs to send data back over the same connection.
+  </AlertDescription>
+</Alert>
+
+## SSE from a Route Handler
+
+Next.js Route Handlers can stream responses — perfect for Server-Sent Events.
+
+```typescript
+// app/api/notifications/stream/route.ts
+import { NextRequest } from "next/server"
+
+export async function GET(request: NextRequest) {
+  const stream = new ReadableStream({
+    start(controller) {
+      // Send a message every 3 seconds
+      const interval = setInterval(() => {
+        const data = JSON.stringify({
+          id: crypto.randomUUID(),
+          message: `Update at ${new Date().toISOString()}`,
+          type: Math.random() > 0.7 ? "alert" : "info",
+        })
+        controller.enqueue(new TextEncoder().encode(`data: ${data}\n\n`))
+      }, 3000)
+
+      request.signal.addEventListener("abort", () => {
+        clearInterval(interval)
+        controller.close()
+      })
+    },
+  })
+
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      Connection: "keep-alive",
+    },
+  })
+}
+```
+
+Client consumption:
+
+```tsx
+"use client"
+import { useEffect, useState } from "react"
+
+export function NotificationFeed() {
+  const [notifications, setNotifications] = useState<string[]>([])
+
+  useEffect(() => {
+    const eventSource = new EventSource("/api/notifications/stream")
+
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data)
+      setNotifications((prev) => [data.message, ...prev].slice(0, 50))
+    }
+
+    eventSource.onerror = () => {
+      console.error("SSE connection error — retrying...")
+      // EventSource auto-reconnects
+    }
+
+    return () => eventSource.close()
+  }, [])
+
+  return (
+    <ul className="space-y-2">
+      {notifications.map((msg, i) => (
+        <li key={i} className="p-2 bg-gray-100 rounded text-sm">{msg}</li>
+      ))}
+    </ul>
+  )
+}
+```
+
+## WebSocket with Socket.IO
+
+For bidirectional communication, socket.io is the most ergonomic option.
+
+```typescript
+// server.ts — custom Next.js server
+import { createServer } from "http"
+import { parse } from "url"
+import next from "next"
+import { Server } from "socket.io"
+
+const dev = process.env.NODE_ENV !== "production"
+const app = next({ dev })
+const handle = app.getRequestHandler()
+
+app.prepare().then(() => {
+  const server = createServer((req, res) => {
+    const parsedUrl = parse(req.url!, true)
+    handle(req, res, parsedUrl)
+  })
+
+  const io = new Server(server)
+
+  io.on("connection", (socket) => {
+    console.log("Client connected:", socket.id)
+
+    socket.on("message", (data) => {
+      // Broadcast to all connected clients
+      io.emit("message", { userId: socket.id, text: data })
+    })
+
+    socket.on("disconnect", () => {
+      console.log("Client disconnected:", socket.id)
+    })
+  })
+
+  server.listen(3000)
+})
+```
+
+```tsx
+"use client"
+import { useEffect, useState } from "react"
+import { io, Socket } from "socket.io-client"
+
+export function ChatRoom() {
+  const [socket, setSocket] = useState<Socket | null>(null)
+  const [messages, setMessages] = useState<string[]>([])
+
+  useEffect(() => {
+    const s = io()
+    setSocket(s)
+    s.on("message", (data: { userId: string; text: string }) => {
+      setMessages((prev) => [...prev, `${data.userId}: ${data.text}`])
+    })
+    return () => { s.close() }
+  }, [])
+
+  function send(text: string) {
+    socket?.emit("message", text)
+  }
+
+  return (
+    <div>
+      <MessageList messages={messages} />
+      <MessageInput onSend={send} />
+    </div>
+  )
+}
+```
+
+<Alert>
+  <AlertTitle>Gotcha</AlertTitle>
+  <AlertDescription>
+    Socket.IO requires a persistent Node.js server. It won't run on Vercel's serverless functions. For serverless-friendly WebSocket, use a third-party provider like Pusher, Ably, or Supabase Realtime which manage the persistent connection infrastructure.
+  </AlertDescription>
+</Alert>
+
+## Optimistic Updates
+
+Optimistic updates update the UI before the server responds — making the app feel instant.
+
+```tsx
+"use client"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+
+interface Todo {
+  id: string
+  text: string
+  completed: boolean
+}
+
+export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
+  const [todos, setTodos] = useState(initialTodos)
+  const router = useRouter()
+
+  async function toggle(todo: Todo) {
+    // Optimistic update — flip immediately
+    setTodos((prev) =>
+      prev.map((t) => (t.id === todo.id ? { ...t, completed: !t.completed } : t))
+    )
+
+    try {
+      const res = await fetch(`/api/todos/${todo.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ completed: !todo.completed }),
+      })
+      if (!res.ok) throw new Error("Failed to update")
+      router.refresh() // Server re-render to confirm state
+    } catch {
+      // Rollback on failure
+      setTodos((prev) =>
+        prev.map((t) => (t.id === todo.id ? { ...t, completed: todo.completed } : t))
+      )
+    }
+  }
+
+  return (
+    <ul>
+      {todos.map((todo) => (
+        <li key={todo.id}>
+          <label className={todo.completed ? "line-through" : ""}>
+            <input
+              type="checkbox"
+              checked={todo.completed}
+              onChange={() => toggle(todo)}
+            />
+            {todo.text}
+          </label>
+        </li>
+      ))}
+    </ul>
+  )
+}
+```
+
+## When Real-Time Is Actually Needed
+
+| Scenario | Approach | Why |
+|----------|----------|-----|
+| AI response streaming | SSE | Server pushes tokens as they're generated — one direction only |
+| Live dashboard metrics | Polling (30s) | Data changes infrequently; extra infrastructure not worth it |
+| Chat application | WebSocket | Users send and receive in both directions; low latency needed |
+| Notification badge | SSE | Server pushes when new notification arrives; client just displays count |
+| Collaborative cursor | WebSocket | Both users send and receive position data continuously |
+| User is typing indicator | WebSocket | Need near-instant bidirectional signaling |
+
+<Alert>
+  <AlertTitle>Tip</AlertTitle>
+  <AlertDescription>
+    Start with polling. If your polling interval is under 10 seconds and you have more than 1,000 concurrent users, switch to SSE. Upgrade to WebSocket only when the client needs to send data back. Premature optimization toward real-time adds significant complexity.
+  </AlertDescription>
+</Alert>
+
+## Interactive Exercise
+
+<InteractiveExercise
+  title="Build a Real-Time Notification Feed"
+  description="Create a notification feed component that connects to an SSE endpoint. The component should display incoming notifications, indicate connection status, and handle reconnection gracefully."
+  starterCode={`"use client"
+import { useEffect, useState } from "react"
+
+interface Notification {
+  id: string
+  message: string
+  timestamp: string
+  read: boolean
+}
+
+export default function NotificationBell() {
+  const [notifications, setNotifications] = useState<Notification[]>([])
+  const [connected, setConnected] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  // TODO: Connect to EventSource at /api/notifications/stream
+  // TODO: Update connected state on open/error
+  // TODO: Parse incoming events and prepend to notifications list
+  // TODO: Track unread count, mark as read on click
+  // TODO: Clean up on unmount
+
+  return (
+    <div>
+      {/* Your code here */}
+    </div>
+  )
+}`}
+  solutionCode={`"use client"
+import { useEffect, useState } from "react"
+
+interface Notification {
+  id: string
+  message: string
+  timestamp: string
+  read: boolean
+}
+
+export default function NotificationBell() {
+  const [notifications, setNotifications] = useState<Notification[]>([])
+  const [connected, setConnected] = useState(false)
+
+  useEffect(() => {
+    const eventSource = new EventSource("/api/notifications/stream")
+
+    eventSource.onopen = () => setConnected(true)
+
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data)
+      setNotifications((prev) => [
+        { id: data.id, message: data.message, timestamp: data.timestamp ?? new Date().toISOString(), read: false },
+        ...prev,
+      ].slice(0, 100))
+    }
+
+    eventSource.onerror = () => {
+      setConnected(false)
+      // EventSource auto-reconnects, but we log for debugging
+      console.warn("SSE disconnected, retrying...")
+    }
+
+    return () => {
+      eventSource.close()
+    }
+  }, [])
+
+  const unreadCount = notifications.filter((n) => !n.read).length
+
+  function markAllRead() {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
+  }
+
+  return (
+    <div className="max-w-md mx-auto p-4">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold">Notifications</h2>
+        <div className="flex items-center gap-2">
+          <span className={\`w-2 h-2 rounded-full \${connected ? "bg-green-500" : "bg-red-500"}\`} />
+          <span className="text-sm text-gray-500">
+            {unreadCount > 0 ? \`\${unreadCount} unread\` : "All caught up"}
+          </span>
+          {unreadCount > 0 && (
+            <button onClick={markAllRead} className="text-xs text-blue-600 hover:underline">
+              Mark all read
+            </button>
+          )}
+        </div>
+      </div>
+      <ul className="space-y-2">
+        {notifications.map((n) => (
+          <li
+            key={n.id}
+            className={\`p-3 rounded text-sm cursor-pointer transition
+              \${n.read ? "bg-gray-50 text-gray-600" : "bg-blue-50 font-medium"}\`}
+            onClick={() => setNotifications((prev) =>
+              prev.map((x) => x.id === n.id ? { ...x, read: true } : x)
+            )}
+          >
+            {n.message}
+          </li>
+        ))}
+      </ul>
+      {notifications.length === 0 && (
+        <p className="text-center text-gray-400 py-8">Waiting for notifications...</p>
+      )}
+    </div>
+  )
+}`}
+  hints={[
+    "EventSource auto-reconnects on error — you just need to update the connection indicator",
+    "Prepend new notifications and slice to 100 to avoid memory leaks from long sessions",
+    "Clicking a notification should mark it as read (optimistic local state)",
+    "The green/red dot gives instant feedback on connection health",
+  ]}
+  language="tsx"
+/>
+
+## Quiz
+
+<Quiz
+  questions={[
+    {
+      question: "What format must each SSE message follow?",
+      options: [
+        "JSON in the response body",
+        "data: <payload>\\n\\n with a double newline terminator",
+        "An XML envelope wrapped in <event> tags",
+        "A plain text line terminated by a semicolon",
+      ],
+      correctIndex: 1,
+      explanation: "SSE spec requires each message to start with data: and end with two newlines (\\n\\n). This is how the EventSource API delimits messages.",
+    },
+    {
+      question: "Why is SSE generally preferred over WebSocket for a notification bell?",
+      options: [
+        "SSE has lower latency than WebSocket",
+        "Notifications are one-directional (server to client) — SSE is simpler and uses plain HTTP",
+        "WebSocket requires the server to initiate connections",
+        "SSE supports binary data transfer natively",
+      ],
+      correctIndex: 1,
+      explanation: "Notifications only flow from server to client. SSE is perfect for this: it's simpler, uses standard HTTP (works in serverless), and has automatic reconnection built into EventSource.",
+    },
+    {
+      question: "What is the purpose of an optimistic update?",
+      options: [
+        "To batch multiple mutations into a single server request",
+        "To show the result immediately before the server confirms, then roll back on failure",
+        "To prefetch data before the user navigates to a page",
+        "To reduce the payload size of API responses",
+      ],
+      correctIndex: 1,
+      explanation: "Optimistic updates apply the expected state change to the UI immediately. If the server request fails, you roll back to the previous state. This eliminates perceived latency.",
+    },
+  ]}
+/>
+
+<LessonSummary
+  points={[
+    "Polling is simplest — use it unless intervals are short (<10s) and users are many (>1k)",
+    "SSE streams data one-way over a single HTTP connection — ideal for Next.js Route Handlers",
+    "WebSocket enables bidirectional communication but requires persistent infrastructure",
+    "EventSource auto-reconnects; Socket.IO provides rooms, namespaces, and fallback transports",
+    "Optimistic updates make apps feel instant — always pair with rollback on error",
+    "Start simple (polling) and escalate only when metrics prove you need it",
+  ]}
+/>

@@ -1,0 +1,63 @@
+---
+title: Authentication System
+description: Build a complete auth system with login, signup, and protected routes
+difficulty: advanced
+order: 5
+---
+
+# Authentication System
+
+Build a full authentication system.
+
+## Requirements
+
+- [ ] User registration with email + password
+- [ ] Login with session management
+- [ ] Protected routes that redirect to login
+- [ ] Password reset flow
+- [ ] Profile page with user info
+
+## Starter
+
+```tsx
+// Auth context
+"use client"
+
+import { createContext, useContext, useState } from "react"
+
+interface AuthUser {
+  id: string
+  email: string
+  name: string
+}
+
+const AuthContext = createContext<{
+  user: AuthUser | null
+  login: (email: string, password: string) => Promise<void>
+  logout: () => void
+  signup: (email: string, password: string, name: string) => Promise<void>
+} | null>(null)
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<AuthUser | null>(null)
+
+  // TODO: implement login, signup, logout
+
+  return (
+    <AuthContext.Provider value={{ user, login, logout, signup }}>
+      {children}
+    </AuthContext.Provider>
+  )
+}
+
+export function useAuth() {
+  const ctx = useContext(AuthContext)
+  if (!ctx) throw new Error("useAuth must be inside AuthProvider")
+  return ctx
+}
+```
+
+## Next Steps
+
+- [Blog](/practice/blog)
+- [Kanban Board](/practice/kanban)

@@ -1,0 +1,150 @@
+---
+title: Composition Patterns
+description: Build reusable component systems with cva, cn(), and variant patterns
+difficulty: advanced
+order: 8
+---
+
+<LearningObjectives
+  objectives={[
+    "Use @apply for shared CSS extraction (sparingly)",
+    "Build reusable component patterns with cn()",
+    "Create type-safe variant systems with cva()",
+    "Choose between inline utilities, @apply, and cva",
+  ]}
+/>
+
+## cn() for Safe Class Merging
+
+`cn()` = `clsx` (conditionals) + `tailwind-merge` (conflict resolution — last wins).
+
+```tsx
+import { cn } from "@/lib/utils"
+
+function Badge({ variant = "default", className, children }) {
+  return (
+    <span className={cn(
+      "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+      variant === "default" && "bg-gray-100 text-gray-700",
+      variant === "success" && "bg-green-100 text-green-700",
+      className, // caller overrides — tailwind-merge handles px conflicts
+    )}>{children}</span>
+  )
+}
+```
+
+## cva() — Class Variance Authority
+
+Structured variant API with TypeScript autocomplete via `VariantProps`.
+
+```tsx
+import { cva, type VariantProps } from "class-variance-authority"
+
+const button = cva(
+  "inline-flex items-center justify-center rounded-lg font-medium transition-colors",
+  {
+    variants: {
+      variant: {
+        primary: "bg-blue-500 text-white hover:bg-blue-600",
+        secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300",
+        ghost: "bg-transparent hover:bg-gray-100",
+      },
+      size: { sm: "h-8 px-3 text-sm", md: "h-10 px-4 text-base", lg: "h-12 px-6 text-lg" },
+    },
+    compoundVariants: [{ variant: "primary", size: "lg", className: "shadow-md" }],
+    defaultVariants: { variant: "primary", size: "md" },
+  },
+)
+
+function Button({ variant, size, className, children }: ButtonProps) {
+  return <button className={cn(button({ variant, size }), className)}>{children}</button>
+}
+```
+
+## @apply — Use Sparingly
+
+```css
+/* CSS boundaries only — styling markdown prose */
+.prose h2 { @apply mt-8 mb-4 text-2xl font-bold tracking-tight; }
+.prose p { @apply mb-4 leading-relaxed text-gray-600; }
+.prose code { @apply rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono; }
+```
+
+<Alert>
+  <AlertTitle><AlertTriangle className="inline h-4 w-4" /> Avoid this anti-pattern</AlertTitle>
+  <AlertDescription>Using @apply for every component defeats utility composability. Inline + cn()/cva is better. Reserve @apply for CSS boundaries (prose, third-party widgets).</AlertDescription>
+</Alert>
+
+## Pattern Comparison
+
+<Tabs defaultValue="inline">
+  <TabsList>
+    <TabsTrigger value="inline">Inline</TabsTrigger>
+    <TabsTrigger value="apply">@apply</TabsTrigger>
+    <TabsTrigger value="cva">cva</TabsTrigger>
+  </TabsList>
+  <TabsContent value="inline">
+    **One-off elements, prototyping.** No abstraction overhead. Fully visible styles.
+    ```html
+    <button class="inline-flex items-center rounded-lg bg-blue-500 px-4 py-2 text-white">Click</button>
+    ```
+  </TabsContent>
+  <TabsContent value="apply">
+    **CSS boundaries, third-party.** Clean HTML, but hides utilities in CSS files.
+    ```css
+    .btn { @apply inline-flex items-center rounded-lg px-4 py-2; }
+    .btn-primary { @apply bg-blue-500 text-white; }
+    ```
+  </TabsContent>
+  <TabsContent value="cva">
+    **Component libraries, design systems.** Type-safe, composable, easy overrides.
+    ```tsx
+    const btn = cva("inline-flex items-center rounded-lg font-medium", {
+      variants: { variant: { primary: "bg-blue-500 text-white" }, size: { sm: "h-8 px-3" } },
+    })
+    ```
+  </TabsContent>
+</Tabs>
+
+<InteractiveExercise
+  title="Button Component System with Variants"
+  description="Build a reusable Button with variant (primary/secondary/outline), size (sm/md/lg)."
+  starterCode={`function Button({ variant = "primary", size = "md", className, children }) {
+  return <button className={...}>{children}</button>
+}`}
+  solutionCode={`const buttonVariants = cva("inline-flex items-center justify-center rounded-lg font-medium transition-colors", {
+  variants: {
+    variant: {
+      primary: "bg-blue-500 text-white hover:bg-blue-600",
+      secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300",
+      outline: "border-2 border-gray-300 text-gray-700 hover:bg-gray-50",
+    },
+    size: { sm: "h-8 px-3 text-sm", md: "h-10 px-4 text-base", lg: "h-12 px-6 text-lg" },
+  },
+  compoundVariants: [
+    { variant: "primary", size: "lg", className: "shadow-md" },
+    { variant: "outline", size: "sm", className: "px-2" },
+  ],
+  defaultVariants: { variant: "primary", size: "md" },
+})
+function Button({ variant, size, className, children, ...props }) {
+  return <button className={cn(buttonVariants({ variant, size }), className)} {...props}>{children}</button>
+}`}
+  hints={["Define base styles first, then variants", "Accept className and merge with cn()", "Spread remaining props"]}
+/>
+
+<Quiz questions={[
+  { question: "What does cn() do that template literals don't?", options: ["Optimizes CSS bundle", "Resolves conflicting Tailwind classes (last wins) + conditionals", "Generates config", "Compiles to vanilla CSS"], correctIndex: 1, explanation: "tailwind-merge resolves conflicts like px-3 + px-6; clsx handles conditionals." },
+  { question: "When should you use @apply?", options: ["Every component", "CSS boundaries (prose, third-party)", "Never", "Inline styles only"], correctIndex: 1, explanation: "Reserve @apply for CSS boundaries. Use inline + cn()/cva for components." },
+  { question: "What do compoundVariants do?", options: ["Responsive variants", "Apply styles when two+ variants active together", "Chain components", "Override theme"], correctIndex: 1, explanation: "compoundVariants adds styles for specific variant combinations (e.g., primary + lg)." },
+]} />
+
+<LessonSummary
+  points={[
+    "Use cn() (clsx + tailwind-merge) for safe, conflict-free class merging",
+    "cva() provides structured, type-safe variant APIs with autocomplete",
+    "Compound variants handle special-case combinations cleanly",
+    "Avoid @apply for components — reserve for CSS boundaries only",
+    "Always accept className prop on components and merge with cn()",
+  ]}
+/>

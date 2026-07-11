@@ -1,0 +1,143 @@
+---
+title: Tailwind Flexbox
+description: Master Flexbox layouts with Tailwind utility classes
+order: 2
+---
+
+# Tailwind Flexbox
+
+Flexbox is a one-dimensional layout model. Tailwind provides utility classes for every Flexbox property.
+
+## Display Flex
+
+Enable flexbox on any element:
+
+```html
+<div class="flex">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</div>
+```
+
+## Direction
+
+Control the flex direction:
+
+```html
+<!-- Row (default) -->
+<div class="flex flex-row">...</div>
+
+<!-- Row reversed -->
+<div class="flex flex-row-reverse">...</div>
+
+<!-- Column -->
+<div class="flex flex-col">...</div>
+
+<!-- Column reversed -->
+<div class="flex flex-col-reverse">...</div>
+```
+
+## Justify Content
+
+Align items along the main axis:
+
+```html
+<div class="flex justify-start">...</div>
+<div class="flex justify-center">...</div>
+<div class="flex justify-end">...</div>
+<div class="flex justify-between">...</div>
+<div class="flex justify-around">...</div>
+<div class="flex justify-evenly">...</div>
+```
+
+## Align Items
+
+Align items along the cross axis:
+
+```html
+<div class="flex items-start">...</div>
+<div class="flex items-center">...</div>
+<div class="flex items-end">...</div>
+<div class="flex items-stretch">...</div>
+<div class="flex items-baseline">...</div>
+```
+
+## Flex Wrap
+
+Control wrapping behavior:
+
+```html
+<div class="flex flex-wrap">...</div>
+<div class="flex flex-nowrap">...</div>
+<div class="flex flex-wrap-reverse">...</div>
+```
+
+## Gap
+
+Add spacing between flex items:
+
+```html
+<div class="flex gap-2">...</div>
+<div class="flex gap-4">...</div>
+<div class="flex gap-8">...</div>
+```
+
+## Flex Grow & Shrink
+
+Control how items grow or shrink:
+
+```html
+<div class="flex">
+  <div class="flex-1">Takes remaining space</div>
+  <div class="flex-none">Fixed width</div>
+  <div class="flex-1">Takes remaining space</div>
+</div>
+```
+
+## Common Patterns
+
+### Centered content (both axes):
+
+```html
+<div class="flex items-center justify-center h-64">
+  <div>Centered</div>
+</div>
+```
+
+### Sticky footer:
+
+```html
+<div class="flex flex-col min-h-svh">
+  <header class="h-16">Header</header>
+  <main class="flex-1">Content</main>
+  <footer class="h-16">Footer</footer>
+</div>
+```
+
+### Card grid:
+
+```html
+<div class="flex flex-wrap gap-4">
+  <div class="flex-1 min-w-64">Card 1</div>
+  <div class="flex-1 min-w-64">Card 2</div>
+  <div class="flex-1 min-w-64">Card 3</div>
+</div>
+```
+
+## Best Practices
+
+- Use `gap-*` instead of margins on children
+- Use `flex-1` for equal distribution
+- Set `min-w-0` to allow shrinking below content size
+- Use `items-center` for vertical centering
+- Combine with `grow`/`shrink` for responsive layouts
+
+## Next Steps
+
+- [CSS Grid](/tailwind/grid) — Two-dimensional layouts
+- [Spacing & Sizing](/tailwind/spacing) — Padding, margin, width
+
+---
+
+**Exercise**: Create a responsive navbar with logo on the left and nav links on the right using Flexbox utilities.

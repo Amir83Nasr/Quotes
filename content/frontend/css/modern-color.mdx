@@ -1,0 +1,195 @@
+---
+title: Modern CSS Color
+description: Use modern color spaces like oklch, color-mix, and relative color syntax
+difficulty: intermediate
+order: 10
+---
+
+<LearningObjectives objectives={[
+"Write colors in hex, rgb, hsl, and oklch notation",
+"Understand why oklch and oklab are perceptually uniform",
+"Use color-mix() to blend colors in any color space",
+"Apply relative color syntax with the from keyword",
+"Use currentColor and system colors for theme integration",
+"Check color contrast against WCAG guidelines",
+"Set color-scheme and handle forced-colors mode",
+]} />
+
+## Color Formats Compared
+
+```css
+/* Legacy formats */
+.element { color: #6366f1; }                   /* hex */
+.element { color: rgb(99, 102, 241); }         /* rgb */
+.element { color: rgba(99, 102, 241, 0.8); }  /* rgb with alpha */
+.element { color: hsl(239, 84%, 67%); }       /* hsl */
+
+/* Modern formats */
+.element { color: oklch(59% 0.19 275); }      /* oklch — modern, perceptual */
+.element { color: oklab(59% 0.06 -0.18); }     /* oklab */
+```
+
+## oklch — Perceptually Uniform
+
+OKLCH stands for Lightness-Chroma-Hue. Unlike HSL, equal changes in values look equal to the human eye.
+
+```css
+/* oklch(L C H) — L 0-100%, C 0-0.4, H 0-360 */
+:root {
+  --indigo: oklch(59% 0.19 275);
+  --indigo-light: oklch(75% 0.13 275);    /* same hue, lighter */
+  --indigo-dark: oklch(35% 0.15 275);     /* same hue, darker */
+  --gray: oklch(50% 0.01 275);            /* same hue, 0 chroma = gray */
+}
+```
+
+<Tabs>
+<TabsList>
+<TabsTrigger value="oklch">OKLCH Scale</TabsTrigger>
+<TabsTrigger value="hsl">HSL Scale</TabsTrigger>
+</TabsList>
+<TabsContent value="oklch">
+
+```css
+/* OKLCH — same lightness = same perceived brightness */
+.bg-1 { background: oklch(60% 0.2 30); }     /* orange */
+.bg-2 { background: oklch(60% 0.2 150); }    /* green — same perceived brightness */
+.bg-3 { background: oklch(60% 0.2 270); }    /* blue — same perceived brightness */
+```
+
+</TabsContent>
+<TabsContent value="hsl">
+
+```css
+/* HSL — same lightness ≠ same perceived brightness */
+.bg-1 { background: hsl(30, 80%, 60%); }      /* orange — looks brighter */
+.bg-2 { background: hsl(150, 80%, 60%); }     /* green */
+.bg-3 { background: hsl(270, 80%, 60%); }     /* blue — looks darker */
+```
+
+</TabsContent>
+</Tabs>
+
+## color-mix() function
+
+Mix two colors in any color space.
+
+```css
+.button {
+  /* Mix white into indigo at 40% */
+  background: color-mix(in oklch, #6366f1 60%, white);
+
+  /* Equal mix in srgb */
+  border-color: color-mix(in srgb, #6366f1, #ef4444);
+
+  /* Tinted with transparency */
+  box-shadow: 0 2px 8px color-mix(in oklch, #6366f1 30%, transparent);
+}
+```
+
+## Relative Color Syntax
+
+Derive new colors from existing ones using the `from` keyword.
+
+```css
+:root {
+  --primary: #6366f1;
+  --primary-light: oklch(from var(--primary) calc(l + 15%) c h);
+  --primary-dark: oklch(from var(--primary) calc(l - 15%) c h);
+  --primary-muted: oklch(from var(--primary) l calc(c * 0.3) h);
+}
+```
+
+## currentColor & System Colors
+
+`currentColor` inherits the element's text color. System colors respect OS theme.
+
+```css
+.card { color: #1e293b; }
+.card .icon { fill: currentColor; }          /* matches parent text color */
+
+/* System colors — adapt to user's OS */
+@media (forced-colors: active) {
+  .card { border: 2px solid CanvasText; }
+  .btn { background: ButtonFace; color: ButtonText; }
+}
+```
+
+## Color Contrast & WCAG
+
+| Level | Ratio | Applies to |
+|-------|-------|------------|
+| AA | 4.5:1 | Normal text (< 18px) |
+| AA Large | 3:1 | Text >= 18px bold or >= 24px |
+| AAA | 7:1 | All text |
+
+```css
+/* Use high-contrast colors for accessibility */
+.btn-primary {
+  background: oklch(55% 0.2 275);       /* AA pass against white */
+  color: white;                          /* contrast ratio ~5.5:1 */
+}
+```
+
+## color-scheme
+
+Tell the browser what color schemes your page supports.
+
+```css
+:root {
+  color-scheme: light dark;
+}
+```
+
+```html
+<meta name="color-scheme" content="light dark" />
+```
+
+This enables native form controls, scrollbars, and default colors to match the scheme.
+
+<SandboxPreview
+  html={`<div class="palette">
+  <div class="swatch" style="background: oklch(55% 0.2 30)">oklch(55% 0.2 30)</div>
+  <div class="swatch" style="background: oklch(55% 0.2 120)">oklch(55% 0.2 120)</div>
+  <div class="swatch" style="background: oklch(55% 0.2 210)">oklch(55% 0.2 210)</div>
+  <div class="swatch" style="background: oklch(55% 0.2 300)">oklch(55% 0.2 300)</div>
+  <div class="swatch mixed">color-mix</div>
+</div>`}
+  css={`.palette { display: flex; gap: 0.5rem; flex-wrap: wrap; } .swatch { width: 120px; height: 80px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: white; font-size: 0.7rem; text-align: center; padding: 0.25rem; } .mixed { background: color-mix(in oklch, #6366f1, #ef4444); }`}
+/>
+
+<InteractiveExercise
+  title="Create a Color Palette with OKLCH"
+  description="Build a 3-color palette (primary, secondary, accent) using oklch with the same lightness but different hues. Display them as swatches with labels."
+  starterCode={`<div class="palette-demo">
+  <!-- Create 3 swatches with oklch colors -->
+</div>`}
+  language="html"
+  solutionCode={`<style>
+  .palette-demo { display: flex; gap: 1rem; font-family: monospace; }
+  .swatch { width: 120px; height: 100px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 0.5rem; font-size: 0.75rem; text-align: center; }
+  .swatch label { opacity: 0.9; margin-top: auto; }
+</style>
+<div class="palette-demo">
+  <div class="swatch" style="background: oklch(60% 0.18 30);">Primary<br/><span style="font-size:0.65rem">oklch(60% 0.18 30)</span></div>
+  <div class="swatch" style="background: oklch(60% 0.18 150);">Secondary<br/><span style="font-size:0.65rem">oklch(60% 0.18 150)</span></div>
+  <div class="swatch" style="background: oklch(60% 0.18 280);">Accent<br/><span style="font-size:0.65rem">oklch(60% 0.18 280)</span></div>
+</div>`}
+  hints={["Use oklch(L C H) with same L and C values", "Pick different H (hue) values for each swatch", "Add inline background styles to divs"]}
+  previewType="html"
+/>
+
+<Quiz questions={[
+  { question: "Why is oklch better than hsl for design systems?", options: ["It supports more colors", "It's perceptually uniform — same lightness looks equally bright", "It's faster to render", "It only works in modern browsers"], correctIndex: 1, explanation: "OKLCH is perceptually uniform: changing lightness or chroma by the same amount produces an equal perceptual difference. HSL doesn't guarantee this." },
+  { question: "What does `color-mix(in oklch, blue, white)` do?", options: ["Adds blue and white as layers", "Creates a lighter blue by mixing blue with white in oklch space", "Blends the two colors overlay-style", "Creates a gradient"], correctIndex: 1, explanation: "color-mix blends two colors proportionally in a specified color space. Here it tints blue toward white." },
+  { question: "What WCAG ratio is required for normal text at AA level?", options: ["3:1", "4.5:1", "7:1", "2:1"], correctIndex: 1, explanation: "Normal text under WCAG AA requires a 4.5:1 contrast ratio. Large text needs 3:1." },
+]} />
+
+<LessonSummary points={[
+"oklch() and oklab() are perceptually uniform — use for design systems",
+"color-mix() blends colors in any color space with proportional mixing",
+"Relative color syntax (from) derives new colors from existing references",
+"currentColor inherits text color — useful for SVG icons",
+"WCAG requires 4.5:1 contrast for normal text (AA)",
+"color-scheme meta signals light/dark support to the browser",
+]} />

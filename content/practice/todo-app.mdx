@@ -1,0 +1,115 @@
+---
+title: Build a Todo App
+description: A complete todo application with React and Next.js
+difficulty: beginner
+order: 1
+---
+
+# Build a Todo App
+
+Build a functional todo application that demonstrates core React concepts: state management, component composition, and user interactions.
+
+## Requirements
+
+- [ ] Add new todos with a text input
+- [ ] Mark todos as complete (toggle)
+- [ ] Delete individual todos
+- [ ] Filter todos: All / Active / Completed
+- [ ] Show total and completed count
+
+## Starter Code
+
+```tsx
+"use client"
+
+import { useState } from "react"
+
+interface Todo {
+  id: string
+  text: string
+  completed: boolean
+}
+
+export default function TodoApp() {
+  const [todos, setTodos] = useState<Todo[]>([])
+  const [input, setInput] = useState("")
+
+  // TODO: Implement addTodo
+  // TODO: Implement toggleTodo
+  // TODO: Implement deleteTodo
+
+  return (
+    <div className="mx-auto max-w-md p-4">
+      <h1 className="mb-4 text-2xl font-bold">Todo App</h1>
+
+      {/* Add todo form */}
+      <div className="mb-4 flex gap-2">
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Add a todo..."
+          className="flex-1 rounded border px-3 py-2"
+        />
+        <button className="rounded bg-blue-500 px-4 py-2 text-white">
+          Add
+        </button>
+      </div>
+
+      {/* Todo list */}
+      <ul className="space-y-2">
+        {todos.map((todo) => (
+          <li key={todo.id} className="flex items-center gap-2">
+            {/* TODO: toggle button */}
+            {/* TODO: todo text */}
+            {/* TODO: delete button */}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+```
+
+## Hints
+
+<details>
+<summary>Need a hint?</summary>
+
+Use `crypto.randomUUID()` or `Date.now().toString()` to generate unique IDs for new todos.
+
+</details>
+
+<details>
+<summary>Toggle logic</summary>
+
+```tsx
+const toggleTodo = (id: string) => {
+  setTodos((prev) =>
+    prev.map((todo) =>
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo,
+    ),
+  )
+}
+```
+
+</details>
+
+<details>
+<summary>Filter approach</summary>
+
+```tsx
+const [filter, setFilter] = useState<"all" | "active" | "completed">("all")
+
+const filtered = todos.filter((todo) => {
+  if (filter === "active") return !todo.completed
+  if (filter === "completed") return todo.completed
+  return true
+})
+```
+
+</details>
+
+## Next Steps
+
+- [Expense Tracker](/practice/expense-tracker) — Track your spending
+- [Dashboard](/practice/dashboard) — Build a data dashboard

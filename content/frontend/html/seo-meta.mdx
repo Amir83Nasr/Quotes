@@ -1,0 +1,223 @@
+---
+title: SEO & Meta Tags
+description: Optimize HTML head sections for search engines, social sharing, and discoverability
+difficulty: intermediate
+order: 5
+---
+
+<LearningObjectives objectives={[
+"Write viewport meta tag for proper mobile rendering",
+"Implement Open Graph and Twitter Card meta tags for social sharing",
+"Add structured data with JSON-LD for rich search results",
+"Use canonical, noindex, and robots directives correctly",
+"Write effective <title> and <meta name=\"description\"> tags",
+"Set up favicons and app icons for all platforms",
+"Understand sitemaps and robots.txt files",
+]} />
+
+## The Complete Head Section
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Primary SEO -->
+  <title>Complete CSS Grid Guide | Learn CSS Today</title>
+  <meta name="description" content="Master CSS Grid with hands-on examples. Covers grid-template, auto-fit, minmax, placement, and responsive layouts from beginner to advanced." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://example.com/css-grid-guide" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Complete CSS Grid Guide" />
+  <meta property="og:description" content="Master CSS Grid with hands-on examples." />
+  <meta property="og:image" content="https://example.com/og-css-grid.png" />
+  <meta property="og:url" content="https://example.com/css-grid-guide" />
+  <meta property="og:type" content="article" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Complete CSS Grid Guide" />
+  <meta name="twitter:description" content="Master CSS Grid with hands-on examples." />
+  <meta name="twitter:image" content="https://example.com/twitter-css-grid.png" />
+
+  <!-- Icons -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+</head>
+```
+
+## Title & Description Best Practices
+
+```html
+<!-- Good: descriptive, keyword-rich, under 60 chars -->
+<title>CSS Grid Layout Guide | Learn CSS Today</title>
+<meta name="description" content="A step-by-step guide to CSS Grid layout with interactive examples. Covers grid-template, grid-area, auto-fit, minmax, and responsive design patterns." />
+
+<!-- Bad: vague, keyword-stuffed -->
+<title>Home</title>
+<meta name="description" content="css grid css grid tutorial css grid guide css grid layout learn css grid best css grid tutorial" />
+```
+
+| Tag | Length Limit | Purpose |
+|-----|-------------|---------|
+| `<title>` | 50-60 chars | Search result headline |
+| `<meta description>` | 150-160 chars | Search result snippet |
+
+## Open Graph for Social Sharing
+
+```html
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Page Title" />
+<meta property="og:description" content="Page description" />
+<meta property="og:image" content="https://example.com/image.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:url" content="https://example.com/page" />
+<meta property="og:site_name" content="Site Name" />
+<meta property="og:locale" content="en_US" />
+```
+
+**Image specs**: 1200x630px, max 5MB, use JPG or PNG.
+
+## JSON-LD Structured Data
+
+Google uses structured data for rich results (recipe stars, FAQ, breadcrumbs).
+
+```html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "CSS Grid Layout Guide",
+  "description": "A step-by-step guide to CSS Grid layout.",
+  "author": {
+    "@type": "Person",
+    "name": "Jane Smith"
+  },
+  "datePublished": "2026-07-11",
+  "image": "https://example.com/og-css-grid.png",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Learn CSS Today"
+  }
+}
+</script>
+```
+
+<Alert><AlertTitle>Test Your Structured Data</AlertTitle><AlertDescription>Use Google's Rich Results Test or Schema.org validator. Invalid JSON-LD is silently ignored — no error is shown to users.</Description></Alert>
+
+## Robots Directives
+
+```html
+<!-- Allow indexing and link following (default) -->
+<meta name="robots" content="index, follow" />
+
+<!-- Prevent indexing a specific page -->
+<meta name="robots" content="noindex, nofollow" />
+
+<!-- Control crawler behavior via X-Robots-Tag in HTTP header -->
+<!-- Can be set per-file type (e.g., noindex PDFs) -->
+```
+
+For site-wide control, use `robots.txt`:
+
+```
+User-agent: *
+Allow: /
+Disallow: /admin/
+Sitemap: https://example.com/sitemap.xml
+```
+
+## Favicon & App Icons
+
+```html
+<!-- Modern SVG favicon (browser default) -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+<!-- Fallback for older browsers -->
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+
+<!-- iOS home screen icon -->
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+<!-- Web app manifest -->
+<link rel="manifest" href="/site.webmanifest" />
+
+<!-- Tile color for Windows -->
+<meta name="msapplication-TileColor" content="#6366f1" />
+<meta name="theme-color" content="#6366f1" />
+```
+
+<InteractiveExercise
+  title="Write Complete Head Section for a Blog Post"
+  description="Write the full <head> section for a blog post about 'JavaScript Async Programming' on site 'AsyncJS.dev'. Include SEO meta, Open Graph, Twitter Card, favicons, and JSON-LD structured data."
+  starterCode={`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Your head content here -->
+</head>
+<body>
+  <h1>JavaScript Async Programming</h1>
+</body>
+</html>`}
+  language="html"
+  solutionCode={`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JavaScript Async Programming Guide | AsyncJS.dev</title>
+  <meta name="description" content="Master async JavaScript: promises, async/await, event loop, and error handling with practical examples." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asyncjs.dev/guides/async-programming" />
+  <meta property="og:title" content="JavaScript Async Programming Guide" />
+  <meta property="og:description" content="Master async JavaScript: promises, async/await, event loop, and error handling." />
+  <meta property="og:image" content="https://asyncjs.dev/og-async.png" />
+  <meta property="og:url" content="https://asyncjs.dev/guides/async-programming" />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="JavaScript Async Programming" />
+  <meta name="twitter:description" content="Master async JavaScript with practical examples." />
+  <meta name="twitter:image" content="https://asyncjs.dev/twitter-async.png" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "JavaScript Async Programming Guide",
+    "description": "Master async JavaScript: promises, async/await, event loop, and error handling.",
+    "author": { "@type": "Person", "name": "AsyncJS Team" },
+    "datePublished": "2026-07-11",
+    "publisher": { "@type": "Organization", "name": "AsyncJS.dev" }
+  }
+  </script>
+</head>
+<body>
+  <h1>JavaScript Async Programming</h1>
+</body>
+</html>`}
+  hints={["Start with charset and viewport", "Write a descriptive <title> under 60 chars", "Add Open Graph with og:title, og:description, og:image", "Add Twitter Card with summary_large_image", "Include JSON-LD structured data for Article type", "Add favicon links"]}
+  previewType="html"
+/>
+
+<Quiz questions={[
+  { question: "What's the recommended length for a <title> tag?", options: ["Under 100 chars", "50-60 chars", "Exactly 70 chars", "No limit"], correctIndex: 1, explanation: "Google typically displays the first 50-60 characters of a title tag. Longer titles get truncated." },
+  { question: "Which meta property controls link previews on Facebook and LinkedIn?", options: ["twitter:card", "og:image", "og:title", "All Open Graph properties"], correctIndex: 3, explanation: "Open Graph (og:) properties control link previews on Facebook, LinkedIn, and many other platforms. Twitter uses its own namespace but falls back to OG." },
+  { question: "What is JSON-LD used for?", options: ["Validating JSON data", "Providing structured data to search engines for rich results", "Linking JSON files", "Styling JSON output"], correctIndex: 1, explanation: "JSON-LD (JavaScript Object Notation for Linked Data) provides structured data for search engines to display rich results like stars, FAQs, and breadcrumbs." },
+  { question: "How do you prevent a page from being indexed?", options: ["Remove the page entirely", "Add <meta name=\"robots\" content=\"noindex\">", "Use a 301 redirect", "Add rel=\"nofollow\""], correctIndex: 1, explanation: "The noindex robots directive tells search engines not to index the page. Nofollow controls link following, not indexing." },
+]} />
+
+<LessonSummary points={[
+"viewport meta is essential for mobile rendering — always include it",
+"Open Graph and Twitter Card meta control social previews",
+"JSON-LD structured data enables rich search results",
+"Use noindex for pages you don't want in search results",
+"Favicon SVG is the modern standard, with PNG fallbacks for legacy",
+"canonical URLs prevent duplicate content issues",
+]} />

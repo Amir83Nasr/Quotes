@@ -1,0 +1,56 @@
+---
+title: HTML Forms
+description: Building accessible and well-structured forms
+order: 3
+---
+
+# HTML Forms
+
+Forms collect user input. Well-structured forms improve accessibility and UX.
+
+## Form Structure
+
+```html
+<form action="/submit" method="POST" novalidate>
+  <fieldset>
+    <legend>Personal Information</legend>
+
+    <div>
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" required>
+    </div>
+
+    <div>
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email">
+    </div>
+  </fieldset>
+
+  <button type="submit">Submit</button>
+</form>
+```
+
+## Input Types
+
+| Type | Purpose |
+|------|---------|
+| text | General text input |
+| email | Email address (validates @) |
+| password | Masked text input |
+| number | Numeric input with steppers |
+| tel | Phone numbers |
+| url | URLs (validates format) |
+| date | Date picker |
+| checkbox | Multiple selection |
+| radio | Single selection |
+
+## Validation Attributes
+
+```html
+<input type="text" required minlength="2" maxlength="50" pattern="[A-Za-z]+">
+```
+
+## Next Steps
+
+- [JavaScript Introduction](/frontend/javascript/intro)
+- [Forms & Validation](/advanced/forms)

@@ -1,0 +1,55 @@
+---
+title: CSS Layout
+description: Common CSS layout patterns and techniques
+order: 4
+---
+
+# CSS Layout
+
+Modern CSS provides several layout approaches.
+
+## Layout Strategies
+
+| Approach | Best For |
+|----------|----------|
+| Normal Flow | Default document layout |
+| Flexbox | One-dimensional layouts |
+| Grid | Two-dimensional layouts |
+| Positioning | Overlays, modals, tooltips |
+
+## Holy Grail Layout
+
+```css
+.page {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+}
+```
+
+## Centering
+
+```css
+/* Flexbox centering */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Grid centering */
+.container {
+  display: grid;
+  place-items: center;
+}
+
+/* Margin auto (for block elements) */
+.element {
+  margin-inline: auto;
+}
+```
+
+## Next Steps
+
+- [Flexbox](/frontend/css/flexbox)
+- [Grid](/frontend/css/grid)

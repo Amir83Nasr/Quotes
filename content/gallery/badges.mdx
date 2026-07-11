@@ -1,0 +1,31 @@
+---
+title: Badge Components
+description: Badge variants in shadcn/ui
+order: 3
+---
+
+# Badges
+
+Badges display status, categories, or labels.
+
+## Variants
+
+<GalleryDemo component="badgeVariants" />
+
+## Usage
+
+```tsx
+import { Badge } from "@/components/ui/badge"
+
+<Badge>Default</Badge>
+<Badge variant="secondary">Secondary</Badge>
+<Badge variant="outline">Outline</Badge>
+<Badge variant="destructive">Destructive</Badge>
+```
+
+## Props
+
+| Prop | Type | Default |
+|------|------|---------|
+| variant | `"default" \| "secondary" \| "outline" \| "destructive"` | `"default"` |
+| children | `React.ReactNode` | required |

@@ -1,0 +1,192 @@
+---
+title: Cascade Layers & Specificity
+description: Master the CSS cascade, specificity calculation, and @layer for predictable styles
+difficulty: intermediate
+order: 3
+---
+
+<LearningObjectives objectives={[
+"Understand the CSS cascade algorithm and how styles win",
+"Calculate specificity: inline, ID, class, element selectors",
+"Use @layer to control cascade order explicitly",
+"Know when to use (and avoid) !important",
+"Understand CSS reset vs normalize approaches",
+"Apply @layer for framework override patterns",
+]} />
+
+## The Cascade Algorithm
+
+CSS resolves conflicting declarations in this order:
+
+1. **Origin & Importance** — user agent < user < author, !important flips priorities
+2. **Context** — @layer order determines layer priority
+3. **Specificity** — More specific selector wins
+4. **Order** — Later declaration wins (same specificity)
+
+```css
+/* Both apply to same element — which wins? */
+p { color: red; }        /* specificity: 0-0-1 */
+.text { color: blue; }   /* specificity: 0-1-0 — WINS (higher specificity) */
+```
+
+## Specificity Calculation
+
+Calculate as (inline, ID, class/pseudo-class, element/pseudo-element):
+
+| Selector | Specificity |
+|----------|-------------|
+| `*` | 0-0-0-0 |
+| `p` | 0-0-0-1 |
+| `.card` | 0-0-1-0 |
+| `#header` | 0-1-0-0 |
+| `style=""` | 1-0-0-0 |
+| `div.card.active` | 0-0-2-1 |
+| `#nav .item a` | 0-1-1-1 |
+
+```css
+/* Avoid this: overly specific selectors create maintenance problems */
+header#main-header nav ul li a.nav-link { color: blue; }
+/* Prefer: */
+.nav-link { color: blue; }
+```
+
+<Alert><AlertTitle>Don't Nest Too Deep</AlertTitle><AlertDescription>Deep nesting in preprocessors (SCSS) or styled-components produces high-specificity selectors. Flat, class-based selectors are easier to override.</Description></Alert>
+
+## @layer for Cascade Control
+
+`@layer` lets you define explicit cascade layers. Styles in later layers override earlier ones, regardless of specificity.
+
+```css
+@layer reset, base, components, utilities;
+
+@layer reset {
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  a { color: inherit; }
+}
+
+@layer base {
+  body { font-family: system-ui; line-height: 1.6; }
+  h1 { font-size: 2rem; margin-block: 1rem; }
+}
+
+@layer components {
+  .card { padding: 1.5rem; border-radius: 8px; }
+  .btn { display: inline-flex; padding: 0.5rem 1rem; }
+}
+
+@layer utilities {
+  .mt-4 { margin-top: 1rem; }
+  .text-center { text-align: center; }
+}
+```
+
+## !important — When to Avoid
+
+`!important` breaks the cascade. Use only for:
+
+- Utility overrides (e.g., `.hidden { display: none !important; }`)
+- Third-party widget isolation
+- Overriding inline styles you can't control
+
+```css
+/* Avoid this pattern */
+.card { color: red !important; }
+.special { color: blue !important; } /* Now you need another !important */
+
+/* Instead — use @layer or specificity */
+```
+
+## CSS Reset vs Normalize
+
+| Approach | Philosophy |
+|----------|------------|
+| **Reset** (e.g., Andy Bell) | Remove all default browser styles. Start from zero. |
+| **Normalize** (e.g., Nicolas Gallagher) | Preserve useful defaults, normalize across browsers. |
+
+```css
+/* Modern minimal reset */
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  input, button, textarea, select {
+    font: inherit;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
+  }
+}
+```
+
+## @layer for Framework Overrides
+
+Wrap third-party CSS in an `@layer` to keep your styles on top.
+
+```html
+<!-- Framework styles get lower priority -->
+<style>
+  @layer framework {
+    @import url("framework.css");
+  }
+</style>
+
+<!-- Your styles automatically win -->
+<style>
+  .card { border: 2px solid #6366f1; }
+</style>
+```
+
+<InteractiveExercise
+  title="Fix Specificity Issues"
+  description="The styles below have specificity problems. Fix them so the card has a indigo border and the special card has a coral border."
+  starterCode={`<style>
+  .wrapper .card { border: 2px solid #ccc; }
+  .special { border-color: #ef4444; }
+
+  .card-wrapper #my-card { border-color: #6366f1; }
+</style>
+<div class="wrapper card-wrapper">
+  <div class="card" id="my-card">Normal Card</div>
+  <div class="card special" id="my-card2">Special Card</div>
+</div>`}
+  language="html"
+  solutionCode={`<style>
+  /* Fix: put bare class selector after ID selector, or use @layer */
+  @layer base, overrides;
+  @layer base {
+    .card { border: 2px solid #6366f1; }
+    .special { border: 2px solid #ef4444; }
+  }
+</style>
+<div class="wrapper card-wrapper">
+  <div class="card">Normal Card</div>
+  <div class="card special">Special Card</div>
+</div>`}
+  hints={["The ID selector #my-card wins over .special because ID > class", "Use @layer to reset cascade order", "Or restructure to avoid ID selectors on styled elements"]}
+  previewType="html"
+/>
+
+<Quiz questions={[
+  { question: "What is the specificity of `.nav li.active a`?", options: ["0-0-1-1", "0-0-2-2", "0-1-2-1", "0-0-3-0"], correctIndex: 1, explanation: "Two classes (nav, active) = 0-0-2, two elements (li, a) = 0-0-2 = 0-0-2-2" },
+  { question: "What does @layer do?", options: ["Groups selectors by specificity", "Defines explicit cascade layers where later layers override earlier ones", "Creates a CSS grid", "Imports external stylesheets"], correctIndex: 1, explanation: "@layer lets you define named layers. Styles in later layers override earlier layers regardless of specificity." },
+  { question: "When is !important acceptable?", options: ["Never", "For all utility overrides", "For utility overrides and third-party overrides", "Whenever a specificity conflict arises"], correctIndex: 2, explanation: "!important is acceptable for utility classes (.hidden), overriding inline styles, or third-party widget isolation — not for routine specificity battles." },
+]} />
+
+<LessonSummary points={[
+"Cascade combines origin, @layer, specificity, and source order",
+"Specificity is (inline, ID, class, element) — keep selectors flat",
+"@layer gives explicit control over cascade priority",
+"!important breaks cascade — reserve for utilities and third-party overrides",
+"Modern CSS reset removes browser defaults with box-sizing and font inheritance",
+]} />

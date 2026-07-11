@@ -1,0 +1,93 @@
+---
+title: Full Stack Introduction
+description: Building complete web applications — frontend, backend, and everything between
+order: 1
+---
+
+# Full Stack Introduction
+
+Full stack development covers both frontend (UI) and backend (server, database, APIs). This section covers the skills needed to build complete web applications.
+
+## Architecture Overview
+
+A typical full stack application has three layers:
+
+```
+┌──────────────────┐
+│   Frontend UI    │  React / Next.js → User interface
+├──────────────────┤
+│   API Layer      │  REST / GraphQL → Data exchange
+├──────────────────┤
+│   Backend        │  Server logic → Business rules
+├──────────────────┤
+│   Database       │  PostgreSQL / SQLite → Data storage
+└──────────────────┘
+```
+
+## Backend Integration
+
+Frontend applications communicate with backends through APIs:
+
+```typescript
+async function fetchUsers(): Promise<User[]> {
+  const res = await fetch("/api/users")
+  if (!res.ok) throw new Error("Failed to fetch")
+  return res.json()
+}
+
+// In Next.js, you can use server components for direct DB access
+// instead of going through an API route
+```
+
+## Authentication
+
+Common auth patterns for web apps:
+
+- **Session-based**: Server stores session, client gets a cookie
+- **JWT (JSON Web Tokens)**: Server signs a token, client stores it
+- **OAuth**: Delegate auth to a provider (Google, GitHub)
+
+```typescript
+// JWT example flow
+// 1. User logs in → server returns a signed token
+// 2. Client stores token (httpOnly cookie or localStorage)
+// 3. Client sends token with every request via Authorization header
+// 4. Server verifies token before responding
+```
+
+## Databases
+
+| Type | Examples | Use Case |
+|------|----------|----------|
+| Relational | PostgreSQL, SQLite | Structured data with relations |
+| Document | MongoDB, Firebase | Flexible schemas |
+| Key/Value | Redis | Caching, sessions |
+| ORM | Prisma, Drizzle | Type-safe DB access |
+
+## Deployment
+
+```bash
+# Build for production
+npm run build
+
+# Start production server
+npm start
+
+# Or deploy to platforms like:
+# Vercel, Netlify, Railway, Fly.io, AWS
+```
+
+## Best Practices
+
+- Keep business logic separate from framework code
+- Validate all user input (frontend + backend)
+- Use environment variables for configuration
+- Implement proper error handling everywhere
+- Write automated tests for critical paths
+- Use HTTPS in production
+
+## Next Steps
+
+- [Backend Integration](/fullstack/backend) — Connect frontend to APIs
+- [Authentication](/fullstack/authentication) — Secure your app
+- [Deployment](/fullstack/deployment) — Ship to production

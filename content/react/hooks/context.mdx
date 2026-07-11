@@ -1,0 +1,376 @@
+---
+title: React Context
+description: Share state across components without prop drilling using Context and useContext
+difficulty: intermediate
+order: 4
+---
+
+# React Context
+
+Context lets a parent provide data to any descendant in the tree without passing props through every level — eliminating prop drilling.
+
+<LearningObjectives objectives={[
+  "Create and provide context with createContext",
+  "Consume context with the useContext hook",
+  "Recognize when context is appropriate vs prop drilling",
+  "Understand performance implications and context splitting",
+  "Build a practical theme provider and auth context"
+]} />
+
+## The Problem: Prop Drilling
+
+Without context, deeply nested components require threading props through intermediaries that don't need them.
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="before">Before (Prop Drilling)</TabsTrigger>
+    <TabsTrigger value="after">After (Context)</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="before">
+
+```tsx
+function App() {
+  const [user, setUser] = useState(null)
+  return <Dashboard user={user} setUser={setUser} />
+}
+
+function Dashboard({ user, setUser }) {
+  // Dashboard doesn't use user directly,
+  // just passes it down
+  return <Sidebar user={user} setUser={setUser} />
+}
+
+function Sidebar({ user, setUser }) {
+  // Sidebar doesn't use user either
+  return <ProfileCard user={user} setUser={setUser} />
+}
+
+function ProfileCard({ user, setUser }) {
+  // Only ProfileCard needs user
+  return <p>{user?.name}</p>
+}
+```
+
+  </TabsContent>
+
+  <TabsContent value="after">
+
+```tsx
+import { createContext, useContext, useState } from "react"
+
+type User = { name: string; email: string } | null
+const UserContext = createContext<{
+  user: User
+  setUser: (user: User) => void
+} | null>(null)
+
+function App() {
+  const [user, setUser] = useState<User>(null)
+  return (
+    <UserContext.Provider value={{ user, setUser }}>
+      <Dashboard />
+    </UserContext.Provider>
+  )
+}
+
+function Dashboard() { return <Sidebar /> }
+function Sidebar() { return <ProfileCard /> }
+
+function ProfileCard() {
+  const ctx = useContext(UserContext)
+  if (!ctx) throw new Error("useUser must be inside UserProvider")
+  return <p>{ctx.user?.name ?? "Not logged in"}</p>
+}
+```
+
+  </TabsContent>
+</Tabs>
+
+<Alert>
+  <Info />
+  <AlertTitle>No context for simple cases</AlertTitle>
+  <AlertDescription>
+    Two or three levels of props is fine. Context adds complexity — use it when drilling becomes painful (5+ levels) or when many unrelated components need the same data.
+  </AlertDescription>
+</Alert>
+
+## Creating and Providing Context
+
+The standard pattern: create context, define a provider component, export a custom hook.
+
+```tsx
+"use client"
+
+import { createContext, useContext, useState, type ReactNode } from "react"
+
+// 1. Define the type and create context
+type Theme = "light" | "dark"
+type ThemeContext = { theme: Theme; toggleTheme: () => void }
+
+const ThemeContext = createContext<ThemeContext | null>(null)
+
+// 2. Provider component
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  const [theme, setTheme] = useState<Theme>("light")
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "light" ? "dark" : "light"))
+  }
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  )
+}
+
+// 3. Custom hook for consuming
+export function useTheme() {
+  const ctx = useContext(ThemeContext)
+  if (!ctx) throw new Error("useTheme must be used within a ThemeProvider")
+  return ctx
+}
+```
+
+## Consuming Context
+
+Any component inside the provider reads context with the custom hook.
+
+```tsx
+// Consumer component
+function ThemedCard() {
+  const { theme, toggleTheme } = useTheme()
+
+  return (
+    <div className={theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-black"}>
+      <p>Current theme: {theme}</p>
+      <button onClick={toggleTheme}>Toggle Theme</button>
+    </div>
+  )
+}
+```
+
+## Performance: Context Splitting
+
+Every context value update re-renders **all** consumers, even if only part of the value changed.
+
+```tsx
+// ❌ Bad: single context for unrelated data
+const AppContext = createContext({
+  user: null, theme: "light", notifications: []
+} as AppState)
+
+// ✅ Good: split by update frequency
+const UserContext = createContext<User | null>(null)       // updates rarely
+const ThemeContext = createContext<Theme>("light")          // updates on toggle
+const NotificationsContext = createContext<Notification[]>([]) // updates frequently
+```
+
+<Alert>
+  <AlertTriangle />
+  <AlertTitle>Context re-render cost</AlertTitle>
+  <AlertDescription>
+    When context value changes, every consumer re-renders. Split contexts by how often the value changes — stable data in one, frequently changing data in another. Memoize the value prop with `useMemo` to avoid unnecessary re-renders from the provider itself.
+  </AlertDescription>
+</Alert>
+
+## Auth Context Example
+
+A realistic auth context with login/logout.
+
+```tsx
+"use client"
+
+import { createContext, useContext, useState, useCallback, type ReactNode } from "react"
+
+type User = { id: string; name: string; email: string }
+type AuthContext = {
+  user: User | null
+  login: (email: string, password: string) => Promise<void>
+  logout: () => void
+  isLoading: boolean
+}
+
+const AuthContext = createContext<AuthContext | null>(null)
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const login = useCallback(async (email: string, _password: string) => {
+    setIsLoading(true)
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json()
+      setUser(data.user)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  const logout = useCallback(() => setUser(null), [])
+
+  return (
+    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+      {children}
+    </AuthContext.Provider>
+  )
+}
+
+export function useAuth() {
+  const ctx = useContext(AuthContext)
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider")
+  return ctx
+}
+```
+
+## Interactive Exercise
+
+Build a theme toggle. Create a `ThemeContext` with "light" | "dark" state, a provider, and a `useTheme` hook. Components should read and toggle the theme.
+
+<InteractiveExercise
+  title="Theme Switcher with Context"
+  description="Create a ThemeProvider and two consumer components: one that displays the current theme and one that toggles it."
+  language="tsx"
+  starterCode={`"use client"
+
+import { createContext, useContext, useState, type ReactNode } from "react"
+
+// TODO: Define ThemeContext, ThemeProvider, useTheme
+
+function CurrentTheme() {
+  // TODO: read theme from context
+  return <p>Theme: ???</p>
+}
+
+function ThemeToggle() {
+  // TODO: toggle theme from context
+  return <button>Toggle Theme</button>
+}
+
+export default function App() {
+  return (
+    // TODO: wrap with ThemeProvider
+    <div>
+      <CurrentTheme />
+      <ThemeToggle />
+    </div>
+  )
+}`}
+  solutionCode={`"use client"
+
+import { createContext, useContext, useState, type ReactNode } from "react"
+
+type Theme = "light" | "dark"
+type ThemeContextValue = { theme: Theme; toggleTheme: () => void }
+
+const ThemeContext = createContext<ThemeContextValue | null>(null)
+
+function ThemeProvider({ children }: { children: ReactNode }) {
+  const [theme, setTheme] = useState<Theme>("light")
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "light" ? "dark" : "light"))
+  }
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  )
+}
+
+function useTheme() {
+  const ctx = useContext(ThemeContext)
+  if (!ctx) throw new Error("useTheme must be used within ThemeProvider")
+  return ctx
+}
+
+function CurrentTheme() {
+  const { theme } = useTheme()
+  return <p>Theme: {theme}</p>
+}
+
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme()
+  return (
+    <button
+      onClick={toggleTheme}
+      className={\`px-4 py-2 rounded \${
+        theme === "dark" ? "bg-gray-800 text-white" : "bg-gray-200 text-black"
+      }\`}
+    >
+      Switch to {theme === "light" ? "dark" : "light"}
+    </button>
+  )
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <div className="flex flex-col gap-4">
+        <CurrentTheme />
+        <ThemeToggle />
+      </div>
+    </ThemeProvider>
+  )
+}`}
+  hints={[
+    "Define a Theme type with 'light' | 'dark'",
+    "Context value needs both theme and toggleTheme",
+    "Create a custom useTheme hook with null check",
+    "Wrap consumer components with ThemeProvider"
+  ]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz questions={[
+  {
+    question: "What problem does Context primarily solve?",
+    options: [
+      "Component styling",
+      "Prop drilling",
+      "Bundle size",
+      "Server-side rendering"
+    ],
+    correctIndex: 1,
+    explanation: "Context eliminates prop drilling — passing props through many intermediary components that don't need them."
+  },
+  {
+    question: "When should you split contexts instead of using one big context?",
+    options: [
+      "Never — one context is always better",
+      "When values update at different frequencies",
+      "When using TypeScript",
+      "Only in production builds"
+    ],
+    correctIndex: 1,
+    explanation: "A context update re-renders all consumers. Split by update frequency so frequently changing values don't cause unnecessary re-renders of components that read stable values."
+  },
+  {
+    question: "What does the custom useTheme hook's null check prevent?",
+    options: [
+      "TypeScript compilation errors",
+      "Runtime error when component is used outside provider",
+      "Memory leaks",
+      "Re-render loops"
+    ],
+    correctIndex: 1,
+    explanation: "The null check throws a clear error if someone uses useTheme without wrapping their component in ThemeProvider, catching bugs early."
+  }
+]} />
+
+<LessonSummary points={[
+  "Context provides data through the tree without prop drilling — use it wisely, not everywhere",
+  "createContext + Provider + useContext (via custom hook) is the standard pattern",
+  "Split contexts by update frequency to avoid unnecessary re-renders",
+  "Memoize provider values with useMemo when the value is derived",
+  "Throw a clear error in custom hooks when used outside a provider"
+]} />

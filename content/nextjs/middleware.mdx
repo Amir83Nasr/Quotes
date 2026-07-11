@@ -1,0 +1,231 @@
+---
+title: Middleware
+description: Run code before requests complete — auth, redirects, headers, and i18n
+difficulty: intermediate
+order: 8
+---
+
+# Middleware
+
+<LearningObjectives objectives={[
+  "Implement middleware.ts at the project root",
+  "Configure matcher patterns for route targeting",
+  "Perform redirects and rewrites in middleware",
+  "Check authentication and protect routes",
+  "Manipulate cookies and request headers",
+  "Handle i18n routing with middleware"
+]} />
+
+## Middleware Basics
+
+`middleware.ts` at the project root runs on every matched request:
+
+```tsx
+// middleware.ts
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+
+export function middleware(request: NextRequest) {
+  console.log(`Request: ${request.method} ${request.nextUrl.pathname}`)
+  return NextResponse.next()
+}
+```
+
+## Matcher Config
+
+Use the `matcher` export to target specific routes:
+
+```tsx
+export const config = {
+  matcher: [
+    "/dashboard/:path*",    // all dashboard routes
+    "/api/:path*",          // all API routes
+    "/((?!_next/static|favicon.ico).*)",  // exclude static assets
+  ],
+}
+```
+
+## Authentication Check
+
+Redirect unauthenticated users to login:
+
+```tsx
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+
+export function middleware(request: NextRequest) {
+  const token = request.cookies.get("session")?.value
+
+  if (!token && request.nextUrl.pathname.startsWith("/dashboard")) {
+    const loginUrl = new URL("/login", request.url)
+    loginUrl.searchParams.set("redirect", request.nextUrl.pathname)
+    return NextResponse.redirect(loginUrl)
+  }
+
+  return NextResponse.next()
+}
+
+export const config = { matcher: "/dashboard/:path*" }
+```
+
+## Redirects and Rewrites
+
+```tsx
+// Permanent redirect
+export function middleware(request: NextRequest) {
+  if (request.nextUrl.pathname === "/old-page") {
+    return NextResponse.redirect(new URL("/new-page", request.url), 308)
+  }
+  return NextResponse.next()
+}
+
+// Rewrite (serve content from a different URL without redirecting)
+export function middleware(request: NextRequest) {
+  if (request.nextUrl.pathname === "/home") {
+    return NextResponse.rewrite(new URL("/", request.url))
+  }
+}
+```
+
+<Alert>
+  <AlertTitle>308 vs 307 Redirect</AlertTitle>
+  <AlertDescription>
+    Use 308 for permanent redirects (preserves request method, including POST). Use 307 for temporary redirects. NextResponse.redirect defaults to 307.
+  </AlertDescription>
+</Alert>
+
+## Cookies and Headers
+
+```tsx
+export function middleware(request: NextRequest) {
+  const response = NextResponse.next()
+
+  // Set a cookie
+  response.cookies.set("visitor", "true", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    maxAge: 60 * 60 * 24, // 1 day
+  })
+
+  // Set a response header
+  response.headers.set("x-version", "1.0")
+
+  // Read request header
+  const country = request.geo?.country ?? "US"
+  response.headers.set("x-country", country)
+
+  return response
+}
+```
+
+## i18n Routing
+
+```tsx
+import { match } from "@formatjs/intl-localematcher"
+import Negotiator from "negotiator"
+
+const locales = ["en", "es", "fr"]
+const defaultLocale = "en"
+
+function getLocale(request: NextRequest): string {
+  const negotiatorHeaders: Record<string, string> = {}
+  request.headers.forEach((value, key) => { negotiatorHeaders[key] = value })
+  const languages = new Negotiator({ headers: negotiatorHeaders }).languages()
+  return match(languages, locales, defaultLocale)
+}
+
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+  const pathnameHasLocale = locales.some(
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+  )
+
+  if (pathnameHasLocale) return NextResponse.next()
+
+  const locale = getLocale(request)
+  request.nextUrl.pathname = `/${locale}${pathname}`
+  return NextResponse.redirect(request.nextUrl)
+}
+```
+
+## Interactive Exercise
+
+<InteractiveExercise
+  title="Auth Middleware with Redirect"
+  description="Write middleware that checks for a session cookie and redirects unauthenticated users to /login with the original path as a redirect param."
+  starterCode={`// middleware.ts
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+
+export function middleware(request: NextRequest) {
+  // TODO: Check for "session" cookie
+  // TODO: If missing and path is /dashboard, redirect to /login?redirect=/dashboard
+  return NextResponse.next()
+}
+
+export const config = {
+  matcher: [] // TODO: Add matcher
+}`}
+  solutionCode={`import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+
+export function middleware(request: NextRequest) {
+  const session = request.cookies.get("session")?.value
+
+  if (!session) {
+    const loginUrl = new URL("/login", request.url)
+    loginUrl.searchParams.set("redirect", request.nextUrl.pathname)
+    return NextResponse.redirect(loginUrl)
+  }
+
+  return NextResponse.next()
+}
+
+export const config = {
+  matcher: "/dashboard/:path*",
+}`}
+  hints={["Use request.cookies.get() to read cookies", "Redirect to /login with a redirect param so the user goes back after login", "Set matcher to only run on dashboard routes"]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz
+  questions={[
+    {
+      question: "Where should middleware.ts be placed?",
+      options: [
+        "Inside app/ directory",
+        "At the project root (same level as app/)",
+        "Inside pages/ directory",
+        "In src/middleware/",
+      ],
+      correctIndex: 1,
+      explanation: "middleware.ts lives at the project root (or src/ if using src/ structure), not inside app/ or pages/.",
+    },
+    {
+      question: "What does NextResponse.rewrite() do compared to NextResponse.redirect()?",
+      options: [
+        "They are identical",
+        "rewrite() changes the URL in the browser; redirect() does not",
+        "rewrite() serves content from another URL without changing the browser URL; redirect() changes the browser URL",
+        "rewrite() only works for API routes",
+      ],
+      correctIndex: 2,
+      explanation: "rewrite() proxies content from a different URL while the browser keeps the original URL. redirect() sends the browser to a new URL entirely.",
+    },
+  ]}
+/>
+
+## Lesson Summary
+
+<LessonSummary
+  points={[
+    "middleware.ts runs before every matched request — ideal for auth, redirects, headers",
+    "matcher config controls which routes trigger middleware",
+    "NextResponse.redirect() and NextResponse.rewrite() provide URL manipulation",
+    "Cookies and headers can be read and modified in middleware",
+    "Middleware enables server-side i18n routing based on Accept-Language",
+  ]}
+/>

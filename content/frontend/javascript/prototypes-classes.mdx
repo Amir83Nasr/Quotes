@@ -1,0 +1,146 @@
+---
+title: Prototypes & Classes
+description: Prototype chain, class syntax, inheritance, composition
+order: 3
+---
+
+# Prototypes & Classes
+
+<LearningObjectives objectives={["Understand prototype chain", "Compare constructor functions vs class syntax", "Use extends, super, static, private fields", "Prefer composition over inheritance"]} />
+
+## Prototype Chain
+
+Objects have `[[Prototype]]`. Property lookup walks the chain.
+
+```javascript
+const animal = { eats: true }
+const rabbit = { jumps: true }
+Object.setPrototypeOf(rabbit, animal)
+rabbit.jumps // true (own), rabbit.eats // true (prototype), rabbit.toString // Object.prototype
+```
+
+## Constructor vs Class
+
+```javascript
+// Constructor function (pre-ES6)
+function User(name, role) { this.name = name; this.role = role }
+User.prototype.greet = function () { return 'Hi, I\'m ' + this.name }
+new User("Alice", "admin").greet() // "Hi, I'm Alice"
+
+// Class syntax (ES6 sugar)
+class User {
+  constructor(name, role) { this.name = name; this.role = role }
+  greet() { return 'Hi, I\'m ' + this.name }
+}
+```
+
+## extends & super
+
+```javascript
+class Animal {
+  constructor(name) { this.name = name }
+  speak() { return this.name + ' makes a sound' }
+}
+class Dog extends Animal {
+  constructor(name, breed) { super(name); this.breed = breed }
+  speak() { return this.name + ' barks' }
+}
+new Dog("Rex", "Husky") instanceof Animal // true
+```
+
+<Tabs><TabsList><TabsTrigger value="p">Prototype</TabsTrigger><TabsTrigger value="c">Class</TabsTrigger></TabsList><TabsContent value="p">
+
+```javascript
+function Dog(name, breed) { Animal.call(this, name); this.breed = breed }
+Dog.prototype = Object.create(Animal.prototype)
+Dog.prototype.speak = function () { return this.name + ' barks' }
+```
+
+</TabsContent><TabsContent value="c">
+
+```javascript
+class Dog extends Animal {
+  constructor(name, breed) { super(name); this.breed = breed }
+  speak() { return this.name + ' barks' }
+}
+```
+
+</TabsContent></Tabs>
+
+## Static & Private
+
+```javascript
+class MathUtils { static clamp(v, min, max) { return Math.min(Math.max(v, min), max) } }
+MathUtils.clamp(15, 0, 10) // 10
+
+class Account { #balance = 0; constructor(v) { this.#balance = v }; getBalance() { return this.#balance } }
+// acct.#balance // SyntaxError — truly private
+```
+
+## Composition Over Inheritance
+
+Assemble behavior from small pieces.
+
+```javascript
+const canFly = (obj) => ({ ...obj, fly: () => obj.name + ' flies' })
+const canSwim = (obj) => ({ ...obj, swim: () => obj.name + ' swims' })
+const duck = canSwim(canFly({ name: "Daffy", speak: () => "quacks" }))
+duck.fly()  // "Daffy flies"
+```
+
+## Interactive Exercise
+
+<InteractiveExercise
+  title="UI Element Hierarchy"
+  description="Base UIElement with id, render(), validate(). Extend: Button(id, label, onClick) and TextField(id, label, required)."
+  starterCode={`class UIElement {
+  constructor(id) { this.id = id }
+  render() { return '<div id="'+this.id+'"></div>' }
+  validate() { return null }
+}
+class Button extends UIElement {
+  // constructor(id, label, onClick)
+  // render() returns button HTML
+  // validate() — label non-empty
+}
+class TextField extends UIElement {
+  // constructor(id, label, required)
+  // render() returns input HTML
+  // validate() — if required, value non-empty
+}`}
+  language="javascript"
+  hints={["Call super(id) first in child constructor"]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz questions={[
+  {
+    question: "When must super() be called?",
+    options: ["At end of constructor", "Before accessing this in derived class", "Optional"],
+    correctIndex: 1,
+    explanation: "Must call super() before using this in a derived class."
+  },
+  {
+    question: "What does static mean?",
+    options: ["Method on instances", "Method on class itself, not instances", "Private"],
+    correctIndex: 1,
+    explanation: "Static members exist on the class constructor, not instances."
+  },
+  {
+    question: "Benefit of composition over inheritance?",
+    options: ["Faster execution", "More flexible, avoids deep hierarchies", "Less memory"],
+    correctIndex: 1,
+    explanation: "Composition assembles behavior from small reusable pieces."
+  }
+]} />
+
+## Lesson Summary
+
+<LessonSummary points={[
+  "Prototype chain: objects inherit from other objects",
+  "Class syntax is sugar over constructor + prototype",
+  "extends + super for hierarchies; static for class-level; # for private fields",
+  "Prefer composition — mix behavior instead of deep inheritance trees"
+]} />

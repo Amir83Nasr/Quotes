@@ -1,0 +1,202 @@
+---
+title: Custom Properties (CSS Variables)
+description: Master CSS custom properties for dynamic theming and reusable styles
+difficulty: intermediate
+order: 8
+---
+
+<LearningObjectives objectives={[
+"Define and use custom properties with the -- prefix",
+"Understand inheritance and cascading behavior of custom properties",
+"Use var() with fallback values for resilient styles",
+"Build a dynamic theme system with custom properties",
+"Register typed custom properties with @property",
+"Animate custom properties efficiently",
+]} />
+
+## Defining Custom Properties
+
+Custom properties (CSS variables) start with `--` and are accessed via `var()`.
+
+```css
+:root {
+  --color-primary: #6366f1;
+  --spacing-md: 1rem;
+  --font-size-base: 16px;
+}
+
+.button {
+  background: var(--color-primary);
+  padding: var(--spacing-md);
+  font-size: var(--font-size-base);
+}
+```
+
+## Inheritance & Cascading
+
+Custom properties inherit through the DOM. Override at any level.
+
+```css
+.card { --border-radius: 8px; }
+.card.featured { --border-radius: 16px; }
+.card * { border-radius: var(--border-radius); } /* all children inherit */
+```
+
+<Alert><AlertTitle>Gotcha</AlertTitle><AlertDescription>Custom properties cascade normally, so a value defined on an element applies to its children. Use `:root` for globals, specific selectors for scoped overrides.</AlertDescription></Alert>
+
+## var() with Fallbacks
+
+Provide a fallback in case the variable isn't set.
+
+```css
+.card {
+  /* Fallback: #ccc if --color-surface is not defined */
+  background: var(--color-surface, #ccc);
+
+  /* Nested fallback: use --color-primary if set, otherwise --color-blue, otherwise #333 */
+  color: var(--color-primary, var(--color-blue, #333));
+}
+```
+
+## Dynamic Theming
+
+Swap property values at a higher level to change the entire theme.
+
+```css
+[data-theme="dark"] {
+  --color-bg: #0f172a;
+  --color-text: #e2e8f0;
+  --color-accent: #818cf8;
+}
+[data-theme="light"] {
+  --color-bg: #ffffff;
+  --color-text: #1e293b;
+  --color-accent: #6366f1;
+}
+body { background: var(--color-bg); color: var(--color-text); }
+```
+
+<Tabs>
+<TabsList>
+<TabsTrigger value="theme">Theme Switcher</TabsTrigger>
+<TabsTrigger value="code">Code</TabsTrigger>
+</TabsList>
+<TabsContent value="theme">
+<SandboxPreview
+  html={`<div class="theme-demo" id="demo">
+  <button class="btn" data-theme-btn>Toggle Theme</button>
+  <div class="card-stack">
+    <div class="card">Primary Card</div>
+    <div class="card secondary">Secondary Card</div>
+  </div>
+</div>
+<script>
+document.getElementById('demo').querySelector('[data-theme-btn]').onclick = () => {
+  document.getElementById('demo').dataset.theme = document.getElementById('demo').dataset.theme === 'dark' ? 'light' : 'dark';
+};
+</script>`}
+  css={`.theme-demo { --color-bg: #fff; --color-text: #1e293b; --color-primary: #6366f1; --color-secondary: #a78bfa; background: var(--color-bg); color: var(--color-text); padding: 1.5rem; border-radius: 8px; transition: 0.3s; }
+.theme-demo[data-theme="dark"] { --color-bg: #0f172a; --color-text: #e2e8f0; --color-primary: #818cf8; --color-secondary: #a78bfa; }
+.card { background: var(--color-primary); color: white; padding: 1rem; margin: 0.5rem 0; border-radius: 6px; }
+.card.secondary { background: var(--color-secondary); }
+.btn { padding: 0.5rem 1rem; margin-bottom: 1rem; cursor: pointer; }`}
+/>
+</TabsContent>
+<TabsContent value="code">
+
+```css
+:root {
+  --color-bg: #fff;
+  --color-primary: #6366f1;
+}
+[data-theme="dark"] {
+  --color-bg: #0f172a;
+  --color-primary: #818cf8;
+}
+```
+
+</TabsContent>
+</Tabs>
+
+## @property for Typed Properties
+
+Register custom properties with a syntax type, initial value, and inheritance. Enables animating properties that CSS can't normally interpolate.
+
+```css
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.box {
+  --gradient-angle: 0deg;
+  background: linear-gradient(var(--gradient-angle), #6366f1, #a78bfa);
+  transition: --gradient-angle 1s;
+}
+
+.box:hover { --gradient-angle: 360deg; }
+```
+
+<InteractiveExercise
+  title="Build a Theme System"
+  description="Create a component that uses custom properties for theming — define light/dark variables and apply them."
+  starterCode={`<div class="theme-section">
+  <button class="toggle">Switch Theme</button>
+  <div class="demo-card">
+    <h3>Themed Card</h3>
+    <p>This card uses CSS custom properties for colors.</p>
+  </div>
+</div>`}
+  language="html"
+  solutionCode={`<style>
+  .theme-section {
+    --bg: #ffffff;
+    --text: #1e293b;
+    --accent: #6366f1;
+    --border: #e2e8f0;
+    background: var(--bg);
+    color: var(--text);
+    padding: 1.5rem;
+    border-radius: 8px;
+    transition: 0.3s;
+  }
+  .theme-section.dark {
+    --bg: #0f172a;
+    --text: #e2e8f0;
+    --accent: #818cf8;
+    --border: #334155;
+  }
+  .demo-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+  .demo-card h3 { color: var(--accent); }
+  .toggle { padding: 0.5rem 1rem; cursor: pointer; margin-bottom: 0.5rem; }
+</style>
+<div class="theme-section" id="theme-root">
+  <button class="toggle" onclick="document.getElementById('theme-root').classList.toggle('dark')">Switch Theme</button>
+  <div class="demo-card">
+    <h3>Themed Card</h3>
+    <p>This card uses CSS custom properties for colors.</p>
+  </div>
+</div>`}
+  hints={["Define all colors as custom properties on .theme-section", "Use .dark class to override property values", "Apply var() to all color declarations"]}
+  previewType="html"
+/>
+
+<Quiz questions={[
+  { question: "How do you access a custom property named --color-primary?", options: ["color-primary()", "var(--color-primary)", "get(--color-primary)", "--color-primary"], correctIndex: 1, explanation: "Use the var() function to read a custom property value." },
+  { question: "What does @property do?", options: ["Creates a CSS class", "Defines a variable with type info for animations", "Imports a stylesheet", "Declares a media query"], correctIndex: 1, explanation: "@property registers a custom property with a syntax type, initial value, and inheritance flag — enabling CSS transitions on that property." },
+  { question: "What happens if var(--undefined-var) has no fallback?", options: ["The property becomes invalid and is ignored", "It returns black", "It throws an error", "It inherits from parent"], correctIndex: 0, explanation: "When a var() reference can't be resolved and there's no fallback, the declaration is invalid and ignored by the browser." },
+]} />
+
+<LessonSummary points={[
+"Custom properties use -- prefix and are read with var()",
+"Properties inherit and cascade through the DOM tree",
+"var() accepts fallback values for resilience",
+"Theming swaps property values at a container level",
+"@property enables typed custom properties with animation support",
+]} />

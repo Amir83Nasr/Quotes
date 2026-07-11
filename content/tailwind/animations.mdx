@@ -1,0 +1,157 @@
+---
+title: Animations & Transitions
+description: Create smooth animations and transitions with Tailwind utilities
+difficulty: intermediate
+order: 7
+---
+
+<LearningObjectives
+  objectives={[
+    "Apply transition-* utilities (properties, duration, timing, delay)",
+    "Use built-in animate-* utilities (spin, ping, pulse, bounce)",
+    "Create custom keyframe animations",
+    "Chain hover/focus/active transitions",
+    "Use group-hover for parent-child animations",
+  ]}
+/>
+
+## Transition Utilities
+
+Control transition-property, duration, timing, and delay with utility classes.
+
+```html
+<button class="bg-blue-500 transition-colors duration-200 hover:bg-blue-600
+               rounded-lg px-4 py-2 text-white">Hover Me</button>
+
+<div class="transition-all duration-300 ease-out hover:scale-105 hover:shadow-lg
+            rounded-xl bg-white p-6 shadow-sm">Content with smooth scale</div>
+```
+
+| Utility | CSS Property |
+|---------|-------------|
+| `transition-all` | `transition: all` |
+| `transition-colors` | color, background-color, border-color |
+| `transition-transform` | `transition: transform` |
+| `duration-200` | `transition-duration: 200ms` |
+| `ease-in-out` | `transition-timing-function: ease-in-out` |
+
+## Built-in Animations
+
+```html
+<div class="flex items-center gap-6 p-6">
+  <!-- Spinning loader -->
+  <div class="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-blue-500"></div>
+  <!-- Ping notification dot -->
+  <span class="relative flex h-4 w-4">
+    <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+    <span class="relative inline-flex h-4 w-4 rounded-full bg-red-500"></span>
+  </span>
+  <!-- Pulse skeleton loader -->
+  <div class="h-12 w-24 animate-pulse rounded-lg bg-gray-200"></div>
+  <!-- Bounce -->
+  <svg class="h-6 w-6 animate-bounce text-blue-500" ...>↓</svg>
+</div>
+```
+
+## Custom Keyframes
+
+Define in globals.css:
+
+```css
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+@theme { --animate-wiggle: wiggle 1s ease-in-out infinite; }
+```
+
+```html
+<button class="animate-wiggle rounded-lg bg-purple-500 px-4 py-2 text-white">Wobble</button>
+```
+
+<Alert>
+  <AlertTitle><Lightbulb className="inline h-4 w-4" /> Performance Rule</AlertTitle>
+  <AlertDescription>Animate transform and opacity only. Avoid width, height, margin — those trigger layout recalculations.</AlertDescription>
+</Alert>
+
+## Group Hover Animations
+
+Animate children when parent is hovered with `group` + `group-hover:`.
+
+```html
+<div class="group relative cursor-pointer rounded-xl border p-6 transition-shadow hover:shadow-lg">
+  <div class="mb-3 h-32 rounded-lg bg-linear-to-br from-blue-400 to-purple-500
+              transition-transform duration-300 group-hover:scale-105"></div>
+  <h3 class="font-semibold transition-colors group-hover:text-blue-600">Interactive Card</h3>
+  <p class="mt-1 text-sm text-gray-500">Children animate on parent hover.</p>
+  <span class="mt-2 inline-block text-sm font-medium text-blue-500
+               transition-transform duration-200 group-hover:translate-x-1">Learn →</span>
+</div>
+```
+
+## Animated Elements Showcase
+
+<SandboxPreview title="Animated Elements" type="html" height={300}
+  html={`
+<script src="https://cdn.tailwindcss.com"><\/script>
+<div class="flex flex-wrap items-center gap-8 p-8">
+  <div class="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-blue-500"></div>
+  <div class="h-12 w-12 animate-pulse rounded-full bg-blue-400"></div>
+  <div class="h-12 w-12 animate-bounce rounded-full bg-purple-500"></div>
+  <div class="group h-24 w-24 cursor-pointer rounded-xl bg-linear-to-br from-pink-500 to-orange-500
+              transition-all duration-300 hover:scale-110 hover:rotate-6 hover:shadow-xl
+              flex items-center justify-center text-white text-sm font-bold">Hover</div>
+</div>`}
+/>
+
+<InteractiveExercise
+  title="Hover Card with Animated Border"
+  description="Create a card that reveals a gradient border on hover using group-hover."
+  starterCode={`<div class="group relative rounded-xl border-2 p-6">
+  <div class="..." style="...">  <!-- animated border overlay --></div>
+  <div><h3>Title</h3><p>Content</p></div>
+</div>`}
+  solutionCode={`<div class="group relative overflow-hidden rounded-xl border-2 border-transparent bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-lg">
+  <div class="absolute inset-0 -z-10 bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+       style="mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; padding: 2px;">
+  </div>
+  <h3 class="font-semibold text-gray-900 transition-colors group-hover:text-blue-600">Animated Border Card</h3>
+  <p class="mt-1 text-sm text-gray-500">Hover to see gradient border appear.</p>
+  <span class="mt-3 inline-block text-sm font-medium text-blue-500 transition-transform duration-200 group-hover:translate-x-1">Explore →</span>
+</div>`}
+  hints={["Use group on outer card, group-hover:opacity-100 on gradient overlay", "mask-composite: exclude makes gradient appear as border only"]}
+/>
+
+<Quiz
+  questions={[
+    {
+      question: "Which properties are safest for 60fps animations?",
+      options: ["width and height", "transform and opacity", "margin and padding", "top and left"],
+      correctIndex: 1,
+      explanation: "Transform and opacity are GPU-composited. Layout properties trigger reflows.",
+    },
+    {
+      question: "How to animate a child when parent is hovered?",
+      options: ["child:hover", "group-hover: with group on parent", ":parent-hover > child", "hover:child"],
+      correctIndex: 1,
+      explanation: "Add group to parent, use group-hover: on children.",
+    },
+    {
+      question: "Which utility creates a skeleton loading effect?",
+      options: ["animate-spin", "animate-pulse", "animate-bounce", "animate-ping"],
+      correctIndex: 1,
+      explanation: "animate-pulse creates a gentle opacity fade for skeleton loaders.",
+    },
+  ]}
+/>
+
+<LessonSummary
+  points={[
+    "Use transition-{property} duration-{time} ease-{type} for CSS transitions",
+    "Built-in animations: animate-spin, animate-pulse, animate-bounce, animate-ping",
+    "Custom keyframes via @theme { --animate-name: ... }",
+    "Animate transform + opacity for GPU-composited performance",
+    "group + group-hover for parent-triggered child animations",
+    "Respect prefers-reduced-motion with motion-safe:/motion-reduce: variants",
+  ]}
+/>

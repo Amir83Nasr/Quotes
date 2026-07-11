@@ -1,0 +1,72 @@
+---
+title: Kanban Board
+description: Build a drag-and-drop kanban board for task management
+difficulty: advanced
+order: 6
+---
+
+# Kanban Board
+
+A drag-and-drop project management board with columns and cards.
+
+## Requirements
+
+- [ ] Columns for task stages (To Do, In Progress, Done)
+- [ ] Add tasks to any column
+- [ ] Drag tasks between columns
+- [ ] Edit task details
+- [ ] Delete tasks
+- [ ] Persist state (localStorage)
+
+## Starter
+
+```tsx
+"use client"
+
+import { useState } from "react"
+
+interface Task {
+  id: string
+  title: string
+  description: string
+}
+
+interface Column {
+  id: string
+  title: string
+  tasks: Task[]
+}
+
+export default function KanbanBoard() {
+  const [columns, setColumns] = useState<Column[]>([
+    { id: "todo", title: "To Do", tasks: [] },
+    { id: "progress", title: "In Progress", tasks: [] },
+    { id: "done", title: "Done", tasks: [] },
+  ])
+
+  // TODO: implement addTask, moveTask, editTask, deleteTask
+
+  return (
+    <div className="flex gap-4 overflow-x-auto p-4">
+      {columns.map((column) => (
+        <div key={column.id} className="w-72 shrink-0 rounded-lg bg-muted p-4">
+          <h2 className="mb-3 font-semibold">{column.title}</h2>
+          {column.tasks.map((task) => (
+            <div key={task.id} className="mb-2 rounded border bg-background p-3">
+              <p className="font-medium">{task.title}</p>
+              {task.description && (
+                <p className="mt-1 text-sm text-muted-foreground">{task.description}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+## Next Steps
+
+- [Blog](/practice/blog)
+- [Authentication System](/practice/auth)

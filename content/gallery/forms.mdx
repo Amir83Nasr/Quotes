@@ -1,0 +1,41 @@
+---
+title: Form Showcase
+description: Explore form patterns and input components
+order: 7
+---
+
+# Form Showcase
+
+Forms collect and validate user input. shadcn/ui provides input fields, labels, checkboxes, and more.
+
+## Input Fields
+
+<GalleryDemo component="formInputs" />
+
+## Form Layout
+
+<GalleryDemo component="formLayout" />
+
+## Code Usage
+
+```tsx
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+
+<form className="space-y-4">
+  <div>
+    <Label htmlFor="email">Email</Label>
+    <Input id="email" type="email" placeholder="you@example.com" />
+  </div>
+  <Button type="submit">Submit</Button>
+</form>
+```
+
+## Best Practices
+
+- Always pair inputs with `<Label>`
+- Show validation errors inline, not in alerts
+- Group related fields with `<fieldset>`
+- Use `type` for appropriate keyboard on mobile
+- Disable submit button during processing

@@ -1,0 +1,141 @@
+---
+title: Async/Await Patterns
+description: Sequential vs parallel, error handling, retry, timeout
+order: 7
+---
+
+# Async/Await Patterns
+
+<LearningObjectives objectives={["Use async/await and error handling", "Choose sequential vs parallel execution", "Apply timeout and retry patterns"]} />
+
+## Async/Await
+
+```javascript
+async function fetchUser(id) {
+  const res = await fetch('/api/users/' + id)
+  if (!res.ok) throw Error('HTTP ' + res.status)
+  return res.json()
+}
+// Always returns a promise
+```
+
+## Error Handling
+
+```javascript
+// try/catch for per-op recovery
+try { return await fetchUser(id) }
+catch (err) { console.error(err); return null }
+
+// .catch for fallback chains
+fetchUser(id).catch(err => { console.error(err); return null })
+```
+
+## Sequential vs Parallel
+
+<Tabs><TabsList><TabsTrigger value="s">Sequential</TabsTrigger><TabsTrigger value="p">Parallel</TabsTrigger></TabsList><TabsContent value="s">
+
+```javascript
+// Each needs previous result
+const user = await fetchUser(id)     // 100ms
+const posts = await fetchPosts(user) // 200ms (needs user)
+// Total: ~300ms
+```
+
+</TabsContent><TabsContent value="p">
+
+```javascript
+// Independent — run concurrently
+const [users, posts] = await Promise.all([
+  fetch("/api/users").then(r => r.json()),  // 100ms
+  fetch("/api/posts").then(r => r.json()),   // 200ms
+])
+// Total: ~200ms
+```
+
+</TabsContent></Tabs>
+
+### Mixed
+
+```javascript
+async function dashboard(id) {
+  const user = await fetchUser(id)                            // serial
+  const [posts, fol] = await Promise.all([                    // parallel
+    fetchUserPosts(user.id), fetchFollowers(user.id),
+  ])
+  return { user, posts, fol }
+}
+```
+
+## Fetch with Timeout
+
+```javascript
+async function fetchWithTimeout(url, timeout = 5000) {
+  const ctrl = new AbortController()
+  const id = setTimeout(() => ctrl.abort(), timeout)
+  try { return await fetch(url, { signal: ctrl.signal }) }
+  finally { clearTimeout(id) }
+}
+```
+
+## Retry Pattern
+
+```javascript
+async function fetchWithRetry(url, { retries = 3, delay = 1000 } = {}) {
+  for (let i = 0; i <= retries; i++) {
+    try {
+      const r = await fetch(url)
+      if (!r.ok) throw Error('HTTP ' + r.status)
+      return await r.json()
+    } catch (err) {
+      if (i === retries) throw err
+      await new Promise(r => setTimeout(r, delay * 2 ** i))
+    }
+  }
+}
+```
+
+## Interactive Exercise
+
+<InteractiveExercise
+  title="Build fetchWithRetry"
+  description="Fetch with retry, exponential backoff, timeout. Retry 5xx, throw 4xx immediately."
+  starterCode={`async function fetchWithRetry(url, options = {}) {
+  const { retries = 3, delay = 1000, timeout = 5000 } = options
+  // Use AbortController for timeout
+  // Only retry 5xx, throw 4xx immediately
+}`}
+  language="javascript"
+  hints={["New AbortController per attempt", "Exponential backoff: delay * 2^attempt"]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz questions={[
+  {
+    question: "What does async function always return?",
+    options: ["Value directly", "A promise", "A generator"],
+    correctIndex: 1,
+    explanation: "Async functions always return a promise."
+  },
+  {
+    question: "When NOT to retry HTTP request?",
+    options: ["500", "503", "404"],
+    correctIndex: 2,
+    explanation: "4xx are client errors — retrying won't help."
+  },
+  {
+    question: "Top-level await does what?",
+    options: ["Syntax error", "Blocks module until promise settles", "Node only"],
+    correctIndex: 1,
+    explanation: "Top-level await suspends module execution (ESM only)."
+  }
+]} />
+
+## Lesson Summary
+
+<LessonSummary points={[
+  "Async functions return promises; await pauses until settlement",
+  "Sequential for dependencies; Promise.all for parallel work",
+  "AbortController for timeouts; exponential backoff for retries"
+]} />

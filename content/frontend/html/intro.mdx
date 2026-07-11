@@ -1,0 +1,133 @@
+---
+title: HTML Introduction
+description: The foundation of every web page — semantic markup and document structure
+order: 1
+---
+
+# HTML Introduction
+
+HTML (HyperText Markup Language) is the standard language for creating web pages. It describes the structure of content using elements enclosed in tags.
+
+## Document Structure
+
+Every HTML document follows a basic structure:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Title</title>
+</head>
+<body>
+  <h1>Hello, World!</h1>
+  <p>This is a paragraph.</p>
+</body>
+</html>
+```
+
+## Semantic Elements
+
+Semantic HTML gives meaning to content, improving accessibility and SEO.
+
+| Element | Purpose |
+|---------|---------|
+| `<header>` | Introductory content or navigation |
+| `<nav>` | Navigation links |
+| `<main>` | Primary content of the page |
+| `<section>` | Thematic grouping of content |
+| `<article>` | Self-contained composition |
+| `<aside>` | Sidebar or related content |
+| `<footer>` | Footer for a section or page |
+
+```html
+<body>
+  <header>
+    <h1>My Website</h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+    </nav>
+  </header>
+
+  <main>
+    <article>
+      <h2>Article Title</h2>
+      <p>Article content goes here.</p>
+    </article>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 My Website</p>
+  </footer>
+</body>
+```
+
+## Text Elements
+
+| Element | Description |
+|---------|-------------|
+| `<h1>` to `<h6>` | Headings (h1 is most important) |
+| `<p>` | Paragraph |
+| `<strong>` | Bold / important text |
+| `<em>` | Italic / emphasized text |
+| `<a>` | Hyperlink |
+| `<span>` | Inline container for styling |
+
+## Lists
+
+```html
+<!-- Unordered list -->
+<ul>
+  <li>Item one</li>
+  <li>Item two</li>
+</ul>
+
+<!-- Ordered list -->
+<ol>
+  <li>First step</li>
+  <li>Second step</li>
+</ol>
+```
+
+## Images and Links
+
+```html
+<!-- Image -->
+<img src="photo.jpg" alt="Description of the photo" width="400">
+
+<!-- Link -->
+<a href="https://example.com" target="_blank" rel="noopener noreferrer">
+  Visit Example
+</a>
+```
+
+## Forms
+
+Forms collect user input. Always pair inputs with `<label>` for accessibility.
+
+```html
+<form action="/submit" method="POST">
+  <label for="name">Name:</label>
+  <input type="text" id="name" name="name" required>
+
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email">
+
+  <button type="submit">Submit</button>
+</form>
+```
+
+## Best Practices
+
+- Use semantic elements — they help screen readers and search engines
+- Always provide `alt` text for images
+- Use `<label>` elements with form inputs
+- Keep heading hierarchy logical (h1 → h2 → h3, never skip levels)
+- Write lowercase tags and quote attribute values
+
+## Next Steps
+
+- [CSS Introduction](/frontend/css/intro) — Style your HTML
+- [JavaScript Introduction](/frontend/javascript/intro) — Add interactivity

@@ -1,0 +1,66 @@
+---
+title: Dashboard
+description: Build a data dashboard with charts and summaries
+difficulty: intermediate
+order: 4
+---
+
+# Build a Dashboard
+
+A data dashboard displaying metrics, charts, and summaries.
+
+## Requirements
+
+- [ ] Show summary cards (total users, revenue, etc.)
+- [ ] Display data in a table
+- [ ] Filter by date range
+- [ ] Responsive grid layout
+- [ ] Loading states
+
+## Starter
+
+```tsx
+"use client"
+
+import { useState } from "react"
+
+interface Metric {
+  label: string
+  value: string
+  change: number // percentage
+}
+
+export default function Dashboard() {
+  const [metrics] = useState<Metric[]>([
+    { label: "Total Users", value: "2,847", change: 12.5 },
+    { label: "Revenue", value: "$48,290", change: -3.2 },
+    { label: "Active Now", value: "142", change: 8.1 },
+  ])
+
+  // TODO: loading state
+  // TODO: date range filter
+  // TODO: data table
+
+  return (
+    <div className="mx-auto max-w-6xl p-4">
+      <h1 className="mb-6 text-3xl font-bold">Dashboard</h1>
+      <div className="grid gap-4 md:grid-cols-3">
+        {metrics.map((metric) => (
+          <div key={metric.label} className="rounded-lg border p-4">
+            <p className="text-sm text-muted-foreground">{metric.label}</p>
+            <p className="text-2xl font-bold">{metric.value}</p>
+            <p className={metric.change >= 0 ? "text-green-500" : "text-red-500"}>
+              {metric.change >= 0 ? "+" : ""}{metric.change}%
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+```
+
+## Next Steps
+
+- [Expense Tracker](/practice/expense-tracker)
+- [Todo App](/practice/todo-app)

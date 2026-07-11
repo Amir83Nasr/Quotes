@@ -1,0 +1,308 @@
+---
+title: Compound Components
+description: Build flexible, shared-state components with the compound components pattern
+difficulty: intermediate
+order: 4
+---
+
+# Compound Components
+
+<LearningObjectives
+  objectives={[
+    "Explain the compound component pattern and when to use it",
+    "Share implicit state between parent and child components with Context",
+    "Build a Tabs component from scratch",
+    "Compare compound components, render props, and hooks approaches"
+  ]}
+/>
+
+## What Are Compound Components?
+
+Compound components are a group of components that work together to form a cohesive UI, sharing implicit state without passing props manually through every level.
+
+Think `<select>` and `<option>` in HTML — they share state (selected value) implicitly via parent-child relationship. React compound components mimic this using Context.
+
+### Example: Built-in Tabs API
+
+```tsx
+// The API you probably already use:
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="a">Tab A</TabsTrigger>
+    <TabsTrigger value="b">Tab B</TabsTrigger>
+  </TabsList>
+  <TabsContent value="a">Content A</TabsContent>
+  <TabsContent value="b">Content B</TabsContent>
+</Tabs>
+```
+
+No prop drilling. No wiring by the consumer. That's compound components.
+
+## Building Tabs from Scratch
+
+### Step 1: Context for shared state
+
+```tsx
+"use client"
+
+import { createContext, useContext, useState, ReactNode } from "react"
+
+interface TabsContextValue {
+  active: string
+  setActive: (value: string) => void
+}
+
+const TabsContext = createContext<TabsContextValue | null>(null)
+
+function useTabsContext() {
+  const ctx = useContext(TabsContext)
+  if (!ctx) throw new Error("Tabs compound components must be inside <Tabs>")
+  return ctx
+}
+```
+
+### Step 2: The parent provider
+
+```tsx
+interface TabsProps {
+  defaultValue: string
+  children: ReactNode
+}
+
+function Tabs({ defaultValue, children }: TabsProps) {
+  const [active, setActive] = useState(defaultValue)
+  return (
+    <TabsContext.Provider value={{ active, setActive }}>
+      {children}
+    </TabsContext.Provider>
+  )
+}
+```
+
+### Step 3: Child components
+
+```tsx
+function TabsList({ children }: { children: ReactNode }) {
+  return <div className="flex gap-1 border-b">{children}</div>
+}
+
+interface TabProps { value: string; children: ReactNode }
+
+function Tab({ value, children }: TabProps) {
+  const { active, setActive } = useTabsContext()
+  const activeClass = active === value ? "bg-blue-500 text-white" : "bg-gray-100"
+
+  return (
+    <button
+      className={`px-4 py-2 rounded-t ${activeClass}`}
+      onClick={() => setActive(value)}
+    >
+      {children}
+    </button>
+  )
+}
+
+function TabPanel({ value, children }: TabProps) {
+  const { active } = useTabsContext()
+  if (active !== value) return null
+  return <div className="p-4">{children}</div>
+}
+```
+
+### Usage
+
+```tsx
+<Tabs defaultValue="code">
+  <TabsList>
+    <Tab value="code">Code</Tab>
+    <Tab value="preview">Preview</Tab>
+  </TabsList>
+  <TabPanel value="code">```tsx console.log("hi")```</TabPanel>
+  <TabPanel value="preview">// rendered output</TabPanel>
+</Tabs>
+```
+
+## API Design Comparison
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="compound">Compound (Context)</TabsTrigger>
+    <TabsTrigger value="render-props">Render Props</TabsTrigger>
+    <TabsTrigger value="hooks">Custom Hook</TabsTrigger>
+  </TabsList>
+  <TabsContent value="compound">
+
+```tsx
+<Menu>
+  <MenuTrigger>Open</MenuTrigger>
+  <MenuList>
+    <MenuItem onSelect={fn}>Edit</MenuItem>
+    <MenuItem onSelect={fn}>Delete</MenuItem>
+  </MenuList>
+</Menu>
+```
+
+Declarative. Children declare intent. Parent orchestrates.
+
+  </TabsContent>
+  <TabsContent value="render-props">
+
+```tsx
+<Menu>
+  {(open, toggle) => (
+    <>
+      <button onClick={toggle}>Open</button>
+      {open && (
+        <ul>
+          <li onClick={fn}>Edit</li>
+          <li onClick={fn}>Delete</li>
+        </ul>
+      )}
+    </>
+  )}
+</Menu>
+```
+
+Explicit. Consumer controls markup. Verbose for complex trees.
+
+  </TabsContent>
+  <TabsContent value="hooks">
+
+```tsx
+function MenuExample() {
+  const { open, toggle } = useMenu()
+  return (
+    <>
+      <button onClick={toggle}>Open</button>
+      {open && (
+        <ul>
+          <li>Edit</li>
+        </ul>
+      )}
+    </>
+  )
+}
+```
+
+Most flexible. Consumer controls everything. Loses the "it just works" ergonomics.
+
+  </TabsContent>
+</Tabs>
+
+## Interactive Exercise: Accordion
+
+<InteractiveExercise
+  title="Build an Accordion with Compound Components"
+  description="Create an Accordion compound component with Accordion, AccordionItem, AccordionTrigger, and AccordionPanel. Only one panel open at a time."
+  starterCode={`// Write your Accordion, AccordionItem,
+// AccordionTrigger, and AccordionPanel components
+// Usage: <Accordion>
+//   <AccordionItem>
+//     <AccordionTrigger>Section 1</AccordionTrigger>
+//     <AccordionPanel>Content 1</AccordionPanel>
+//   </AccordionItem>
+// </Accordion>
+export {}`}
+  language="tsx"
+  solutionCode={`import { createContext, useContext, useState, type ReactNode } from "react"
+
+interface AccordionContext {
+  openItem: string | null
+  setOpenItem: (id: string | null) => void
+}
+const AccordionCtx = createContext<AccordionContext | null>(null)
+function useAccordion() {
+  const ctx = useContext(AccordionCtx)
+  if (!ctx) throw new Error("Must be inside Accordion")
+  return ctx
+}
+
+function Accordion({ children }: { children: ReactNode }) {
+  const [openItem, setOpenItem] = useState<string | null>(null)
+  return (
+    <AccordionCtx.Provider value={{ openItem, setOpenItem }}>
+      <div className="border rounded">{children}</div>
+    </AccordionCtx.Provider>
+  )
+}
+
+function AccordionItem({ id, children }: { id: string; children: ReactNode }) {
+  return <div className="border-b last:border-b-0">{children}</div>
+}
+
+function AccordionTrigger({ id, children }: { id: string; children: ReactNode }) {
+  const { openItem, setOpenItem } = useAccordion()
+  return (
+    <button
+      className="w-full text-left p-3 font-medium"
+      onClick={() => setOpenItem(openItem === id ? null : id)}
+    >
+      {children} {openItem === id ? "▲" : "▼"}
+    </button>
+  )
+}
+
+function AccordionPanel({ id, children }: { id: string; children: ReactNode }) {
+  const { openItem } = useAccordion()
+  if (openItem !== id) return null
+  return <div className="p-3">{children}</div>
+}`}
+  hints={[
+    "Create context with openItem and setOpenItem",
+    "Accordion is the provider with useState<string | null>",
+    "Trigger calls setOpenItem, toggling on same id",
+    "Panel checks openItem and returns null when closed"
+  ]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz
+  questions={[
+    {
+      question: "What problem do compound components solve?",
+      options: [
+        "Prop drilling",
+        "Performance optimization",
+        "CSS styling",
+        "TypeScript types"
+      ],
+      correctIndex: 0,
+      explanation: "Compound components share implicit state via Context, eliminating prop drilling."
+    },
+    {
+      question: "What mechanism do compound components typically use for shared state?",
+      options: ["Redux", "React Context", "Local storage", "URL params"],
+      correctIndex: 1,
+      explanation: "React Context provides the implicit shared state that compound components rely on."
+    },
+    {
+      question: "What happens if a child component is used outside its compound parent?",
+      options: [
+        "It renders nothing",
+        "Context throws or returns undefined — you should throw a descriptive error",
+        "React warns in console",
+        "It works fine without the parent"
+      ],
+      correctIndex: 1,
+      explanation: "useContext returns undefined if no provider is found. Always check and throw a helpful error."
+    },
+    {
+      question: "Which pattern gives consumers the most control over markup?",
+      options: ["Compound components", "Render props", "Hooks", "HOCs"],
+      correctIndex: 2,
+      explanation: "Custom hooks give consumers full control over markup while providing state and logic."
+    }
+  ]}
+/>
+
+<LessonSummary
+  points={[
+    "Compound components share implicit state via React Context",
+    "The parent component is the Context provider; children consume via useContext",
+    "Always validate context exists and throw a descriptive error for misuse",
+    "Compound components trade flexibility for ergonomics — choose based on API goals",
+    "Real-world examples: Tabs, Select, Menu, Accordion, Stepper"
+  ]}
+/>

@@ -1,0 +1,48 @@
+---
+title: Dialog Component
+description: Modal dialogs in shadcn/ui
+order: 6
+---
+
+# Dialog
+
+Dialogs interrupt the user with critical information or confirmation prompts.
+
+## Example
+
+<GalleryDemo component="dialogExample" />
+
+## Usage
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
+<Dialog>
+  <DialogTrigger asChild>
+    <Button variant="outline">Open</Button>
+  </DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Title</DialogTitle>
+      <DialogDescription>
+        Description of the dialog purpose.
+      </DialogDescription>
+    </DialogHeader>
+    {/* Dialog content */}
+  </DialogContent>
+</Dialog>
+```
+
+## Props
+
+| Prop | Type | Default |
+|------|------|---------|
+| open | `boolean` | controlled or uncontrolled |
+| onOpenChange | `(open: boolean) => void` | — |

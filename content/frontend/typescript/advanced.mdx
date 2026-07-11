@@ -1,0 +1,55 @@
+---
+title: Advanced TypeScript Types
+description: Conditional types, mapped types, template literals, and more
+order: 10
+---
+
+# Advanced Types
+
+TypeScript's type system is Turing-complete. These advanced patterns unlock powerful abstractions.
+
+## Conditional Types
+
+```typescript
+type IsString<T> = T extends string ? "yes" : "no"
+type A = IsString<"hello">   // "yes"
+type B = IsString<number>    // "no"
+
+// Extract return type from a function
+type ReturnOf<T> = T extends (...args: unknown[]) => infer R ? R : never
+type Num = ReturnOf<() => number>  // number
+```
+
+## Mapped Types
+
+```typescript
+type Readonly<T> = {
+  readonly [K in keyof T]: T[K]
+}
+
+type Optional<T> = {
+  [K in keyof T]?: T[K]
+}
+
+// Transform all values to strings
+type Stringify<T> = {
+  [K in keyof T]: string
+}
+```
+
+## Template Literal Types
+
+```typescript
+type EventName = `on${Capitalize<string>}`
+// "onClick" | "onChange" | "onSubmit" ...
+
+type Color = "primary" | "secondary"
+type Size = "sm" | "md" | "lg"
+type Variant = `${Color}-${Size}`
+// "primary-sm" | "primary-md" | ...
+```
+
+## Next Steps
+
+- [React Patterns](/react/components)
+- [State Management](/advanced/state-management)

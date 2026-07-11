@@ -1,0 +1,54 @@
+---
+title: CSS Grid
+description: Two-dimensional layout with CSS Grid
+order: 6
+---
+
+# CSS Grid
+
+CSS Grid is a two-dimensional layout system.
+
+## Basic Grid
+
+```css
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+```
+
+## Grid Areas
+
+```css
+.layout {
+  display: grid;
+  grid-template-areas:
+    "header header"
+    "sidebar main"
+    "footer footer";
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+}
+
+.header { grid-area: header; }
+.sidebar { grid-area: sidebar; }
+.main { grid-area: main; }
+.footer { grid-area: footer; }
+```
+
+## Auto-fit / Minmax
+
+```css
+.responsive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+```
+
+## Next Steps
+
+- [Flexbox](/frontend/css/flexbox) — One-dimensional layout
+- [Tailwind Grid](/tailwind/grid) — Grid in Tailwind

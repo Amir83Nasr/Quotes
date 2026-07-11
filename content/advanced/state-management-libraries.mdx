@@ -1,0 +1,381 @@
+---
+title: State Management Libraries
+description: Compare Zustand, Jotai, and Context — when to use each
+order: 8
+---
+
+# State Management Libraries
+
+React built-ins (`useState`, Context) cover many cases. Libraries add perf, ergonomics, and middleware.
+
+<LearningObjectives objectives={[
+  "Create Zustand stores with selectors and actions",
+  "Build Jotai atoms with derived state",
+  "Compare Context vs Zustand vs Jotai vs Redux tradeoffs",
+  "Use localStorage persistence middleware",
+  "Integrate devtools for debugging",
+  "Choose the right tool for different app scales"
+]} />
+
+## Zustand Basics
+
+Minimal API. Create a store with a function, get hooks back.
+
+```tsx
+import { create } from "zustand"
+
+type CounterStore = {
+  count: number
+  increment: () => void
+  decrement: () => void
+  reset: () => void
+}
+
+const useCounter = create<CounterStore>((set) => ({
+  count: 0,
+  increment: () => set((state) => ({ count: state.count + 1 })),
+  decrement: () => set((state) => ({ count: state.count - 1 })),
+  reset: () => set({ count: 0 }),
+}))
+
+function Counter() {
+  const count = useCounter((state) => state.count)
+  const { increment, decrement } = useCounter()
+
+  return (
+    <div>
+      <p>{count}</p>
+      <button onClick={increment}>+</button>
+      <button onClick={decrement}>-</button>
+    </div>
+  )
+}
+```
+
+### Selectors for Perf
+
+Zustand only re-renders when selected value changes:
+
+```tsx
+const userName = useUserStore((state) => state.user.name)
+// Component only re-renders if user.name changes, not whole store
+```
+
+## Jotai Atoms
+
+Atomic state — each atom is a standalone unit. Compose them.
+
+```tsx
+import { atom, useAtom } from "jotai"
+
+const countAtom = atom(0)
+const doubledAtom = atom((get) => get(countAtom) * 2)
+const incrementAtom = atom(null, (get, set) => set(countAtom, get(countAtom) + 1))
+
+function Counter() {
+  const [count] = useAtom(countAtom)
+  const [doubled] = useAtom(doubledAtom)
+  const [, increment] = useAtom(incrementAtom)
+
+  return <button onClick={increment}>{count} (doubled: {doubled})</button>
+}
+```
+
+### Derived Atoms
+
+```tsx
+const todosAtom = atom<Todo[]>([])
+const completedAtom = atom((get) => get(todosAtom).filter((t) => t.completed))
+const statsAtom = atom((get) => {
+  const all = get(todosAtom)
+  return { total: all.length, done: get(completedAtom).length }
+})
+```
+
+## Comparison
+
+<Tabs>
+<TabsList>
+<TabsTrigger value="zustand">Zustand</TabsTrigger>
+<TabsTrigger value="jotai">Jotai</TabsTrigger>
+<TabsTrigger value="context">Context</TabsTrigger>
+</TabsList>
+<TabsContent value="zustand">
+
+```tsx
+// Single store, selectors prevent re-renders
+// Actions outside components — testable
+// ~1KB bundle
+
+const useStore = create<BearStore>((set) => ({
+  bears: 0,
+  addBear: () => set((s) => ({ bears: s.bears + 1 })),
+}))
+
+// Read with selector
+const bears = useStore((s) => s.bears)
+// Write anywhere
+const addBear = useStore.getState().addBear
+```
+</TabsContent>
+<TabsContent value="jotai">
+
+```tsx
+// Composable atoms, fine-grained updates
+// No provider needed (unlike Context)
+// ~3KB bundle
+
+const countAtom = atom(0)
+const doubled = atom((get) => get(countAtom) * 2)
+
+// Re-renders only when consumed atom changes
+const [count] = useAtom(countAtom)
+```
+</TabsContent>
+<TabsContent value="context">
+
+```tsx
+// Built-in, no deps
+// Re-renders ALL consumers on any value change
+// Wrap in provider
+
+const Ctx = createContext({ count: 0, setCount: () => {} })
+
+// Every consumer re-renders when count changes
+const { count } = useContext(Ctx)
+```
+</TabsContent>
+</Tabs>
+
+| Feature | Context | Zustand | Jotai | Redux |
+|---------|---------|---------|-------|-------|
+| Bundle size | 0 | ~1KB | ~3KB | ~11KB |
+| Re-renders | All consumers | By selector | By atom | By selector |
+| Boilerplate | None | Minimal | Minimal | Actions/reducers |
+| Middleware | No | Yes (persist, devtools) | Yes | Yes (redux-saga, thunk) |
+| SSR friendly | Yes | Yes | Yes | Yes |
+| Async | Manual | Built-in | Built-in | Thunks/sagas |
+
+## Reaching for a Library
+
+Use Context when:
+- State changes infrequently (theme, locale, auth)
+- Small subtree of consumers
+- No need for devtools/persistence
+
+Use Zustand when:
+- Frequent updates across many components
+- Need middleware (persist, devtools)
+- Want actions outside React
+
+Use Jotai when:
+- Highly granular state (form fields, UI toggles)
+- Composable derived state
+- Each value has different update frequency
+
+<Alert>
+<AlertTitle>Over-engineering Trap</AlertTitle>
+<AlertDescription>If two components share state, start with lifted useState. Only reach for a library when lifting becomes painful or perf degrades. Don't put server data in global state — use TanStack Query or SWR.</AlertDescription>
+</Alert>
+
+## Persisting Store State
+
+Zustand persist middleware saves to localStorage:
+
+```tsx
+import { create } from "zustand"
+import { persist } from "zustand/middleware"
+
+type ThemeStore = {
+  theme: "light" | "dark"
+  setTheme: (theme: "light" | "dark") => void
+}
+
+const useTheme = create<ThemeStore>()(
+  persist(
+    (set) => ({
+      theme: "light",
+      setTheme: (theme) => set({ theme }),
+    }),
+    { name: "theme-preference" },
+  ),
+)
+// Theme survives page reloads
+```
+
+## Devtools Integration
+
+```tsx
+import { devtools } from "zustand/middleware"
+
+const useStore = create<Store>()(
+  devtools(
+    (set) => ({
+      user: null,
+      login: (user) => set({ user }, false, "auth/login"),
+      logout: () => set({ user: null }, false, "auth/logout"),
+    }),
+    { name: "AppStore" },
+  ),
+)
+// Visible in Redux DevTools browser extension
+```
+
+## InteractiveExercise
+
+Build a shopping cart store with Zustand. Must support addItem, removeItem, updateQuantity, and compute total.
+
+<InteractiveExercise
+  title="Shopping Cart with Zustand"
+  description="Create a Zustand store for a shopping cart with computed totals"
+  language="tsx"
+  starterCode={`import { create } from "zustand"
+
+// Step 1: Define CartItem type (id, name, price, quantity)
+// Step 2: Define CartStore type (items, addItem, removeItem, updateQuantity, total)
+// Step 3: Create store with create<CartStore>()
+// Step 4: total should be a getter — computed from items
+
+export function Cart() {
+  // Select items and total from store
+  return (
+    <div>
+      <h2>Cart</h2>
+      <ul>{/* Map items */}</ul>
+      <p>Total: $0.00</p>
+      <button>Add Item</button>
+    </div>
+  )
+}`}
+  solutionCode={`import { create } from "zustand"
+import { devtools } from "zustand/middleware"
+
+type CartItem = {
+  id: string
+  name: string
+  price: number
+  quantity: number
+}
+
+type CartStore = {
+  items: CartItem[]
+  addItem: (item: Omit<CartItem, "quantity">) => void
+  removeItem: (id: string) => void
+  updateQuantity: (id: string, quantity: number) => void
+  clearCart: () => void
+}
+
+const useCart = create<CartStore>()(
+  devtools(
+    (set) => ({
+      items: [],
+      addItem: (item) =>
+        set((state) => {
+          const existing = state.items.find((i) => i.id === item.id)
+          if (existing) {
+            return {
+              items: state.items.map((i) =>
+                i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i,
+              ),
+            }
+          }
+          return { items: [...state.items, { ...item, quantity: 1 }] }
+        }),
+      removeItem: (id) =>
+        set((state) => ({ items: state.items.filter((i) => i.id !== id) })),
+      updateQuantity: (id, quantity) =>
+        set((state) => ({
+          items: state.items.map((i) =>
+            i.id === id ? { ...i, quantity: Math.max(0, quantity) } : i,
+          ),
+        })),
+      clearCart: () => set({ items: [] }),
+    }),
+    { name: "shopping-cart" },
+  ),
+)
+
+function CartItem({ item }: { item: CartItem }) {
+  const { removeItem, updateQuantity } = useCart()
+  return (
+    <li>
+      {item.name} - ${item.price} x
+      <input
+        type="number"
+        value={item.quantity}
+        onChange={(e) => updateQuantity(item.id, Number(e.target.value))}
+        min={0}
+      />
+      = ${(item.price * item.quantity).toFixed(2)}
+      <button onClick={() => removeItem(item.id)}>Remove</button>
+    </li>
+  )
+}
+
+export function Cart() {
+  const items = useCart((state) => state.items)
+  const total = items.reduce((sum, i) => sum + i.price * i.quantity, 0)
+  const addItem = useCart((state) => state.addItem)
+  const clearCart = useCart((state) => state.clearCart)
+
+  return (
+    <div>
+      <h2>Shopping Cart</h2>
+      {items.length === 0 ? (
+        <p>Cart is empty</p>
+      ) : (
+        <>
+          <ul>
+            {items.map((item) => <CartItem key={item.id} item={item} />)}
+          </ul>
+          <p>Total: <strong>${total.toFixed(2)}</strong></p>
+          <button onClick={clearCart}>Clear Cart</button>
+        </>
+      )}
+      <button onClick={() => addItem({ id: "hat", name: "Cool Hat", price: 19.99 })}>
+        Add Hat ($19.99)
+      </button>
+      <button onClick={() => addItem({ id: "shirt", name: "T-Shirt", price: 29.99 })}>
+        Add Shirt ($29.99)
+      </button>
+    </div>
+  )
+}`}
+  hints={[
+    "Use devtools middleware to inspect state changes",
+    "AddItem should check for existing items and increment quantity",
+    "Total is a computed value — no need to store it, derive from items",
+    "Use selectors to prevent unnecessary re-renders",
+  ]}
+/>
+
+<Quiz questions={[
+  {
+    question: "How does Zustand prevent unnecessary re-renders?",
+    options: ["By using Context internally", "Through selector functions that track specific state slices", "By batching all state updates", "By using immutable data structures"],
+    correctIndex: 1,
+    explanation: "Zustand components subscribe via selectors — they only re-render when the selected slice of state changes.",
+  },
+  {
+    question: "What makes Jotai different from Zustand?",
+    options: ["Jotai uses a single global store", "Jotai uses atom-based state, not a single store", "Jotai requires a Provider wrapper", "Jotai is only for class components"],
+    correctIndex: 1,
+    explanation: "Jotai's atoms are individual state units that compose. Zustand uses a single store with selectors. Both solve re-render issues differently.",
+  },
+  {
+    question: "When should you NOT use a state management library?",
+    options: ["When state is shared between distant components", "When state changes infrequently on a small subtree", "When you need middleware", "When debugging complex state flows"],
+    correctIndex: 1,
+    explanation: "Context is fine for infrequent updates (theme, locale) on a small subtree. Adding a library there is unnecessary overhead.",
+  },
+]} />
+
+<LessonSummary points={[
+  "Zustand: minimal store with selectors for targeted re-renders",
+  "Jotai: composable atoms for fine-grained state",
+  "Context re-renders all consumers — use for infrequent changes only",
+  "persist middleware saves/loads from localStorage automatically",
+  "devtools middleware enables Redux DevTools debugging",
+  "Start simple (useState/Context); reach for a library when it hurts",
+  "Server state belongs in TanStack Query/SWR, not global store",
+]} />

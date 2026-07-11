@@ -1,0 +1,315 @@
+---
+title: useRef Hook
+description: Access DOM elements and persist mutable values across renders without re-rendering
+difficulty: intermediate
+order: 3
+---
+
+# useRef
+
+`useRef` serves two purposes: holding a mutable value that persists across renders without causing re-renders, and accessing DOM elements directly.
+
+<LearningObjectives objectives={[
+  "Access and manipulate DOM elements with refs",
+  "Store mutable values that survive re-renders (timers, previous values)",
+  "Distinguish useRef from useState (no re-render on change)",
+  "Forward refs through component boundaries with forwardRef",
+  "Avoid common pitfalls like ref overuse on state-driven values"
+]} />
+
+## Basic DOM Access
+
+Refs give direct access to a DOM node. Common uses: focus management, text selection, media playback, integrating third-party libraries.
+
+```tsx
+"use client"
+
+import { useRef, useEffect } from "react"
+
+export default function AutoFocus() {
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    // Focus input on mount
+    inputRef.current?.focus()
+  }, [])
+
+  return <input ref={inputRef} type="text" placeholder="Auto-focused" />
+}
+```
+
+<Alert>
+  <AlertTriangle />
+  <AlertTitle>Ref on mount</AlertTitle>
+  <AlertDescription>
+    `ref.current` is `null` during the first render. The DOM node is assigned after the component mounts. Access refs inside `useEffect` or event handlers, never during render.
+  </AlertDescription>
+</Alert>
+
+## Mutable Values Across Renders
+
+Updating a ref does **not** trigger a re-render. Use this for values that need to persist but don't affect the UI — interval IDs, previous prop values, subscription handles.
+
+```tsx
+"use client"
+
+import { useState, useRef, useEffect } from "react"
+
+export default function TimerWithRef() {
+  const [count, setCount] = useState(0)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const start = () => {
+    if (intervalRef.current) return
+    intervalRef.current = setInterval(() => {
+      setCount((c) => c + 1)
+    }, 1000)
+  }
+
+  const stop = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
+  }
+
+  useEffect(() => () => stop(), []) // cleanup on unmount
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={start}>Start</button>
+      <button onClick={stop}>Stop</button>
+    </div>
+  )
+}
+```
+
+## Tracking Previous Values
+
+Refs hold values without triggering re-renders, making them perfect for comparing old vs new props or state.
+
+```tsx
+"use client"
+
+import { useState, useRef, useEffect } from "react"
+
+export function usePrevious<T>(value: T): T | undefined {
+  const ref = useRef<T>()
+
+  useEffect(() => {
+    ref.current = value
+  }, [value])
+
+  return ref.current
+}
+
+export default function CounterDiff() {
+  const [count, setCount] = useState(0)
+  const prevCount = usePrevious(count)
+
+  return (
+    <div>
+      <p>Now: {count}, Before: {prevCount ?? "—"}</p>
+      <p>Change: {prevCount !== undefined ? count - prevCount : 0}</p>
+      <button onClick={() => setCount((c) => c + 1)}>+1</button>
+    </div>
+  )
+}
+```
+
+## forwardRef Pattern
+
+When a parent needs a ref to a child's DOM node (e.g., focusing an input inside a custom component), wrap the child with `forwardRef`.
+
+```tsx
+"use client"
+
+import { useRef, forwardRef } from "react"
+
+// Child receives ref forwarded from parent
+const FancyInput = forwardRef<HTMLInputElement, { label: string }>(
+  (props, ref) => (
+    <label>
+      {props.label}
+      <input ref={ref} className="fancy-input" />
+    </label>
+  )
+)
+FancyInput.displayName = "FancyInput"
+
+export default function Form() {
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const focusInput = () => {
+    inputRef.current?.focus()
+  }
+
+  return (
+    <div>
+      <FancyInput ref={inputRef} label="Name" />
+      <button onClick={focusInput}>Focus input</button>
+    </div>
+  )
+}
+```
+
+## useRef vs useState
+
+| | useRef | useState |
+|---|---|---|
+| Re-render on change | No | Yes |
+| Returns | `{ current: value }` | `[value, setValue]` |
+| Read during render | Yes (but don't write during render) | Yes |
+| Use case | DOM refs, timers, previous values | UI state |
+
+<Alert>
+  <Lightbulb />
+  <AlertTitle>Don't read/write refs during render</AlertTitle>
+  <AlertDescription>
+    Mutating `ref.current` or reading it during the render phase can lead to unpredictable behavior. React expects rendering to be a pure computation. Keep ref mutations inside `useEffect` or event handlers.
+  </AlertDescription>
+</Alert>
+
+## Interactive Exercise
+
+Build a stopwatch with start/stop/reset and lap recording. Store the interval ID in a ref, track elapsed time with state.
+
+<InteractiveExercise
+  title="Stopwatch with Laps"
+  description="Implement a stopwatch. Use useRef for the interval ID and useState for elapsed time. Add a Lap button that records the current time."
+  language="tsx"
+  starterCode={`"use client"
+
+import { useState, useRef } from "react"
+
+export default function Stopwatch() {
+  const [elapsed, setElapsed] = useState(0)
+  const [laps, setLaps] = useState<number[]>([])
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  // TODO: implement start, stop, reset, lap functions
+
+  return (
+    <div>
+      <p className="text-3xl font-mono">{elapsed.toFixed(1)}s</p>
+      <div className="flex gap-2 mt-2">
+        <button className="px-3 py-1 bg-green-500 text-white rounded" onClick={start}>Start</button>
+        <button className="px-3 py-1 bg-red-500 text-white rounded" onClick={stop}>Stop</button>
+        <button className="px-3 py-1 bg-gray-500 text-white rounded" onClick={reset}>Reset</button>
+        <button className="px-3 py-1 bg-blue-500 text-white rounded" onClick={lap}>Lap</button>
+      </div>
+      {laps.length > 0 && (
+        <ul className="mt-4 list-disc list-inside">
+          {laps.map((t, i) => <li key={i}>Lap {i + 1}: {t.toFixed(1)}s</li>)}
+        </ul>
+      )}
+    </div>
+  )
+}`}
+  solutionCode={`"use client"
+
+import { useState, useRef, useCallback } from "react"
+
+export default function Stopwatch() {
+  const [elapsed, setElapsed] = useState(0)
+  const [laps, setLaps] = useState<number[]>([])
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const start = useCallback(() => {
+    if (intervalRef.current) return
+    const startTime = Date.now() - elapsed * 1000
+    intervalRef.current = setInterval(() => {
+      setElapsed((Date.now() - startTime) / 1000)
+    }, 100)
+  }, [elapsed])
+
+  const stop = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
+  }, [])
+
+  const reset = useCallback(() => {
+    stop()
+    setElapsed(0)
+    setLaps([])
+  }, [stop])
+
+  const lap = useCallback(() => {
+    if (intervalRef.current) {
+      setLaps((prev) => [...prev, elapsed])
+    }
+  }, [elapsed])
+
+  return (
+    <div>
+      <p className="text-3xl font-mono">{elapsed.toFixed(1)}s</p>
+      <div className="flex gap-2 mt-2">
+        <button className="px-3 py-1 bg-green-500 text-white rounded" onClick={start}>Start</button>
+        <button className="px-3 py-1 bg-red-500 text-white rounded" onClick={stop}>Stop</button>
+        <button className="px-3 py-1 bg-gray-500 text-white rounded" onClick={reset}>Reset</button>
+        <button className="px-3 py-1 bg-blue-500 text-white rounded" onClick={lap}>Lap</button>
+      </div>
+      {laps.length > 0 && (
+        <ul className="mt-4 list-disc list-inside">
+          {laps.map((t, i) => <li key={i}>Lap {i + 1}: {t.toFixed(1)}s</li>)}
+        </ul>
+      )}
+    </div>
+  )
+}`}
+  hints={[
+    "Use Date.now() and save the start time to compute elapsed accurately",
+    "clearInterval + set intervalRef to null in the stop function",
+    "The Lap button should copy the current elapsed value into the laps array"
+  ]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz questions={[
+  {
+    question: "What happens to the component when ref.current is updated?",
+    options: [
+      "The component re-renders",
+      "The component does not re-render",
+      "Only the children re-render",
+      "An error is thrown"
+    ],
+    correctIndex: 1,
+    explanation: "Updating a ref does not trigger a re-render. Refs persist values across renders without causing updates."
+  },
+  {
+    question: "When is ref.current available for a DOM element?",
+    options: [
+      "During the first render",
+      "Before the component mounts",
+      "After the DOM node is mounted (in useEffect or event handlers)",
+      "Only inside state updaters"
+    ],
+    correctIndex: 2,
+    explanation: "ref.current is null during the first render. It's populated after the component mounts. Access refs in useEffect or event handlers."
+  },
+  {
+    question: "Which pattern should you use to pass a ref to a child component?",
+    options: [
+      "prop drilling",
+      "forwardRef",
+      "useRef in the child",
+      "Context API"
+    ],
+    correctIndex: 1,
+    explanation: "forwardRef lets a parent component pass a ref down to a child's DOM node."
+  }
+]} />
+
+<LessonSummary points={[
+  "useRef returns a mutable object with a `.current` property that persists across renders",
+  "Use refs for DOM access (focus, measurements) and mutable values (interval IDs, previous values)",
+  "Updating ref.current does NOT cause a re-render — unlike useState",
+  "Use forwardRef to expose a child's DOM node to a parent ref",
+  "Never read or write ref.current during the render phase"
+]} />

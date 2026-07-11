@@ -1,0 +1,143 @@
+---
+title: State Management
+description: Manage application state effectively with various strategies
+order: 1
+---
+
+# State Management
+
+State management is about **where** and **how** your data lives as the user interacts with your app.
+
+## Types of State
+
+### Local State
+
+State that belongs to a single component:
+
+```tsx
+function Counter() {
+  const [count, setCount] = useState(0)
+  return <button onClick={() => setCount(count + 1)}>{count}</button>
+}
+```
+
+### Lifted State
+
+Shared between sibling components via their closest common ancestor:
+
+```tsx
+function Parent() {
+  const [value, setValue] = useState("")
+  return (
+    <>
+      <Input value={value} onChange={setValue} />
+      <Preview text={value} />
+    </>
+  )
+}
+```
+
+### Global State
+
+Accessible anywhere in the app — context, Redux, Zustand, etc.
+
+## useState — Local State
+
+The simplest form of state. Use it when state only affects one component.
+
+```tsx
+function Toggle() {
+  const [isOn, setIsOn] = useState(false)
+  return (
+    <button onClick={() => setIsOn(!isOn)}>
+      {isOn ? "ON" : "OFF"}
+    </button>
+  )
+}
+```
+
+## useReducer — Complex State
+
+Use when state updates follow multiple paths:
+
+```tsx
+type Action =
+  | { type: "increment" }
+  | { type: "decrement" }
+  | { type: "reset" }
+
+function reducer(state: number, action: Action): number {
+  switch (action.type) {
+    case "increment": return state + 1
+    case "decrement": return state - 1
+    case "reset": return 0
+  }
+}
+
+function Counter() {
+  const [count, dispatch] = useReducer(reducer, 0)
+  return (
+    <>
+      <p>Count: {count}</p>
+      <button onClick={() => dispatch({ type: "increment" })}>+</button>
+      <button onClick={() => dispatch({ type: "reset" })}>Reset</button>
+    </>
+  )
+}
+```
+
+## Context API — Shared State
+
+Use React Context to avoid prop drilling:
+
+```tsx
+const ThemeContext = createContext("light")
+
+function App() {
+  return (
+    <ThemeContext.Provider value="dark">
+      <Toolbar />
+    </ThemeContext.Provider>
+  )
+}
+
+function Toolbar() {
+  const theme = useContext(ThemeContext)
+  return <div className={theme}>Themed content</div>
+}
+```
+
+## When to Use What
+
+| Pattern | When |
+|---------|------|
+| `useState` | Single component, independent values |
+| `useReducer` | Complex state logic, multiple update paths |
+| Context | Shared state across a subtree, few consumers |
+| Zustand/Redux | Many consumers, frequent updates, app-wide state |
+| URL params | Shareable, bookmarkable state |
+| Server state | Data from API (use SWR/React Query) |
+
+## Common Mistakes
+
+- **Over-globalizing**: Not everything belongs in global state
+- **Prop drilling overuse**: Context is free, use it for deep trees
+- **Mutable state**: Always treat state as immutable
+- **Storing derived data**: Compute derived values inline, don't store them
+
+## Best Practices
+
+1. Keep state as **close** to where it's used as possible
+2. Prefer **lifting state up** over global state
+3. Use **colocation** — state, reducer, and component in same file
+4. For server data, use a dedicated library like **TanStack Query**
+5. **Type your state** with TypeScript
+
+## Next Steps
+
+- [Forms & Validation](/advanced/forms) — Form state management
+- [Performance](/advanced/performance) — Optimize re-renders
+
+---
+
+**Exercise**: Build a todo app using `useReducer` with add, toggle, and delete actions.

@@ -1,0 +1,35 @@
+---
+title: Tabs Component
+description: Tabbed navigation in shadcn/ui
+order: 8
+---
+
+# Tabs
+
+Tabs organize related content across different views.
+
+## Example
+
+<GalleryDemo component="tabsExample" />
+
+## Usage
+
+```tsx
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+<Tabs defaultValue="account">
+  <TabsList>
+    <TabsTrigger value="account">Account</TabsTrigger>
+    <TabsTrigger value="password">Password</TabsTrigger>
+  </TabsList>
+  <TabsContent value="account">Account settings.</TabsContent>
+  <TabsContent value="password">Change password.</TabsContent>
+</Tabs>
+```
+
+## Props
+
+| Prop | Type | Default |
+|------|------|---------|
+| defaultValue | `string` | required |
+| orientation | `"horizontal" \| "vertical"` | `"horizontal"` |

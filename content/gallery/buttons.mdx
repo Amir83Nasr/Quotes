@@ -1,0 +1,57 @@
+---
+title: Button Showcase
+description: Explore different button variants and styles
+order: 4
+---
+
+# Button Showcase
+
+Buttons are the most fundamental UI element. shadcn/ui provides a versatile `<Button>` component with multiple variants and sizes.
+
+## Variants
+
+<GalleryDemo component="buttonVariants" />
+
+## Sizes
+
+<GalleryDemo component="buttonSizes" />
+
+## Icon Buttons
+
+<GalleryDemo component="buttonIcons" />
+
+## Code Usage
+
+```tsx
+import { Button } from "@/components/ui/button"
+
+// Default
+<Button>Default</Button>
+
+// Variants
+<Button variant="secondary">Secondary</Button>
+<Button variant="outline">Outline</Button>
+<Button variant="ghost">Ghost</Button>
+<Button variant="destructive">Destructive</Button>
+<Button variant="link">Link</Button>
+
+// Sizes
+<Button size="sm">Small</Button>
+<Button size="lg">Large</Button>
+<Button size="icon">
+  <ChevronRight className="h-4 w-4" />
+</Button>
+```
+
+## Best Practices
+
+- Use **one primary action** per section
+- Destructive buttons need clear confirmation
+- Icon buttons need `aria-label` for accessibility
+- Keep button text short and actionable
+- Use `asChild` prop for link buttons with `<Link>`
+
+## Related Components
+
+- [Cards](/gallery/cards)
+- [Forms](/gallery/forms)

@@ -1,0 +1,69 @@
+---
+title: Accessibility
+description: Building inclusive web applications — WCAG, ARIA, and semantic HTML
+order: 5
+---
+
+# Accessibility (A11y)
+
+Accessibility ensures your app works for everyone, regardless of ability.
+
+## Core Principles
+
+| Principle | Description |
+|-----------|-------------|
+| Perceivable | Content must be available to senses |
+| Operable | UI must work with various input methods |
+| Understandable | Content and UI must be clear |
+| Robust | Works with assistive technologies |
+
+## Semantic HTML
+
+```html
+<!-- Bad -->
+<div class="btn" onclick="submit()">Submit</div>
+
+<!-- Good -->
+<button type="submit">Submit</button>
+```
+
+## ARIA Attributes
+
+```html
+<button aria-label="Close dialog" onClick={close}>
+  <XIcon />
+</button>
+
+<div role="alert" aria-live="polite">
+  Form submitted successfully
+</div>
+```
+
+## Keyboard Navigation
+
+```tsx
+function Menu({ items }: { items: string[] }) {
+  return (
+    <ul role="menubar">
+      {items.map((item) => (
+        <li key={item} role="menuitem" tabIndex={0}>
+          {item}
+        </li>
+      ))}
+    </ul>
+  )
+}
+```
+
+## Best Practices
+
+- Use proper heading hierarchy (h1 → h2 → h3)
+- All images need alt text
+- Color contrast ratio ≥ 4.5:1
+- Support keyboard-only navigation
+- Test with screen readers (VoiceOver, NVDA)
+
+## Next Steps
+
+- [Testing](/advanced/testing)
+- [Design Patterns](/advanced/design-patterns)

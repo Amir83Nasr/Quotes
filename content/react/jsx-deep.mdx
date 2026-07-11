@@ -1,0 +1,307 @@
+---
+title: JSX Deep Dive
+description: Understanding JSX — syntax, expressions, conditional rendering, lists, fragments
+difficulty: beginner
+order: 3
+---
+
+# JSX Deep Dive
+
+<LearningObjectives
+  objectives={[
+    "Explain JSX as syntactic sugar over React.createElement",
+    "Write expressions inside JSX with curly braces",
+    "Apply conditional rendering patterns (&&, ternary, if/else)",
+    "Render lists with proper keys",
+    "Use fragments to avoid wrapper divs",
+    "Spread props onto components"
+  ]}
+/>
+
+## JSX is Syntax Sugar
+
+Every JSX element compiles to a `React.createElement` call.
+
+```tsx
+// What you write:
+const el = <h1 className="title">Hello</h1>
+
+// What Babel produces:
+const el = React.createElement("h1", { className: "title" }, "Hello")
+```
+
+JSX makes the tree readable. `createElement` is what the runtime actually runs.
+
+<Alert>
+  <AlertTriangle />
+  <AlertTitle>Gotcha</AlertTitle>
+  <AlertDescription>
+    JSX attributes use camelCase — `className` not `class`, `htmlFor` not `for`.
+  </AlertDescription>
+</Alert>
+
+## Expressions in JSX
+
+Any JavaScript expression goes inside `{}`.
+
+```tsx
+function Greeting({ user, unread }) {
+  const now = new Date().getHours()
+  const timeGreeting = now < 12 ? "Good morning" : "Good afternoon"
+
+  return (
+    <div>
+      <h1>{timeGreeting}, {user.name}</h1>
+      <p>{user.name.length > 0 ? `You have ${unread} messages` : "No messages"}</p>
+      <p>{Math.random().toFixed(2)}</p>
+    </div>
+  )
+}
+```
+
+Statements (`if`, `for`, `switch`) don't fit inside `{}` — extract to a variable or use ternary.
+
+## Conditional Rendering
+
+Different patterns for different situations.
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="and">&& (short-circuit)</TabsTrigger>
+    <TabsTrigger value="ternary">Ternary</TabsTrigger>
+    <TabsTrigger value="ifelse">If/else var</TabsTrigger>
+  </TabsList>
+  <TabsContent value="and">
+
+```tsx
+// Show badge only if unread > 0
+function NotificationBadge({ unread }) {
+  return (
+    <div>
+      <p>Messages</p>
+      {unread > 0 && (
+        <span className="badge">{unread}</span>
+      )}
+    </div>
+  )
+}
+```
+⚠️ `{0 && <Component />}` renders `0`, not nothing. Compare with `{count > 0 && <C />}`.
+
+  </TabsContent>
+  <TabsContent value="ternary">
+
+```tsx
+function StatusBanner({ status }) {
+  return (
+    <div className={status === "active" ? "bg-green" : "bg-gray"}>
+      {status === "active" ? "Online" : "Offline"}
+    </div>
+  )
+}
+```
+
+Ternary works inline. Good for two branches.
+
+  </TabsContent>
+  <TabsContent value="ifelse">
+
+```tsx
+function Dashboard({ role }) {
+  if (role === "admin") return <AdminPanel />
+  if (role === "user") return <UserPanel />
+  return <LoginPrompt />
+}
+```
+
+Early return with `if` keeps logic flat. Best for exclusive branches.
+
+  </TabsContent>
+</Tabs>
+
+## Lists and Keys
+
+Map over arrays to render lists. Every item needs a **stable key**.
+
+```tsx
+interface Todo {
+  id: string
+  text: string
+  done: boolean
+}
+
+function TodoList({ items }: { items: Todo[] }) {
+  return (
+    <ul>
+      {items.map((item) => (
+        <li key={item.id}>
+          {item.text} {item.done ? "✓" : "○"}
+        </li>
+      ))}
+    </ul>
+  )
+}
+```
+
+Key requirements:
+- **Stable** across re-renders — use unique IDs from your data
+- Avoid `index` — it breaks when items reorder, causing stale state
+
+<Alert>
+  <Info />
+  <AlertTitle>When is index okay?</AlertTitle>
+  <AlertDescription>
+    Only if the list is static and never reordered/filtered. Even then, prefer stable keys.
+  </AlertDescription>
+</Alert>
+
+## Fragments
+
+Group elements without adding a DOM node.
+
+```tsx
+function Columns() {
+  return (
+    <>
+      <td>First</td>
+      <td>Second</td>
+    </>
+  )
+}
+```
+
+`<>` is shorthand for `<React.Fragment>`. Keyed fragments need the full `<Fragment key={id}>`.
+
+## Spread Props
+
+Pass an object's properties as props with `{...obj}`.
+
+```tsx
+interface User {
+  name: string
+  email: string
+  role: string
+}
+
+function ProfileCard({ name, email, role }: User) {
+  return (
+    <div className="card">
+      <h2>{name}</h2>
+      <p>{email}</p>
+      <Badge>{role}</Badge>
+    </div>
+  )
+}
+
+// Spread user object
+const user: User = { name: "Alice", email: "a@b.com", role: "admin" }
+;<ProfileCard {...user} />
+```
+
+## Interactive Exercise
+
+<InteractiveExercise
+  title="Render a Team List with Keys"
+  description="Render a list of team members. Each item needs a stable key. Show a filtered subset."
+  starterCode={`interface Member {
+  id: string
+  name: string
+  role: string
+}
+
+const team: Member[] = [
+  { id: "m1", name: "Alice", role: "Designer" },
+  { id: "m2", name: "Bob", role: "Developer" },
+  { id: "m3", name: "Charlie", role: "Developer" },
+]
+
+export default function TeamList() {
+  // Filter to show only developers
+  // Render with stable keys
+  return null
+}`}
+  language="tsx"
+  solutionCode={`interface Member {
+  id: string
+  name: string
+  role: string
+}
+
+const team: Member[] = [
+  { id: "m1", name: "Alice", role: "Designer" },
+  { id: "m2", name: "Bob", role: "Developer" },
+  { id: "m3", name: "Charlie", role: "Developer" },
+]
+
+export default function TeamList() {
+  const developers = team.filter((m) => m.role === "Developer")
+
+  return (
+    <ul>
+      {developers.map((member) => (
+        <li key={member.id}>
+          {member.name} — {member.role}
+        </li>
+      ))}
+    </ul>
+  )
+}`}
+  hints={[
+    "Filter first, then map",
+    "Use member.id as the key",
+    "Render each item inside <li>"
+  ]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz
+  questions={[
+    {
+      question: "What does JSX compile to?",
+      options: ["Regular HTML", "React.createElement calls", "JavaScript strings", "Web Components"],
+      correctIndex: 1,
+      explanation: "Babel compiles JSX down to React.createElement calls that the runtime understands."
+    },
+    {
+      question: "Why should you avoid array index as a key?",
+      options: [
+        "Index is not unique",
+        "Index changes when items are reordered, causing stale state",
+        "Index causes type errors",
+        "Index is slower"
+      ],
+      correctIndex: 1,
+      explanation: "When items reorder, index shifts. React reuses component instances based on key, leading to wrong state."
+    },
+    {
+      question: "What does `{0 && <Component />}` render?",
+      options: ["Nothing", "The Component", "0", "An error"],
+      correctIndex: 2,
+      explanation: "0 is falsy in condition but truthy in JSX rendering — it prints '0'. Guard with explicit comparison."
+    },
+    {
+      question: "When would you use <> instead of a <div>?",
+      options: [
+        "To apply CSS classes",
+        "To group children without adding a DOM node",
+        "To pass a key to the group",
+        "To create a flex container"
+      ],
+      correctIndex: 1,
+      explanation: "Fragments (<>...</>) group elements without adding an extra DOM wrapper."
+    }
+  ]}
+/>
+
+<LessonSummary
+  points={[
+    "JSX is syntactic sugar for React.createElement",
+    "Wrap JS expressions in {} — statements go outside or in variables",
+    "Conditional rendering: && for one branch, ternary for two, if/early-return for exclusive branches",
+    "Use stable, unique keys for list items — avoid index",
+    "Fragments (<>...</>) group without extra DOM nodes",
+    "Spread props with {...obj} for clean prop forwarding"
+  ]}
+/>

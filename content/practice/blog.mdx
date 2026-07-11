@@ -1,0 +1,38 @@
+---
+title: Blog Application
+description: Build a blog with Markdown content and dynamic routing
+difficulty: intermediate
+order: 3
+---
+
+# Build a Blog
+
+Create a blog that reads Markdown files and renders them as pages.
+
+## Requirements
+
+- [ ] List all blog posts on the homepage
+- [ ] Dynamic slug-based routing for individual posts
+- [ ] Markdown rendering with code highlighting
+- [ ] Category or tag filtering
+- [ ] Search posts by title
+
+## Starter
+
+```tsx
+// pages/blog/[slug].tsx
+export async function getStaticPaths() {
+  // TODO: Scan posts directory for .md files
+  return { paths: [], fallback: false }
+}
+
+export async function getStaticProps({ params }) {
+  // TODO: Read and parse the markdown file
+  return { props: {} }
+}
+```
+
+## Next Steps
+
+- [Authentication System](/practice/auth)
+- [Kanban Board](/practice/kanban)

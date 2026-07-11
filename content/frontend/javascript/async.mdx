@@ -1,0 +1,70 @@
+---
+title: JavaScript Async/Await
+description: Asynchronous JavaScript — promises, async/await, and error handling
+order: 6
+---
+
+# Async/Await
+
+JavaScript is single-threaded. Async/await handles asynchronous operations without blocking.
+
+## Callbacks → Promises → Async/Await
+
+```javascript
+// Callback (old)
+fs.readFile("data.json", (err, data) => {
+  if (err) console.error(err)
+  else process(data)
+})
+
+// Promise
+fetch("/api/data")
+  .then((res) => res.json())
+  .then((data) => console.log(data))
+  .catch((err) => console.error(err))
+
+// Async/Await (modern)
+async function loadData() {
+  try {
+    const res = await fetch("/api/data")
+    const data = await res.json()
+    console.log(data)
+  } catch (err) {
+    console.error(err)
+  }
+}
+```
+
+## Parallel Execution
+
+```javascript
+// Sequential (slower)
+const a = await fetchA()
+const b = await fetchB()
+
+// Parallel (faster)
+const [a, b] = await Promise.all([fetchA(), fetchB()])
+
+// Race — first to resolve wins
+const result = await Promise.race([fetchA(), fetchB()])
+```
+
+## Error Handling
+
+```javascript
+async function safeFetch(url: string) {
+  try {
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    return await res.json()
+  } catch (err) {
+    console.error(`Fetch failed: ${url}`, err)
+    return null
+  }
+}
+```
+
+## Next Steps
+
+- [TypeScript Introduction](/frontend/typescript/intro)
+- [Data Fetching in Next.js](/nextjs/data-fetching)

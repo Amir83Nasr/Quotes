@@ -1,0 +1,327 @@
+---
+title: Form Libraries
+description: Build complex forms with React Hook Form and Zod validation
+order: 7
+---
+
+# Form Libraries
+
+Forms are everywhere. React Hook Form (RHF) + Zod cuts boilerplate by 60% vs manual state.
+
+<LearningObjectives objectives={[
+  "Understand why form libraries improve DX and perf",
+  "Set up RHF with register, handleSubmit, and formState",
+  "Define Zod schemas for type-safe validation",
+  "Integrate RHF with Zod via @hookform/resolvers",
+  "Handle complex forms: arrays, nested objects, conditional fields",
+  "Build a multi-field registration form with validation"
+]} />
+
+## Why Form Libraries?
+
+| Problem | Manual Approach | RHF Approach |
+|---------|----------------|--------------|
+| Controlled re-renders | Every keystroke re-renders whole form | Uncontrolled inputs, isolated renders |
+| Validation | Write from scratch | Zod/Yup schemas |
+| Error display | Custom state per field | `formState.errors` auto-wired |
+| Field arrays | Manual add/remove logic | `useFieldArray` |
+
+<Alert>
+<AlertTitle>Key Insight</AlertTitle>
+<AlertDescription>RHF uses uncontrolled inputs by default. Means zero re-renders on keystroke. Only re-renders the field that changes.</AlertDescription>
+</Alert>
+
+## Basic Setup
+
+```tsx
+import { useForm } from "react-hook-form"
+
+type FormData = {
+  name: string
+  email: string
+}
+
+function SimpleForm() {
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>()
+  const onSubmit = (data: FormData) => console.log(data)
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input {...register("name", { required: "Name is required" })} />
+      {errors.name && <p>{errors.name.message}</p>}
+      <input {...register("email", {
+        required: true,
+        pattern: { value: /^\S+@\S+$/i, message: "Invalid email" }
+      })} />
+      {errors.email && <p>{errors.email.message}</p>}
+      <button type="submit">Submit</button>
+    </form>
+  )
+}
+```
+
+## Zod Schema Validation
+
+Defining validation separately keeps types and rules in sync:
+
+```tsx
+import { z } from "zod"
+
+const loginSchema = z.object({
+  email: z.string().email("Must be a valid email"),
+  password: z.string().min(8, "Min 8 characters"),
+})
+
+type LoginData = z.infer<typeof loginSchema>
+// { email: string; password: string }
+```
+
+## RHF + Zod Integration
+
+```tsx
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+
+const schema = z.object({
+  username: z.string().min(3, "Username must be at least 3 characters"),
+  email: z.string().email("Invalid email address"),
+  age: z.coerce.number().min(18, "Must be 18 or older"),
+})
+
+type Schema = z.infer<typeof schema>
+
+function ValidatedForm() {
+  const { register, handleSubmit, formState: { errors } } = useForm<Schema>({
+    resolver: zodResolver(schema),
+  })
+
+  return (
+    <form onSubmit={handleSubmit((data) => console.log(data))}>
+      <input {...register("username")} />
+      {errors.username && <p role="alert">{errors.username.message}</p>}
+      <input {...register("email")} />
+      {errors.email && <p role="alert">{errors.email.message}</p>}
+      <input type="number" {...register("age")} />
+      {errors.age && <p role="alert">{errors.age.message}</p>}
+      <button type="submit">Register</button>
+    </form>
+  )
+}
+```
+
+<Alert>
+<AlertTitle>Gotcha: Number Inputs</AlertTitle>
+<AlertDescription>HTML inputs return strings. Use `z.coerce.number()` to parse correctly. Without coerce, a number field validates as string and fails.</AlertDescription>
+</Alert>
+
+## Controlled vs Uncontrolled
+
+<Tabs>
+<TabsList>
+<TabsTrigger value="rhf">RHF (Uncontrolled)</TabsTrigger>
+<TabsTrigger value="manual">Manual (Controlled)</TabsTrigger>
+</TabsList>
+<TabsContent value="rhf">
+
+```tsx
+function RHFInput() {
+  const { register } = useForm()
+  // No value/onChange — register binds ref
+  return <input {...register("name")} />
+}
+// Zero re-renders on sibling field change
+```
+</TabsContent>
+<TabsContent value="manual">
+
+```tsx
+function ManualInput() {
+  const [value, setValue] = useState("")
+  // Every keystroke re-renders
+  return <input value={value} onChange={(e) => setValue(e.target.value)} />
+}
+// Entire component re-renders every keystroke
+```
+</TabsContent>
+</Tabs>
+
+## Field Arrays
+
+```tsx
+import { useFieldArray, useForm } from "react-hook-form"
+
+type InvoiceForm = {
+  items: { name: string; quantity: number; price: number }[]
+}
+
+function Invoice() {
+  const { control, register } = useForm<InvoiceForm>({
+    defaultValues: { items: [{ name: "", quantity: 1, price: 0 }] },
+  })
+  const { fields, append, remove } = useFieldArray({ control, name: "items" })
+
+  return (
+    <>
+      {fields.map((field, index) => (
+        <div key={field.id}>
+          <input {...register(`items.${index}.name`)} placeholder="Item name" />
+          <input type="number" {...register(`items.${index}.quantity`)} />
+          <input type="number" {...register(`items.${index}.price`)} />
+          <button type="button" onClick={() => remove(index)}>Remove</button>
+        </div>
+      ))}
+      <button type="button" onClick={() => append({ name: "", quantity: 1, price: 0 })}>
+        Add Item
+      </button>
+    </>
+  )
+}
+```
+
+## InteractiveExercise
+
+Build a registration form with email, password, password confirmation, and a terms checkbox. Form must validate passwords match.
+
+<InteractiveExercise
+  title="Registration Form"
+  description="Create a registration form with password confirmation match validation"
+  language="tsx"
+  starterCode={`import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+
+// Step 1: Define schema with password confirmation
+// Hint: use .refine() or .superRefine() to check passwords match
+// Step 2: Create type from schema
+// Step 3: Set up useForm with zodResolver
+// Step 4: Render fields with register + error messages
+
+type FormValues = {
+  email: string
+  password: string
+  confirmPassword: string
+  acceptTerms: boolean
+}
+
+export default function RegisterForm() {
+  // Your code here
+  return (
+    <form>
+      <div>
+        <label>Email</label>
+        <input type="email" />
+      </div>
+      <div>
+        <label>Password</label>
+        <input type="password" />
+      </div>
+      <div>
+        <label>Confirm Password</label>
+        <input type="password" />
+      </div>
+      <div>
+        <label>
+          <input type="checkbox" /> I accept the terms
+        </label>
+      </div>
+      <button type="submit">Register</button>
+    </form>
+  )
+}`}
+  solutionCode={`import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+
+const schema = z.object({
+  email: z.string().email("Valid email required"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string(),
+  acceptTerms: z.literal(true, {
+    errorMap: () => ({ message: "You must accept the terms" }),
+  }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+})
+
+type FormValues = z.infer<typeof schema>
+
+export default function RegisterForm() {
+  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+      acceptTerms: false as unknown as true,
+    },
+  })
+
+  const onSubmit = (data: FormValues) => {
+    console.log("Registered:", data)
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div>
+        <label>Email</label>
+        <input type="email" {...register("email")} />
+        {errors.email && <p role="alert">{errors.email.message}</p>}
+      </div>
+      <div>
+        <label>Password</label>
+        <input type="password" {...register("password")} />
+        {errors.password && <p role="alert">{errors.password.message}</p>}
+      </div>
+      <div>
+        <label>Confirm Password</label>
+        <input type="password" {...register("confirmPassword")} />
+        {errors.confirmPassword && <p role="alert">{errors.confirmPassword.message}</p>}
+      </div>
+      <div>
+        <label>
+          <input type="checkbox" {...register("acceptTerms")} /> I accept the terms
+        </label>
+        {errors.acceptTerms && <p role="alert">{errors.acceptTerms.message}</p>}
+      </div>
+      <button type="submit">Register</button>
+    </form>
+  )
+}`}
+  hints={[
+    "Use z.object({...}).refine() to compare password fields",
+    "Set path in refine options to attach error to confirmPassword field",
+    "z.literal(true) forces the checkbox to be checked",
+  ]}
+/>
+
+<Quiz questions={[
+  {
+    question: "Why doesn't RHF re-render on every keystroke?",
+    options: ["It uses controlled inputs", "It uses uncontrolled inputs with refs", "It batches all updates", "It uses Web Workers"],
+    correctIndex: 1,
+    explanation: "RHF registers inputs via refs (uncontrolled). React doesn't re-render when ref values change — only on submit.",
+  },
+  {
+    question: "What does z.coerce.number() do?",
+    options: ["Validates the value is a number", "Converts string input to number", "Coerces NaN to 0", "Throws on non-numeric input"],
+    correctIndex: 1,
+    explanation: "HTML inputs return strings. z.coerce.number() converts the string '42' to number 42 before validation.",
+  },
+  {
+    question: "How do you attach a Zod validation error to a specific field via refine?",
+    options: ["return { field: 'name' }", "Use the path option in refine config", "Call setError manually", "Throw an error with the field name"],
+    correctIndex: 1,
+    explanation: "refine's third parameter accepts { path: ['fieldName'] } to associate the error with a specific field.",
+  },
+]} />
+
+<LessonSummary points={[
+  "RHF uses uncontrolled inputs via refs — zero re-renders on keystroke",
+  "Zod schemas define both validation rules and TypeScript types",
+  "@hookform/resolvers/zod bridges RHF and Zod",
+  "useFieldArray handles dynamic lists of form fields",
+  "z.coerce.number() parses string inputs before validation",
+  "z.literal(true) enforces boolean checkbox acceptance",
+]} />

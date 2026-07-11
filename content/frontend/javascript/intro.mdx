@@ -1,0 +1,156 @@
+---
+title: JavaScript Introduction
+description: The language of the web — variables, functions, and the DOM
+order: 1
+---
+
+# JavaScript Introduction
+
+JavaScript is a dynamic programming language that powers interactivity on the web. It runs in the browser and on servers (Node.js).
+
+## Variables
+
+Three ways to declare variables:
+
+```javascript
+const name = "React"       // Cannot be reassigned (preferred)
+let count = 0               // Can be reassigned
+var old = "avoid"           // Function-scoped, avoid in modern code
+
+count = 1 // OK
+name = "Vue" // Error: can't reassign const
+```
+
+## Data Types
+
+```javascript
+// Primitive types
+const str = "hello"          // string
+const num = 42               // number
+const bool = true            // boolean
+const und = undefined        // undefined
+const nul = null             // null
+const sym = Symbol("id")     // symbol
+const big = 9007199254740991n // bigint
+
+// Reference types
+const obj = { key: "value" } // object
+const arr = [1, 2, 3]        // array
+function greet() {}           // function
+```
+
+## Functions
+
+```javascript
+// Function declaration
+function add(a, b) {
+  return a + b
+}
+
+// Arrow function
+const multiply = (a, b) => a * b
+
+// Default parameters
+const greet = (name = "World") => `Hello, ${name}!`
+```
+
+## Objects and Arrays
+
+```javascript
+// Object
+const user = {
+  name: "Alice",
+  age: 30,
+  greet() {
+    return `Hi, I'm ${this.name}`
+  },
+}
+
+// Access
+user.name      // "Alice"
+user["age"]    // 30
+
+// Array
+const items = ["a", "b", "c"]
+items.push("d")     // Add to end
+items.pop()         // Remove from end
+items[0]            // "a"
+
+// Destructuring
+const { name, age } = user
+const [first, second] = items
+```
+
+## Control Flow
+
+```javascript
+// Conditionals
+if (score >= 90) {
+  grade = "A"
+} else if (score >= 80) {
+  grade = "B"
+} else {
+  grade = "C"
+}
+
+// Loops
+for (const item of items) {
+  console.log(item)
+}
+
+for (const key in user) {
+  console.log(key, user[key])
+}
+
+items.forEach((item) => console.log(item))
+```
+
+## DOM Manipulation
+
+```javascript
+// Select elements
+const button = document.querySelector("button")
+const container = document.getElementById("app")
+
+// Modify content
+container.textContent = "Hello!"
+container.innerHTML = "<strong>Bold text</strong>"
+
+// Events
+button.addEventListener("click", () => {
+  alert("Button clicked!")
+})
+```
+
+## Modern ES6+ Features
+
+```javascript
+// Template literals
+const greeting = `Hello, ${name}!`
+
+// Spread operator
+const merged = [...arr1, ...arr2]
+const clone = { ...user, age: 31 }
+
+// Optional chaining
+const zip = user?.address?.zip ?? "N/A"
+
+// Promise / async-await
+async function fetchData() {
+  const res = await fetch("/api/data")
+  return res.json()
+}
+```
+
+## Best Practices
+
+- Use `const` by default, `let` only when reassigning
+- Prefer arrow functions for callbacks
+- Use destructuring for cleaner code
+- Handle async errors with try/catch
+- Use strict equality (`===`) over loose equality (`==`)
+
+## Next Steps
+
+- [TypeScript Introduction](/frontend/typescript/intro) — Type-safe JavaScript
+- [React Introduction](/react/intro) — Build UIs with React

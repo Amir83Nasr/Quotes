@@ -1,0 +1,269 @@
+---
+title: Branded Types & Nominal Typing
+description: Adding compile-time safety with branded types
+difficulty: advanced
+order: 8
+---
+
+# Branded Types & Nominal Typing
+
+TypeScript has structural typing — any type with the same shape is compatible. Branded types add nominal behavior for extra safety.
+
+<LearningObjectives objectives={[
+  "Understand structural vs nominal typing",
+  "Implement the brand pattern (T & { __brand: B })",
+  "Use flavoring for lightweight nominal typing",
+  "Add runtime validation paired with branded types",
+  "Prevent mixing up IDs, emails, and other primitives",
+  "Apply branding to real-world function signatures"
+]} />
+
+## The Problem: Structural Typing
+
+Two different concepts with the same shape are interchangeable.
+
+```ts
+type UserID = string
+type Email = string
+type PostID = string
+
+function getUser(id: UserID) { /* ... */ }
+function sendEmail(to: Email) { /* ... */ }
+
+const userId: UserID = "user_123"
+// Oops — no error, but wrong semantic type
+sendEmail(userId) // compiles fine
+```
+
+## The Brand Pattern
+
+Add a phantom property that exists only at compile time.
+
+```ts
+type Brand<T, B> = T & { __brand: B }
+
+type UserID = Brand<string, "UserID">
+type Email = Brand<string, "Email">
+type PostID = Brand<string, "PostID">
+
+function getUser(id: UserID): void { /* ... */ }
+function sendEmail(to: Email): void { /* ... */ }
+
+const userId = "user_123" as UserID
+const email = "alice@example.com" as Email
+
+getUser(userId) // OK
+getUser(email)  // Type error: Email is not UserID
+sendEmail(email) // OK
+sendEmail(userId) // Type error: UserID is not Email
+```
+
+<Alert>
+  <AlertTitle>Gotcha</AlertTitle>
+  <AlertDescription>The `as` cast is a type-level assertion. For real safety, create constructor functions that validate at runtime and return the branded type.</AlertDescription>
+</Alert>
+
+## Runtime Validation + Compile-Time Safety
+
+Pair branded types with runtime checks.
+
+```ts
+type Brand<T, B> = T & { __brand: B }
+
+type Email = Brand<string, "Email">
+type UserID = Brand<string, "UserID">
+
+// Constructor with runtime validation
+function createEmail(value: string): Email {
+  if (!value.includes("@")) throw new Error("Invalid email")
+  return value as Email
+}
+
+function createUserID(value: string): UserID {
+  if (!value.startsWith("user_")) throw new Error("Invalid user ID")
+  return value as UserID
+}
+
+// Safe constructors
+function sendEmail(to: Email, body: string): void {
+  console.log(`Sending to ${to}: ${body}`)
+}
+
+const email = createEmail("alice@example.com")
+const id = createUserID("user_42")
+sendEmail(email, id) // Type error
+```
+
+## Flavoring Pattern
+
+A lighter-weight alternative that doesn't affect runtime behavior.
+
+```ts
+// Flavor — brands are optional, not enforced
+type Flavor<T, F> = T & { __flavor?: F }
+
+type USD = Flavor<number, "USD">
+type EUR = Flavor<number, "EUR">
+
+function formatMoney(amount: USD): string {
+  return `$${amount.toFixed(2)}`
+}
+
+const price = 29.99 as USD
+const rate = 0.92 as EUR
+
+formatMoney(price) // OK
+formatMoney(rate)  // Type error (flavored)
+```
+
+## Real-World: Domain Primitives
+
+```ts
+type Brand<T, B> = T & { __brand: B }
+
+// Domain types
+type Phone = Brand<string, "Phone">
+type SSN = Brand<string, "SSN">
+type OrderID = Brand<string, "OrderID">
+type Quantity = Brand<number, "Quantity">
+
+function validatePhone(input: string): Phone {
+  if (!/^\+?[\d\s-]{7,15}$/.test(input)) throw new Error("Invalid phone")
+  return input as Phone
+}
+
+function validateSSN(input: string): SSN {
+  if (!/^\d{3}-\d{2}-\d{4}$/.test(input)) throw new Error("Invalid SSN")
+  return input as SSN
+}
+
+// Function signatures encode domain rules
+function createOrder(
+  userId: UserID,
+  items: Array<{ id: OrderID; qty: Quantity }>,
+  contact: Phone
+): void {
+  /* ... */
+}
+```
+
+## Effect on Function Signatures
+
+Branding forces callers to be explicit about their types.
+
+```ts
+type Brand<T, B> = T & { __brand: B }
+type APIKey = Brand<string, "APIKey">
+type BearerToken = Brand<string, "BearerToken">
+
+function authenticate(token: BearerToken): { userId: string } {
+  // decode JWT…
+  return { userId: "user_1" }
+}
+
+function fetchResource(apiKey: APIKey, resource: string): Promise<unknown> {
+  // use API key…
+  return Promise.resolve({})
+}
+
+// Cannot accidentally mix them up
+const key = "sk-abc123" as APIKey
+const token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoiMSJ9.xxx" as BearerToken
+
+authenticate(key) // Type error
+fetchResource(token, "users") // Type error
+```
+
+<InteractiveExercise
+  title="Branded User Entities"
+  description="Create a branded UserId and Email type. Build a safeUser function that accepts an unknown object, validates it has valid id and email fields, and returns a branded result if valid."
+  language="typescript"
+  starterCode={`type Brand<T, B> = T & { __brand: B }
+type UserId = Brand<string, "UserId">
+type Email = Brand<string, "Email">
+
+interface SafeUser {
+  id: UserId
+  email: Email
+}
+
+type SafeResult =
+  | { ok: true; user: SafeUser }
+  | { ok: false; error: string }
+
+// Implement safeUser that validates raw input
+function safeUser(input: unknown): SafeResult {
+
+}`}
+  solutionCode={`type Brand<T, B> = T & { __brand: B }
+type UserId = Brand<string, "UserId">
+type Email = Brand<string, "Email">
+
+interface SafeUser { id: UserId; email: Email }
+
+type SafeResult =
+  | { ok: true; user: SafeUser }
+  | { ok: false; error: string }
+
+function safeUser(input: unknown): SafeResult {
+  if (typeof input !== "object" || input === null) {
+    return { ok: false, error: "Input must be an object" }
+  }
+  const obj = input as Record<string, unknown>
+  if (typeof obj.id !== "string" || !obj.id.startsWith("user_")) {
+    return { ok: false, error: "Invalid user ID" }
+  }
+  if (typeof obj.email !== "string" || !obj.email.includes("@")) {
+    return { ok: false, error: "Invalid email" }
+  }
+  return {
+    ok: true,
+    user: { id: obj.id as UserId, email: obj.email as Email }
+  }
+}`}
+  hints={[
+    "Check typeof input === 'object' and !== null first.",
+    "Cast to Record<string, unknown> for safe property access.",
+    "Validate the id prefix (e.g. 'user_') before casting to UserId.",
+    "Validate the email contains '@' before casting to Email.",
+    "Return { ok: false, error: message } for invalid cases."
+  ]}
+/>
+
+<Quiz
+  questions={[
+    {
+      question: "Why are branded types needed in TypeScript?",
+      options: ["TypeScript has nominal typing by default", "TypeScript has structural typing, which can't distinguish same-shape types", "Brands improve runtime performance", "Brands enable inheritance"],
+      correctIndex: 1,
+      explanation: "TypeScript uses structural typing. Two types with the same shape are interchangeable, even when they represent different domains."
+    },
+    {
+      question: "What does the Brand type do at runtime?",
+      options: ["Adds a property to the object", "Throws if branding is violated", "Does nothing — it's erased at compile time", "Creates a class instance"],
+      correctIndex: 2,
+      explanation: "The __brand property exists only at the type level. TypeScript erases all types during compilation, so branding has zero runtime cost."
+    },
+    {
+      question: "What is the difference between Brand and Flavor?",
+      options: ["Brand and Flavor are the same", "Flavor uses optional property, making it easier to subtype", "Flavor is strict, Brand is loose", "Brand works on objects, Flavor on primitives"],
+      correctIndex: 1,
+      explanation: "Flavor uses `__flavor?: F` (optional), so a flavored type is structurally compatible with its base type for convenience."
+    },
+    {
+      question: "What should paired with branded types for real safety?",
+      options: ["A linter rule", "Runtime validation in constructor functions", "A comment explaining the type", "Unit tests only"],
+      correctIndex: 1,
+      explanation: "Branded types only provide compile-time safety. Runtime validation functions that return branded types ensure invalid values never enter the system."
+    },
+  ]}
+/>
+
+<LessonSummary points={[
+  "Structural typing treats same-shape types as identical — branding adds nominal distinctions.",
+  "The Brand pattern (T & { __brand: B }) adds a phantom type property.",
+  "Flavoring uses optional flavors for lighter-weight nominal distinctions.",
+  "Pair branded types with runtime validation constructors for defense in depth.",
+  "Domain primitives (Email, UserID, Phone) prevent mixing up semantically different values.",
+  "Branded function signatures force callers to be explicit about which domain type they're passing."
+]} />

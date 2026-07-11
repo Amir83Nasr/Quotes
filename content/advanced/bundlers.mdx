@@ -1,0 +1,316 @@
+---
+title: Bundlers and Build Tools
+description: Understanding Webpack, Vite, Turbopack, and build optimization
+order: 9
+---
+
+# Bundlers and Build Tools
+
+Bundlers transform your dev-friendly code into production-optimized bundles.
+
+<LearningObjectives objectives={[
+  "Understand Webpack core concepts: entry, output, loaders, plugins",
+  "Compare Vite's ESM dev server vs traditional bundler approach",
+  "Use dynamic imports for code splitting",
+  "Explain tree shaking and dead code elimination",
+  "Configure environment variables for different modes",
+  "Analyze and optimize bundle size"
+]} />
+
+## Webpack Core Concepts
+
+```js
+// webpack.config.js — classic setup
+module.exports = {
+  entry: "./src/index.tsx",
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "[name].[contenthash].js",
+  },
+  module: {
+    rules: [
+      { test: /\.tsx?$/, use: "ts-loader" },        // loader
+      { test: /\.css$/, use: ["style-loader", "css-loader"] },
+    ],
+  },
+  plugins: [
+    new HtmlWebpackPlugin({ template: "./public/index.html" }),
+  ],
+}
+```
+
+| Concept | Role |
+|---------|------|
+| Entry | Where bundler starts resolving deps |
+| Output | Where final bundles go |
+| Loaders | Transform files (TS → JS, SCSS → CSS) |
+| Plugins | Extend behavior (HTML generation, minification) |
+| Chunks | Split output files |
+
+## Vite Approach
+
+Vite serves ESM in dev — no bundling needed until production:
+
+```ts
+// vite.config.ts
+import { defineConfig } from "vite"
+import react from "@vitejs/plugin-react"
+
+export default defineConfig({
+  plugins: [react()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom"],
+        },
+      },
+    },
+  },
+})
+```
+
+<Tabs>
+<TabsList>
+<TabsTrigger value="webpack">Webpack config</TabsTrigger>
+<TabsTrigger value="vite">Vite config</TabsTrigger>
+</TabsList>
+<TabsContent value="webpack">
+
+```js
+// webpack.config.js — 30+ lines typical
+const path = require("path")
+
+module.exports = {
+  entry: "./src/index.tsx",
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "[name].[contenthash].js",
+    clean: true,
+  },
+  resolve: {
+    extensions: [".ts", ".tsx", ".js", ".jsx"],
+  },
+  module: {
+    rules: [
+      { test: /\.tsx?$/, use: "ts-loader", exclude: /node_modules/ },
+      { test: /\.css$/, use: ["style-loader", "css-loader"] },
+    ],
+  },
+  plugins: [
+    new HtmlWebpackPlugin({ template: "./public/index.html" }),
+  ],
+}
+```
+</TabsContent>
+<TabsContent value="vite">
+
+```ts
+// vite.config.ts — ~10 lines
+import { defineConfig } from "vite"
+import react from "@vitejs/plugin-react"
+
+export default defineConfig({
+  plugins: [react()],
+  server: { port: 3000 },
+  build: { sourcemap: true },
+})
+// No loaders needed — Vite handles TS, CSS natively
+// Dev server cold-starts in < 1s (native ESM)
+```
+</TabsContent>
+</Tabs>
+
+## HMR — Hot Module Replacement
+
+Applies code changes without full reload. Preserves state.
+
+```
+Webpack:  HMR via WebSocket, rebuilds changed modules
+Vite:     HMR via native ESM — only invalidate browser cache for changed file
+          No rebuild needed — cold start ~50ms vs Webpack ~2-5s
+
+Turbopack: Rust-based incremental engine
+           Only recomputes changed cells — < 50ms updates at any scale
+```
+
+## Code Splitting
+
+```tsx
+// Static import — always bundled
+import { HeavyChart } from "./HeavyChart"
+
+// Dynamic import — separate chunk
+import("./HeavyChart").then(({ HeavyChart }) => {
+  // Loaded on demand
+})
+
+// React.lazy (builds on dynamic import)
+const HeavyChart = lazy(() => import("./HeavyChart"))
+
+// Next.js dynamic
+import dynamic from "next/dynamic"
+const HeavyComponent = dynamic(() => import("./Heavy"), {
+  loading: () => <Skeleton />,
+  ssr: false, // Skip server render for client-only components
+})
+```
+
+## Tree Shaking
+
+Dead code elimination relies on ES module static analysis:
+
+```ts
+// utils.ts
+export function usedFn() { return 42 }
+export function deadFn() { return "never called" } // Removed in build
+
+// app.ts — only imports usedFn
+import { usedFn } from "./utils"
+```
+
+Tree shaking works when:
+- ES module syntax (`import`/`export`), not CommonJS (`require`)
+- `sideEffects: false` in `package.json`
+- No dynamic imports that defeat static analysis
+
+<Alert>
+<AlertTitle>Gotcha: Side Effects</AlertTitle>
+<AlertDescription>If a module modifies global state (e.g., polyfill), set `"sideEffects": ["./polyfill.js"]` in package.json — otherwise tree shaker might remove it thinking it's unused.</AlertDescription>
+</Alert>
+
+## Environment Variables
+
+```ts
+// Vite
+console.log(import.meta.env.VITE_API_URL)
+console.log(import.meta.env.DEV)  // true in dev
+console.log(import.meta.env.PROD) // true in production
+
+// Webpack (via DefinePlugin or dotenv-webpack)
+console.log(process.env.API_URL)
+
+// Next.js
+console.log(process.env.NEXT_PUBLIC_API_URL)
+// Prefix with NEXT_PUBLIC_ for client-side access
+```
+
+## Turbopack (Next.js)
+
+Next.js uses Turbopack by default in dev (v15+):
+
+```bash
+# Enabled automatically in Next.js 15+
+next dev --turbo
+```
+
+Benefits vs Webpack:
+- Rust-based — 10-100x faster for large apps
+- Incremental computation — only rebuilds changed cells
+- Caching at function level, not file level
+
+## InteractiveExercise
+
+Identify optimization opportunities in this bundle config.
+
+<InteractiveExercise
+  title="Bundle Optimization"
+  description="Analyze and optimize a bloated Webpack config"
+  language="ts"
+  starterCode={`// Current webpack.config.js — find 3+ optimization issues
+const path = require("path")
+
+module.exports = {
+  entry: "./src/index.tsx",
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "bundle.js",
+  },
+  module: {
+    rules: [
+      { test: /\\.tsx?$/, use: "ts-loader" },
+      { test: /\\.css$/, use: ["style-loader", "css-loader"] },
+    ],
+  },
+  resolve: {
+    extensions: [".ts", ".tsx", ".js"],
+  },
+  // Issues to fix:
+  // 1. No content hash in filename (cache busting)
+  // 2. No optimization.splitChunks (vendor bundle)
+  // 3. No mode set (no minification)
+  // 4. No HtmlWebpackPlugin
+  // Bonus: Add bundle analyzer
+}`}
+  solutionCode={`const path = require("path")
+const HtmlWebpackPlugin = require("html-webpack-plugin")
+const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer")
+
+module.exports = {
+  mode: "production",
+  entry: "./src/index.tsx",
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "[name].[contenthash].js", // Cache busting
+    clean: true,
+  },
+  module: {
+    rules: [
+      { test: /\\.tsx?$/, use: "ts-loader", exclude: /node_modules/ },
+      { test: /\\.css$/, use: ["style-loader", "css-loader"] },
+    ],
+  },
+  resolve: {
+    extensions: [".ts", ".tsx", ".js"],
+  },
+  plugins: [
+    new HtmlWebpackPlugin({ template: "./public/index.html" }),
+    new BundleAnalyzerPlugin(), // Visualize bundle size
+  ],
+  optimization: {
+    splitChunks: {
+      chunks: "all",         // Separate vendor chunks
+      cacheGroups: {
+        vendor: { test: /[\\\\/]node_modules[\\\\/]/, name: "vendors" },
+      },
+    },
+  },
+}`}
+  hints={[
+    "Without mode: 'production', Webpack doesn't minify output",
+    "[contenthash] in filename enables long-term caching — browser re-downloads only when file changes",
+    "splitChunks separates vendor code (react, lodash) from app code so users cache them separately",
+    "BundleAnalyzerPlugin shows a treemap of your bundle contents",
+  ]}
+/>
+
+<Quiz questions={[
+  {
+    question: "Why does Vite dev server start faster than Webpack?",
+    options: ["Vite uses fewer plugins", "Vite serves native ESM without bundling in dev", "Vite is written in Rust", "Vite only compiles changed files"],
+    correctIndex: 1,
+    explanation: "Vite serves files as native ES modules — no bundling needed until production build. Webpack bundles everything upfront even in dev.",
+  },
+  {
+    question: "What's required for tree shaking to work?",
+    options: ["Webpack 5 or higher", "ES module syntax (import/export)", "CommonJS require()", "A bundler plugin"],
+    correctIndex: 1,
+    explanation: "Tree shaking requires static ES module imports/exports. CommonJS require() is dynamic and can't be statically analyzed.",
+  },
+  {
+    question: "What does [contenthash] in Webpack output filenames do?",
+    options: ["Makes filenames shorter", "Hashes file contents for cache busting", "Encrypts the bundle", "Disables caching"],
+    correctIndex: 1,
+    explanation: "contenthash changes when file content changes. Browser caches the file until the hash changes — only re-downloads when code changes.",
+  },
+]} />
+
+<LessonSummary points={[
+  "Webpack: entry, loaders, plugins, output — full control, more config",
+  "Vite: native ESM in dev (fast), Rollup for production (efficient)",
+  "Dynamic imports create separate chunks loaded on demand",
+  "Tree shaking removes dead ES module exports",
+  "Turbopack: Rust-based incremental engine in Next.js",
+  "Analyze bundles with webpack-bundle-analyzer or vite-bundle-visualizer",
+  "Use contenthash for cache busting, splitChunks for vendor separation",
+]} />

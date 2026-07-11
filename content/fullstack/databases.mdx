@@ -1,0 +1,373 @@
+---
+title: Databases & ORMs
+description: SQL, NoSQL, and Prisma ORM in Next.js applications
+order: 5
+---
+
+# Databases & ORMs
+
+<LearningObjectives
+  objectives={[
+    "Choose between SQL and NoSQL for your Next.js app",
+    "Set up Prisma with PostgreSQL in a Next.js project",
+    "Query databases directly from Server Components",
+    "Design relations, run migrations, and seed data",
+    "Handle connection pooling for serverless deployments",
+  ]}
+/>
+
+## SQL vs NoSQL
+
+<Tabs>
+<TabsList>
+<TabsTrigger value="sql">SQL (PostgreSQL)</TabsTrigger>
+<TabsTrigger value="nosql">NoSQL (MongoDB)</TabsTrigger>
+</TabsList>
+<TabsContent value="sql">
+
+- **Schema**: Fixed tables with strict types
+- **Relations**: JOINs, foreign keys, referential integrity
+- **ACID**: Transactions, rollbacks, consistency
+- **Best for**: Financial data, structured content, anything requiring relational integrity
+- **Next.js fit**: Prisma + Neon/PlanetScale for serverless
+
+</TabsContent>
+<TabsContent value="nosql">
+
+- **Schema**: Flexible documents, mixed shapes per collection
+- **Relations**: Embedded docs or manual references
+- **BASE**: Eventual consistency, higher write throughput
+- **Best for**: Rapid prototyping, hierarchical data, high-scale writes
+- **Next.js fit**: Mongoose ORM, direct MongoDB driver
+
+</TabsContent>
+</Tabsults>
+
+<Alert>
+  <AlertTitle>Tip</AlertTitle>
+  <AlertDescription>
+    Most production Next.js apps use PostgreSQL + Prisma. Serverless DB providers like Neon and PlanetScale scale to zero when idle — cost-effective for indie projects.
+  </AlertDescription>
+</Alert>
+
+## Prisma Setup
+
+```bash
+npm install prisma @prisma/client
+npx prisma init
+```
+
+Environment variable in `.env`:
+
+```bash
+DATABASE_URL="postgresql://user:password@localhost:5432/myapp"
+```
+
+The generated `schema.prisma`:
+
+```prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  posts     Post[]
+  createdAt DateTime @default(now())
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  createdAt DateTime @default(now())
+}
+```
+
+## Queries in Server Components
+
+Direct DB access without an API layer — one of Next.js's superpowers.
+
+```tsx
+import { prisma } from "@/lib/prisma"
+
+// lib/prisma.ts — singleton pattern prevents multiple instances
+import { PrismaClient } from "@prisma/client"
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
+export const prisma = globalForPrisma.prisma ?? new PrismaClient()
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
+
+// app/posts/page.tsx — Server Component queries DB directly
+export default async function PostsPage() {
+  const posts = await prisma.post.findMany({
+    where: { published: true },
+    include: {
+      author: {
+        select: { name: true, email: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 20,
+  })
+
+  return (
+    <ul>
+      {posts.map((post) => (
+        <li key={post.id}>
+          <h2>{post.title}</h2>
+          <p>By {post.author.name}</p>
+        </li>
+      ))}
+    </ul>
+  )
+}
+```
+
+## Migrations & Seeding
+
+```bash
+# Create migration from schema changes
+npx prisma migrate dev --name add-comment-model
+
+# Apply to production
+npx prisma migrate deploy
+
+# Reset local DB
+npx prisma migrate reset
+```
+
+Seed file — `prisma/seed.ts`:
+
+```typescript
+import { PrismaClient } from "@prisma/client"
+
+const prisma = new PrismaClient()
+
+async function main() {
+  const alice = await prisma.user.upsert({
+    where: { email: "alice@example.com" },
+    update: {},
+    create: {
+      email: "alice@example.com",
+      name: "Alice",
+      posts: {
+        create: [
+          { title: "Getting Started with Prisma", published: true },
+          { title: "Advanced Queries", published: false },
+        ],
+      },
+    },
+  })
+  console.log("Seeded:", alice)
+}
+
+main()
+  .catch((e) => console.error(e))
+  .finally(() => prisma.$disconnect())
+```
+
+```bash
+# Add to package.json
+# "prisma": { "seed": "tsx prisma/seed.ts" }
+npx prisma db seed
+```
+
+## Relation Queries
+
+```typescript
+// Include — fetch author with every post
+const posts = await prisma.post.findMany({
+  include: { author: true },
+})
+
+// Select — pick specific fields, deeply
+const user = await prisma.user.findUnique({
+  where: { email: "alice@example.com" },
+  select: {
+    name: true,
+    posts: {
+      where: { published: true },
+      select: { title: true, createdAt: true },
+      orderBy: { createdAt: "desc" },
+    },
+  },
+})
+
+// Nested create — user + post in one operation
+const userWithPost = await prisma.user.create({
+  data: {
+    name: "Bob",
+    email: "bob@example.com",
+    posts: {
+      create: { title: "First Post", content: "Hello world" },
+    },
+  },
+  include: { posts: true },
+})
+```
+
+## Connection Pooling & Edge
+
+Serverless functions are short-lived — every function gets its own DB connection. Pooling prevents connection exhaustion.
+
+```typescript
+// lib/prisma.ts — for serverless (Neon, PlanetScale)
+import { PrismaClient } from "@prisma/client"
+import { PrismaNeonHTTP } from "@prisma/adapter-neon"
+import { Pool } from "@neondatabase/serverless"
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL })
+const adapter = new PrismaNeonHTTP(pool)
+export const prisma = new PrismaClient({ adapter })
+```
+
+<Alert>
+  <AlertTitle>Gotcha</AlertTitle>
+  <AlertDescription>
+    Edge Runtime does not support TCP connections. Use HTTP-based adapters (Neon HTTP, PlanetScale serverless driver) when deploying to Vercel Edge Functions or Cloudflare Workers.
+  </AlertDescription>
+</Alert>
+
+## Interactive Exercise
+
+<InteractiveExercise
+  title="Design a Blog Schema"
+  description="Create a Prisma schema for a blog with categories, tags, and comments — then write a query to fetch a single post with all related data."
+  starterCode={`// schema.prisma — fill in the models
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// TODO: Add User model (id, name, email, posts)
+// TODO: Add Post model (id, title, content, published, author, category, tags, comments)
+// TODO: Add Category model (id, name, slug, posts)
+// TODO: Add Tag model (id, name, posts)
+// TODO: Add Comment model (id, content, author, post)
+`}
+  solutionCode={`model User {
+  id        String    @id @default(cuid())
+  name      String
+  email     String    @unique
+  posts     Post[]
+  comments  Comment[]
+  createdAt DateTime  @default(now())
+}
+
+model Post {
+  id        String    @id @default(cuid())
+  title     String
+  content   String?
+  published Boolean   @default(false)
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  String
+  category  Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
+  tags      TagOnPost[]
+  comments  Comment[]
+  createdAt DateTime  @default(now())
+}
+
+model Category {
+  id    String @id @default(cuid())
+  name  String @unique
+  slug  String @unique
+  posts Post[]
+}
+
+model Tag {
+  id    String      @id @default(cuid())
+  name  String      @unique
+  posts TagOnPost[]
+}
+
+model TagOnPost {
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String
+  tag    Tag    @relation(fields: [tagId], references: [id])
+  tagId  String
+  @@id([postId, tagId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    String
+  createdAt DateTime @default(now())
+}`}
+  hints={[
+    "Use @relation for foreign keys — specify fields and references",
+    "Many-to-many between Post and Tag needs a junction table (TagOnPost) with @@id([postId, tagId])",
+    "Category is optional (Category?) — a post might not have one",
+    "Comment has two foreign keys: authorId → User, postId → Post",
+  ]}
+  language="prisma"
+/>
+
+## Quiz
+
+<Quiz
+  questions={[
+    {
+      question: "What does the `include` option do in a Prisma query?",
+      options: [
+        "Filters results by a condition",
+        "Fetches related models in the same query",
+        "Creates a new database index",
+        "Orders results by a field",
+      ],
+      correctIndex: 1,
+      explanation: "include fetches related records (like author on a Post) in a single query, avoiding N+1 problems.",
+    },
+    {
+      question: "Why use an HTTP-based adapter (Neon/PlanetScale) with Prisma on serverless?",
+      options: [
+        "It improves query performance by 10x",
+        "Edge Runtime does not support raw TCP connections",
+        "It automatically generates TypeScript types",
+        "HTTP adapters support MongoDB natively",
+      ],
+      correctIndex: 1,
+      explanation: "Edge functions and serverless runtimes lack TCP socket support — HTTP adapters bridge this gap.",
+    },
+    {
+      question: "What does `npx prisma migrate deploy` do compared to `npx prisma migrate dev`?",
+      options: [
+        "Runs pending migrations in production without confirmation",
+        "Creates a new migration based on schema changes",
+        "Drops and recreates the database",
+        "Seeds the database with sample data",
+      ],
+      correctIndex: 0,
+      explanation: "migrate dev creates migrations locally with prompts; migrate deploy runs pending ones in CI/production.",
+    },
+  ]}
+/>
+
+<LessonSummary
+  points={[
+    "SQL (PostgreSQL) is the default choice for Next.js apps needing relational integrity",
+    "Prisma generates a type-safe client from your schema — queries are checked at compile time",
+    "Server Components can query the database directly, eliminating API boilerplate",
+    "Use migrations for schema version control; seed scripts for test data",
+    "In serverless environments, use HTTP-based DB adapters to avoid TCP issues",
+    "Include/select options prevent N+1 queries by fetching relations eagerly",
+  ]}
+/>

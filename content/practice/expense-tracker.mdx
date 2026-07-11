@@ -1,0 +1,56 @@
+---
+title: Expense Tracker
+description: Build an expense tracking application
+difficulty: intermediate
+order: 2
+---
+
+# Build an Expense Tracker
+
+Track income and expenses with categorization, totals, and filtering.
+
+## Requirements
+
+- [ ] Add transactions with amount, category, date
+- [ ] Categorize transactions (Food, Transport, etc.)
+- [ ] Show running balance
+- [ ] Filter by category
+- [ ] Show income vs expenses chart (optional)
+
+## Starter
+
+```tsx
+"use client"
+
+import { useState } from "react"
+
+type Category = "food" | "transport" | "utilities" | "entertainment" | "income"
+
+interface Transaction {
+  id: string
+  amount: number
+  category: Category
+  description: string
+  date: string
+}
+
+export default function ExpenseTracker() {
+  const [transactions, setTransactions] = useState<Transaction[]>([])
+
+  // TODO: addTransaction
+  // TODO: calculate totals
+  // TODO: filter by category
+
+  return (
+    <div className="mx-auto max-w-2xl p-4">
+      <h1 className="mb-6 text-3xl font-bold">Expense Tracker</h1>
+      {/* Your implementation */}
+    </div>
+  )
+}
+```
+
+## Next Steps
+
+- [Dashboard](/practice/dashboard)
+- [Todo App](/practice/todo-app)

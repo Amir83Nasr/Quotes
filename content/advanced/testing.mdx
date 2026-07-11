@@ -1,0 +1,58 @@
+---
+title: Testing
+description: Frontend testing — unit, integration, and e2e tests
+order: 4
+---
+
+# Testing
+
+Testing ensures your code works correctly and stays working.
+
+## Testing Pyramid
+
+```
+        ╱  E2E  ╲          Few, slow, high confidence
+       ╱ Integration ╲     Medium count
+      ╱   Unit Test    ╲   Many, fast, low confidence
+```
+
+## Unit Tests (Vitest + React Testing Library)
+
+```tsx
+import { render, screen, fireEvent } from "@testing-library/react"
+import { describe, it, expect } from "vitest"
+import Counter from "./Counter"
+
+describe("Counter", () => {
+  it("starts at 0", () => {
+    render(<Counter />)
+    expect(screen.getByText("0")).toBeDefined()
+  })
+
+  it("increments on click", () => {
+    render(<Counter />)
+    fireEvent.click(screen.getByText("+"))
+    expect(screen.getByText("1")).toBeDefined()
+  })
+})
+```
+
+## Tools
+
+- **Vitest** — Fast unit test runner
+- **React Testing Library** — Component tests
+- **Playwright** — E2E browser tests
+- **MSW** — Mock API responses
+
+## Best Practices
+
+- Test behavior, not implementation
+- Avoid testing framework internals
+- Write tests that resemble user interactions
+- Mock at the network boundary (MSW)
+- Run tests in CI
+
+## Next Steps
+
+- [Performance](/advanced/performance)
+- [Practice Projects](/practice/todo-app)

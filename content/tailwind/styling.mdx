@@ -1,0 +1,72 @@
+---
+title: Tailwind Styling
+description: Colors, spacing, typography, and theming in Tailwind CSS
+order: 4
+---
+
+# Styling with Tailwind
+
+Beyond layout — colors, spacing, typography, and theme customization.
+
+## Colors
+
+```html
+<!-- Text colors -->
+<p class="text-blue-500">Blue text</p>
+<p class="text-gray-700 dark:text-gray-300">Responsive dark mode</p>
+
+<!-- Background colors -->
+<div class="bg-blue-100 dark:bg-blue-900">Background</div>
+
+<!-- Border colors -->
+<div class="border border-gray-200 dark:border-gray-700">Bordered</div>
+```
+
+## Spacing
+
+```html
+<!-- Margin -->
+<div class="m-4 mt-2 mx-auto">All sides, top, horizontal</div>
+
+<!-- Padding -->
+<div class="p-6 px-4 py-2">Padding shorthand</div>
+
+<!-- Gap (flex/grid) -->
+<div class="flex gap-4">Spacing between items</div>
+```
+
+## Typography
+
+```html
+<h1 class="text-3xl font-bold tracking-tight">Heading</h1>
+<h2 class="text-xl font-semibold">Subheading</h2>
+<p class="text-base leading-relaxed text-gray-600">Body text</p>
+```
+
+## Dark Mode
+
+```html
+<div class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+  Automatically adapts to theme
+</div>
+```
+
+## Custom Theme (tailwind.config)
+
+```ts
+// tailwind.config.ts
+export default {
+  theme: {
+    extend: {
+      colors: {
+        primary: { 500: "#3b82f6", 600: "#2563eb" },
+      },
+    },
+  },
+}
+```
+
+## Next Steps
+
+- [Flexbox](/tailwind/flexbox)
+- [Grid](/tailwind/grid)

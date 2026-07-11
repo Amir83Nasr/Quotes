@@ -1,0 +1,390 @@
+---
+title: Modern Web APIs
+description: Browser APIs for lazy loading, responsive components, offline support, and more
+order: 11
+---
+
+# Modern Web APIs
+
+Browser APIs unlock features once impossible or library-dependent. Today most ship natively.
+
+<LearningObjectives objectives={[
+  "Use IntersectionObserver for lazy loading and infinite scroll",
+  "Track element resizes with ResizeObserver",
+  "Observe DOM mutations with MutationObserver",
+  "Access user location with Geolocation API",
+  "Persist data with Web Storage API",
+  "Run heavy computation off the main thread with Web Workers",
+  "Register Service Workers for offline support"
+]} />
+
+## IntersectionObserver
+
+Detect when elements enter/exit the viewport. No scroll event listeners needed.
+
+```tsx
+import { useEffect, useRef, useState } from "react"
+
+function useInView(threshold = 0.5) {
+  const ref = useRef<HTMLDivElement>(null!)
+  const [inView, setInView] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold },
+    )
+
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [threshold])
+
+  return { ref, inView }
+}
+```
+
+### Lazy Image Loading
+
+```tsx
+function LazyImage({ src, alt }: { src: string; alt: string }) {
+  const { ref, inView } = useInView(0.1)
+  const [loaded, setLoaded] = useState(false)
+
+  return (
+    <div ref={ref} style={{ minHeight: 300, background: "#eee" }}>
+      {inView && (
+        <img
+          src={src}
+          alt={alt}
+          onLoad={() => setLoaded(true)}
+          style={{ opacity: loaded ? 1 : 0, transition: "opacity 0.3s" }}
+        />
+      )}
+    </div>
+  )
+}
+```
+
+### Infinite Scroll
+
+```tsx
+function InfiniteScroll({ loadMore }: { loadMore: () => Promise<void> }) {
+  const { ref, inView } = useInView(0.1)
+
+  useEffect(() => {
+    if (inView) loadMore()
+  }, [inView, loadMore])
+
+  return <div ref={ref}>Loading more...</div>
+}
+// loadMore fires whenever the sentinel enters viewport
+// No scroll event, no throttle, no math
+```
+
+<Alert>
+<AlertTitle>Gotcha: threshold value</AlertTitle>
+<AlertDescription>threshold: 1.0 means 100% visible. For infinite scroll, 0.1 or even 0.0 is better — fires as soon as the sentinel enters the viewport, triggering the next load before user reaches bottom.</AlertDescription>
+</Alert>
+
+## ResizeObserver
+
+React to element size changes. Essential for responsive components and charts.
+
+```tsx
+import { useEffect, useRef, useState } from "react"
+
+function useElementSize() {
+  const ref = useRef<HTMLDivElement>(null!)
+  const [size, setSize] = useState({ width: 0, height: 0 })
+
+  useEffect(() => {
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect
+      setSize({ width, height })
+    })
+
+    observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [])
+
+  return { ref, ...size }
+}
+
+function ResponsiveContainer() {
+  const { ref, width, height } = useElementSize()
+
+  return (
+    <div ref={ref} style={{ resize: "both", overflow: "auto" }}>
+      <p>Container: {width.toFixed(0)} x {height.toFixed(0)}px</p>
+    </div>
+  )
+}
+```
+
+## MutationObserver
+
+Watch DOM changes — useful for detecting third-party script injections.
+
+```tsx
+function useMutationLogger(target: HTMLElement | null) {
+  useEffect(() => {
+    if (!target) return
+
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === "childList") {
+          console.log("Nodes added/removed:", mutation.addedNodes.length)
+        }
+        if (mutation.type === "attributes") {
+          console.log("Attribute changed:", mutation.attributeName)
+        }
+      })
+    })
+
+    observer.observe(target, {
+      childList: true,
+      attributes: true,
+      subtree: true,
+    })
+
+    return () => observer.disconnect()
+  }, [target])
+}
+```
+
+## Geolocation API
+
+```tsx
+function useGeolocation() {
+  const [position, setPosition] = useState<GeolocationPosition | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  const requestLocation = useCallback(() => {
+    if (!navigator.geolocation) {
+      setError("Geolocation not supported")
+      return
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => setPosition(pos),
+      (err) => setError(err.message),
+      { enableHighAccuracy: true, timeout: 5000 },
+    )
+  }, [])
+
+  return { position, error, requestLocation }
+}
+```
+
+## Web Workers
+
+Offload CPU-heavy work from the main thread:
+
+```ts
+// worker.ts — runs in separate thread
+self.onmessage = (event: MessageEvent<number[]>) => {
+  const numbers = event.data
+  // Heavy computation — doesn't block UI
+  const sorted = numbers.sort((a, b) => a - b)
+  self.postMessage(sorted)
+}
+```
+
+```tsx
+// Component — communicates with worker
+function useSortWorker() {
+  const workerRef = useRef<Worker | null>(null)
+  const [result, setResult] = useState<number[] | null>(null)
+
+  useEffect(() => {
+    workerRef.current = new Worker(new URL("./worker.ts", import.meta.url))
+    workerRef.current.onmessage = (e) => setResult(e.data)
+    return () => workerRef.current?.terminate()
+  }, [])
+
+  const sort = (numbers: number[]) => {
+    workerRef.current?.postMessage(numbers)
+  }
+
+  return { result, sort }
+}
+```
+
+## Service Workers (Offline)
+
+```ts
+// sw.ts — intercepts fetch, serves from cache
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open("v1").then((cache) =>
+      cache.addAll(["/", "/index.html", "/styles.css", "/app.js"]),
+    ),
+  )
+})
+
+self.addEventListener("activate", (event) => {
+  // Clean old caches
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((k) => k !== "v1").map((k) => caches.delete(k))),
+    ),
+  )
+})
+
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.match(event.request).then((cached) =>
+      cached ?? fetch(event.request).then((response) => {
+        // Cache new requests
+        const clone = response.clone()
+        caches.open("v1").then((cache) => cache.put(event.request, clone))
+        return response
+      }),
+    ),
+  )
+})
+```
+
+## InteractiveExercise
+
+Build an infinite scroll list using IntersectionObserver.
+
+<InteractiveExercise
+  title="Infinite Scroll with IntersectionObserver"
+  description="Build a paginated list that loads more items as user scrolls"
+  language="tsx"
+  starterCode={`import { useState, useEffect, useRef, useCallback } from "react"
+
+type Item = { id: number; title: string }
+
+async function fetchItems(page: number): Promise<Item[]> {
+  // Simulates API call
+  await new Promise((r) => setTimeout(r, 800))
+  return Array.from({ length: 10 }, (_, i) => ({
+    id: page * 10 + i,
+    title: \`Item \${page * 10 + i}\`,
+  }))
+}
+
+// Step 1: Create a ref for the sentinel element
+// Step 2: Set up IntersectionObserver on the sentinel
+// Step 3: When sentinel is visible (inView), fetch next page
+// Step 4: Append fetched items to list
+// Step 5: Show loading indicator while fetching
+
+export default function InfiniteList() {
+  // Your code here
+  return (
+    <div>
+      <ul>{/* Mapped items */}</ul>
+      <div ref={/* sentinel ref */}>
+        {/* Loading indicator */}
+      </div>
+    </div>
+  )
+}`}
+  solutionCode={`import { useState, useEffect, useRef, useCallback } from "react"
+
+type Item = { id: number; title: string }
+
+async function fetchItems(page: number): Promise<Item[]> {
+  await new Promise((r) => setTimeout(r, 800))
+  return Array.from({ length: 10 }, (_, i) => ({
+    id: page * 10 + i,
+    title: \`Item \${page * 10 + i}\`,
+  }))
+}
+
+export default function InfiniteList() {
+  const [items, setItems] = useState<Item[]>([])
+  const [page, setPage] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const sentinelRef = useRef<HTMLDivElement>(null!)
+
+  const loadMore = useCallback(async () => {
+    if (loading || !hasMore) return
+    setLoading(true)
+    try {
+      const newItems = await fetchItems(page)
+      setItems((prev) => [...prev, ...newItems])
+      setPage((p) => p + 1)
+      if (newItems.length < 10) setHasMore(false)
+    } finally {
+      setLoading(false)
+    }
+  }, [page, loading, hasMore])
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current
+    if (!sentinel) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) loadMore()
+      },
+      { threshold: 0.1 },
+    )
+
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [loadMore])
+
+  return (
+    <div>
+      <ul>
+        {items.map((item) => (
+          <li key={item.id}>
+            {item.title}
+          </li>
+        ))}
+      </ul>
+      <div ref={sentinelRef} style={{ textAlign: "center", padding: 20 }}>
+        {loading && <p>Loading...</p>}
+        {!hasMore && <p>No more items</p>}
+      </div>
+    </div>
+  )
+}`}
+  hints={[
+    "Use IntersectionObserver with threshold: 0.1 to trigger early",
+    "Guard against double-fetch with a loading flag",
+    "hasMore prevents infinite API calls when list is exhausted",
+    "Remember to disconnect observer on cleanup",
+  ]}
+/>
+
+<Quiz questions={[
+  {
+    question: "What advantage does IntersectionObserver have over scroll event listeners?",
+    options: ["It's faster for animations", "No scroll events needed — fires when intersection crosses threshold", "It works on server-side", "It replaces requestAnimationFrame"],
+    correctIndex: 1,
+    explanation: "IntersectionObserver declaratively monitors visibility. No scroll event listeners, no manual position calculation, no throttle/debounce needed.",
+  },
+  {
+    question: "What does ResizeObserver track?",
+    options: ["Window resize events", "Individual element size changes", "Image dimensions", "Font size changes"],
+    correctIndex: 1,
+    explanation: "ResizeObserver watches specific elements for size changes. window.resize only watches the viewport — ResizeObserver tracks any element.",
+  },
+  {
+    question: "Why use Web Workers for heavy computation?",
+    options: ["They run faster than main thread", "They don't block the UI thread", "They can access the DOM", "They replace the event loop"],
+    correctIndex: 1,
+    explanation: "Web Workers run in a separate thread. Heavy computation there doesn't block rendering or event handling on the main thread.",
+  },
+]} />
+
+<LessonSummary points={[
+  "IntersectionObserver: lazy load images, infinite scroll — no scroll listeners",
+  "ResizeObserver: respond to individual element size changes",
+  "MutationObserver: detect DOM changes from scripts or user interaction",
+  "Geolocation API: getCurrentPosition with permission prompt",
+  "Web Workers: offload heavy CPU work off the main thread",
+  "Service Workers: intercept fetch, cache assets for offline support",
+  "Web Storage: localStorage (persistent) vs sessionStorage (tab-scoped)",
+  "All these APIs are native — no libraries required for basic usage",
+]} />

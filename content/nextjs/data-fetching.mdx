@@ -1,0 +1,103 @@
+---
+title: Data Fetching in Next.js
+description: Fetching data with Server Components, streaming, and caching
+order: 5
+---
+
+# Data Fetching
+
+Next.js 16 provides multiple patterns for data fetching.
+
+## Server Component Fetching
+
+Fetch data directly in Server Components:
+
+```tsx
+async function getPost(id: string) {
+  const res = await fetch(`https://api.example.com/posts/${id}`)
+  if (!res.ok) return null
+  return res.json()
+}
+
+export default async function PostPage({ params }: { params: { id: string } }) {
+  const post = await getPost(params.id)
+
+  if (!post) return <div>Post not found</div>
+
+  return (
+    <article>
+      <h1>{post.title}</h1>
+      <p>{post.content}</p>
+    </article>
+  )
+}
+```
+
+## Caching
+
+Next.js caches `fetch` requests by default:
+
+```tsx
+// Cached (default) — deduplicated and cached
+const data = await fetch("https://api.example.com/data")
+
+// Revalidated — cache with background refresh
+const data = await fetch("https://api.example.com/data", {
+  next: { revalidate: 60 }, // seconds
+})
+
+// Uncached — always fresh
+const data = await fetch("https://api.example.com/data", {
+  cache: "no-store",
+})
+```
+
+## Streaming with Suspense
+
+Stream UI as data arrives:
+
+```tsx
+import { Suspense } from "react"
+
+export default function Page() {
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      <Suspense fallback={<div>Loading posts...</div>}>
+        <Posts />
+      </Suspense>
+      <Suspense fallback={<div>Loading comments...</div>}>
+        <Comments />
+      </Suspense>
+    </div>
+  )
+}
+
+async function Posts() {
+  const posts = await fetch("https://api.example.com/posts").then((r) => r.json())
+  return <ul>{posts.map((p) => <li key={p.id}>{p.title}</li>)}</ul>
+}
+```
+
+## Route Handlers
+
+Create API endpoints in the App Router:
+
+```tsx
+// app/api/posts/route.ts
+export async function GET() {
+  const posts = await db.query("SELECT * FROM posts")
+  return Response.json(posts)
+}
+
+export async function POST(request: Request) {
+  const body = await request.json()
+  const post = await db.insert("posts", body)
+  return Response.json(post, { status: 201 })
+}
+```
+
+## Next Steps
+
+- [Server Components](/nextjs/server-components) — RSC deep dive
+- [Full Stack](/fullstack/intro) — Build complete apps

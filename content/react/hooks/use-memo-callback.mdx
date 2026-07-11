@@ -1,0 +1,386 @@
+---
+title: useMemo and useCallback
+description: Optimize performance with memoization — and know when not to use it
+difficulty: advanced
+order: 6
+---
+
+# useMemo and useCallback
+
+Memoization caches a value so it's only recomputed when dependencies change. `useMemo` caches computed values; `useCallback` caches function references.
+
+<LearningObjectives objectives={[
+  "Use useMemo to skip expensive recalculations",
+  "Use useCallback to stabilize function references",
+  "Combine React.memo with useCallback to prevent child re-renders",
+  "Recognize when memoization is overhead, not optimization",
+  "Measure before optimizing — rely on profiling, not intuition"
+]} />
+
+## useMemo: Expensive Computations
+
+`useMemo` caches the result of a computation between renders.
+
+```tsx
+"use client"
+
+import { useState, useMemo } from "react"
+
+export default function SearchList() {
+  const [query, setQuery] = useState("")
+  const [items] = useState(() =>
+    Array.from({ length: 10000 }, (_, i) => `Item ${i}: ${Math.random().toString(36).slice(2)}`)
+  )
+
+  // Without useMemo: filtered runs on every keystroke
+  // With useMemo: filtered only runs when query or items change
+  const filtered = useMemo(() => {
+    console.log("Filtering...")
+    return items.filter((item) =>
+      item.toLowerCase().includes(query.toLowerCase())
+    )
+  }, [query, items])
+
+  return (
+    <div>
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search..."
+      />
+      <ul>
+        {filtered.slice(0, 20).map((item, i) => (
+          <li key={i}>{item}</li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+```
+
+<Alert>
+  <AlertTriangle />
+  <AlertTitle>Don't memoize everything</AlertTitle>
+  <AlertDescription>
+    `useMemo` adds memory overhead (cached result + dependency tracking). For trivial computations like `a + b`, the cache check costs more than recomputing. Profile first — if the computation is under 1ms, skip the memo.
+  </AlertDescription>
+</Alert>
+
+## useCallback: Stable Function References
+
+`useCallback` returns the same function instance between renders unless dependencies change.
+
+```tsx
+"use client"
+
+import { useState, useCallback } from "react"
+
+export default function CallbackDemo() {
+  const [count, setCount] = useState(0)
+
+  // New function every render without useCallback
+  const handleClick = useCallback(() => {
+    setCount((c) => c + 1)
+  }, []) // empty deps — setCount is stable
+
+  return <SlowButton onClick={handleClick} label={`Count: ${count}`} />
+}
+
+// React.memo: only re-render if props change
+const SlowButton = React.memo(function SlowButton({
+  onClick, label
+}: { onClick: () => void; label: string }) {
+  console.log("SlowButton rendered")
+  return <button onClick={onClick}>{label}</button>
+})
+```
+
+## useCallback + React.memo
+
+`useCallback` is most valuable when paired with `React.memo`. Without `useCallback`, a parent re-render creates a new function reference, causing `React.memo` to see a changed prop and re-render the child regardless.
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="bad">Without useCallback</TabsTrigger>
+    <TabsTrigger value="good">With useCallback</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="bad">
+
+```tsx
+function Parent() {
+  const [count, setCount] = useState(0)
+
+  // New function every render — React.memo sees !===
+  const increment = () => setCount((c) => c + 1)
+
+  return <MemoChild onClick={increment} />
+}
+// MemoChild still re-renders because onClick changed!
+```
+
+  </TabsContent>
+
+  <TabsContent value="good">
+
+```tsx
+function Parent() {
+  const [count, setCount] = useState(0)
+
+  // Same function reference across renders
+  const increment = useCallback(
+    () => setCount((c) => c + 1),
+    []
+  )
+
+  return <MemoChild onClick={increment} />
+}
+// MemoChild skips re-render — onClick is stable
+```
+
+  </TabsContent>
+</Tabs>
+
+## When Memoization Hurts
+
+Memoization is not free. Every `useMemo`/`useCallback` call does:
+
+1. Allocates the dependency array on render
+2. Compares previous deps with current deps (`Object.is` on each)
+3. Either returns cached value (fast) or recomputes (slow path)
+
+**Memoization wins when:**
+- Computation is expensive (arrays > 10k items, complex math, deep object creation)
+- Referential stability prevents cascading child re-renders
+
+**Memoization loses when:**
+- Computation is cheap (string concat, simple arithmetic, boolean logic)
+- Dependencies change on every render anyway (memoized value is never reused)
+- Component tree is shallow (no memoized children to benefit)
+
+<Alert>
+  <Lightbulb />
+  <AlertTitle>Measure with React Profiler</AlertTitle>
+  <AlertDescription>
+    Open your browser DevTools > React Profiler. Record interactions. If a component re-renders without prop changes, that's where `useCallback`/`useMemo` helps. If no unnecessary re-renders, adding memoization is pure overhead.
+  </AlertDescription>
+</Alert>
+
+## Real Example: Filterable Product List
+
+Combine useMemo and useCallback to optimize a product list with filtering, sorting, and pagination.
+
+```tsx
+"use client"
+
+import { useState, useMemo, useCallback } from "react"
+
+type Product = { id: number; name: string; price: number; category: string }
+
+export default function ProductList({ products }: { products: Product[] }) {
+  const [category, setCategory] = useState("all")
+  const [sortBy, setSortBy] = useState<"name" | "price">("name")
+
+  // Memoize the filtered product list
+  const visible = useMemo(() => {
+    const filtered = category === "all"
+      ? products
+      : products.filter((p) => p.category === category)
+
+    return [...filtered].sort((a, b) =>
+      sortBy === "name"
+        ? a.name.localeCompare(b.name)
+        : a.price - b.price
+    )
+  }, [products, category, sortBy])
+
+  // Stabilize event handlers
+  const onCategoryChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => setCategory(e.target.value),
+    []
+  )
+  const onSortChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => setSortBy(e.target.value as "name" | "price"),
+    []
+  )
+
+  return (
+    <div>
+      <select value={category} onChange={onCategoryChange}>
+        <option value="all">All</option>
+        <option value="electronics">Electronics</option>
+        <option value="clothing">Clothing</option>
+      </select>
+      <select value={sortBy} onChange={onSortChange}>
+        <option value="name">Name</option>
+        <option value="price">Price</option>
+      </select>
+      <ProductGrid products={visible} />
+    </div>
+  )
+}
+
+const ProductGrid = React.memo(function ProductGrid({
+  products
+}: { products: Product[] }) {
+  return (
+    <ul>
+      {products.map((p) => (
+        <li key={p.id}>{p.name} — ${p.price}</li>
+      ))}
+    </ul>
+  )
+})
+```
+
+## Interactive Exercise
+
+Optimize a list component that renders search results. The list receives a filter function and displays 1000 items. Use `useMemo` for the filtered list and `useCallback` for the filter handler.
+
+<InteractiveExercise
+  title="Optimize Search Results"
+  description="Create a search component with 1000 items. Use useMemo to filter results and useCallback to stabilize the search handler so a memoized result list doesn't re-render on every keystroke."
+  language="tsx"
+  starterCode={`"use client"
+
+import { useState } from "react"
+
+const ITEMS = Array.from({ length: 1000 }, (_, i) => ({
+  id: i,
+  title: \`Item \${i}: \${["Apple", "Banana", "Cherry", "Date", "Elderberry"][i % 5]}\`,
+  description: \`Description for item \${i}\`
+}))
+
+// TODO: use useMemo to filter items, useCallback for onChange
+
+export default function SearchPage() {
+  const [query, setQuery] = useState("")
+
+  return (
+    <div>
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search items..."
+      />
+      <ResultList items={ITEMS} />
+    </div>
+  )
+}
+
+// TODO: wrap with React.memo
+function ResultList({ items }: { items: typeof ITEMS }) {
+  console.log("ResultList rendered")
+  return (
+    <ul>
+      {items.slice(0, 50).map((item) => (
+        <li key={item.id}>{item.title}</li>
+      ))}
+    </ul>
+  )
+}`}
+  solutionCode={`"use client"
+
+import { useState, useMemo, useCallback } from "react"
+
+const ITEMS = Array.from({ length: 1000 }, (_, i) => ({
+  id: i,
+  title: \`Item \${i}: \${["Apple", "Banana", "Cherry", "Date", "Elderberry"][i % 5]}\`,
+  description: \`Description for item \${i}\`
+}))
+
+export default function SearchPage() {
+  const [query, setQuery] = useState("")
+
+  const filtered = useMemo(() => {
+    if (!query.trim()) return ITEMS
+    const lower = query.toLowerCase()
+    return ITEMS.filter(
+      (item) =>
+        item.title.toLowerCase().includes(lower) ||
+        item.description.toLowerCase().includes(lower)
+    )
+  }, [query])
+
+  const onChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value),
+    []
+  )
+
+  return (
+    <div>
+      <input
+        value={query}
+        onChange={onChange}
+        placeholder="Search items..."
+      />
+      <ResultList items={filtered} />
+    </div>
+  )
+}
+
+const ResultList = React.memo(function ResultList({
+  items
+}: { items: typeof ITEMS }) {
+  console.log("ResultList rendered")
+  return (
+    <ul>
+      {items.slice(0, 50).map((item) => (
+        <li key={item.id}>{item.title}</li>
+      ))}
+    </ul>
+  )
+})`}
+  hints={[
+    "Pass query to the filtered useMemo dependency array",
+    "Wrap ResultList with React.memo to skip re-renders when items reference hasn't changed",
+    "The input onChange doesn't need query in deps — use setState's function form or the computed value is managed in filtered useMemo"
+  ]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz questions={[
+  {
+    question: "What does useMemo return?",
+    options: [
+      "A memoized function",
+      "A cached value",
+      "A new component",
+      "A ref object"
+    ],
+    correctIndex: 1,
+    explanation: "useMemo caches and returns the result of a computation between renders. It recalculates only when dependencies change."
+  },
+  {
+    question: "When is useCallback without React.memo useless?",
+    options: [
+      "Always — they're independent",
+      "When the child already re-renders for other reasons",
+      "When the parent re-renders but the child has no props",
+      "When the child is a native HTML element"
+    ],
+    correctIndex: 1,
+    explanation: "useCallback + React.memo only skips re-renders if ALL props stay referentially equal. If other non-memoized props or context values change, the child re-renders anyway."
+  },
+  {
+    question: "Which is a valid reason to skip memoization?",
+    options: [
+      "The computation is trivial (e.g., a + b)",
+      "The component re-renders frequently",
+      "Dependencies are stable",
+      "The app uses TypeScript"
+    ],
+    correctIndex: 0,
+    explanation: "For trivial computations, the overhead of useMemo's dep array comparison often exceeds the cost of recomputation. Profile before optimizing."
+  }
+]} />
+
+<LessonSummary points={[
+  "useMemo caches computed values; useCallback caches function references",
+  "Pair useCallback with React.memo to prevent unnecessary child re-renders",
+  "Memoization adds overhead — only use it when profiling shows a bottleneck",
+  "Cheap computations (< 1ms) and always-changing deps are signs you don't need it",
+  "React DevTools Profiler shows exactly which components re-render and why"
+]} />

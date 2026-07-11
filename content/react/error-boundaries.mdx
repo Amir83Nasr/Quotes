@@ -1,0 +1,284 @@
+---
+title: Error Boundaries
+description: Catch and handle rendering errors with error boundaries
+difficulty: advanced
+order: 6
+---
+
+# Error Boundaries
+
+<LearningObjectives
+  objectives={[
+    "Explain what errors error boundaries catch (build/commit phase, not event handlers)",
+    "Implement componentDidCatch and getDerivedStateFromError",
+    "Build a reusable ErrorBoundary component with granular fallback",
+    "Place error boundaries strategically in your component tree",
+    "Understand React 19 error handling improvements"
+  ]}
+/>
+
+## What Error Boundaries Catch
+
+Error boundaries catch errors during:
+- Rendering (build/commit phase)
+- Lifecycle methods
+- Constructors
+
+They DO NOT catch errors in:
+- Event handlers (use try/catch)
+- Async code (use try/catch or catch on the promise)
+- Server-side rendering
+- Errors thrown in the error boundary itself
+
+<Alert>
+  <AlertTriangle />
+  <AlertTitle>Class components only</AlertTitle>
+  <AlertDescription>
+    Error boundaries must be class components — React lifecycle methods `componentDidCatch` and `getDerivedStateFromError` don't exist on function components. React 19 may change this; for now this is the rule.
+  </AlertDescription>
+</Alert>
+
+## Building a Reusable ErrorBoundary
+
+```tsx
+"use client"
+
+import { Component, ReactNode, ErrorInfo } from "react"
+
+interface Props {
+  children: ReactNode
+  fallback?: ReactNode
+  onError?: (error: Error, info: ErrorInfo) => void
+}
+
+interface State {
+  hasError: boolean
+  error?: Error
+}
+
+export class ErrorBoundary extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props)
+    this.state = { hasError: false }
+  }
+
+  static getDerivedStateFromError(error: Error): State {
+    // Update state so next render shows fallback
+    return { hasError: true, error }
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    // Log to error reporting service
+    console.error("ErrorBoundary caught:", error, info)
+    this.props.onError?.(error, info)
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        this.props.fallback ?? (
+          <div className="rounded border border-red-300 bg-red-50 p-4">
+            <h2 className="text-red-800 font-semibold">Something went wrong</h2>
+            <p className="text-red-600 text-sm">{this.state.error?.message}</p>
+          </div>
+        )
+      )
+    }
+
+    return this.props.children
+  }
+}
+```
+
+## Placement Strategies
+
+Granular boundaries keep one failure from taking down the whole page.
+
+```tsx
+function App() {
+  return (
+    <div>
+      <Header />
+      <ErrorBoundary fallback={<p>Sidebar crashed</p>}>
+        <Sidebar />
+      </ErrorBoundary>
+      <ErrorBoundary fallback={<p>Content unavailable</p>}>
+        <MainContent />
+      </ErrorBoundary>
+      <Footer />
+    </div>
+  )
+}
+```
+
+Strategy: wrap each feature or independent section. **One error boundary per route** is too coarse — one broken widget takes the whole page.
+
+## Error Boundaries and Suspense
+
+Combine with Suspense for robust UX:
+
+```tsx
+function UserDashboard() {
+  return (
+    <ErrorBoundary fallback={<p>Failed to load profile</p>}>
+      <Suspense fallback={<ProfileSkeleton />}>
+        <UserProfile />
+      </Suspense>
+    </ErrorBoundary>
+  )
+}
+```
+
+When the data fetch or lazy load fails, Suspense triggers the error boundary above it.
+
+## HOC Pattern for Boundaries
+
+Wrap any component with boundary protection:
+
+```tsx
+function withErrorBoundary<P extends object>(
+  Component: React.ComponentType<P>,
+  fallback?: ReactNode
+) {
+  return function WithErrorBoundary(props: P) {
+    return (
+      <ErrorBoundary fallback={fallback}>
+        <Component {...props} />
+      </ErrorBoundary>
+    )
+  }
+}
+
+const SafeWidget = withErrorBoundary(Widget, <p>Widget unavailable</p>)
+```
+
+## React 19 Improvements
+
+In React 19, error handling becomes more ergonomic:
+- `onCaughtError` and `onUncaughtError` root options for global error reporting
+- Better integration with Suspense — errors during streaming server rendering are handled gracefully
+
+For now, class component boundaries + `<Suspense>` is the battle-tested pattern.
+
+## Interactive Exercise
+
+<InteractiveExercise
+  title="Wrap a Broken Component with ErrorBoundary"
+  description="Create a component that throws on render and wrap it with ErrorBoundary to handle the crash gracefully."
+  starterCode={`"use client"
+
+import { Component, type ReactNode, type ErrorInfo } from "react"
+
+// 1. Build an ErrorBoundary class component
+// 2. Create a component that throws when a prop "shouldThrow" is true
+// 3. Show fallback UI when the error is caught
+
+export default function Exercise() {
+  return null // Your error-boundary-wrapped component here
+}`}
+  language="tsx"
+  solutionCode={`"use client"
+
+import { Component, type ReactNode, type ErrorInfo } from "react"
+
+interface ErrorBoundaryProps {
+  children: ReactNode
+  fallback: ReactNode
+}
+interface ErrorBoundaryState {
+  hasError: boolean
+}
+
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props)
+    this.state = { hasError: false }
+  }
+  static getDerivedStateFromError(): ErrorBoundaryState {
+    return { hasError: true }
+  }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error("Caught:", error, info)
+  }
+  render() {
+    if (this.state.hasError) return this.props.fallback
+    return this.props.children
+  }
+}
+
+function Bomb({ shouldThrow }: { shouldThrow: boolean }) {
+  if (shouldThrow) throw new Error("💥 Component exploded!")
+  return <p>All good here</p>
+}
+
+export default function Exercise() {
+  return (
+    <ErrorBoundary fallback={<p className="text-red-500">Oops, something crashed</p>}>
+      <Bomb shouldThrow />
+    </ErrorBoundary>
+  )
+}`}
+  hints={[
+    "ErrorBoundary must be a class component with getDerivedStateFromError",
+    "getDerivedStateFromError returns new state that triggers fallback render",
+    "componentDidCatch receives the error for logging",
+    "The Bomb component uses if(shouldThrow) throw new Error(...)"
+  ]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz
+  questions={[
+    {
+      question: "What types of components can be error boundaries?",
+      options: ["Function components", "Class components", "Both", "Neither"],
+      correctIndex: 1,
+      explanation: "Error boundaries require getDerivedStateFromError and componentDidCatch, which are class-component lifecycle methods."
+    },
+    {
+      question: "Which errors does an error boundary NOT catch?",
+      options: [
+        "Errors in the render method",
+        "Errors in lifecycle methods",
+        "Errors in event handlers",
+        "Errors in constructors"
+      ],
+      correctIndex: 2,
+      explanation: "Event handler errors don't happen during React's render phase. Use try/catch inside the handler."
+    },
+    {
+      question: "What is the recommended placement strategy for error boundaries?",
+      options: [
+        "One boundary wrapping the entire app",
+        "Granular boundaries per feature or independent section",
+        "One boundary per file",
+        "Error boundaries are only for development"
+      ],
+      correctIndex: 1,
+      explanation: "Granular boundaries prevent a single crash from taking down unrelated parts of the page."
+    },
+    {
+      question: "What does getDerivedStateFromError return?",
+      options: [
+        "The error object to display",
+        "An updated state object to trigger fallback render",
+        "A boolean indicating if error should be suppressed",
+        "The component's new props"
+      ],
+      correctIndex: 1,
+      explanation: "It returns new state (like { hasError: true }) so the next render shows the fallback UI."
+    }
+  ]}
+/>
+
+<LessonSummary
+  points={[
+    "Error boundaries catch rendering/lifecycle errors — not event handlers or async code",
+    "Must use class components with getDerivedStateFromError and componentDidCatch",
+    "Place boundaries granularly to isolate failures to specific features",
+    "Combine with Suspense for robust UX during loading failures",
+    "HOC pattern (withErrorBoundary) makes wrapping any component easy"
+  ]}
+/>

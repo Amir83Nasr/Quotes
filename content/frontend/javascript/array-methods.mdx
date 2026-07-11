@@ -1,0 +1,121 @@
+---
+title: Array Methods Deep Dive
+description: map, filter, reduce, chaining, immutability
+order: 9
+---
+
+# Array Methods Deep Dive
+
+<LearningObjectives objectives={["Use map, filter, reduce, find, some, every, flat, flatMap", "Chain methods for readable pipelines", "Understand mutable vs immutable", "Use reduce as multi-purpose tool"]} />
+
+## Core Methods
+
+```javascript
+const n = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+n.map(x => x * 2)             // [2, 4, 6, ... 20] — transform each
+n.filter(x => x % 2 === 0)    // [2, 4, 6, 8, 10] — keep matches
+n.find(x => x > 5)            // 6 — first match
+n.some(x => x % 2 === 0)      // true — any match?
+n.every(x => x > 0)           // true — all match?
+```
+
+## reduce
+
+```javascript
+[1, 2, 3, 4, 5].reduce((a, n) => a + n, 0)                    // 15 — sum
+[1, 2, 3].reduce((a, n) => [...a, n * 2], [])                  // [2, 4, 6] — map
+[1, 2, 3].reduce((a, n) => n % 2 ? a : [...a, n], [])          // [2] — filter
+// Group objects by property
+[{name:"A",r:"admin"},{name:"B",r:"editor"}].reduce((a, p) => ((a[p.r] ??= []).push(p), a), {})
+```
+
+## flat & flatMap
+
+```javascript
+[1, [2, [3]]].flat()           // [1, 2, [3]]
+[1, [2, [3]]].flat(Infinity)   // [1, 2, 3]
+["hello world"].flatMap(s => s.split(" "))  // ["hello", "world"]
+[1, -2, 3].flatMap(n => n > 0 ? [n * 2] : [])  // [2, 6] — map + filter
+```
+
+## Method Chaining
+
+<Tabs><TabsList><TabsTrigger value="i">Imperative</TabsTrigger><TabsTrigger value="d">Declarative</TabsTrigger></TabsList><TabsContent value="i">
+
+```javascript
+const orders = [{ item:"Laptop", price:1200, qty:1 }, { item:"Mouse", price:25, qty:3 }, { item:"Kb", price:80, qty:0 }]
+const r = []
+for (const o of orders) { if (o.qty > 0 && o.price > 50) r.push({ item: o.item, total: o.price * o.qty }) }
+r.sort((a, b) => b.total - a.total)
+```
+
+</TabsContent><TabsContent value="d">
+
+```javascript
+orders.filter(o => o.qty > 0 && o.price > 50)
+  .map(o => ({ item: o.item, total: o.price * o.qty }))
+  .sort((a, b) => b.total - a.total)
+```
+
+</TabsContent></Tabs>
+
+<Alert><Lightbulb /><AlertTitle>Performance</AlertTitle><AlertDescription>Chaining creates intermediate arrays. Fine <10K items. For huge data use single-pass reduce.</AlertDescription></Alert>
+
+## Immutable vs Mutable
+
+```javascript
+[3, 1, 2].sort()                    // [1, 2, 3] — mutates!
+[...[3, 1, 2]].sort()               // safe copy
+[3, 1, 2].toSorted()                // ES2023 — immutable
+```
+
+<Alert><AlertTriangle /><AlertTitle>Gotcha</AlertTitle><AlertDescription>`sort()` defaults to string sort: `[1, 10, 2].sort()` → `[1, 10, 2]`. Always pass `(a, b) => a - b`. Also mutates — copy first.</AlertDescription></Alert>
+
+## Interactive Exercise
+
+<InteractiveExercise
+  title="Data Pipeline"
+  description="Write `processTransactions` that filters completed, converts USD→EUR (0.92), groups by category with totals."
+  starterCode={`const tx = [
+  { id:1,amount:100,currency:"USD",category:"food",status:"completed" },
+  { id:2,amount:50,currency:"EUR",category:"transport",status:"completed" },
+]
+function processTransactions(txns, rate = 0.92) {
+  // Return { category: totalEUR }
+}`}
+  language="javascript"
+  hints={["Chain filter → reduce for one-pass", "Use || 0 for accumulator init per category"]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz questions={[
+  {
+    question: "flatMap(fn) does what?",
+    options: ["Maps then flattens one level", "Flattens then maps", "map + flat()"],
+    correctIndex: 0,
+    explanation: "flatMap maps then flattens one level efficiently."
+  },
+  {
+    question: "Why is arr.sort() alone buggy?",
+    options: ["Mutates", "String sort default", "All of the above"],
+    correctIndex: 2,
+    explanation: "Mutates, default string sort. Use toSorted() or copy + comparator."
+  },
+  {
+    question: "Which returns first matching element?",
+    options: ["filter", "find", "some"],
+    correctIndex: 1,
+    explanation: "find returns first match (or undefined). filter returns all."
+  }
+]} />
+
+## Lesson Summary
+
+<LessonSummary points={[
+  "map (transform), filter (keep), find (first), reduce (swiss army knife)",
+  "flatMap maps + flattens one level; flat flattens arbitrary depth",
+  "Chain methods for declarative data pipelines",
+  "sort mutates — use toSorted() or copy; always pass comparator"
+]} />

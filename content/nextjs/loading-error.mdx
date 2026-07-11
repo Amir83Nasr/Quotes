@@ -1,0 +1,271 @@
+---
+title: Loading & Error UI
+description: Loading skeletons, error boundaries, and streaming states in Next.js
+difficulty: intermediate
+order: 6
+---
+
+# Loading & Error UI
+
+<LearningObjectives objectives={[
+  "Create loading.tsx for instant loading states",
+  "Build error.tsx with reset() and error boundaries",
+  "Implement global-error.tsx for root-level errors",
+  "Use Suspense boundaries within pages for streaming",
+  "Design streaming HTML with loading skeletons"
+]} />
+
+## Loading.tsx
+
+Create `loading.tsx` next to `page.tsx` to show an immediate loading state:
+
+```tsx
+// app/dashboard/loading.tsx
+export default function DashboardLoading() {
+  return (
+    <div className="space-y-4">
+      <div className="h-8 bg-gray-200 rounded animate-pulse w-48" />
+      <div className="grid gap-4 md:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="h-32 bg-gray-200 rounded animate-pulse" />
+        ))}
+      </div>
+    </div>
+  )
+}
+```
+
+## Error.tsx
+
+Errors are caught by error boundaries. The `error.tsx` file lets the user retry:
+
+```tsx
+"use client"
+
+export default function DashboardError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string }
+  reset: () => void
+}) {
+  return (
+    <div className="p-6 text-center">
+      <h2 className="text-xl font-bold text-red-600">Something went wrong</h2>
+      <p className="text-gray-600 mt-2">{error.message}</p>
+      <button
+        onClick={() => reset()}
+        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+      >
+        Try again
+      </button>
+    </div>
+  )
+}
+```
+
+<Alert>
+  <AlertTitle>Error Boundaries Are Client Components</AlertTitle>
+  <AlertDescription>
+    error.tsx must be a Client Component ("use client"). The error boundary only catches errors in its segment and below — not in the layout that wraps it.
+  </AlertDescription>
+</Alert>
+
+## Global Error
+
+For root-level layout errors, use `global-error.tsx`:
+
+```tsx
+"use client"
+
+export default function GlobalError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string }
+  reset: () => void
+}) {
+  return (
+    <html>
+      <body>
+        <h1>Critical Error</h1>
+        <button onClick={() => reset()}>Reload</button>
+      </body>
+    </html>
+  )
+}
+```
+
+## Skeleton Patterns
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="card">Card Skeleton</TabsTrigger>
+    <TabsTrigger value="table">Table Skeleton</TabsTrigger>
+    <TabsTrigger value="page">Page Skeleton</TabsTrigger>
+  </TabsList>
+  <TabsContent value="card">
+    ```tsx
+    function CardSkeleton() {
+      return (
+        <div className="border rounded-lg p-4 space-y-3">
+          <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" />
+          <div className="h-3 bg-gray-200 rounded animate-pulse" />
+          <div className="h-3 bg-gray-200 rounded animate-pulse w-1/2" />
+        </div>
+      )
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="table">
+    ```tsx
+    function TableSkeleton({ rows = 5 }: { rows?: number }) {
+      return (
+        <div className="space-y-2">
+          {Array.from({ length: rows }).map((_, i) => (
+            <div key={i} className="flex gap-4">
+              <div className="h-4 bg-gray-200 rounded animate-pulse w-1/4" />
+              <div className="h-4 bg-gray-200 rounded animate-pulse w-1/2" />
+              <div className="h-4 bg-gray-200 rounded animate-pulse w-1/4" />
+            </div>
+          ))}
+        </div>
+      )
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="page">
+    ```tsx
+    function PageSkeleton() {
+      return (
+        <div className="space-y-6">
+          <div className="h-8 bg-gray-200 rounded animate-pulse w-64" />
+          <div className="grid gap-4 md:grid-cols-2">
+            <CardSkeleton />
+            <CardSkeleton />
+          </div>
+          <TableSkeleton />
+        </div>
+      )
+    }
+    ```
+  </TabsContent>
+</Tabs>
+
+## Suspense Within Pages
+
+Use React Suspense for streaming parts of a page independently:
+
+```tsx
+import { Suspense } from "react"
+import { PostSkeleton } from "./skeletons"
+
+export default function BlogPage() {
+  return (
+    <div>
+      <h1>Blog</h1>
+      <Suspense fallback={<PostSkeleton />}>
+        <BlogPosts />
+      </Suspense>
+    </div>
+  )
+}
+
+async function BlogPosts() {
+  const posts = await fetch("https://api.example.com/posts").then((r) => r.json())
+  return <ul>{/* render posts */}</ul>
+}
+```
+
+## Interactive Exercise
+
+<InteractiveExercise
+  title="Page with Loading Skeleton + Error Boundary"
+  description="Create a user profile page that shows a skeleton while data loads and an error boundary with retry."
+  starterCode={`"use client"
+// Build a UserProfile component that:
+// 1. Shows a skeleton while loading
+// 2. Displays user data when fetched
+// 3. Shows an error state if fetch fails with retry button
+import { useState, useEffect } from "react"
+
+export default function UserProfile({ userId }: { userId: string }) {
+  // TODO: Implement loading, data, and error states
+  return <div>{/* your code */}</div>
+}`}
+  solutionCode={`"use client"
+import { useState, useEffect } from "react"
+
+type User = { id: string; name: string; email: string }
+
+export default function UserProfile({ userId }: { userId: string }) {
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  async function fetchUser() {
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await fetch(\`/api/users/\${userId}\`)
+      if (!res.ok) throw new Error("Failed to fetch user")
+      const data = await res.json()
+      setUser(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown error")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => { fetchUser() }, [userId])
+
+  if (loading) return <div className="space-y-2 animate-pulse"><div className="h-6 bg-gray-200 rounded w-48" /><div className="h-4 bg-gray-200 rounded w-64" /></div>
+  if (error) return <div className="text-red-600 p-4 border rounded"><p>{error}</p><button onClick={fetchUser} className="mt-2 px-3 py-1 bg-blue-600 text-white rounded">Retry</button></div>
+
+  return <div><h2>{user!.name}</h2><p>{user!.email}</p></div>
+}`}
+  hints={["Track three states: loading, error, data", "Use try/catch in the fetch function", "animate-pulse is Tailwind's skeleton animation utility"]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz
+  questions={[
+    {
+      question: "Why must error.tsx be a Client Component?",
+      options: [
+        "Because errors only occur on the client",
+        "Because error boundaries require React hooks like useState",
+        "Because error.tsx is not a React component",
+        "It doesn't have to be — it works as a Server Component too",
+      ],
+      correctIndex: 1,
+      explanation: "Error boundaries use client-side React APIs (hooks, event handlers) to catch rendering errors and manage retry state via reset().",
+    },
+    {
+      question: "Where should global-error.tsx be placed?",
+      options: [
+        "In any route segment where errors might occur",
+        "At the root app/ level only",
+        "Inside the error.tsx file as a named export",
+        "In the public/ directory",
+      ],
+      correctIndex: 1,
+      explanation: "global-error.tsx is placed at app/ to handle errors in the root layout itself, which error.tsx cannot do since it's rendered inside the layout.",
+    },
+  ]}
+/>
+
+## Lesson Summary
+
+<LessonSummary
+  points={[
+    "loading.tsx shows immediate fallback UI while the page loads",
+    "error.tsx catches segment errors and provides reset() for retry",
+    "global-error.tsx catches root layout errors — must include html/body tags",
+    "Suspense enables streaming parts of a page independently",
+    "Skeleton animations (animate-pulse) give visual feedback during loading",
+  ]}
+/>

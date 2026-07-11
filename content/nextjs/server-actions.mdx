@@ -1,0 +1,245 @@
+---
+title: Server Actions and Mutations
+description: Mutate server data directly from client components with Server Actions
+difficulty: advanced
+order: 10
+---
+
+# Server Actions and Mutations
+
+<LearningObjectives objectives={[
+  "Use 'use server' directive for server actions",
+  "Differentiate server actions from route handlers",
+  "Build form actions with progressive enhancement",
+  "Revalidate data after mutations with revalidatePath and revalidateTag",
+  "Handle errors gracefully in server actions"
+]} />
+
+## "use server" Directive
+
+Server Actions are functions that run on the server but can be called from client code:
+
+```tsx
+// app/actions.ts
+"use server"
+
+export async function createPost(formData: FormData) {
+  const title = formData.get("title") as string
+  const content = formData.get("content") as string
+
+  await db.query("INSERT INTO posts (title, content) VALUES ($1, $2)", [title, content])
+}
+```
+
+## Inline Server Action
+
+Define the action directly in the component file:
+
+```tsx
+// app/posts/new/page.tsx
+export default function NewPostPage() {
+  async function createPost(formData: FormData) {
+    "use server"
+
+    const title = formData.get("title")
+    const content = formData.get("content")
+    await db.query("INSERT INTO posts (title, content) VALUES ($1, $2)", [title, content])
+  }
+
+  return (
+    <form action={createPost}>
+      <input name="title" required />
+      <textarea name="content" required />
+      <button type="submit">Create</button>
+    </form>
+  )
+}
+```
+
+## Server Action vs Route Handler
+
+| Aspect | Server Action | Route Handler |
+|--------|--------------|---------------|
+| Invocation | Direct function call | HTTP request |
+| URL | None (RPC-style) | /api/... endpoint |
+| Progressive enhancement | Built-in | Manual |
+| Revalidation | revalidatePath / revalidateTag | Manual fetch |
+| Best for | Form submissions, mutations | Webhooks, external API consumers |
+
+## Form with Revalidation
+
+```tsx
+"use client"
+
+import { revalidatePath } from "next/cache"
+
+export default function CreatePostForm() {
+  async function submit(formData: FormData) {
+    "use server"
+
+    const res = await fetch("https://api.example.com/posts", {
+      method: "POST",
+      body: JSON.stringify({ title: formData.get("title") }),
+    })
+
+    if (!res.ok) {
+      return { error: "Failed to create post" }
+    }
+
+    revalidatePath("/posts")   // refresh the posts page
+    return { success: true }
+  }
+
+  return (
+    <form action={submit}>
+      <input name="title" required />
+      <button type="submit">Create</button>
+    </form>
+  )
+}
+```
+
+<Alert>
+  <AlertTitle>Revalidation is Critical</AlertTitle>
+  <AlertDescription>
+    Mutations without revalidation leave the UI stale. Always call revalidatePath() or revalidateTag() after successful mutations, or pass a revalidating action to the client.
+  </AlertDescription>
+</Alert>
+
+## Error Handling
+
+```tsx
+"use server"
+
+import { revalidateTag } from "next/cache"
+
+export async function addComment(prevState: unknown, formData: FormData) {
+  const postId = formData.get("postId")
+  const text = formData.get("text")
+
+  if (!text || typeof text !== "string" || text.trim().length === 0) {
+    return { error: "Comment text is required" }
+  }
+
+  if (text.length > 500) {
+    return { error: "Comment must be under 500 characters" }
+  }
+
+  try {
+    await db.query("INSERT INTO comments (post_id, text) VALUES ($1, $2)", [postId, text])
+    revalidateTag(`comments-${postId}`)
+    return { success: true }
+  } catch (err) {
+    return { error: "Database error — please try again" }
+  }
+}
+```
+
+## Progressive Enhancement
+
+Server Actions with `<form>` work even without JavaScript:
+
+```tsx
+// app/newsletter/page.tsx
+export default function NewsletterPage() {
+  async function subscribe(formData: FormData) {
+    "use server"
+    const email = formData.get("email")
+    await db.query("INSERT INTO subscribers (email) VALUES ($1)", [email])
+    revalidatePath("/newsletter")
+  }
+
+  return (
+    <form action={subscribe}>
+      <input type="email" name="email" required />
+      <button type="submit">Subscribe</button>
+    </form>
+  )
+}
+```
+
+## Interactive Exercise
+
+<InteractiveExercise
+  title="Form with Server Action + Revalidation"
+  description="Build a comment form that uses a server action, validates input, inserts data, and revalidates the comments list."
+  starterCode={`"use server"
+// app/actions/comments.ts
+// Create a server action addComment that:
+// 1. Validates the form data (text required, max 1000 chars)
+// 2. Inserts into database (simulate with console.log + revalidate)
+// 3. Returns success or error
+// 4. Revalidates the comments
+
+export async function addComment(formData: FormData) {
+  // TODO: Implement validated server action
+}`}
+  solutionCode={`"use server"
+import { revalidateTag } from "next/cache"
+
+export async function addComment(formData: FormData) {
+  const postId = formData.get("postId")
+  const text = formData.get("text")
+
+  if (!text || typeof text !== "string" || text.trim() === "") {
+    return { error: "Comment text is required" }
+  }
+
+  if (text.length > 1000) {
+    return { error: "Comment must be under 1000 characters" }
+  }
+
+  try {
+    // Simulated DB insert
+    console.log(\`Inserting comment for post \${postId}: \${text}\`)
+    revalidateTag(\`comments-\${postId}\`)
+    return { success: true }
+  } catch {
+    return { error: "Failed to save comment" }
+  }
+}`}
+  hints={["Always validate inputs in server actions — they can be called outside the form", "Return error objects instead of throwing for form UX", "Use revalidateTag to target specific cached data"]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz
+  questions={[
+    {
+      question: "When would you use a route handler instead of a server action?",
+      options: [
+        "Server actions are always better — never use route handlers",
+        "When you need to expose an API for external consumers or webhooks",
+        "When performance is critical",
+        "When the mutation involves file uploads",
+      ],
+      correctIndex: 1,
+      explanation: "Route handlers are HTTP endpoints — use them when external clients (SPA, mobile app, webhooks) need API access. Server actions are RPC-style and best for form mutations within your Next.js app.",
+    },
+    {
+      question: "What does revalidateTag() do?",
+      options: [
+        "Clears the entire Next.js cache",
+        "Invalidates all cached fetch requests with a specific tag",
+        "Re-runs all server components",
+        "Deletes the database records",
+      ],
+      correctIndex: 1,
+      explanation: "revalidateTag invalidates all cached fetch requests that have a specific tag (set via next: { tags: [...] }). This is more granular than revalidatePath which targets by URL pattern.",
+    },
+  ]}
+/>
+
+## Lesson Summary
+
+<LessonSummary
+  points={[
+    "Server Actions are functions with 'use server' that run on the server",
+    "Can be defined inline in components or in separate files",
+    "Forms with server actions work without JavaScript (progressive enhancement)",
+    "Always revalidate after mutations — use revalidatePath or revalidateTag",
+    "Return error objects for form-level error handling instead of throwing",
+    "Use route handlers for external API consumers, server actions for internal mutations",
+  ]}
+/>

@@ -1,0 +1,289 @@
+---
+title: Utility Types Deep Dive
+description: Master built-in utility types and create your own
+difficulty: advanced
+order: 7
+---
+
+# Utility Types Deep Dive
+
+Built-in utility types solve common transformations. Understanding how they work lets you compose and create your own.
+
+<LearningObjectives objectives={[
+  "Use Partial, Required, Pick, Omit, Record for object transformations",
+  "Apply Extract, Exclude, NonNullable for union filtering",
+  "Extract types with ReturnType, Parameters, Awaited",
+  "Compose multiple utility types together",
+  "Create custom utility types",
+  "Use string manipulation types (Uppercase, Capitalize, ...)"
+]} />
+
+## Object Shape Utilities
+
+```ts
+interface Todo {
+  title: string
+  description: string
+  completed: boolean
+  createdAt: Date
+}
+
+// Partial — all optional
+type PartialTodo = Partial<Todo>
+
+// Required — all required (removes ?)
+type RequiredTodo = Required<PartialTodo>
+
+// Pick — subset
+type TodoPreview = Pick<Todo, "title" | "completed">
+// { title: string; completed: boolean }
+
+// Omit — exclude keys
+type TodoWithoutDates = Omit<Todo, "createdAt">
+// { title: string; description: string; completed: boolean }
+
+// Record — key-value map
+type PageMap = Record<string, Todo>
+type WeekTodos = Record<"mon" | "tue" | "wed", Todo>
+```
+
+## Union Filtering Utilities
+
+```ts
+type Status = "idle" | "loading" | "success" | "error" | 200 | 400 | 500
+
+// Extract — pick members matching a type
+type StringStatus = Extract<Status, string>
+// "idle" | "loading" | "success" | "error"
+
+// Exclude — remove members matching a type
+type AsyncStatus = Exclude<Status, 200 | 400 | 500>
+// "idle" | "loading" | "success" | "error"
+
+// NonNullable — remove null and undefined
+type Maybe = string | number | null | undefined
+type Definitely = NonNullable<Maybe>
+// string | number
+```
+
+## Function Type Utilities
+
+```ts
+function createUser(name: string, age: number, admin?: boolean): User {
+  return { id: crypto.randomUUID(), name, age }
+}
+
+// ReturnType — what a function returns
+type UserType = ReturnType<typeof createUser>
+// User
+
+// Parameters — tuple of parameter types
+type CreateUserParams = Parameters<typeof createUser>
+// [name: string, age: number, admin?: boolean]
+
+// ConstructorParameters — for classes
+class Logger { constructor(private prefix: string, private level: string) {} }
+type LoggerParams = ConstructorParameters<typeof Logger>
+// [prefix: string, level: string]
+
+// InstanceType — instance type from constructor
+type LoggerInstance = InstanceType<typeof Logger>
+// Logger
+```
+
+## Awaited — Unwrap Promises
+
+```ts
+type AsyncData = Promise<Promise<string>>
+type Data = Awaited<AsyncData>
+// string (recursively unwraps)
+
+// Real-world: infer API response types
+async function fetchUser(id: string): Promise<{ name: string; email: string }> {
+  const res = await fetch(`/api/users/${id}`)
+  return res.json()
+}
+type FetchedUser = Awaited<ReturnType<typeof fetchUser>>
+// { name: string; email: string }
+```
+
+## Before and After: Utilities in Action
+
+<Tabs defaultValue="before">
+<TabsList>
+<TabsTrigger value="before">Before</TabsTrigger>
+<TabsTrigger value="after">After</TabsTrigger>
+</TabsList>
+<TabsContent value="before">
+
+```ts
+interface FormValues {
+  name: string
+  email: string
+  age: number
+  subscribe: boolean
+}
+
+// Manual partial — fragile, verbose
+interface PartialForm {
+  name?: string
+  email?: string
+  age?: number
+  subscribe?: boolean
+}
+
+// Manual error type — repetitive
+type FormError = Partial<Record<keyof FormValues, string>>
+```
+
+</TabsContent>
+<TabsContent value="after">
+
+```ts
+interface FormValues {
+  name: string
+  email: string
+  age: number
+  subscribe: boolean
+}
+
+// One-liner
+type PartialForm = Partial<FormValues>
+
+// Composed: all keys map to error messages
+type FormError = Partial<Record<keyof FormValues, string>>
+// { name?: string; email?: string; age?: string; subscribe?: string }
+
+// Composed: pick form keys for a step
+type StepOneFields = Pick<FormValues, "name" | "email">
+```
+
+</TabsContent>
+</Tabs>
+
+## Creating Custom Utility Types
+
+```ts
+// ByKeys — pick keys by value type
+type ByKeys<T, V> = {
+  [K in keyof T]: T[K] extends V ? K : never
+}[keyof T]
+// Usage: pick keys whose values are strings
+type StringKeys<T> = ByKeys<T, string>
+
+interface Post { id: number; title: string; slug: string; published: boolean }
+type PostStringKeys = StringKeys<Post>
+// "title" | "slug"
+
+// Spread — merge two types (second wins on conflict)
+type Spread<A, B> = Omit<A, keyof B> & B
+type Merged = Spread<{ a: string; b: number }, { b: string; c: boolean }>
+// { a: string; b: string; c: boolean }
+
+// Nullable — make any type null
+type Nullable<T> = T | null
+
+// AsyncReturnType — unwrap Promise from return type
+type AsyncReturnType<T extends (...args: unknown[]) => unknown> =
+  Awaited<ReturnType<T>>
+```
+
+## String Manipulation Types
+
+```ts
+type Greeting = "helloWorld"
+type Upper = Uppercase<Greeting>       // "HELLOWORLD"
+type Lower = Lowercase<Upper>          // "helloworld"
+type Capital = Capitalize<Greeting>    // "HelloWorld"
+type Uncap = Uncapitalize<Capital>     // "helloWorld"
+
+// Real-world: generated API action types
+type Entity = "user" | "post" | "comment"
+type Action = "create" | "read" | "update" | "delete"
+type APIAction = `${Uppercase<Action>}_${Uppercase<Entity>}`
+// "CREATE_USER" | "CREATE_POST" | "CREATE_COMMENT" | "READ_USER" | ...
+```
+
+<InteractiveExercise
+  title="Typed API Response Handler"
+  description="Define a generic API response type using utility types. Given a base data shape, add meta, pagination, and error fields. Then create a type-safe fetch function."
+  language="typescript"
+  starterCode={`interface APIResponse<T> {
+  data: T
+  meta?: {
+    page: number
+    totalPages: number
+  }
+  error?: { message: string; code: number }
+}
+
+// Create a partial update type for T
+type UpdatePayload<T> = // use Partial and Pick
+
+// Create a response for a list endpoint
+type ListResponse<T> = // use Pick and Omit from APIResponse
+
+// Try: list of users
+interface User { id: number; name: string; email: string }
+type UserList = ListResponse<User>[]`}
+  solutionCode={`interface APIResponse<T> {
+  data: T
+  meta?: { page: number; totalPages: number }
+  error?: { message: string; code: number }
+}
+
+type UpdatePayload<T> = Partial<Pick<T, Exclude<keyof T, "id">>>
+type ListResponse<T> = Omit<APIResponse<T[]>, "error">
+
+interface User { id: number; name: string; email: string }
+
+type UserUpdate = UpdatePayload<User>
+// { name?: string; email?: string }
+
+type UserList = ListResponse<User>
+// { data: User[]; meta?: { page: number; totalPages: number } }`}
+  hints={[
+    "Use Partial to make all properties optional.",
+    "Use Exclude<keyof T, 'id'> to exclude 'id' from the keys.",
+    "Use Omit<Type, 'error'> to create a success-only version.",
+    "Compose: Pick and Partial for updates, Omit for success responses."
+  ]}
+/>
+
+<Quiz
+  questions={[
+    {
+      question: "Which utility type would you use to get a function's parameter types?",
+      options: ["ReturnType", "Parameters", "Awaited", "InstanceType"],
+      correctIndex: 1,
+      explanation: "Parameters<typeof fn> returns a tuple of the function's parameter types."
+    },
+    {
+      question: "What does `Omit<T, K>` do internally?",
+      options: ["Pick<T, K>", "Pick<T, Exclude<keyof T, K>>", "Partial<Pick<T, K>>", "Exclude<T, K>"],
+      correctIndex: 1,
+      explanation: "Omit uses Pick<T, Exclude<keyof T, K>> — it excludes keys K and picks the rest."
+    },
+    {
+      question: "How does Awaited<T> handle nested Promises?",
+      options: ["Doesn't support them", "Unwraps one level only", "Recursively unwraps all Promise layers", "Throws an error"],
+      correctIndex: 2,
+      explanation: "Awaited<T> recursively unwraps Promise<Promise<...T>> until it reaches a non-Promise type."
+    },
+    {
+      question: "What is the result of Exclude<string | number | boolean, string | number>?",
+      options: ["string", "boolean", "string | boolean", "never"],
+      correctIndex: 1,
+      explanation: "Exclude removes string and number from the union, leaving only boolean."
+    },
+  ]}
+/>
+
+<LessonSummary points={[
+  "Partial, Required, Pick, Omit, Record transform object shapes.",
+  "Extract, Exclude, NonNullable filter union members.",
+  "ReturnType, Parameters, Awaited extract from functions and promises.",
+  "Utility types compose together (e.g., Partial<Pick<T, K>>).",
+  "String manipulation types (Uppercase, Capitalize, ...) transform string literals.",
+  "Create custom utilities by combining mapped types, conditionals, and key remapping."
+]} />

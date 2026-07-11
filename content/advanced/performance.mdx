@@ -1,0 +1,64 @@
+---
+title: Performance Optimization
+description: Optimizing React apps — memoization, lazy loading, and profiling
+order: 3
+---
+
+# Performance Optimization
+
+Performance is a feature. Optimize judiciously.
+
+## React.memo
+
+```tsx
+import { memo } from "react"
+
+const ExpensiveList = memo(function ExpensiveList({ items }: { items: string[] }) {
+  return (
+    <ul>
+      {items.map((item) => (
+        <li key={item}>{item}</li>
+      ))}
+    </ul>
+  )
+})
+```
+
+## useMemo and useCallback
+
+```tsx
+import { useMemo, useCallback } from "react"
+
+// Memoize computed values
+const sorted = useMemo(() => {
+  return items.sort((a, b) => a.name.localeCompare(b.name))
+}, [items])
+
+// Memoize callbacks
+const handleClick = useCallback((id: string) => {
+  setSelected(id)
+}, [])
+```
+
+## Code Splitting with Next.js
+
+```tsx
+import dynamic from "next/dynamic"
+
+const HeavyComponent = dynamic(() => import("@/components/Heavy"), {
+  loading: () => <p>Loading...</p>,
+})
+```
+
+## Best Practices
+
+- Measure before optimizing (React Profiler, Lighthouse)
+- Lazy load below-the-fold content
+- Avoid unnecessary re-renders
+- Use proper key props in lists
+- Optimize images (Next.js Image component)
+
+## Next Steps
+
+- [Accessibility](/advanced/accessibility)
+- [Testing](/advanced/testing)

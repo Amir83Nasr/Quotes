@@ -1,0 +1,346 @@
+---
+title: Custom Hooks
+description: Extract and reuse component logic by building your own hooks
+difficulty: intermediate
+order: 7
+---
+
+# Custom Hooks
+
+Custom hooks let you extract component logic into reusable functions. They compose built-in hooks (useState, useEffect, useRef, etc.) into higher-level abstractions.
+
+<LearningObjectives objectives={[
+  "Extract reusable logic from components into custom hooks",
+  "Follow the use* naming convention and rules of hooks",
+  "Build progressively complex hooks: useLocalStorage, useMediaQuery, useDebounce",
+  "Compose multiple hooks together inside a custom hook",
+  "Write testable hooks and understand testing strategies"
+]} />
+
+## The Pattern
+
+A custom hook is a JavaScript function starting with `use` that calls other hooks. It returns state, functions, or both.
+
+```tsx
+"use client"
+
+import { useState } from "react"
+
+// First custom hook: encapsulates toggle logic
+export function useToggle(initial = false) {
+  const [on, setOn] = useState(initial)
+  const toggle = () => setOn((prev) => !prev)
+  const setTrue = () => setOn(true)
+  const setFalse = () => setOn(false)
+
+  return { on, toggle, setTrue, setFalse }
+}
+
+// Usage
+function Accordion() {
+  const { on: isOpen, toggle } = useToggle()
+  return (
+    <div>
+      <button onClick={toggle}>{isOpen ? "Close" : "Open"}</button>
+      {isOpen && <p>Content visible</p>}
+    </div>
+  )
+}
+```
+
+<Alert>
+  <Info />
+  <AlertTitle>Rules still apply</AlertTitle>
+  <AlertDescription>
+    Custom hooks must follow the Rules of Hooks: call hooks unconditionally at the top level, never inside loops, conditions, or nested functions. Your custom hook is still a hook.
+  </AlertDescription>
+</Alert>
+
+## useLocalStorage
+
+Persist state to `localStorage` — reads on mount, writes on change.
+
+```tsx
+"use client"
+
+import { useState, useEffect } from "react"
+
+export function useLocalStorage<T>(key: string, initial: T) {
+  const [value, setValue] = useState<T>(() => {
+    try {
+      const stored = localStorage.getItem(key)
+      return stored ? (JSON.parse(stored) as T) : initial
+    } catch {
+      return initial
+    }
+  })
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value))
+    } catch (err) {
+      console.error("Failed to save to localStorage", err)
+    }
+  }, [key, value])
+
+  return [value, setValue] as const
+}
+
+// Usage
+function Settings() {
+  const [theme, setTheme] = useLocalStorage("theme", "light")
+  return (
+    <select value={theme} onChange={(e) => setTheme(e.target.value)}>
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+    </select>
+  )
+}
+```
+
+## useMediaQuery
+
+Reactively track a CSS media query — useful for responsive logic in JS.
+
+```tsx
+"use client"
+
+import { useState, useEffect } from "react"
+
+export function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(() => {
+    if (typeof window === "undefined") return false
+    return window.matchMedia(query).matches
+  })
+
+  useEffect(() => {
+    const mql = window.matchMedia(query)
+    const handler = (e: MediaQueryListEvent) => setMatches(e.matches)
+
+    mql.addEventListener("change", handler)
+    return () => mql.removeEventListener("change", handler)
+  }, [query])
+
+  return matches
+}
+
+// Usage: compose multiple breakpoints
+function ResponsiveLayout() {
+  const isMobile = useMediaQuery("(max-width: 640px)")
+  const isTablet = useMediaQuery("(min-width: 641px) and (max-width: 1024px)")
+  const isDesktop = useMediaQuery("(min-width: 1025px)")
+
+  if (isMobile) return <MobileNav />
+  if (isTablet) return <TabletNav />
+  return <FullNav />
+}
+```
+
+## useDebounce
+
+Delay updating a value until after a pause — essential for search-as-you-type inputs.
+
+```tsx
+"use client"
+
+import { useState, useEffect } from "react"
+
+export function useDebounce<T>(value: T, delay: number): T {
+  const [debounced, setDebounced] = useState(value)
+
+  useEffect(() => {
+    const id = setTimeout(() => setDebounced(value), delay)
+    return () => clearTimeout(id)
+  }, [value, delay])
+
+  return debounced
+}
+
+// Usage in a search component
+function SearchResults() {
+  const [query, setQuery] = useState("")
+  const debouncedQuery = useDebounce(query, 300)
+
+  useEffect(() => {
+    if (debouncedQuery.length < 2) return
+    fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}`)
+      .then((r) => r.json())
+      // ... update results state
+  }, [debouncedQuery])
+
+  return <input value={query} onChange={(e) => setQuery(e.target.value)} />
+}
+```
+
+## Composing Hooks Together
+
+Custom hooks compose naturally. Build higher-level hooks from lower-level ones.
+
+```tsx
+"use client"
+
+// Compose useDebounce + useMediaQuery into a responsive search hook
+export function useResponsiveSearch() {
+  const isMobile = useMediaQuery("(max-width: 640px)")
+  const debounceMs = isMobile ? 500 : 200 // longer debounce on mobile
+  const [query, setQuery] = useState("")
+  const debouncedQuery = useDebounce(query, debounceMs)
+
+  return {
+    query,
+    setQuery,
+    debouncedQuery,
+    isMobile,
+  }
+}
+```
+
+## Testing Custom Hooks
+
+Test hooks with `renderHook` from `@testing-library/react`.
+
+```tsx
+import { renderHook, act } from "@testing-library/react"
+import { useToggle } from "./useToggle"
+
+test("toggles on and off", () => {
+  const { result } = renderHook(() => useToggle())
+
+  expect(result.current.on).toBe(false)
+
+  act(() => result.current.toggle())
+  expect(result.current.on).toBe(true)
+
+  act(() => result.current.setFalse())
+  expect(result.current.on).toBe(false)
+})
+```
+
+<Alert>
+  <Lightbulb />
+  <AlertTitle>Hook testing tips</AlertTitle>
+  <AlertDescription>
+    Use `renderHook` to test hook behavior in isolation. For async hooks (like useDebounce), wrap state updates in `act()` and use `waitFor` or `jest.useFakeTimers()` for time-based logic. Mock `window.matchMedia` for useMediaQuery tests.
+  </AlertDescription>
+</Alert>
+
+## Interactive Exercise
+
+Build a `useWindowSize` hook that tracks window dimensions and updates on resize. Then use it in a component that displays "Mobile" or "Desktop" based on a 768px breakpoint.
+
+<InteractiveExercise
+  title="Build useWindowSize Hook"
+  description="Create a useWindowSize hook that returns width and height. Use it in a component to show responsive breakpoint status."
+  language="tsx"
+  starterCode={`"use client"
+
+import { useState, useEffect } from "react"
+
+// TODO: Write useWindowSize hook
+
+export default function ResponsiveDisplay() {
+  // TODO: use the hook and display width, height, and breakpoint
+
+  return (
+    <div>
+      <p>Width: ???</p>
+      <p>Height: ???</p>
+      <p>Breakpoint: ???</p>
+    </div>
+  )
+}`}
+  solutionCode={`"use client"
+
+import { useState, useEffect } from "react"
+
+type WindowSize = { width: number; height: number }
+
+function useWindowSize(): WindowSize {
+  const [size, setSize] = useState<WindowSize>(() => ({
+    width: typeof window !== "undefined" ? window.innerWidth : 0,
+    height: typeof window !== "undefined" ? window.innerHeight : 0,
+  }))
+
+  useEffect(() => {
+    const handler = () => {
+      setSize({ width: window.innerWidth, height: window.innerHeight })
+    }
+
+    window.addEventListener("resize", handler)
+    return () => window.removeEventListener("resize", handler)
+  }, [])
+
+  return size
+}
+
+function breakpoint(width: number): string {
+  if (width < 640) return "Mobile"
+  if (width < 768) return "Tablet"
+  if (width < 1024) return "Small Desktop"
+  return "Large Desktop"
+}
+
+export default function ResponsiveDisplay() {
+  const { width, height } = useWindowSize()
+
+  return (
+    <div>
+      <p>Width: {width}px</p>
+      <p>Height: {height}px</p>
+      <p>Breakpoint: {breakpoint(width)}</p>
+    </div>
+  )
+}`}
+  hints={[
+    "Initialize width/height with window.innerWidth/innerHeight",
+    "Add a resize listener in useEffect and remove it on cleanup",
+    "Compute breakpoint string from width using a helper function"
+  ]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz questions={[
+  {
+    question: "What makes a function a custom hook?",
+    options: [
+      "Calling it inside a component",
+      "Starting the name with 'use' and calling other hooks inside it",
+      "Using TypeScript generics",
+      "Exporting it as default"
+    ],
+    correctIndex: 1,
+    explanation: "A custom hook is a function that starts with 'use' and calls other hooks. The naming convention enables React's lint rules to validate hook usage."
+  },
+  {
+    question: "Which built-in hooks can a custom hook call?",
+    options: [
+      "Only useState and useEffect",
+      "Any React hooks (useState, useEffect, useRef, useMemo, etc.)",
+      "Only hooks without dependencies",
+      "Only one hook per custom hook"
+    ],
+    correctIndex: 1,
+    explanation: "Custom hooks can compose any built-in hooks. That's their power — they abstract arbitrary combinations of hook logic."
+  },
+  {
+    question: "What is the benefit of composing hooks (e.g., useDebounce + useMediaQuery inside a single custom hook)?",
+    options: [
+      "Reduced bundle size",
+      "Cleaner abstraction that hides coordination logic between hooks",
+      "Automatic memoization",
+      "Faster runtime performance"
+    ],
+    correctIndex: 1,
+    explanation: "Composing hooks lets you encapsulate cross-cutting concerns (like 'debounce longer on mobile') in one place, keeping components simple."
+  }
+]} />
+
+<LessonSummary points={[
+  "Custom hooks extract reusable stateful logic — follow the use* naming convention",
+  "Compose any built-in hooks inside a custom hook (useState, useEffect, useRef, etc.)",
+  "Build hooks incrementally: start with a concrete need, generalize when you see repetition",
+  "Test hooks in isolation with renderHook from @testing-library/react",
+  "Use TypeScript generics for type-safe hooks like useLocalStorage<T>"
+]} />

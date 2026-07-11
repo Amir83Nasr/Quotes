@@ -1,0 +1,54 @@
+---
+title: Card Showcase
+description: Explore card component patterns and layouts
+order: 5
+---
+
+# Card Showcase
+
+Cards group related content and actions. shadcn/ui's `<Card>` component comes with header, content, and footer sub-components.
+
+## Basic Card
+
+<GalleryDemo component="cardBasic" />
+
+## Card with Image
+
+<GalleryDemo component="cardWithImage" />
+
+## Interactive Card
+
+<GalleryDemo component="cardInteractive" />
+
+## Code Usage
+
+```tsx
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+
+<Card>
+  <CardHeader>
+    <CardTitle>Card Title</CardTitle>
+    <CardDescription>Card description</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <p>Main content</p>
+  </CardContent>
+  <CardFooter>
+    <Button>Action</Button>
+  </CardFooter>
+</Card>
+```
+
+## Patterns
+
+- Use `CardHeader` + `CardContent` for informational cards
+- Add `CardFooter` for actions
+- Combine with `Link` for clickable cards
+- Use `hover:shadow-md` for interactive cards

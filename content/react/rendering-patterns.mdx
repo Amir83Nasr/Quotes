@@ -1,0 +1,407 @@
+---
+title: Rendering Patterns
+description: Conditional rendering, render props, HOCs, memoization, Server Components
+difficulty: advanced
+order: 7
+---
+
+# Rendering Patterns
+
+<LearningObjectives
+  objectives={[
+    "Apply conditional rendering patterns (ternary, &&, switch)",
+    "Render lists with stable keys",
+    "Use render props for sharing cross-cutting logic",
+    "Build and apply Higher-Order Components (HOCs)",
+    "Optimize renders with React.memo, useMemo, useCallback",
+    "Understand Server vs Client Component mental model"
+  ]}
+/>
+
+## Conditional Rendering
+
+### Ternaries and Guards
+
+```tsx
+function StatusMessage({ status }: { status: "loading" | "error" | "success" }) {
+  return (
+    <div>
+      {status === "loading" && <Spinner />}
+      {status === "error" && <ErrorBanner />}
+      {status === "success" && <SuccessCheck />}
+
+      {/* or ternary for two branches */}
+      {items.length > 0 ? (
+        <ItemList items={items} />
+      ) : (
+        <EmptyState />
+      )}
+    </div>
+  )
+}
+```
+
+### Switch-based rendering
+
+```tsx
+function PaymentStep({ step }: { step: number }) {
+  switch (step) {
+    case 1: return <ShippingForm />
+    case 2: return <PaymentForm />
+    case 3: return <Confirmation />
+    default: return <ShippingForm />
+  }
+}
+```
+
+## List Rendering with Keys
+
+```tsx
+interface Item {
+  id: string
+  label: string
+}
+
+function List({ items }: { items: Item[] }) {
+  return (
+    <ul>
+      {items.map((item) => (
+        <li key={item.id}>{item.label}</li>
+      ))}
+    </ul>
+  )
+}
+```
+
+Keys must be stable and unique per list. Index is unsafe when items reorder.
+
+## Render Props Pattern
+
+A component that accepts a function as its child to share logic.
+
+```tsx
+"use client"
+
+import { useState, ReactNode } from "react"
+
+interface MouseTrackerRenderProps {
+  x: number
+  y: number
+}
+
+interface MouseTrackerProps {
+  children: (state: MouseTrackerRenderProps) => ReactNode
+}
+
+function MouseTracker({ children }: MouseTrackerProps) {
+  const [position, setPosition] = useState({ x: 0, y: 0 })
+
+  return (
+    <div
+      className="h-40 border rounded"
+      onMouseMove={(e) => setPosition({ x: e.clientX, y: e.clientY })}
+    >
+      {children(position)}
+    </div>
+  )
+}
+
+// Usage
+;<MouseTracker>
+  {({ x, y }) => (
+    <p className="p-4">Mouse at ({x}, {y})</p>
+  )}
+</MouseTracker>
+```
+
+## Higher-Order Components (HOC)
+
+A function that takes a component and returns a new component with additional props.
+
+```tsx
+"use client"
+
+import { useState, ComponentType } from "react"
+
+interface WithThemeProps {
+  theme: "light" | "dark"
+  toggleTheme: () => void
+}
+
+function withTheme<P extends object>(
+  Component: ComponentType<P & WithThemeProps>
+) {
+  return function ThemedComponent(props: P) {
+    const [theme, setTheme] = useState<"light" | "dark">("light")
+    return (
+      <Component
+        {...props}
+        theme={theme}
+        toggleTheme={() => setTheme(theme === "light" ? "dark" : "light")}
+      />
+    )
+  }
+}
+
+// Usage
+function Header({ theme, toggleTheme, ...props }: WithThemeProps & { title: string }) {
+  return (
+    <header className={theme === "dark" ? "bg-gray-900 text-white" : "bg-white"}>
+      <h1>{props.title}</h1>
+      <button onClick={toggleTheme}>Toggle theme</button>
+    </header>
+  )
+}
+
+const ThemedHeader = withTheme(Header)
+```
+
+## Controlling Renders
+
+Prevent unnecessary re-renders with memoization.
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="memo">React.memo</TabsTrigger>
+    <TabsTrigger value="usememo">useMemo</TabsTrigger>
+    <TabsTrigger value="usecallback">useCallback</TabsTrigger>
+  </TabsList>
+  <TabsContent value="memo">
+
+```tsx
+import { memo } from "react"
+
+const ExpensiveList = memo(function ExpensiveList({ items }: { items: string[] }) {
+  return (
+    <ul>
+      {items.map((item, i) => <li key={i}>{item}</li>)}
+    </ul>
+  )
+})
+```
+
+`memo` skips re-render if props haven't changed (shallow compare).
+
+  </TabsContent>
+  <TabsContent value="usememo">
+
+```tsx
+import { useMemo } from "react"
+
+function Analytics({ data }: { data: number[] }) {
+  const stats = useMemo(() => ({
+    avg: data.reduce((a, b) => a + b, 0) / data.length,
+    max: Math.max(...data),
+    min: Math.min(...data),
+  }), [data])
+
+  return <pre>{JSON.stringify(stats, null, 2)}</pre>
+}
+```
+
+`useMemo` caches expensive computations. Runs again only when deps change.
+
+  </TabsContent>
+  <TabsContent value="usecallback">
+
+```tsx
+import { useCallback } from "react"
+
+function ProductList({ products, onAdd }: {
+  products: Product[]
+  onAdd: (id: string) => void
+}) {
+  const handleAdd = useCallback(
+    (id: string) => onAdd(id),
+    [onAdd]
+  )
+
+  return products.map((p) => (
+    <ProductCard key={p.id} product={p} onAdd={handleAdd} />
+  ))
+}
+```
+
+`useCallback` returns the same function reference unless deps change. Avoids child re-renders when passed as prop.
+
+  </TabsContent>
+</Tabs>
+
+## Server vs Client Components (Mental Model)
+
+Next.js App Router has two component types:
+
+| Server Component (default) | Client Component ("use client") |
+|---|---|
+| Renders on server, sends HTML | Renders on client (hydrates) |
+| Can't use state, effects, browser APIs | Can use hooks, event handlers |
+| Can be async (fetch data directly) | Can't be async |
+| Smaller bundle (no JS sent) | Sends JS to browser |
+
+```tsx
+// Page.tsx — Server Component (default)
+import { db } from "@/lib/db"
+
+export default async function Page() {
+  const posts = await db.post.findMany()
+  return <PostList posts={posts} />
+}
+
+// PostList.tsx — Client Component
+"use client"
+
+function PostList({ posts }: { posts: Post[] }) {
+  const [liked, setLiked] = useState<Set<string>>(new Set())
+
+  return (
+    <ul>
+      {posts.map((post) => (
+        <li key={post.id}>
+          {post.title}
+          <button onClick={() => setLiked((p) => new Set(p).add(post.id))}>
+            {liked.has(post.id) ? "♥" : "♡"}
+          </button>
+        </li>
+      ))}
+    </ul>
+  )
+}
+```
+
+Rule: default to Server Component. Add `"use client"` only when you need interactivity.
+
+## HOC vs Render Props vs Hooks
+
+| Pattern | Use case |
+|---|---|
+| **Hooks** (modern) | Cross-cutting logic shared across components |
+| **Render Props** (legacy) | When consumer needs full rendering control |
+| **HOC** (legacy) | Wrapping multiple components with the same logic |
+| **Compound Components** | Complex coordinated UI (Tabs, Select) |
+
+Today, prefer **hooks** for sharing stateful logic. Render props and HOCs are still valid for specific cases (layout components, conditionally rendering different wrappers).
+
+## Interactive Exercise
+
+<InteractiveExercise
+  title="HOC with Mouse Tracking"
+  description="Build a withMouseTracking HOC that provides x/y coordinates to any wrapped component."
+  starterCode={`"use client"
+
+// Build a withMouseTracking HOC that:
+// 1. Tracks mouse position in a div
+// 2. Passes { x, y } to the wrapped component
+// 3. Uses it to wrap an element that displays the coords
+
+export default function Exercise() {
+  return null
+}`}
+  language="tsx"
+  solutionCode={`"use client"
+
+import { useState, type ComponentType } from "react"
+
+interface MouseProps {
+  x: number
+  y: number
+}
+
+function withMouseTracking<P extends object>(
+  Component: ComponentType<P & MouseProps>
+) {
+  return function WithMouse(props: P) {
+    const [pos, setPos] = useState({ x: 0, y: 0 })
+    return (
+      <div
+        className="h-48 border rounded"
+        onMouseMove={(e) => setPos({ x: e.clientX, y: e.clientY })}
+      >
+        <Component {...props} x={pos.x} y={pos.y} />
+      </div>
+    )
+  }
+}
+
+function MouseDisplay({ x, y, label }: MouseProps & { label: string }) {
+  return (
+    <p className="p-4">
+      {label}: ({x}, {y})
+    </p>
+  )
+}
+
+const TrackedDisplay = withMouseTracking(MouseDisplay)
+
+export default function Exercise() {
+  return <TrackedDisplay label="Position" />
+}`}
+  hints={[
+    "withMouseTracking returns a new component that adds onMouseMove handler on a div",
+    "Use useState<{x: number, y: number}> for tracking",
+    "Spread original props with {...props} to wrapped component",
+    "The inner component receives x, y plus its original props"
+  ]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz
+  questions={[
+    {
+      question: "When should you prefer hooks over render props or HOCs?",
+      options: [
+        "Always — hooks are always better",
+        "For sharing stateful logic between components",
+        "For wrapping components with layout",
+        "They are equivalent — just syntax preference"
+      ],
+      correctIndex: 1,
+      explanation: "Hooks are the modern approach for sharing stateful logic. Render props and HOCs remain useful for specific cases."
+    },
+    {
+      question: "What does React.memo do?",
+      options: [
+        "Memoizes the component's return value to avoid recalculation",
+        "Skips re-rendering when props haven't changed (shallow comparison)",
+        "Caches the component's children",
+        "Prevents the component from ever re-rendering"
+      ],
+      correctIndex: 1,
+      explanation: "React.memo does a shallow prop comparison. If props are the same, it skips rendering and reuses the last result."
+    },
+    {
+      question: "In Next.js, which is the default component type?",
+      options: [
+        "Client Component",
+        "Server Component",
+        "Both are default",
+        "Depends on the route"
+      ],
+      correctIndex: 1,
+      explanation: "Next.js App Router defaults to Server Components. Add 'use client' only when you need client-side interactivity."
+    },
+    {
+      question: "What is the main purpose of useCallback?",
+      options: [
+        "To cache computed values",
+        "To maintain stable function references between renders",
+        "To debounce function calls",
+        "To prevent a function from running"
+      ],
+      correctIndex: 1,
+      explanation: "useCallback returns the same function reference between renders unless its dependency array changes, preventing unnecessary child re-renders."
+    }
+  ]}
+/>
+
+<LessonSummary
+  points={[
+    "Conditional rendering: && for guard, ternary for two branches, early return for exclusive",
+    "Always use stable, unique keys for list items",
+    "Render props: component accepts a function child to share logic",
+    "HOC: function wraps a component and returns an enhanced version",
+    "React.memo / useMemo / useCallback prevent unnecessary re-renders",
+    "Next.js defaults to Server Components — add 'use client' only for interactivity"
+  ]}
+/>

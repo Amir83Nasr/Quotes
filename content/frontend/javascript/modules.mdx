@@ -1,0 +1,151 @@
+---
+title: ES Modules
+description: export/import, dynamic imports, tree-shaking, CJS vs ESM
+order: 10
+---
+# ES Modules
+
+<LearningObjectives objectives={["Use named and default exports/imports", "Dynamically import with import()", "Explain tree-shaking", "Compare CommonJS vs ESM"]} />
+
+## Named Exports
+
+```javascript
+// math.js
+export const PI = 3.14159
+export function add(a, b) { return a + b }
+// app.js
+import { PI, add } from "./math.js"
+import * as math from "./math.js"
+import { add as sum } from "./math.js"
+```
+
+## Default Exports
+
+One per module. No name required at import.
+
+```javascript
+// logger.js
+export default function log(msg) { console.log("[LOG]", msg) }
+// app.js
+import log from "./logger.js"     // any name works
+import User, { ROLES } from "./user.js"  // mix default + named
+```
+
+## Dynamic import()
+
+Load on demand — code splitting.
+
+```javascript
+// Static: bundled eagerly
+import { format } from "date-fns"
+// Dynamic: code-split
+if (isAdmin) {
+  const admin = await import("./admin-panel.js")
+  admin.init()
+}
+```
+
+<Alert><Lightbulb /><AlertTitle>Code Splitting</AlertTitle><AlertDescription>Dynamic import() creates separate chunks loaded only when needed.</AlertDescription></Alert>
+
+## Module Resolution
+
+```javascript
+import { useEffect } from "react"      // bare specifier → node_modules
+import { helper } from "./utils.js"     // relative — extension required
+```
+
+## Tree-Shaking
+
+Bundlers remove unused exports traced from static imports.
+
+```javascript
+// ✅ Named exports: tree-shakeable
+export function used() {}
+export function unused() {}  // eliminated
+// ❌ export default { a, b } — hard to tree-shake
+```
+
+<Alert><AlertTriangle /><AlertTitle>Anti-Pattern</AlertTitle><AlertDescription>`export * from "./utils"` (barrel files) kills tree-shaking. Direct imports are safer.</AlertDescription></Alert>
+
+## CommonJS vs ESM
+
+<Tabs><TabsList><TabsTrigger value="c">CJS</TabsTrigger><TabsTrigger value="e">ESM</TabsTrigger></TabsList><TabsContent value="c">
+
+```javascript
+const { PI } = require("./math.cjs")
+// Sync, runtime, no tree-shaking, no top-level await
+```
+
+</TabsContent><TabsContent value="e">
+
+```javascript
+import { PI } from "./math.js"
+// Async, parse-time, tree-shaking, top-level await
+```
+
+</TabsContent></Tabs>
+
+| Feature | CJS | ESM |
+|---------|-----|-----|
+| Syntax | require/exports | import/export |
+| Loading | Sync, runtime | Async, parse-time |
+| Tree-shaking | No | Yes |
+| Top-level await | No | Yes |
+
+## Interactive Exercise
+
+<InteractiveExercise
+  title="Refactor into Modules"
+  description="Split a monolithic script into utils.js (formatDate, handleError), data.js (fetchUser), app.js (entry point)."
+  starterCode={`const API_URL = "https://api.example.com"
+function formatDate(d) { return new Date(d).toLocaleDateString() }
+function handleError(e) { console.error(e.message) }
+async function fetchUser(id) {
+  try {
+    const r = await fetch(API_URL+'/users/'+id)
+    if (!r.ok) throw Error('HTTP '+r.status)
+    return await r.json()
+  } catch (e) { handleError(e); return null }
+}
+async function renderUser(id) {
+  const u = await fetchUser(id); if (!u) return
+  document.getElementById("app").innerHTML = '<h1>'+u.name+'</h1>'
+}
+renderUser(1)`}
+  language="javascript"
+  hints={["Pure functions go in utils", "API fetch logic in data", "app.js imports and runs"]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz questions={[
+  {
+    question: "Why tree-shaking with ESM but not CJS?",
+    options: ["ESM uses static import/export analyzed at build time", "CJS modules larger", "ESM newer"],
+    correctIndex: 0,
+    explanation: "ESM imports/exports are statically declared — bundlers trace usage at build time."
+  },
+  {
+    question: "How many default exports per module?",
+    options: ["Unlimited", "One", "Zero or one"],
+    correctIndex: 2,
+    explanation: "At most one default export. Can mix with named exports."
+  },
+  {
+    question: "Dynamic import() primary use?",
+    options: ["Type safety", "Code splitting / lazy loading", "Faster parsing"],
+    correctIndex: 1,
+    explanation: "Dynamic import enables code splitting — loading chunks on demand."
+  }
+]} />
+
+## Lesson Summary
+
+<LessonSummary points={[
+  "Named exports for tree-shaking; one default export per module",
+  "Dynamic import() for code splitting and lazy loading",
+  "Tree-shaking removes unused exports via static analysis",
+  "CJS: require (sync, runtime). ESM: import (async, static)",
+  "Barrel files kill tree-shaking — prefer direct imports"
+]} />

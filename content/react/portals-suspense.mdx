@@ -1,0 +1,273 @@
+---
+title: Portals and Suspense
+description: Portals for rendering outside the DOM tree and Suspense for loading states
+difficulty: intermediate
+order: 5
+---
+
+# Portals and Suspense
+
+<LearningObjectives
+  objectives={[
+    "Render content outside the parent DOM tree with createPortal",
+    "Use React.lazy and Suspense for code splitting",
+    "Understand Suspense as a boundary for async operations",
+    "Apply useTransition for deferring non-urgent updates"
+  ]}
+/>
+
+## Portals with createPortal
+
+Portals render children into a different DOM node while preserving React context.
+
+```tsx
+"use client"
+
+import { createPortal } from "react-dom"
+
+interface ModalProps {
+  open: boolean
+  onClose: () => void
+  children: React.ReactNode
+}
+
+function Modal({ open, onClose, children }: ModalProps) {
+  if (!open) return null
+
+  return createPortal(
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="fixed inset-0 bg-black/50" onClick={onClose} />
+      <div className="relative bg-white rounded-lg p-6 shadow-xl z-10">
+        {children}
+      </div>
+    </div>,
+    document.body
+  )
+}
+```
+
+Why portals?
+- Modal overlays that shouldn't inherit `overflow: hidden` from a parent
+- Tooltips that need to break out of a clipped container
+- Dropdowns that render over other elements
+
+<Alert>
+  <AlertTriangle />
+  <AlertTitle>Portal gotcha</AlertTitle>
+  <AlertDescription>
+    Event propagation still follows React tree, not DOM tree. Click inside a portal bubbles up through React ancestors, not DOM ancestors.
+  </AlertDescription>
+</Alert>
+
+## Lazy Loading with Suspense
+
+Split large bundles into chunks loaded on demand.
+
+### React.lazy
+
+```tsx
+import { lazy, Suspense } from "react"
+
+// This file is loaded only when rendered
+const HeavyChart = lazy(() => import("./HeavyChart"))
+
+function Dashboard() {
+  return (
+    <Suspense fallback={<div className="animate-pulse h-64 bg-gray-200" />}>
+      <HeavyChart />
+    </Suspense>
+  )
+}
+```
+
+### Wrapping multiple lazy components
+
+You can nest Suspense boundaries to load parts independently:
+
+```tsx
+function Dashboard() {
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      <Suspense fallback={<SidebarSkeleton />}>
+        <LazySidebar />
+      </Suspense>
+      <Suspense fallback={<ChartSkeleton />}>
+        <LazyChart />
+      </Suspense>
+    </div>
+  )
+}
+```
+
+Each boundary is independent — the sidebar renders while the chart loads.
+
+## useTransition for Non-Urgent Updates
+
+Mark state updates as non-urgent so the UI stays responsive.
+
+```tsx
+"use client"
+
+import { useState, useTransition } from "react"
+
+function SearchPage() {
+  const [query, setQuery] = useState("")
+  const [results, setResults] = useState<string[]>([])
+  const [isPending, startTransition] = useTransition()
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value
+    setQuery(value) // urgent — keep input responsive
+
+    startTransition(() => {
+      // non-urgent — can be interrupted
+      const filtered = searchItems.filter((item) =>
+        item.toLowerCase().includes(value.toLowerCase())
+      )
+      setResults(filtered)
+    })
+  }
+
+  return (
+    <div>
+      <input value={query} onChange={handleChange} placeholder="Search..." />
+      {isPending && <p className="text-gray-400">Updating...</p>}
+      <ul>{results.map((r) => <li key={r}>{r}</li>)}</ul>
+    </div>
+  )
+}
+```
+
+`isPending` is `true` while the transition is pending. The old results stay visible.
+
+## Interactive Exercise: Portal Modal with Lazy Load
+
+<InteractiveExercise
+  title="Modal with Portal + Lazy Component"
+  description="Build a modal using createPortal. Inside the modal, lazy-load a heavy content component with Suspense."
+  starterCode={`"use client"
+
+// Build:
+// 1. Modal component using createPortal(document.body)
+// 2. A lazy-loaded <ExpensiveContent /> that simulates a delay
+// 3. Suspense fallback inside the modal
+// 4. Modal trigger button
+
+export default function Exercise() {
+  // Your code here
+  return null
+}`}
+  language="tsx"
+  solutionCode={`"use client"
+
+import { useState, lazy, Suspense } from "react"
+import { createPortal } from "react-dom"
+
+const ExpensiveContent = lazy(async () => {
+  // Simulate a 2s network load
+  await new Promise((r) => setTimeout(r, 2000))
+  return {
+    default: () => (
+      <div>
+        <h3 className="font-bold text-lg">Expensive Content</h3>
+        <p>This was lazy-loaded inside a portal!</p>
+      </div>
+    ),
+  }
+})
+
+function Modal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  if (!open) return null
+  return createPortal(
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="fixed inset-0 bg-black/50" onClick={onClose} />
+      <div className="relative bg-white rounded-lg p-6 shadow-xl min-w-[400px]">
+        <button onClick={onClose} className="absolute top-2 right-2">X</button>
+        <Suspense fallback={<div className="h-20 animate-pulse bg-gray-100 rounded" />}>
+          <ExpensiveContent />
+        </Suspense>
+      </div>
+    </div>,
+    document.body
+  )
+}
+
+export default function Exercise() {
+  const [open, setOpen] = useState(false)
+  return (
+    <div>
+      <button onClick={() => setOpen(true)}>Open Modal</button>
+      <Modal open={open} onClose={() => setOpen(false)} />
+    </div>
+  )
+}`}
+  hints={[
+    "Use React.lazy(() => import(...)) for the lazy component",
+    "createPortal(children, document.body) for the modal",
+    "Wrap the lazy component in <Suspense> with a fallback",
+    "Click on the overlay (not the modal content) to close"
+  ]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz
+  questions={[
+    {
+      question: "What does createPortal do?",
+      options: [
+        "Creates a new React root",
+        "Renders children into a different DOM node while preserving React tree context",
+        "Opens a new browser tab",
+        "Creates a modal automatically"
+      ],
+      correctIndex: 1,
+      explanation: "createPortal renders into a different DOM node, but the React tree (context, events) stays intact."
+    },
+    {
+      question: "Does click event propagation in a portal follow the DOM tree or React tree?",
+      options: [
+        "DOM tree",
+        "React tree",
+        "Both equally",
+        "Neither"
+      ],
+      correctIndex: 1,
+      explanation: "Events bubble through the React component tree, not the DOM tree. Portal children still belong to their React parent."
+    },
+    {
+      question: "What is the purpose of the fallback prop in Suspense?",
+      options: [
+        "Error UI when loading fails",
+        "Loading indicator shown while children are being fetched or loaded",
+        "Aria label for accessibility",
+        "Default content when children are null"
+      ],
+      correctIndex: 1,
+      explanation: "Suspense fallback is shown while the children are loading — for lazy components or data fetching."
+    },
+    {
+      question: "What does isPending flag from useTransition indicate?",
+      options: [
+        "A error occurred during transition",
+        "The transition is still being processed",
+        "The component is about to unmount",
+        "The input value has changed"
+      ],
+      correctIndex: 1,
+      explanation: "isPending is true while the transition is being processed. The UI remains responsive and shows previous results."
+    }
+  ]}
+/>
+
+<LessonSummary
+  points={[
+    "createPortal lets you render outside the parent DOM node while keeping React context",
+    "React.lazy + Suspense enables code splitting — components load on demand",
+    "Multiple Suspense boundaries load parts independently",
+    "useTransition marks state updates as non-urgent to keep UI responsive",
+    "Combine portals with lazy loading for patterns like modals with heavy content"
+  ]}
+/>

@@ -1,0 +1,243 @@
+---
+title: Semantic HTML Deep Dive
+description: Build meaningful, accessible page structures with semantic HTML elements
+difficulty: beginner
+order: 2
+---
+
+<LearningObjectives objectives={[
+"Use header, nav, main, section, article, aside, footer correctly",
+"Structure proper heading hierarchy (h1-h6) for document outlines",
+"Apply figure, figcaption, time, address for rich semantics",
+"Understand landmark roles and browser/AT implications",
+"Recognize SEO benefits of semantic HTML",
+"Replace div soup with meaningful elements",
+]} />
+
+## The Semantic Layout
+
+Semantic elements describe their content meaning, not just appearance.
+
+```html
+<body>
+  <header>
+    <nav aria-label="Main">
+      <a href="/">Home</a>
+      <a href="/blog">Blog</a>
+    </nav>
+  </header>
+
+  <main>
+    <article>
+      <header>
+        <h1>Article Title</h1>
+        <time datetime="2026-07-11">July 11, 2026</time>
+      </header>
+      <p>Article content...</p>
+      <section aria-labelledby="comments-heading">
+        <h2 id="comments-heading">Comments</h2>
+        <!-- comments -->
+      </section>
+    </article>
+
+    <aside>
+      <h2>Related Posts</h2>
+      <!-- related links -->
+    </aside>
+  </main>
+
+  <footer>
+    <address>Contact: <a href="mailto:hello@example.com">hello@example.com</a></address>
+  </footer>
+</body>
+```
+
+## Landmark Roles Browsers Derive
+
+| Element | Implicit Role | Purpose |
+|---------|---------------|---------|
+| `<header>` | `banner` (when not nested in article/section) | Site header |
+| `<nav>` | `navigation` | Navigation links |
+| `<main>` | `main` | Primary content (one per page) |
+| `<section>` | `region` (when has accessible name) | Thematic group |
+| `<article>` | `article` | Self-contained composition |
+| `<aside>` | `complementary` | Related content |
+| `<footer>` | `contentinfo` (when not nested) | Site footer |
+
+## Figure & Figcaption
+
+```html
+<figure>
+  <img src="diagram.png" alt="Flowchart showing login process" />
+  <figcaption>Figure 1: Login process workflow</figcaption>
+</figure>
+```
+
+## Proper Heading Hierarchy
+
+```html
+<!-- Good: hierarchical, no gaps -->
+<h1>Site Title</h1>
+  <h2>Latest Articles</h2>
+    <h3>Article Title</h3>
+      <h4>Section Within Article</h4>
+
+<!-- Bad: skips levels -->
+<h1>Site Title</h1>
+  <h4>Section</h4>  <!-- skipped h2, h3 -->
+
+<!-- Bad: uses divs styled as headings -->
+<div class="heading-large">Section</div>
+```
+
+<Alert><AlertTitle>One h1 Per Page</AlertTitle><AlertDescription>Use a single `<h1>` for the page title. Nest headings sequentially (h1 → h2 → h3). Screen reader users navigate by heading level — gaps break the expected structure.</Description></Alert>
+
+## Semantic HTML vs Div Soup
+
+<Tabs>
+<TabsList>
+<TabsTrigger value="bad">Div Soup</TabsTrigger>
+<TabsTrigger value="good">Semantic</TabsTrigger>
+</TabsList>
+<TabsContent value="bad">
+
+```html
+<div class="header">
+  <div class="nav">
+    <div class="nav-item">Home</div>
+  </div>
+</div>
+<div class="main-content">
+  <div class="post">
+    <div class="post-title">My Post</div>
+    <div class="post-date">Today</div>
+  </div>
+</div>
+<div class="footer">© 2026</div>
+```
+
+</TabsContent>
+<TabsContent value="good">
+
+```html
+<header>
+  <nav>
+    <a href="/">Home</a>
+  </nav>
+</header>
+<main>
+  <article>
+    <h2>My Post</h2>
+    <time datetime="2026-07-11">Today</time>
+    <p>Post content...</p>
+  </article>
+</main>
+<footer>© 2026</footer>
+```
+
+</TabsContent>
+</Tabs>
+
+## SEO Benefits
+
+Semantic HTML signals content hierarchy to search engines:
+
+- `<article>` tells Google this is self-contained content (blog post, news story)
+- `<time>` with `datetime` enables rich snippet dates
+- `<header>`, `<main>`, `<footer>` define page structure for featured snippets
+- Proper heading hierarchy improves keyword relevance signals
+- `<nav>` identifies primary navigation for crawl prioritization
+
+<SandboxPreview
+  html={`<header style="padding:1rem;background:#6366f1;color:white;border-radius:8px 8px 0 0">
+  <nav><a href="#" style="color:white;margin-right:1rem">Home</a><a href="#" style="color:white;margin-right:1rem">Blog</a><a href="#" style="color:white">About</a></nav>
+</header>
+<main style="padding:1.5rem;background:white;border:1px solid #e2e8f0">
+  <article>
+    <h2 style="color:#1e293b">Semantic HTML Guide</h2>
+    <time datetime="2026-07-11" style="color:#64748b;font-size:0.875rem">July 11, 2026</time>
+    <p style="color:#475569">Using semantic elements improves accessibility, SEO, and code clarity.</p>
+    <figure style="border:1px solid #e2e8f0;border-radius:8px;padding:1rem;margin:1rem 0">
+      <div style="background:#f1f5f9;height:80px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#94a3b8">Diagram</div>
+      <figcaption style="font-size:0.8rem;color:#64748b;margin-top:0.5rem">Fig 1: Page structure</figcaption>
+    </figure>
+  </article>
+</main>
+<footer style="padding:1rem;background:#1e293b;color:white;border-radius:0 0 8px 8px;font-size:0.875rem">&copy; 2026 Semantic Demo</footer>`}
+  css={`body { font-family: system-ui; }`}
+/>
+
+<InteractiveExercise
+  title="Refactor Div-Heavy Page to Semantic HTML"
+  description="Convert this div soup into semantic HTML. Use header, nav, main, article, section, aside, footer, time, and proper headings."
+  starterCode={`<div class="page">
+  <div class="top-bar">
+    <div class="nav-links">
+      <span>Home</span>
+      <span>Tutorials</span>
+      <span>Contact</span>
+    </div>
+  </div>
+  <div class="content-area">
+    <div class="post">
+      <div class="post-title">Learning Semantic HTML</div>
+      <div class="post-date">Published: Today</div>
+      <div class="post-body">
+        <p>Semantic HTML uses elements that describe their meaning.</p>
+      </div>
+    </div>
+    <div class="sidebar">
+      <div class="sidebar-title">Related Articles</div>
+      <div class="sidebar-link">CSS Grid Guide</div>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <div>© 2026 My Site</div>
+  </div>
+</div>`}
+  language="html"
+  solutionCode={`<body>
+  <header>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/tutorials">Tutorials</a>
+      <a href="/contact">Contact</a>
+    </nav>
+  </header>
+  <main>
+    <article>
+      <header>
+        <h1>Learning Semantic HTML</h1>
+        <time datetime="2026-07-11">Published: Today</time>
+      </header>
+      <p>Semantic HTML uses elements that describe their meaning.</p>
+    </article>
+    <aside>
+      <h2>Related Articles</h2>
+      <ul>
+        <li><a href="#">CSS Grid Guide</a></li>
+      </ul>
+    </aside>
+  </main>
+  <footer>
+    <p>© 2026 My Site</p>
+  </footer>
+</body>`}
+  hints={["Replace top-bar with <header>", "Replace nav-links with <nav> and <a> tags", "Use <article> for the post, <aside> for the sidebar", "Add <time> element with datetime attribute", "Wrap page content in <main>"]}
+  previewType="html"
+/>
+
+<Quiz questions={[
+  { question: "Which element has an implicit `navigation` landmark role?", options: ["header", "nav", "main", "aside"], correctIndex: 1, explanation: "<nav> has the implicit 'navigation' landmark role, helping screen reader users jump to navigation." },
+  { question: "How many <h1> elements should a page have?", options: ["As many as needed", "At most one", "Exactly one per section", "None — use CSS instead"], correctIndex: 1, explanation: "A page should have one <h1> for the primary title. Multiple <h1> elements confuse the document outline." },
+  { question: "What does the <time> element require for machine readability?", options: ["A class", "The datetime attribute", "An aria-label", "A nested span"], correctIndex: 1, explanation: "The datetime attribute provides a machine-readable date format while the element content displays a human-readable version." },
+]} />
+
+<LessonSummary points={[
+"Semantic elements describe meaning, not just appearance",
+"Each landmark role has a specific purpose — use elements correctly",
+"Maintain logical heading hierarchy (h1 → h2 → h3, no skipping)",
+"Use figure + figcaption for self-contained media with captions",
+"Semantic HTML improves SEO with better content signals",
+"Replace div soup with header, nav, main, article, aside, footer",
+]} />

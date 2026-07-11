@@ -1,0 +1,80 @@
+---
+title: Advanced Forms
+description: Complex form patterns in React — validation, controlled inputs, and libraries
+order: 2
+---
+
+# Forms and Validation
+
+Forms are a critical UI pattern. Learn to build them well in React.
+
+## Controlled Components
+
+React controls form state via state variables:
+
+```tsx
+"use client"
+
+import { useState } from "react"
+
+export default function LoginForm() {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    console.log({ email, password })
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label htmlFor="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full rounded border p-2"
+          required
+        />
+      </div>
+      <div>
+        <label htmlFor="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full rounded border p-2"
+          required
+        />
+      </div>
+      <button type="submit" className="rounded bg-blue-500 px-4 py-2 text-white">
+        Login
+      </button>
+    </form>
+  )
+}
+```
+
+## Validation Pattern
+
+```tsx
+interface Errors {
+  email?: string
+  password?: string
+}
+
+function validate(values: { email: string; password: string }): Errors {
+  const errors: Errors = {}
+  if (!values.email.includes("@")) errors.email = "Invalid email"
+  if (values.password.length < 6) errors.password = "Too short"
+  return errors
+}
+```
+
+## Next Steps
+
+- [State Management](/advanced/state-management)
+- [Performance Optimization](/advanced/performance)

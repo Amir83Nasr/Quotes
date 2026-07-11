@@ -1,0 +1,53 @@
+---
+title: TypeScript Generics
+description: Reusable, type-safe code with generics
+order: 5
+---
+
+# Generics
+
+Generics let you write code that works with any type while preserving type safety.
+
+## Generic Functions
+
+```typescript
+function first<T>(arr: T[]): T | undefined {
+  return arr[0]
+}
+
+const num = first([1, 2, 3])    // type: number
+const str = first(["a", "b"])   // type: string
+```
+
+## Generic Constraints
+
+```typescript
+interface HasId {
+  id: string
+}
+
+function getById<T extends HasId>(items: T[], id: string): T | undefined {
+  return items.find((item) => item.id === id)
+}
+```
+
+## Generic Components (React)
+
+```tsx
+interface ListProps<T> {
+  items: T[]
+  renderItem: (item: T) => React.ReactNode
+}
+
+function List<T>({ items, renderItem }: ListProps<T>) {
+  return <ul>{items.map(renderItem)}</ul>
+}
+
+// Usage — type inferred from items
+<List items={users} renderItem={(user) => <li>{user.name}</li>} />
+```
+
+## Next Steps
+
+- [Advanced Types](/frontend/typescript/advanced)
+- [React Components](/react/components)

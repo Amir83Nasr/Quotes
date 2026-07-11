@@ -1,0 +1,48 @@
+---
+title: Authentication
+description: Authentication patterns for web applications
+order: 3
+---
+
+# Authentication
+
+Common authentication strategies for web apps.
+
+## JWT Authentication Flow
+
+```typescript
+// Login — send credentials, receive token
+async function login(email: string, password: string) {
+  const res = await fetch("/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  })
+  const { token } = await res.json()
+  localStorage.setItem("token", token)
+  return token
+}
+
+// Authenticated request
+async function fetchProfile() {
+  const token = localStorage.getItem("token")
+  const res = await fetch("/api/auth/profile", {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  return res.json()
+}
+```
+
+## Auth Strategies
+
+| Strategy | Storage | Best For |
+|----------|---------|----------|
+| JWT | localStorage / cookie | SPAs, APIs |
+| Session | httpOnly cookie | Server-rendered apps |
+| OAuth | Provider-managed | Social login |
+| API Keys | Header | Service-to-service |
+
+## Next Steps
+
+- [Backend Integration](/fullstack/backend)
+- [Deployment](/fullstack/deployment)

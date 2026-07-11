@@ -1,0 +1,222 @@
+---
+title: Accessibility & ARIA
+description: Build inclusive web experiences with ARIA landmarks, keyboard navigation, and WCAG principles
+difficulty: intermediate
+order: 6
+---
+
+<LearningObjectives objectives={[
+"Use ARIA landmarks, roles, states, and properties correctly",
+"Apply aria-label, aria-labelledby, and aria-describedby for accessible names",
+"Use aria-live regions for dynamic content updates",
+"Implement keyboard navigation with tabindex and focus management",
+"Add skip links for keyboard and screen reader users",
+"Apply WCAG principles: Perceivable, Operable, Understandable, Robust",
+"Test accessibility with screen readers and tools",
+]} />
+
+## WCAG Principles (POUR)
+
+| Principle | Meaning | Example |
+|-----------|---------|---------|
+| **P**erceivable | Content must be presentable to senses | Alt text on images, captions on video |
+| **O**perable | UI must work with various input methods | Keyboard navigation, enough time |
+| **U**nderstandable | Content and UI must be clear | Consistent navigation, error messages |
+| **R**obust | Content works with current/future tools | Valid HTML, proper ARIA usage |
+
+## ARIA Landmarks
+
+Use HTML semantic elements first. Add ARIA roles only when HTML semantics are insufficient.
+
+```html
+<!-- HTML elements already provide landmarks -->
+<header role="banner">...</header>
+<nav role="navigation" aria-label="Main">...</nav>
+<main role="main">...</main>
+<aside role="complementary">...</aside>
+<footer role="contentinfo">...</footer>
+
+<!-- Use role when HTML element doesn't exist -->
+<div role="search">
+  <input type="search" />
+  <button>Search</button>
+</div>
+```
+
+## aria-label, aria-labelledby, aria-describedby
+
+```html
+<!-- aria-label on elements without visible text -->
+<button aria-label="Close dialog">
+  ✕
+</button>
+
+<!-- aria-labelledby: reference a visible label -->
+<div role="dialog" aria-labelledby="dialog-title">
+  <h2 id="dialog-title">Confirm Delete</h2>
+  <p>Are you sure?</p>
+</div>
+
+<!-- aria-describedby: provide extended description -->
+<input
+  type="password"
+  aria-describedby="password-hint"
+/>
+<p id="password-hint">Must be at least 8 characters with one number</p>
+```
+
+## aria-live for Dynamic Content
+
+Announce content changes to screen readers.
+
+```html
+<div aria-live="polite" aria-atomic="true">
+  <!-- Screen reader announces changes here -->
+  <span>Item added to cart (3 items)</span>
+</div>
+```
+
+| Value | Behavior |
+|-------|----------|
+| `off` | Default — no announcement |
+| `polite` | Announce when user is idle |
+| `assertive` | Interrupt current announcement |
+| `atomic="true"` | Announce entire region, not just changed part |
+
+## Keyboard Navigation & tabindex
+
+```html
+<!-- Natural tab order: tabindex="0" makes element focusable -->
+<div tabindex="0" role="button" class="custom-button">
+  Click Me
+</div>
+
+<!-- Positive tabindex creates custom order (avoid unless necessary) -->
+<input tabindex="1" />
+<input tabindex="2" />
+
+<!-- tabindex="-1" makes element programmatically focusable but not tabbable -->
+<div tabindex="-1" id="focus-target">
+  Focus me with JavaScript
+</div>
+```
+
+<Alert><AlertTitle>Don't Use Positive tabindex</AlertTitle><AlertDescription>Values > 0 create an unexpected tab order for keyboard users. The natural DOM order is almost always correct. Use `tabindex="0"` to make a non-interactive element focusable, use `tabindex="-1"` for scripted focus.</Description></Alert>
+
+## Skip Links
+
+Allow keyboard users to skip repetitive navigation.
+
+```html
+<body>
+  <!-- First focusable element on page -->
+  <a href="#main-content" class="skip-link">
+    Skip to main content
+  </a>
+
+  <header>
+    <nav><!-- repetitive navigation --></nav>
+  </header>
+
+  <main id="main-content">
+    <!-- Primary content -->
+  </main>
+</body>
+```
+
+```css
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  padding: 0.5rem 1rem;
+  background: #6366f1;
+  color: white;
+  z-index: 9999;
+}
+
+.skip-link:focus {
+  top: 0;  /* visible when focused */
+}
+```
+
+<SandboxPreview
+  html={`<div class="a11y-demo">
+  <div class="demo-header" style="display:flex;gap:1rem;padding:0.75rem;background:#f1f5f9;border-radius:8px">
+    <a href="#main-area" class="skip" style="position:absolute;top:-100%;background:#6366f1;color:white;padding:4px 8px">Skip to main</a>
+    <span>Home</span>
+    <span>About</span>
+    <span>Contact</span>
+  </div>
+  <div id="main-area" style="padding:1rem">
+    <h2>Main Content</h2>
+    <div role="alert" style="background:#f0fdf4;border:1px solid #22c55e;border-radius:6px;padding:0.75rem">Form submitted successfully!</div>
+    <label for="name">Name</label>
+    <input id="name" aria-describedby="name-hint" style="display:block;margin:0.25rem 0" />
+    <p id="name-hint" style="font-size:0.75rem;color:#64748b">Enter your full name (min 2 characters)</p>
+  </div>
+</div>`}
+  css={`body { font-family: system-ui; } .a11y-demo .skip:focus { top: 0; }`}
+/>
+
+<InteractiveExercise
+  title="Make a Tab Panel Accessible"
+  description="Take this tab panel and add ARIA attributes for full accessibility: roles, aria-selected, aria-controls, aria-labelledby, keyboard event handlers, and tabindex management."
+  starterCode={`<div class="tabs">
+  <div class="tab-list">
+    <button class="tab active">HTML</button>
+    <button class="tab">CSS</button>
+    <button class="tab">JS</button>
+  </div>
+  <div class="tab-panel active">
+    <p>HTML content</p>
+  </div>
+  <div class="tab-panel">
+    <p>CSS content</p>
+  </div>
+  <div class="tab-panel">
+    <p>JS content</p>
+  </div>
+</div>`}
+  language="html"
+  solutionCode={`<style>
+  .tabs { font-family: system-ui; } .tab-list { display: flex; gap: 0; border-bottom: 2px solid #e2e8f0; }
+  .tab { padding: 0.5rem 1rem; border: none; background: transparent; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+  .tab[aria-selected="true"] { border-bottom-color: #6366f1; color: #6366f1; font-weight: 600; }
+  .tab-panel { padding: 1rem; display: none; } .tab-panel:not([hidden]) { display: block; }
+</style>
+<div class="tabs">
+  <div class="tab-list" role="tablist" aria-label="Code examples">
+    <button class="tab" role="tab" aria-selected="true" aria-controls="panel-html" id="tab-html" tabindex="0">HTML</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="panel-css" id="tab-css" tabindex="-1">CSS</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="panel-js" id="tab-js" tabindex="-1">JS</button>
+  </div>
+  <div class="tab-panel" role="tabpanel" id="panel-html" aria-labelledby="tab-html">
+    <p>HTML content</p>
+  </div>
+  <div class="tab-panel" role="tabpanel" id="panel-css" aria-labelledby="tab-css" hidden>
+    <p>CSS content</p>
+  </div>
+  <div class="tab-panel" role="tabpanel" id="panel-js" aria-labelledby="tab-js" hidden>
+    <p>JS content</p>
+  </div>
+</div>`}
+  hints={["Add role=\"tablist\" on the tab container", "Add role=\"tab\" to each button with aria-selected", "Add role=\"tabpanel\" to each panel", "Link tabs to panels with aria-controls and aria-labelledby", "Use tabindex=\"-1\" on inactive tabs, tabindex=\"0\" on active"]}
+  previewType="html"
+/>
+
+<Quiz questions={[
+  { question: "What does aria-live=\"polite\" do?", options: ["Prevents screen reader announcements", "Announces dynamic changes when user is idle", "Makes the element always visible", "Adds live region markup for styling"], correctIndex: 1, explanation: "aria-live=\"polite\" tells the screen reader to announce content changes when the user is not actively doing something, without interrupting." },
+  { question: "Which attribute describes an input's purpose in more detail?", options: ["aria-label", "aria-describedby", "aria-labelledby", "aria-controls"], correctIndex: 1, explanation: "aria-describedby provides an extended description for an element. aria-labelledby gives it a concise name. aria-label replaces visible label text." },
+  { question: "What is a skip link?", options: ["A link that skips animation", "A link that's hidden until focused, letting keyboard users jump to main content", "A link to skip to the next page", "An alt text feature"], correctIndex: 1, explanation: "A skip link is positioned off-screen and becomes visible on focus. It lets keyboard and screen reader users skip repetitive navigation to reach the main content directly." },
+  { question: "What is the correct tabindex for a custom interactive element?", options: ["tabindex=\"1\"", "tabindex=\"0\"", "tabindex=\"-1\"", "tabindex=\"auto\""], correctIndex: 1, explanation: "tabindex=\"0\" adds the element to the natural tab order based on DOM position. Positive values create a confusing custom tab order." },
+]} />
+
+<LessonSummary points={[
+"WCAG POUR: Perceivable, Operable, Understandable, Robust",
+"Use semantic HTML first — ARIA only when HTML is insufficient",
+"aria-label, aria-labelledby, aria-describedby provide accessible names",
+"aria-live regions announce dynamic content to screen readers",
+"tabindex=\"0\" follows DOM order, tabindex=\"-1\" enables scripted focus",
+"Skip links let keyboard users bypass repetitive navigation",
+]} />

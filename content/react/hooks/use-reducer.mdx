@@ -1,0 +1,57 @@
+---
+title: useReducer Hook
+description: Complex state logic with reducers in React
+difficulty: intermediate
+order: 5
+---
+
+# useReducer
+
+`useReducer` is an alternative to `useState` for state logic that involves multiple sub-values or depends on previous state.
+
+## Basic Pattern
+
+```tsx
+"use client"
+
+import { useReducer } from "react"
+
+type State = { count: number }
+type Action = { type: "increment" } | { type: "decrement" } | { type: "reset" }
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case "increment": return { count: state.count + 1 }
+    case "decrement": return { count: state.count - 1 }
+    case "reset": return { count: 0 }
+  }
+}
+
+export default function Counter() {
+  const [state, dispatch] = useReducer(reducer, { count: 0 })
+
+  return (
+    <div>
+      <p>Count: {state.count}</p>
+      <button onClick={() => dispatch({ type: "increment" })}>+</button>
+      <button onClick={() => dispatch({ type: "decrement" })}>-</button>
+      <button onClick={() => dispatch({ type: "reset" })}>Reset</button>
+    </div>
+  )
+}
+```
+
+## When to Use
+
+Use `useReducer` when:
+
+- State has complex update logic
+- Multiple fields update together
+- Next state depends heavily on previous state
+
+For simple values, stick with `useState`.
+
+## Next Steps
+
+- [State Management](/advanced/state-management)
+- [useEffect](/react/hooks/use-effect)

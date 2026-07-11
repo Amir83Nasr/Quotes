@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -126,4 +127,42 @@
   html {
     @apply font-sans;
     }
+}
+
+/* Smooth scrolling + sticky-header-aware heading scroll offset */
+html {
+  scroll-behavior: smooth;
+}
+/* Prevent sticky header from covering scrolled-to headings */
+h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] {
+  scroll-margin-top: 5rem;
+}
+
+/* Always-dark code blocks — forces prose to use dark bg/light text for <pre> regardless of theme */
+.prose-custom.prose {
+  --tw-prose-pre-bg: #1e1e2e;
+  --tw-prose-pre-code: #e4e4e7;
+}
+
+/* ─── Grid background ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+
+  background-image:
+    linear-gradient(to right, oklch(0 0 0 / 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(0 0 0 / 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+
+  mask-image: radial-gradient(ellipse 100% 70% at 50% 40%, black 35%, transparent 72%);
+  -webkit-mask-image: radial-gradient(ellipse 100% 70% at 50% 40%, black 35%, transparent 72%);
+}
+
+.dark body::before {
+  background-image:
+    linear-gradient(to right, oklch(1 0 0 / 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(1 0 0 / 0.055) 1px, transparent 1px);
 }

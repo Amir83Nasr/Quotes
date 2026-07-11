@@ -1,0 +1,308 @@
+---
+title: Streaming & Suspense
+description: Stream HTML to the client with Suspense boundaries and loading UI
+difficulty: advanced
+order: 11
+---
+
+# Streaming & Suspense
+
+<LearningObjectives objectives={[
+  "Understand streaming architecture in Next.js",
+  "Use Suspense boundaries to stream page sections independently",
+  "Implement loading UI components with Suspense",
+  "Stream responses from API route handlers",
+  "Measure performance impact of streaming"
+]} />
+
+## Streaming Architecture
+
+Next.js streams HTML from the server to the client as it renders. Instead of waiting for the entire page, the browser progressively paints sections as they arrive:
+
+```
+Blocking (no streaming):
+[ Request → Fetch Data → Render HTML → Send → Client paints ]
+
+Streaming with Suspense:
+[ Request → Render shell → Stream section 1 → Stream section 2 → ... ]
+```
+
+## Basic Suspense Boundary
+
+Wrap slow async components in `<Suspense>` to stream them independently:
+
+```tsx
+import { Suspense } from "react"
+import { PostsSkeleton } from "./skeletons"
+
+export default function BlogPage() {
+  return (
+    <div>
+      <h1>Blog</h1>
+      <Suspense fallback={<PostsSkeleton />}>
+        <BlogPosts />
+      </Suspense>
+      <Suspense fallback={<div>Loading sidebar...</div>}>
+        <Sidebar />
+      </Suspense>
+    </div>
+  )
+}
+
+async function BlogPosts() {
+  const posts = await fetch("https://api.example.com/posts").then((r) => r.json())
+  return <ul>{/* ... */}</ul>
+}
+```
+
+## Blocking vs Streaming
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="blocking">Blocking (No Suspense)</TabsTrigger>
+    <TabsTrigger value="streaming">Streaming (With Suspense)</TabsTrigger>
+  </TabsList>
+  <TabsContent value="blocking">
+    ```tsx
+    // Everything waits — page stays blank until ALL data loads
+    export default async function Dashboard() {
+      const [revenue, users, analytics] = await Promise.all([
+        getRevenue(),
+        getUsers(),
+        getAnalytics(),
+      ])
+      return <DashboardView revenue={revenue} users={users} analytics={analytics} />
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="streaming">
+    ```tsx
+    // Shell renders immediately, each section streams independently
+    export default function Dashboard() {
+      return (
+        <div>
+          <h1>Dashboard</h1>
+          <Suspense fallback={<Skeleton />}>
+            <Revenue />
+          </Suspense>
+          <Suspense fallback={<Skeleton />}>
+            <Users />
+          </Suspense>
+        </div>
+      )
+    }
+    ```
+  </TabsContent>
+</Tabs>
+
+## Streaming from API Routes
+
+```tsx
+// app/api/chat/route.ts
+export async function POST(request: Request) {
+  const { message } = await request.json()
+
+  const encoder = new TextEncoder()
+  const stream = new ReadableStream({
+    async start(controller) {
+      const words = message.split(" ")
+
+      for (const word of words) {
+        controller.enqueue(
+          encoder.encode(JSON.stringify({ token: word + " " }) + "\n")
+        )
+        await new Promise((r) => setTimeout(r, 50)) // simulate delay
+      }
+
+      controller.close()
+    },
+  })
+
+  return new Response(stream, {
+    headers: { "Content-Type": "text/event-stream" },
+  })
+}
+```
+
+## Dashboard Pattern with Streaming
+
+```tsx
+import { Suspense } from "react"
+import { CardSkeleton } from "@/components/skeletons"
+
+export default function DashboardPage() {
+  return (
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <Suspense fallback={<CardSkeleton />}>
+        <RevenueChart />
+      </Suspense>
+      <Suspense fallback={<CardSkeleton />}>
+        <UserActivity />
+      </Suspense>
+      <Suspense fallback={<CardSkeleton />}>
+        <RecentOrders />
+      </Suspense>
+    </div>
+  )
+}
+
+async function RevenueChart() {
+  const data = await fetch("https://api.example.com/revenue", {
+    next: { revalidate: 30 },
+  }).then((r) => r.json())
+  return <RevenueChartView data={data} />
+}
+
+async function UserActivity() {
+  const data = await fetch("https://api.example.com/activity", {
+    next: { tags: ["activity"] },
+  }).then((r) => r.json())
+  return <ActivityView data={data} />
+}
+```
+
+<Alert>
+  <AlertTitle>SEO and Streaming</AlertTitle>
+  <AlertDescription>
+    Streaming is fully SEO-compatible. Search engines see the fully rendered HTML because the crawler waits for the stream to complete. Next.js sends a complete HTML response even with streaming — it's just delivered progressively.
+  </AlertDescription>
+</Alert>
+
+## Partial Prerendering (PPR)
+
+PPR combines static prerendering with dynamic streaming:
+
+```ts
+// next.config.ts
+const nextConfig: NextConfig = {
+  experimental: {
+    ppr: true,   // enable per-route
+    ppr: "incremental", // or incremental opt-in
+  },
+}
+```
+
+```tsx
+// app/page.tsx — static shell with dynamic holes
+export default function Page() {
+  return (
+    <div>
+      <Header />          {/* Prerendered at build time */}
+      <Suspense fallback={<Skeleton />}>
+        <DynamicContent />  {/* Streamed at request time */}
+      </Suspense>
+    </div>
+  )
+}
+```
+
+## Interactive Exercise
+
+<InteractiveExercise
+  title="Dashboard with Streaming Sections"
+  description="Build a dashboard page that renders a static shell and streams three data sections independently using Suspense boundaries."
+  starterCode={`import { Suspense } from "react"
+
+// Create skeleton components and Suspense boundaries for:
+// 1. StatsCards (simulate 2s delay)
+// 2. RecentActivity (simulate 3s delay)
+// 3. TopProducts (simulate 1s delay)
+// Each should stream independently
+
+export default function Dashboard() {
+  // TODO: Add Suspense boundaries
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      {/* stats */}
+      {/* activity */}
+      {/* products */}
+    </div>
+  )
+}`}
+  solutionCode={`import { Suspense } from "react"
+
+function Skeleton({ className = "h-32" }: { className?: string }) {
+  return <div className={\`bg-gray-200 rounded animate-pulse \${className}\`} />
+}
+
+async function StatsCards() {
+  await new Promise((r) => setTimeout(r, 2000))
+  return <div className="grid grid-cols-3 gap-4">
+    <div className="p-4 bg-blue-100 rounded">Revenue: $12,000</div>
+    <div className="p-4 bg-green-100 rounded">Users: 1,234</div>
+    <div className="p-4 bg-purple-100 rounded">Orders: 56</div>
+  </div>
+}
+
+async function RecentActivity() {
+  await new Promise((r) => setTimeout(r, 3000))
+  return <ul className="space-y-2"><li>User signed up</li><li>Order placed</li></ul>
+}
+
+async function TopProducts() {
+  await new Promise((r) => setTimeout(r, 1000))
+  return <div className="p-4 bg-yellow-100 rounded">Widget A — 200 sold</div>
+}
+
+export default function Dashboard() {
+  return (
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold">Dashboard</h1>
+      <Suspense fallback={<Skeleton className="h-24" />}>
+        <StatsCards />
+      </Suspense>
+      <Suspense fallback={<Skeleton className="h-32" />}>
+        <RecentActivity />
+      </Suspense>
+      <Suspense fallback={<Skeleton className="h-20" />}>
+        <TopProducts />
+      </Suspense>
+    </div>
+  )
+}`}
+  hints={["Each Suspense boundary streams independently — components load in parallel", "Fallback shows immediately, then gets replaced when data arrives", "Simulate delays with await new Promise((r) => setTimeout(r, ms))"]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz
+  questions={[
+    {
+      question: "What happens when a Suspense-bounded component is slow to render?",
+      options: [
+        "The entire page blocks until it completes",
+        "The fallback UI displays while that section streams in — the rest of the page is interactive",
+        "The request times out after 10 seconds",
+        "The slow component is skipped entirely",
+      ],
+      correctIndex: 1,
+      explanation: "Suspense boundaries allow each section to stream independently. The fallback shows immediately for slow sections, while already-loaded content is interactive.",
+    },
+    {
+      question: "Is streaming content visible to search engine crawlers?",
+      options: [
+        "No — search engines cannot process streamed content",
+        "Only if using PPR mode",
+        "Yes — crawlers wait for the full stream to complete before indexing",
+        "Only for text content, not images",
+      ],
+      correctIndex: 2,
+      explanation: "Search engine crawlers wait for the full HTML response. Even with streaming, the complete content is eventually delivered in the HTML, making it fully indexable.",
+    },
+  ]}
+/>
+
+## Lesson Summary
+
+<LessonSummary
+  points={[
+    "Streaming sends HTML progressively instead of waiting for the full page",
+    "Suspense boundaries let each section stream and render independently",
+    "loading.tsx provides implicit Suspense for full page segments",
+    "API routes can stream responses with ReadableStream (SSE pattern)",
+    "PPR combines static prerendering with dynamic streaming",
+    "Streaming is SEO-compatible — crawlers receive the complete content",
+  ]}
+/>

@@ -1,0 +1,69 @@
+---
+title: JavaScript DOM
+description: Manipulating the Document Object Model
+order: 4
+---
+
+# DOM Manipulation
+
+The DOM (Document Object Model) represents the page structure as a tree of nodes.
+
+## Selecting Elements
+
+```javascript
+// By selector (preferred)
+const button = document.querySelector(".btn")
+const allButtons = document.querySelectorAll(".btn")
+
+// By ID
+const header = document.getElementById("header")
+
+// By class
+const cards = document.getElementsByClassName("card")
+```
+
+## Modifying Content
+
+```javascript
+// Text
+element.textContent = "New text"
+
+// HTML
+element.innerHTML = "<strong>Bold</strong>"
+
+// Attributes
+element.setAttribute("disabled", "")
+element.removeAttribute("disabled")
+element.classList.add("active")
+element.classList.remove("hidden")
+```
+
+## Events
+
+```javascript
+button.addEventListener("click", (e) => {
+  e.preventDefault()
+  console.log("Clicked!")
+})
+
+// Event delegation (parent listens)
+list.addEventListener("click", (e) => {
+  if (e.target.matches("li")) {
+    console.log("Item clicked:", e.target.textContent)
+  }
+})
+```
+
+## Creating Elements
+
+```javascript
+const li = document.createElement("li")
+li.textContent = "New item"
+li.className = "list-item"
+list.appendChild(li)
+```
+
+## Next Steps
+
+- [React Introduction](/react/intro) — Declarative UI
+- [Async/Await](/frontend/javascript/async) — Async JS

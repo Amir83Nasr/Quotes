@@ -1,0 +1,251 @@
+---
+title: Declaration Files & Module Augmentation
+description: Writing .d.ts files, ambient declarations, and augmenting modules
+difficulty: advanced
+order: 9
+---
+
+# Declaration Files & Module Augmentation
+
+Declaration files describe the shape of JavaScript code to TypeScript. They enable type safety for libraries without TypeScript source.
+
+<LearningObjectives objectives={[
+  "Structure .d.ts declaration files",
+  "Use declare module, declare namespace, and declare global",
+  "Augment third-party modules with additional types",
+  "Write ambient declarations for global APIs",
+  "Use triple-slash directives for type references",
+  "Understand how types are published with npm packages"
+]} />
+
+## .d.ts Structure
+
+Declaration files describe types without implementation.
+
+```ts
+// math.d.ts
+export function add(a: number, b: number): number
+export function multiply(a: number, b: number): number
+export const PI: 3.14159
+
+// Ambient declarations (no export)
+declare function parseInt(s: string, radix?: number): number
+```
+
+These files are picked up automatically by TypeScript when placed alongside JS files or referenced via typeRoots.
+
+## Declare Module
+
+Add types for libraries without built-in types.
+
+```ts
+// declarations/analytics.d.ts
+declare module "analytics" {
+  export function track(event: string, data?: Record<string, unknown>): void
+  export function identify(userId: string, traits?: Record<string, unknown>): void
+  export function page(name: string): void
+}
+
+// Usage in app code
+import { track } from "analytics"
+track("signup", { method: "email" })
+```
+
+## Augmenting Third-Party Modules
+
+Extend existing module types without modifying node_modules.
+
+```ts
+// augmentations.d.ts
+import "express" // import the module to augment it
+
+declare module "express" {
+  interface Request {
+    user?: {
+      id: string
+      role: "admin" | "user"
+    }
+  }
+}
+
+// Now req.user is available everywhere
+// app.get("/", (req, res) => { req.user.id })
+```
+
+<Alert>
+  <AlertTitle>Tip</AlertTitle>
+  <AlertDescription>Module augmentation uses declaration merging. The `import` line makes TypeScript treat the file as a module, not a global script.</AlertDescription>
+</Alert>
+
+## Ambient Declarations
+
+Describe global APIs available at runtime (window, process, etc.).
+
+```ts
+// globals.d.ts
+interface Window {
+  __APP_VERSION__: string
+  gtag: (command: string, id: string, params?: Record<string, unknown>) => void
+}
+
+declare namespace NodeJS {
+  interface ProcessEnv {
+    NODE_ENV: "development" | "production" | "test"
+    API_KEY: string
+    DATABASE_URL: string
+  }
+}
+
+// Ambient variable declarations
+declare const __BUILD_DATE__: string
+```
+
+## Triple-Slash Directives
+
+Legacy way to reference other type files. Still used in some libraries.
+
+```ts
+/// <reference types="node" />
+/// <reference path="./types.d.ts" />
+/// <reference lib="es2020" />
+
+// <reference types> — ambient module dependency
+// <reference path> — relative file declaration
+// <reference lib> — built-in library (es2015, dom, etc.)
+```
+
+Modern code uses `tsconfig.json` instead:
+- `compilerOptions.types` for type packages
+- `compilerOptions.typeRoots` for custom declaration directories
+
+## Publishing Types with Packages
+
+```ts
+// Types published alongside JS in an npm package
+// package.json
+{
+  "name": "@company/utils",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",  // entry point for types
+  "files": ["dist"]
+}
+
+// Or use typesVersions for different TS versions
+{
+  "typesVersions": {
+    ">=4.0": { "*": ["dist/ts4.0/*"] },
+    ">=5.0": { "*": ["dist/ts5.0/*"] }
+  }
+}
+```
+
+## Real-World: Declaring a Plain JS Library
+
+```ts
+// Given this JS library (no types provided):
+// localStorage-db.js — simple key-value store with TTL
+//   db.set(key, value, ttlSeconds)
+//   db.get(key)         — returns null if expired
+//   db.delete(key)       — returns boolean
+//   db.clear()           — removes all
+//   db.keys()            — returns string[]
+
+// Declaration file: localStorage-db.d.ts
+declare module "local-storage-db" {
+  interface DBOptions {
+    prefix?: string
+  }
+
+  export function createDB(name: string, options?: DBOptions): DB
+
+  export interface DB {
+    set<T>(key: string, value: T, ttlSeconds?: number): void
+    get<T = unknown>(key: string): T | null
+    delete(key: string): boolean
+    clear(): void
+    keys(): string[]
+  }
+}
+```
+
+<InteractiveExercise
+  title="Declaration File for a JS Logger"
+  description="Write a declaration file for a simple JS logger library. The logger has: createLogger(name, options?) returning a Logger with log, warn, error, and setLevel methods."
+  language="typescript"
+  starterCode={`// Imagine this is a .d.ts file
+// Create types for this JS library:
+// const logger = createLogger("myapp", { level: "info" })
+// logger.log("hello")
+// logger.warn("be careful")
+// logger.error("something broke {user}", { user: "alice" })
+// logger.setLevel("debug")
+
+// Write your declaration:
+declare module "simple-logger" {
+
+}`}
+  solutionCode={`declare module "simple-logger" {
+  type LogLevel = "debug" | "info" | "warn" | "error"
+  type LogContext = Record<string, unknown>
+
+  interface LoggerOptions {
+    level?: LogLevel
+    format?: "text" | "json"
+  }
+
+  interface Logger {
+    log(message: string, context?: LogContext): void
+    warn(message: string, context?: LogContext): void
+    error(message: string, context?: LogContext): void
+    debug(message: string, context?: LogContext): void
+    setLevel(level: LogLevel): void
+  }
+
+  export function createLogger(name: string, options?: LoggerOptions): Logger
+}`}
+  hints={[
+    "Use declare module to wrap all the types.",
+    "Define a LogLevel union type for the level parameter.",
+    "Define LoggerOptions interface for the createLogger options.",
+    "Define Logger interface with all methods matching the JS API.",
+    "Export createLogger function with name and optional options."
+  ]}
+/>
+
+<Quiz
+  questions={[
+    {
+      question: "What does a .d.ts file contain?",
+      options: ["TypeScript source code with implementations", "Only type declarations, no implementations", "Compiled JavaScript output", "Test files for types"],
+      correctIndex: 1,
+      explanation: "Declaration files (.d.ts) contain only type and interface declarations — no runtime code."
+    },
+    {
+      question: "What is module augmentation used for?",
+      options: ["Creating new modules", "Adding types to existing modules without modifying their source", "Removing types from modules", "Replacing module implementations"],
+      correctIndex: 1,
+      explanation: "Module augmentation lets you add or modify types of existing modules (including third-party) without changing their source files."
+    },
+    {
+      question: "When would you use declare global?",
+      options: ["To create a global variable", "To augment types available on the global scope (e.g., Window)", "To declare a module", "To export types"],
+      correctIndex: 1,
+      explanation: "declare global is used inside a module file to add or modify types in the global scope, like adding properties to Window."
+    },
+    {
+      question: "How do you specify that a package ships its types in a dist folder?",
+      options: ["triple-slash directives", "tsconfig.json typeRoots", "The types field in package.json", "A .ts file in the root"],
+      correctIndex: 2,
+      explanation: "The types field in package.json points to the entry declaration file, telling TypeScript where to find the package's types."
+    },
+  ]}
+/>
+
+<LessonSummary points={[
+  ".d.ts files contain type declarations without implementations.",
+  "declare module adds types for untyped libraries without modifying them.",
+  "Module augmentation (declare module 'x') extends third-party types.",
+  "declare global augments global interfaces like Window or NodeJS.ProcessEnv.",
+  "Triple-slash directives reference other type files (legacy; use tsconfig instead).",
+  "The types field in package.json tells TypeScript where to find a package's declarations."
+]} />

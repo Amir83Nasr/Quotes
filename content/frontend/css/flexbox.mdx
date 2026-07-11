@@ -1,0 +1,64 @@
+---
+title: CSS Flexbox
+description: Master flexbox layout in CSS
+order: 5
+---
+
+# CSS Flexbox
+
+Flexbox is a one-dimensional layout model for distributing space and aligning items.
+
+## Container Properties
+
+```css
+.flex-container {
+  display: flex;
+  flex-direction: row;       /* row | column */
+  justify-content: center;   /* main axis alignment */
+  align-items: center;       /* cross axis alignment */
+  flex-wrap: wrap;           /* allow wrapping */
+  gap: 16px;                 /* space between items */
+}
+```
+
+## Item Properties
+
+```css
+.flex-item {
+  flex: 1;              /* grow + shrink + basis */
+  align-self: center;   /* override align-items */
+  order: 2;              /* visual order */
+}
+```
+
+## Common Patterns
+
+### Centered Content
+
+```css
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+```
+
+### Card Grid
+
+```css
+.card-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.card-grid > * {
+  flex: 1 1 300px;  /* grow, shrink, min-width */
+}
+```
+
+## Next Steps
+
+- [CSS Grid](/frontend/css/grid) — Two-dimensional layouts
+- [Tailwind Flexbox](/tailwind/flexbox) — Flexbox in Tailwind

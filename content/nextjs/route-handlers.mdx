@@ -1,0 +1,239 @@
+---
+title: Route Handlers
+description: Building API endpoints in the App Router with route handlers
+difficulty: intermediate
+order: 7
+---
+
+# Route Handlers
+
+<LearningObjectives objectives={[
+  "Create GET, POST, PUT, DELETE handlers in app/api",
+  "Use Web API Request/Response standards",
+  "Build dynamic route handlers with params",
+  "Protect API routes with middleware",
+  "Stream responses from route handlers"
+]} />
+
+## Basic Route Handler
+
+Route handlers live in `route.ts` files inside `app/api/`:
+
+```tsx
+// app/api/hello/route.ts
+export async function GET() {
+  return Response.json({ message: "Hello World" })
+}
+
+export async function POST(request: Request) {
+  const body = await request.json()
+  return Response.json({ received: body }, { status: 201 })
+}
+```
+
+## Dynamic Route Handlers
+
+Access route params and search params:
+
+```tsx
+// app/api/posts/[id]/route.ts
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
+  const post = await db.query("SELECT * FROM posts WHERE id = $1", [id])
+
+  if (!post) {
+    return Response.json({ error: "Not found" }, { status: 404 })
+  }
+
+  return Response.json(post)
+}
+```
+
+## Response Formats
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="json">JSON</TabsTrigger>
+    <TabsTrigger value="text">Text</TabsTrigger>
+    <TabsTrigger value="stream">Stream</TabsTrigger>
+  </TabsList>
+  <TabsContent value="json">
+    ```tsx
+    export async function GET() {
+      const data = await db.query("SELECT * FROM users")
+      return Response.json(data)
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="text">
+    ```tsx
+    export async function GET() {
+      return new Response("Plain text response", {
+        headers: { "Content-Type": "text/plain" },
+      })
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="stream">
+    ```tsx
+    export async function GET() {
+      const encoder = new TextEncoder()
+      const stream = new ReadableStream({
+        async start(controller) {
+          controller.enqueue(encoder.encode("data: chunk 1\\n\\n"))
+          await new Promise((r) => setTimeout(r, 1000))
+          controller.enqueue(encoder.encode("data: chunk 2\\n\\n"))
+          controller.close()
+        },
+      })
+      return new Response(stream, {
+        headers: { "Content-Type": "text/event-stream" },
+      })
+    }
+    ```
+  </TabsContent>
+</Tabs>
+
+## Full CRUD Example
+
+```tsx
+// app/api/todos/route.ts
+const todos: Array<{ id: number; text: string; done: boolean }> = []
+let nextId = 1
+
+export async function GET() {
+  return Response.json(todos)
+}
+
+export async function POST(request: Request) {
+  const { text } = await request.json()
+  const todo = { id: nextId++, text, done: false }
+  todos.push(todo)
+  return Response.json(todo, { status: 201 })
+}
+
+// app/api/todos/[id]/route.ts
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
+  const body = await request.json()
+  const index = todos.findIndex((t) => t.id === Number(id))
+  if (index === -1) return Response.json({ error: "Not found" }, { status: 404 })
+
+  todos[index] = { ...todos[index], ...body }
+  return Response.json(todos[index])
+}
+
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
+  const index = todos.findIndex((t) => t.id === Number(id))
+  if (index === -1) return Response.json({ error: "Not found" }, { status: 404 })
+
+  const deleted = todos.splice(index, 1)[0]
+  return Response.json(deleted)
+}
+```
+
+## Middleware for API Protection
+
+```tsx
+// middleware.ts
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+
+export function middleware(request: NextRequest) {
+  const apiKey = request.headers.get("x-api-key")
+  if (request.nextUrl.pathname.startsWith("/api/admin") && apiKey !== process.env.ADMIN_KEY) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+}
+
+export const config = {
+  matcher: "/api/:path*",
+}
+```
+
+## Interactive Exercise
+
+<InteractiveExercise
+  title="Build a CRUD API for Todos"
+  description="Complete the route handler for a todo API with GET, POST, PUT, and DELETE endpoints."
+  starterCode={`// app/api/todos/route.ts
+// Complete the GET and POST handlers
+
+export async function GET() {
+  // TODO: Return the todos array as JSON
+}
+
+export async function POST(request: Request) {
+  // TODO: Parse body, create a todo, return it with status 201
+}`}
+  solutionCode={`// app/api/todos/route.ts
+const todos: Array<{ id: number; text: string; done: boolean }> = []
+let nextId = 1
+
+export async function GET() {
+  return Response.json(todos)
+}
+
+export async function POST(request: Request) {
+  const { text } = await request.json()
+  if (!text || typeof text !== "string") {
+    return Response.json({ error: "text is required" }, { status: 400 })
+  }
+  const todo = { id: nextId++, text, done: false }
+  todos.push(todo)
+  return Response.json(todo, { status: 201 })
+}`}
+  hints={["Use Response.json() to return JSON responses", "Validate input before creating todos", "Return appropriate status codes (201 for created, 400 for bad request)"]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz
+  questions={[
+    {
+      question: "What Web API types does Next.js use for route handlers?",
+      options: [
+        "Express Request/Response",
+        "Web API Request/Response",
+        "Axios request/response",
+        "Custom NextRequest/NextResponse only",
+      ],
+      correctIndex: 1,
+      explanation: "Next.js route handlers use the standard Web API Request and Response objects, making them compatible with the browser's fetch API and standard web platform APIs.",
+    },
+    {
+      question: "How do you access URL query parameters in a route handler?",
+      options: [
+        "request.query",
+        "request.nextUrl.searchParams",
+        "params.query",
+        "URLSearchParams from request.url",
+      ],
+      correctIndex: 1,
+      explanation: "request.nextUrl returns a URL object, and searchParams is a URLSearchParams instance with .get(), .has(), etc.",
+    },
+  ]}
+/>
+
+## Lesson Summary
+
+<LessonSummary
+  points={[
+    "Route handlers use standard Web API Request/Response objects",
+    "Dynamic routes use [param] folders with params prop",
+    "Support GET, POST, PUT, DELETE, PATCH, and more HTTP methods",
+    "Streaming responses use ReadableStream with text/event-stream",
+    "Middleware can protect API routes before they execute",
+  ]}
+/>

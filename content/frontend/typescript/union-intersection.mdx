@@ -1,0 +1,273 @@
+---
+title: Union & Intersection Types
+description: Combining types with unions, intersections, and discriminated unions
+difficulty: intermediate
+order: 3
+---
+
+# Union & Intersection Types
+
+TypeScript's type combinators let you mix existing types into new ones.
+
+<LearningObjectives objectives={[
+  "Model data with union types (A | B)",
+  "Combine objects with intersection types (A & B)",
+  "Use discriminated unions with literal type discriminants",
+  "Write exhaustive switch statements with never",
+  "Apply template literal types to create string unions",
+  "Build real-world patterns like Result and AsyncState"
+]} />
+
+## Union Types
+
+A value can be **one of** several types.
+
+```ts
+type Status = "idle" | "loading" | "success" | "error"
+type ID = string | number
+
+function getID(id: ID): string {
+  return id.toString() // works on both string and number
+}
+```
+
+<Alert>
+  <AlertTitle>Gotcha</AlertTitle>
+  <AlertDescription>When accessing a union property, TypeScript only allows methods common to **all** members. Use narrowing to access specific members.</AlertDescription>
+</Alert>
+
+## Intersection Types
+
+A value satisfies **all** types simultaneously.
+
+```ts
+interface Named { name: string }
+interface Aged { age: number }
+
+type Person = Named & Aged
+// { name: string; age: number }
+
+const alice: Person = { name: "Alice", age: 30 }
+
+// Merging conflicting property types — never wins
+type Conflicting = { a: string } & { a: number }
+// { a: never }
+```
+
+## Discriminated Unions
+
+A literal `kind` property tells TypeScript which variant you have.
+
+```ts
+type Shape =
+  | { kind: "circle"; radius: number }
+  | { kind: "rectangle"; width: number; height: number }
+  | { kind: "triangle"; base: number; height: number }
+
+function area(shape: Shape): number {
+  switch (shape.kind) {
+    case "circle":
+      return Math.PI * shape.radius ** 2
+    case "rectangle":
+      return shape.width * shape.height
+    case "triangle":
+      return (shape.base * shape.height) / 2
+  }
+}
+```
+
+## Exhaustiveness with `never`
+
+When you add a new variant, the compiler catches unhandled cases.
+
+```ts
+function assertNever(x: never): never {
+  throw new Error("Unhandled case: " + x)
+}
+
+function areaSafe(shape: Shape): number {
+  switch (shape.kind) {
+    case "circle": return Math.PI * shape.radius ** 2
+    case "rectangle": return shape.width * shape.height
+    case "triangle": return (shape.base * shape.height) / 2
+    default: return assertNever(shape)
+    // ^ TypeScript error if a new Shape variant is added
+  }
+}
+```
+
+## Template Literal Type Unions
+
+Generate string unions from other types.
+
+```ts
+type CSSUnit = "px" | "em" | "rem" | "%"
+type CSSLength = `${number}${CSSUnit}`
+// "0px" | "1px" | ... | "0em" | "1em" | ... etc.
+
+type EventName = `on${Capitalize<"click" | "change" | "focus">}`
+// "onClick" | "onChange" | "onFocus"
+
+type Color = "primary" | "secondary"
+type Size = "sm" | "md" | "lg"
+type Variant = `${Color}-${Size}`
+// "primary-sm" | "primary-md" | "primary-lg" | "secondary-sm" | ...
+```
+
+## State Modeling Approaches
+
+<Tabs defaultValue="simple">
+<TabsList>
+<TabsTrigger value="simple">Simple Union</TabsTrigger>
+<TabsTrigger value="discriminated">Discriminated Union</TabsTrigger>
+<TabsTrigger value="generic">Generic</TabsTrigger>
+</TabsList>
+<TabsContent value="simple">
+
+```ts
+type ViewState = "loading" | "error" | "data" | "empty"
+
+function render(state: ViewState) {
+  // No data payload — must reach for context
+}
+```
+
+</TabsContent>
+<TabsContent value="discriminated">
+
+```ts
+type ViewState<T> =
+  | { status: "loading" }
+  | { status: "error"; message: string }
+  | { status: "success"; data: T }
+  | { status: "empty" }
+
+// Each variant carries its own data shape
+```
+
+</TabsContent>
+<TabsContent value="generic">
+
+```ts
+type State<T, E = string> =
+  | { status: "idle" }
+  | { status: "pending" }
+  | { status: "resolved"; value: T }
+  | { status: "rejected"; error: E }
+
+// Reusable across any data type
+type UserState = State<User, APIError>
+```
+
+</TabsContent>
+</Tabs>
+
+## Real-World: Result and AsyncState
+
+```ts
+type Result<T, E = Error> =
+  | { ok: true; value: T }
+  | { ok: false; error: E }
+
+function safeParseJSON<T>(json: string): Result<T> {
+  try {
+    return { ok: true, value: JSON.parse(json) as T }
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e : new Error(String(e)) }
+  }
+}
+
+// Exhaustive rendering
+type AsyncState<T> =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "success"; data: T; timestamp: number }
+  | { status: "error"; message: string; code: number }
+
+function renderState<T>(s: AsyncState<T>): string {
+  switch (s.status) {
+    case "idle":      return "Awaiting action..."
+    case "loading":   return "Please wait..."
+    case "success":   return `Loaded ${JSON.stringify(s.data)}`
+    case "error":     return `Error ${s.code}: ${s.message}`
+  }
+}
+```
+
+<InteractiveExercise
+  title="Model a Form State"
+  description="Define a discriminated union for form submission. States: idle, validating, submitting, success (with message), error (with field + message). Then implement getSubmitButtonText."
+  language="typescript"
+  starterCode={`type FormState =
+  // Define your discriminated union here
+  | { status: "idle" }
+  // ... add remaining states
+
+function getSubmitButtonText(state: FormState): string {
+  // Return:
+  // idle -> "Submit"
+  // validating -> "Validating..."
+  // submitting -> "Submitting..."
+  // success -> "Done!"
+  // error -> "Retry"
+}`}
+  solutionCode={`type FormState =
+  | { status: "idle" }
+  | { status: "validating" }
+  | { status: "submitting" }
+  | { status: "success"; message: string }
+  | { status: "error"; field: string; message: string }
+
+function getSubmitButtonText(state: FormState): string {
+  switch (state.status) {
+    case "idle":       return "Submit"
+    case "validating": return "Validating..."
+    case "submitting": return "Submitting..."
+    case "success":    return "Done!"
+    case "error":      return "Retry"
+  }
+}`}
+  hints={[
+    "Each state is an object literal with a discriminant property named status.",
+    "success needs a message string; error needs field and message strings.",
+    "Use a switch on state.status — TypeScript narrows the type in each case."
+  ]}
+/>
+
+<Quiz
+  questions={[
+    {
+      question: "What does `type T = { a: string } & { a: number }` resolve to?",
+      options: ["{ a: string | number }", "{ a: never }", "{ a: string & number }", "never"],
+      correctIndex: 1,
+      explanation: "Intersection of string and number is never — no value satisfies both."
+    },
+    {
+      question: "What is the discriminant property in a discriminated union?",
+      options: ["A function that discriminates values", "A literal type used to narrow the union", "The last property in the object", "An optional property"],
+      correctIndex: 1,
+      explanation: "A literal property (like kind or status) that TypeScript uses to narrow which variant of the union you have."
+    },
+    {
+      question: "What happens if you add a new variant to Shape but don't handle it in a switch with assertNever?",
+      options: ["Runtime error", "Compile-time error on the assertNever call", "TypeScript silently ignores it", "The new variant uses the default case"],
+      correctIndex: 1,
+      explanation: "The new variant's type is passed to assertNever, but it's not never — TypeScript catches it at compile time."
+    },
+    {
+      question: "Which pattern is best for modeling async UI state?",
+      options: ["Simple union of string literals", "Intersection type", "Discriminated union with data per state", "Template literal type"],
+      correctIndex: 2,
+      explanation: "Discriminated union lets each state carry the exact data it needs — nothing more, nothing less."
+    },
+  ]}
+/>
+
+<LessonSummary points={[
+  "Union types (A | B) model values that can be one of several types.",
+  "Intersection types (A & B) merge multiple types into one.",
+  "Discriminated unions use a literal discriminant for type-safe narrowing.",
+  "assertNever + exhaustiveness checking catches unhandled variants at compile time.",
+  "Template literal types derive string unions from other types.",
+  "Pattern Result<T, E> and AsyncState<T> are ubiquitous in production TypeScript."
+]} />

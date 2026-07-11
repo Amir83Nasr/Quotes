@@ -1,0 +1,148 @@
+---
+title: Next.js Routing
+description: Understand how the App Router works in Next.js
+order: 2
+---
+
+# Next.js Routing
+
+Next.js uses a **file-system based router** where files and folders define routes.
+
+## App Router vs Pages Router
+
+Next.js 13+ introduced the **App Router**, built on React Server Components.
+
+| Feature | App Router | Pages Router |
+|---------|-----------|-------------|
+| Server Components | ✅ Default | ❌ |
+| Nested Layouts | ✅ | ❌ |
+| Streaming | ✅ | ❌ |
+| File Conventions | `page.tsx`, `layout.tsx` | `index.tsx` |
+| Data Fetching | `fetch` + `cache()` | `getServerSideProps` |
+
+## Route Segments
+
+Each folder in `app/` maps to a route segment:
+
+```
+app/
+ ├── page.tsx         → /
+ ├── about/
+ │    └── page.tsx    → /about
+ └── blog/
+      ├── page.tsx    → /blog
+      └── [slug]/
+           └── page.tsx → /blog/:slug
+```
+
+## Dynamic Routes
+
+Use `[param]` syntax for dynamic segments:
+
+```tsx
+// app/products/[id]/page.tsx
+export default async function ProductPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
+  return <div>Product {id}</div>
+}
+```
+
+## Layouts
+
+Layouts persist across routes and don't re-render on navigation:
+
+```tsx
+// app/layout.tsx
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html>
+      <body>
+        <header>Site Header</header>
+        {children}
+        <footer>Site Footer</footer>
+      </body>
+    </html>
+  )
+}
+```
+
+## Linking
+
+Use `<Link>` for client-side navigation:
+
+```tsx
+import Link from "next/link"
+
+export default function Nav() {
+  return (
+    <nav>
+      <Link href="/">Home</Link>
+      <Link href="/about">About</Link>
+      <Link href="/blog/first-post">First Post</Link>
+    </nav>
+  )
+}
+```
+
+The `<Link>` component prefetches pages in the background and supports instant navigation via the browser history pushState API.
+
+## Loading & Error States
+
+Next.js supports file conventions for loading and error states:
+
+```tsx
+// app/blog/loading.tsx — shows immediately on navigation
+export default function Loading() {
+  return <div>Loading...</div>
+}
+
+// app/blog/error.tsx — catches errors in the segment
+"use client"
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string }
+  reset: () => void
+}) {
+  return (
+    <div>
+      <h2>Something went wrong!</h2>
+      <button onClick={reset}>Try again</button>
+    </div>
+  )
+}
+```
+
+## Route Groups
+
+Use `(group)` to organize routes without affecting the URL:
+
+```
+app/
+ ├── (marketing)/
+ │    ├── page.tsx     → /
+ │    └── blog/
+ │         └── page.tsx → /blog
+ └── (dashboard)/
+      ├── layout.tsx   → dashboard layout
+      └── settings/
+           └── page.tsx → /settings
+```
+
+## Next Steps
+
+- Learn about [Server Components](/nextjs/server-components)
+- Explore [Data Fetching](/nextjs/data-fetching)
+
+---
+
+**Exercise**: Create a blog route with dynamic `[slug]` segments and a loading state.

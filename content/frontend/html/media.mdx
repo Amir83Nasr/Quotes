@@ -1,0 +1,225 @@
+---
+title: Media Elements
+description: Embed and optimize images, video, and audio with modern HTML features
+difficulty: intermediate
+order: 4
+---
+
+<LearningObjectives objectives={[
+"Use <picture> with multiple <source> elements for responsive images",
+"Configure <img> attributes: loading, decoding, fetchpriority, sizes",
+"Embed <video> with <track> for captions and subtitles",
+"Use <audio> with multiple source formats",
+"Write srcset and sizes attributes for resolution switching",
+"Understand native lazy loading behavior",
+]} />
+
+## The <img> Element — Modern Attributes
+
+```html
+<img
+  src="photo-800.jpg"
+  srcset="photo-400.jpg 400w, photo-800.jpg 800w, photo-1200.jpg 1200w"
+  sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 800px"
+  alt="Mountain landscape at sunset"
+  loading="lazy"
+  decoding="async"
+  fetchpriority="low"
+  width="800"
+  height="600"
+/>
+```
+
+| Attribute | Purpose |
+|-----------|---------|
+| `loading="lazy"` | Defer loading until near viewport |
+| `loading="eager"` | Load immediately (use on above-fold images) |
+| `decoding="async"` | Decode off main thread |
+| `fetchpriority="high"` | Hint to prioritize (LCP image) |
+| `sizes` | Tell browser how wide the image displays |
+
+## Responsive Images with srcset & sizes
+
+Two patterns:
+
+**Resolution switching** — same crop, different sizes:
+
+```html
+<img
+  srcset="icon-2x.png 2x, icon-3x.png 3x"
+  src="icon-1x.png"
+  alt="Icon"
+/>
+```
+
+**Art direction** — different crops for different viewports:
+
+```html
+<picture>
+  <source media="(min-width: 1200px)" srcset="wide-hero.jpg" />
+  <source media="(min-width: 768px)" srcset="tablet-hero.jpg" />
+  <img src="mobile-hero.jpg" alt="Hero image" />
+</picture>
+```
+
+<Alert><AlertTitle>Always Include alt</AlertTitle><AlertDescription>Missing alt text is an accessibility failure. Decorative images use `alt=""`. Informative images need a descriptive alt. Screen readers announce the alt, so keep it meaningful.</Description></Alert>
+
+## The <picture> Element
+
+Art direction and format selection in one element.
+
+```html
+<picture>
+  <!-- WebP for browsers that support it -->
+  <source type="image/webp" srcset="photo.webp" />
+  <!-- AVIF for next-gen compression -->
+  <source type="image/avif" srcset="photo.avif" />
+  <!-- Fallback JPEG -->
+  <img src="photo.jpg" alt="Photo" loading="lazy" />
+</picture>
+```
+
+## Video with Captions
+
+```html
+<video
+  controls
+  width="100%"
+  poster="thumbnail.jpg"
+  preload="metadata"
+>
+  <source src="tutorial.mp4" type="video/mp4" />
+  <source src="tutorial.webm" type="video/webm" />
+  <track
+    kind="captions"
+    src="captions.vtt"
+    srclang="en"
+    label="English"
+    default
+  />
+  <p>Your browser doesn't support video. <a href="tutorial.mp4">Download</a>.</p>
+</video>
+```
+
+## Audio Element
+
+```html
+<audio controls preload="metadata">
+  <source src="podcast.mp3" type="audio/mpeg" />
+  <source src="podcast.ogg" type="audio/ogg" />
+  <p>Your browser doesn't support audio. <a href="podcast.mp3">Download</a>.</p>
+</audio>
+```
+
+## Lazy Loading Behavior
+
+Native `loading="lazy"` defers off-screen images. Browser fetches them when the user scrolls near.
+
+```html
+<!-- Lazy load off-screen images — saves bandwidth -->
+<img src="gallery-1.jpg" alt="Gallery" loading="lazy" />
+<img src="gallery-2.jpg" alt="Gallery" loading="lazy" />
+
+<!-- Eager load the hero / LCP image — must be above the fold -->
+<img src="hero.jpg" alt="Hero" fetchpriority="high" loading="eager" />
+```
+
+<SandboxPreview
+  html={`<div class="gallery">
+  <div class="gallery-item">
+    <div class="placeholder" style="background:#6366f1">Image 1</div>
+    <p>Photo from trip</p>
+  </div>
+  <div class="gallery-item">
+    <div class="placeholder" style="background:#8b5cf6">Image 2</div>
+    <p>City skyline</p>
+  </div>
+  <div class="gallery-item">
+    <div class="placeholder" style="background:#a78bfa">Image 3</div>
+    <p>Beach sunset</p>
+  </div>
+  <div class="gallery-item">
+    <div class="placeholder" style="background:#c4b5fd">Image 4</div>
+    <p>Mountain view</p>
+  </div>
+</div>`}
+  css={`.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; } .gallery-item { border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); } .placeholder { height: 100px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; } .gallery-item p { padding: 0.5rem; margin: 0; font-size: 0.875rem; color: #475569; }`}
+/>
+
+<InteractiveExercise
+  title="Build Responsive Image Gallery"
+  description="Create a responsive image gallery grid using <picture> elements and srcset for different screen sizes. Use placeholders for images."
+  starterCode={`<div class="gallery-grid">
+  <div class="gallery-card">
+    <h3>Gallery Item 1</h3>
+    <p>Use a <picture> element here</p>
+  </div>
+</div>`}
+  language="html"
+  solutionCode={`<style>
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+  .gallery-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+  }
+  .image-placeholder {
+    width: 100%;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+  }
+  .gallery-card h3 { margin: 0.5rem; font-size: 1rem; }
+  .gallery-card p { margin: 0 0.5rem 0.5rem; font-size: 0.8rem; color: #64748b; }
+</style>
+<div class="gallery-grid">
+  <div class="gallery-card">
+    <picture>
+      <source media="(min-width: 768px)" srcset="" />
+      <div class="image-placeholder" style="background: #6366f1">Photo 1</div>
+    </picture>
+    <h3>Mountain Views</h3>
+    <p>A scenic mountain landscape</p>
+  </div>
+  <div class="gallery-card">
+    <div class="image-placeholder" style="background: #8b5cf6">Photo 2</div>
+    <h3>City Lights</h3>
+    <p>Urban skyline at dusk</p>
+  </div>
+  <div class="gallery-card">
+    <div class="image-placeholder" style="background: #a78bfa">Photo 3</div>
+    <h3>Ocean Waves</h3>
+    <p>Coastal sunset view</p>
+  </div>
+  <div class="gallery-card">
+    <div class="image-placeholder" style="background: #c4b5fd">Photo 4</div>
+    <h3>Forest Path</h3>
+    <p>Trail through redwoods</p>
+  </div>
+</div>`}
+  hints={["Use grid-template-columns: repeat(auto-fill, minmax(180px, 1fr))", "Wrap images in <picture> with <source> elements", "Use inline background colors as placeholder images", "Add alt text to each image"]}
+  previewType="html"
+/>
+
+<Quiz questions={[
+  { question: "What does loading=\"lazy\" do on an <img>?", options: ["Makes the image blurry", "Defers loading until the image is near the viewport", "Loads the image on click", "Reduces image quality"], correctIndex: 1, explanation: "loading=\"lazy\" defers image loading until the browser predicts the image will enter the viewport, saving bandwidth." },
+  { question: "Which element lets you serve different image formats and art direction?", options: ["<img> with srcset", "<picture>", "<source> alone", "<figure>"], correctIndex: 1, explanation: "<picture> contains multiple <source> elements for different formats, resolutions, or art direction, plus a fallback <img>." },
+  { question: "What does <track> inside <video> provide?", options: ["Video chapters", "Captions or subtitles", "Video speed control", "Volume presets"], correctIndex: 1, explanation: "The <track> element provides timed text tracks for captions, subtitles, descriptions, chapters, or metadata." },
+]} />
+
+<LessonSummary points={[
+"Use srcset and sizes for resolution switching on <img>",
+"Use <picture> for art direction and format fallbacks",
+"loading=\"lazy\" defers off-screen images, fetchpriority=\"high\" prioritizes LCP images",
+"<video> supports multiple <source> formats and <track> for captions",
+"<audio> follows the same pattern as video for multiple sources",
+"Always include alt text and a fallback message inside media elements",
+]} />

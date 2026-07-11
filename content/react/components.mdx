@@ -1,0 +1,94 @@
+---
+title: React Components
+description: Building reusable UI pieces with React components and props
+order: 2
+---
+
+# React Components
+
+Components are the building blocks of any React application. They let you split the UI into independent, reusable pieces.
+
+## Function Components
+
+Modern React uses function components:
+
+```tsx
+interface GreetingProps {
+  name: string
+  age?: number
+}
+
+function Greeting({ name, age }: GreetingProps) {
+  return (
+    <div>
+      <h1>Hello, {name}!</h1>
+      {age && <p>Age: {age}</p>}
+    </div>
+  )
+}
+```
+
+## Props
+
+Props (properties) are read-only inputs to components:
+
+```tsx
+interface ButtonProps {
+  variant: "primary" | "secondary"
+  children: React.ReactNode
+  onClick?: () => void
+  disabled?: boolean
+}
+
+function Button({ variant, children, onClick, disabled }: ButtonProps) {
+  const base = "rounded px-4 py-2 font-medium"
+  const styles = {
+    primary: "bg-blue-500 text-white",
+    secondary: "bg-gray-200 text-gray-800",
+  }
+
+  return (
+    <button
+      className={`${base} ${styles[variant]}`}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {children}
+    </button>
+  )
+}
+```
+
+## Composition
+
+React encourages component composition over inheritance:
+
+```tsx
+function Card({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-lg border p-4 shadow-sm">
+      <h2 className="mb-2 text-lg font-semibold">{title}</h2>
+      {children}
+    </div>
+  )
+}
+
+// Usage
+<Card title="Welcome">
+  <p>Card content goes here.</p>
+  <Button variant="primary">Learn More</Button>
+</Card>
+```
+
+## Best Practices
+
+- Keep components focused on a single responsibility
+- Use TypeScript interfaces for props
+- Prefer composition over prop drilling
+- Extract reusable logic into custom hooks
+- Use `children` for flexible content areas
+
+## Next Steps
+
+- [React Hooks](/react/hooks/use-state) — useState and other hooks
+- [State Management](/advanced/state-management) — Manage complex state

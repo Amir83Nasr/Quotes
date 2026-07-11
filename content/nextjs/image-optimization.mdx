@@ -1,0 +1,260 @@
+---
+title: Image & Font Optimization
+description: Optimize images with next/image and fonts with next/font
+difficulty: intermediate
+order: 9
+---
+
+# Image & Font Optimization
+
+<LearningObjectives objectives={[
+  "Use next/image with remote patterns and sizes",
+  "Implement next/font with Google Fonts and local fonts",
+  "Understand responsive images with srcSet",
+  "Apply lazy loading strategies for images",
+  "Measure performance benefits of optimized assets"
+]} />
+
+## Next/Image
+
+The `next/image` component provides automatic optimization, lazy loading, and responsive images:
+
+```tsx
+import Image from "next/image"
+import heroImage from "@/public/hero.jpg"
+
+export default function Hero() {
+  return (
+    <Image
+      src={heroImage}
+      alt="Hero banner"
+      priority         // above-the-fold — skip lazy loading
+      className="rounded-lg"
+    />
+  )
+}
+```
+
+## Remote Images
+
+For external URLs, configure remote patterns in `next.config.ts`:
+
+```ts
+// next.config.ts
+import type { NextConfig } from "next"
+
+const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.example.com",
+        port: "",
+        pathname: "/assets/**",
+      },
+    ],
+  },
+}
+
+export default nextConfig
+```
+
+```tsx
+import Image from "next/image"
+
+export default function RemoteImage() {
+  return (
+    <Image
+      src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97"
+      alt="Unsplash image"
+      width={800}
+      height={600}
+      sizes="(max-width: 768px) 100vw, 50vw"
+      className="object-cover"
+    />
+  )
+}
+```
+
+<Alert>
+  <AlertTitle>Remote Images Need Width/Height</AlertTitle>
+  <AlertDescription>
+    Remote images require explicit width and height or fill prop. Without these, Next.js cannot generate the proper srcSet and responsive dimensions. Use fill with objectFit for container-based sizing.
+  </AlertDescription>
+</Alert>
+
+## Before vs After Optimization
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="before">Before (img tag)</TabsTrigger>
+    <TabsTrigger value="after">After (next/image)</TabsTrigger>
+  </TabsList>
+  <TabsContent value="before">
+    ```tsx
+    {/* Plain img — no optimization, no lazy loading, manual srcSet */}
+    <img
+      src="/hero.jpg"
+      alt="Hero"
+      srcSet="/hero-400.jpg 400w, /hero-800.jpg 800w"
+      sizes="100vw"
+      loading="lazy"
+    />
+    ```
+  </TabsContent>
+  <TabsContent value="after">
+    ```tsx
+    <Image
+      src={heroImage}
+      alt="Hero"
+      sizes="100vw"
+      placeholder="blur"
+      priority
+    />
+    {/* Automatic WebP/AVIF conversion, intrinsic srcSet, lazy loading by default */}
+    ```
+  </TabsContent>
+</Tabs>
+
+## Next/Font — Google Fonts
+
+```tsx
+// app/layout.tsx
+import { Inter, Roboto_Mono } from "next/font/google"
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",    // use with Tailwind: font-sans
+})
+
+const robotoMono = Roboto_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+})
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html className={`${inter.variable} ${robotoMono.variable}`}>
+      <body>{children}</body>
+    </html>
+  )
+}
+```
+
+## Local Fonts
+
+```tsx
+import localFont from "next/font/local"
+
+const geistSans = localFont({
+  src: "./fonts/GeistVF.woff2",
+  variable: "--font-geist-sans",
+  display: "swap",    // fallback text shows until font loads
+})
+
+const geistMono = localFont({
+  src: [
+    { path: "./fonts/GeistMonoVF.woff2", weight: "400" },
+    { path: "./fonts/GeistMono-Bold.woff2", weight: "700" },
+  ],
+  variable: "--font-geist-mono",
+})
+```
+
+## Interactive Exercise
+
+<InteractiveExercise
+  title="Build a Gallery with Optimized Images"
+  description="Create a gallery component that displays remote images with next/image, proper sizing, and responsive breakpoints using the fill prop."
+  starterCode={`import Image from "next/image"
+
+const images = [
+  { id: 1, src: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97", alt: "Code" },
+  { id: 2, src: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6", alt: "Setup" },
+  { id: 3, src: "https://images.unsplash.com/photo-1504639725590-34d0984388bd", alt: "Brain" },
+]
+
+export default function Gallery() {
+  // TODO: Display images in a responsive grid using next/image
+  // Use fill prop and object-cover for consistent sizing
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* map images here */}
+    </div>
+  )
+}`}
+  solutionCode={`import Image from "next/image"
+
+const images = [
+  { id: 1, src: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97", alt: "Code" },
+  { id: 2, src: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6", alt: "Setup" },
+  { id: 3, src: "https://images.unsplash.com/photo-1504639725590-34d0984388bd", alt: "Brain" },
+]
+
+export default function Gallery() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {images.map((img) => (
+        <div key={img.id} className="relative aspect-[4/3] overflow-hidden rounded-lg">
+          <Image
+            src={img.src}
+            alt={img.alt}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 33vw"
+          />
+        </div>
+      ))}
+    </div>
+  )
+}`}
+  hints={["The parent div must have position: relative (use relative class) for fill to work", "Use aspect-[4/3] for consistent image proportions", "sizes prop tells the browser which image size to download at different breakpoints"]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz
+  questions={[
+    {
+      question: "What does the priority prop on next/image do?",
+      options: [
+        "Makes the image load before all other images",
+        "Disables lazy loading and adds a preload link — use for above-the-fold images",
+        "Increases the image quality to 100%",
+        "Prioritizes the image in the CDN cache",
+      ],
+      correctIndex: 1,
+      explanation: "priority disables lazy loading and generates a <link rel=\"preload\"> tag so the image starts loading immediately. Use it for hero images and above-the-fold content.",
+    },
+    {
+      question: "How does next/font improve performance compared to loading fonts via CSS @import?",
+      options: [
+        "It downloads all font weights at once",
+        "It self-hosts fonts with no external requests, uses CSS size-adjust to prevent layout shift",
+        "It only works with system fonts",
+        "It caches fonts in localStorage",
+      ],
+      correctIndex: 1,
+      explanation: "next/font downloads and self-hosts font files at build time, eliminating external network requests and using CSS font-display and size-adjust to prevent layout shift (CLS).",
+    },
+  ]}
+/>
+
+## Lesson Summary
+
+<LessonSummary
+  points={[
+    "next/image provides automatic WebP/AVIF conversion, lazy loading, and responsive srcSet",
+    "Remote images require remotePatterns config and explicit dimensions or fill prop",
+    "next/font self-hosts Google Fonts and local fonts — zero external requests, no CLS",
+    "CSS variable approach (--font-inter) integrates with Tailwind CSS font families",
+    "priority prop above the fold; lazy loading is default for below-the-fold images",
+  ]}
+/>

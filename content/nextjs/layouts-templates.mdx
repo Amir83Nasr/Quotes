@@ -1,0 +1,242 @@
+---
+title: Layouts & Templates
+description: Nested layouts, templates, parallel routes, and intercepting routes in Next.js
+difficulty: intermediate
+order: 3
+---
+
+# Layouts & Templates
+
+<LearningObjectives objectives={[
+  "Understand root layout vs nested layout behavior",
+  "Differentiate between layout.tsx and template.tsx",
+  "Implement parallel routes with @slot convention",
+  "Use intercepting routes with (...) syntax",
+  "Organize routes with route groups for shared layouts"
+]} />
+
+## Root Layout
+
+The root `app/layout.tsx` wraps every page. It replaces the HTML and body tags:
+
+```tsx
+// app/layout.tsx
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html>
+      <body>
+        <header>Site Header</header>
+        {children}
+      </body>
+    </html>
+  )
+}
+```
+
+## Nested Layouts
+
+Any route segment can define its own `layout.tsx`. Layouts **persist** across navigation — they don't re-render:
+
+```
+app/
+ ├── dashboard/
+ │    ├── layout.tsx   → sidebar persists
+ │    ├── page.tsx     → /dashboard
+ │    └── settings/
+ │         └── page.tsx → /dashboard/settings
+```
+
+```tsx
+// app/dashboard/layout.tsx
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex">
+      <nav className="w-64">Dashboard Sidebar</nav>
+      <main>{children}</main>
+    </div>
+  )
+}
+```
+
+## Layout vs Template
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="layout">layout.tsx</TabsTrigger>
+    <TabsTrigger value="template">template.tsx</TabsTrigger>
+  </TabsList>
+  <TabsContent value="layout">
+    ```tsx
+    // app/dashboard/layout.tsx — persists across navigations
+    export default function Layout({ children }: { children: React.ReactNode }) {
+      return <div className="layout">{children}</div>
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="template">
+    ```tsx
+    // app/dashboard/template.tsx — remounts on each navigation
+    export default function Template({ children }: { children: React.ReactNode }) {
+      return <div className="template">{children}</div>
+    }
+    ```
+  </TabsContent>
+</Tabs>
+
+<Alert>
+  <AlertTitle>Layout vs Template Gotcha</AlertTitle>
+  <AlertDescription>
+    Use layout when state should persist across pages (sidebar, nav). Use template for page-transition effects or when you need useEffect to run on every navigation.
+  </AlertDescription>
+</Alert>
+
+## Parallel Routes (slots)
+
+Use `@slot` to render multiple pages in the same layout independently:
+
+```
+app/
+ └── dashboard/
+      ├── layout.tsx
+      ├── @feed/
+      │    └── page.tsx
+      └── @analytics/
+           └── page.tsx
+```
+
+```tsx
+// app/dashboard/layout.tsx
+export default function DashboardLayout({
+  children,
+  feed,
+  analytics,
+}: {
+  children: React.ReactNode
+  feed: React.ReactNode
+  analytics: React.ReactNode
+}) {
+  return (
+    <div>
+      <aside>{feed}</aside>
+      <section>{children}</section>
+      <aside>{analytics}</aside>
+    </div>
+  )
+}
+```
+
+## Intercepting Routes
+
+Use `(..)` to intercept routes from a parent segment — useful for modals:
+
+```
+app/
+ └── feed/
+      ├── page.tsx        → /feed
+      └── (..)photos/
+           └── [id]/
+                └── page.tsx  → intercepts /photos/[id] from /feed
+```
+
+## Route Groups
+
+Organize routes without affecting URL paths:
+
+```
+app/
+ ├── (marketing)/
+ │    ├── layout.tsx
+ │    ├── page.tsx       → /
+ │    └── pricing/
+ │         └── page.tsx  → /pricing
+ └── (app)/
+      ├── layout.tsx
+      └── dashboard/
+           └── page.tsx  → /dashboard
+```
+
+## Interactive Exercise
+
+<InteractiveExercise
+  title="Build Nested Layouts with Sidebar"
+  description="Create a dashboard layout structure with a persistent sidebar, account settings page, and an analytics page using route groups."
+  starterCode={`// app/dashboard/layout.tsx — Create a layout with a persistent sidebar
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  // TODO: Add sidebar that persists across dashboard sub-pages
+  return (
+    <div>
+      <nav>{/* sidebar links */}</nav>
+      <main>{children}</main>
+    </div>
+  )
+}`}
+  solutionCode={`// app/dashboard/layout.tsx
+import Link from "next/link"
+
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <div className="flex h-screen">
+      <nav className="w-64 bg-gray-50 p-4 border-r">
+        <h2 className="font-bold mb-4">Dashboard</h2>
+        <ul className="space-y-2">
+          <li><Link href="/dashboard">Overview</Link></li>
+          <li><Link href="/dashboard/settings">Settings</Link></li>
+          <li><Link href="/dashboard/analytics">Analytics</Link></li>
+        </ul>
+      </nav>
+      <main className="flex-1 p-6">{children}</main>
+    </div>
+  )
+}`}
+  hints={["Layout persists — don't use 'use client' unless you need interactivity in the sidebar", "Accept children as a prop in the layout component", "Use Link component for client-side navigation between dashboard pages"]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz
+  questions={[
+    {
+      question: "What is the difference between layout.tsx and template.tsx?",
+      options: [
+        "layout.tsx is for root only, template.tsx for nested",
+        "layout.tsx preserves state across navigations; template.tsx remounts on each navigation",
+        "template.tsx only works with parallel routes",
+        "There is no difference — they are interchangeable",
+      ],
+      correctIndex: 1,
+      explanation: "Layouts persist across navigations without remounting. Templates remount on every navigation, losing state but running effects on each route change.",
+    },
+    {
+      question: "How do you define a parallel route slot?",
+      options: [
+        "Using [param] syntax",
+        "Using (group) syntax",
+        "Using @slot directory convention",
+        "Using \\(...\\) syntax",
+      ],
+      correctIndex: 2,
+      explanation: "Parallel routes use the @slot convention, where each @folder name maps to a named slot that receives its own page content independently.",
+    },
+  ]}
+/>
+
+## Lesson Summary
+
+<LessonSummary
+  points={[
+    "Root layout replaces html/body — every page inherits it",
+    "Nested layouts persist; templates remount on each navigation",
+    "Parallel routes (@slots) render multiple pages in one layout",
+    "Intercepting routes ((...)) override parent segment routes",
+    "Route groups ((group)) organize files without affecting URLs",
+  ]}
+/>

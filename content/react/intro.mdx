@@ -1,0 +1,106 @@
+---
+title: React Introduction
+description: Learn what React is and why it's popular
+order: 1
+---
+
+# React Introduction
+
+React is a JavaScript library for building user interfaces. It lets you compose complex UIs from small and isolated pieces of code called "components."
+
+## What is React?
+
+React is a **library**, not a framework. It focuses on building user interfaces at the component level.
+
+```jsx
+function Welcome() {
+  return <h1>Hello, React!</h1>
+}
+```
+
+## Why Use React?
+
+- **Declarative**: Describe your UI, React updates it
+- **Component-Based**: Break UI into reusable pieces
+- **Learn Once, Write Anywhere**: Works with vanilla JS, React Native, Node
+
+## Key Concepts
+
+### Components
+
+Components are the building blocks of React apps. They accept inputs (props) and return JSX elements.
+
+```jsx
+// Functional Component
+function Greeting({ name }) {
+  return <h1>Hello, {name}!</h1>
+}
+
+// Usage
+<Greeting name="React" />
+```
+
+### JSX
+
+JSX lets you write HTML-like syntax in JavaScript. It gets compiled to regular JavaScript.
+
+```jsx
+const element = <h1>Hello, world!</h1>
+
+// Equivalent in vanilla JS
+const element = React.createElement('h1', null, 'Hello, world!')
+```
+
+### Props
+
+Components receive data through props (properties).
+
+```jsx
+function Card({ title, children }) {
+  return (
+    <div className="card">
+      <h2>{title}</h2>
+      {children}
+    </div>
+  )
+}
+
+// Usage
+<Card title="Welcome">
+  <p>Content goes here</p>
+</Card>
+```
+
+## React vs Other Libraries
+
+| Feature | React | Vue | Angular |
+|---------|-------|-----|---------|
+| Learning Curve | Medium | Easy | Steep |
+| Virtual DOM | Yes | Yes | Yes |
+| Two-Way Binding | No | Yes | Yes |
+| Single File Components | No | Yes | No |
+
+## Getting Started
+
+Create your first React component:
+
+```jsx
+// App.jsx
+export default function App() {
+  return (
+    <div className="app">
+      <h1>My First React App</h1>
+      <p>React makes building interactive UIs easy!</p>
+    </div>
+  )
+}
+```
+
+## Next Steps
+
+- [Components](/react/components) - Learn about components and props
+- [Hooks](/react/hooks) - Use React hooks for state and effects
+
+---
+
+**Try it yourself**: Create a simple component that displays a greeting with a name prop.

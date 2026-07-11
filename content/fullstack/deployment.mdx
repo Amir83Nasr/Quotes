@@ -1,0 +1,71 @@
+---
+title: Deployment
+description: Deploying frontend and full-stack applications
+order: 4
+---
+
+# Deployment
+
+Ship your application to production.
+
+## Platform Options
+
+| Platform | Best For |
+|----------|----------|
+| Vercel | Next.js (native) |
+| Netlify | Static sites, SPAs |
+| Railway | Full-stack apps |
+| Fly.io | Containerized apps |
+| AWS | Enterprise |
+
+## Next.js Build
+
+```bash
+# Build for production
+pnpm build
+
+# Start production server
+pnpm start
+
+# Output: .next/ folder with:
+# - Static HTML pages
+# - Server-side rendered pages
+# - API routes
+```
+
+## Environment Variables
+
+```bash
+# .env.local (local development, git-ignored)
+DATABASE_URL="postgresql://..."
+NEXT_PUBLIC_API_URL="http://localhost:3001"
+
+# .env.production (production values)
+DATABASE_URL="postgresql://prod..."
+NEXT_PUBLIC_API_URL="https://api.example.com"
+```
+
+## CI/CD
+
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - run: pnpm install
+      - run: pnpm build
+      - run: pnpm deploy  # platform-specific
+```
+
+## Next Steps
+
+- [Full Stack Overview](/fullstack/intro)
+- [Practice Projects](/practice/todo-app)

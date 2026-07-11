@@ -1,0 +1,86 @@
+---
+title: Next.js Server Components
+description: React Server Components in Next.js — rendering on the server
+order: 4
+---
+
+# Server Components
+
+React Server Components (RSC) let you render components on the server, sending only the HTML to the client. This reduces bundle size and improves performance.
+
+## Server vs Client Components
+
+| Aspect | Server Component | Client Component |
+|--------|-----------------|-----------------|
+| Rendering | Server only | Browser + server |
+| Bundle size | Zero JS | Full JS included |
+| State / Effects | Not supported | Full support |
+| Database access | Direct | Via API |
+| Hooks | No | Yes |
+
+## Default: Server Components
+
+In Next.js App Router, **all components are Server Components by default**:
+
+```tsx
+// app/page.tsx — Server Component (no "use client")
+import { getPosts } from "@/lib/db"
+
+export default async function Page() {
+  const posts = await getPosts()
+
+  return (
+    <ul>
+      {posts.map((post) => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  )
+}
+```
+
+## Client Components
+
+Add `"use client"` to use hooks, event handlers, or browser APIs:
+
+```tsx
+"use client"
+
+import { useState } from "react"
+
+export default function Counter() {
+  const [count, setCount] = useState(0)
+  return <button onClick={() => setCount(count + 1)}>Count: {count}</button>
+}
+```
+
+## Server Component Benefits
+
+- **Smaller JS bundles** — interactive components only
+- **Direct data access** — no API layer needed
+- **Automatic code splitting** — per-component
+- **Streaming** — send HTML as it renders
+
+## Pattern: Server + Client
+
+Wrap interactive client components inside server components:
+
+```tsx
+// Server Component
+export default async function Page() {
+  const data = await fetchData()
+  return <ClientList items={data} />
+}
+
+// Client Component
+"use client"
+function ClientList({ items }: { items: Item[] }) {
+  const [filter, setFilter] = useState("")
+  // ... interactive filtering
+}
+```
+
+## Next Steps
+
+- [Data Fetching](/nextjs/data-fetching) — Fetching data in RSC
+- [Routing](/nextjs/routing) — App Router patterns

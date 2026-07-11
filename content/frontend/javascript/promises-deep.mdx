@@ -1,0 +1,128 @@
+---
+title: Promises Deep Dive
+description: Promise states, chaining, static methods, error handling
+order: 5
+---
+
+# Promises Deep Dive
+
+<LearningObjectives objectives={["Understand promise states (pending, fulfilled, rejected)", "Chain with .then, .catch, .finally", "Choose between all, allSettled, race, any", "Implement Promise.all from scratch"]} />
+
+## Promise States
+
+Three states, settle once, one-way.
+
+```javascript
+new Promise((resolve, reject) => { /* pending */
+  resolve("done") // → fulfilled
+  // reject("err") // → rejected
+})
+new Promise((r) => { r("first"); r("second") }) // "first" — second ignored
+```
+
+## Chaining
+
+Each .then returns new promise. Rejections skip to nearest .catch.
+
+```javascript
+fetch("/api/user/1")
+  .then(r => { if (!r.ok) throw Error('HTTP ' + r.status); return r.json() })
+  .then(user => fetch('/api/posts?userId=' + user.id))
+  .then(r => r.json())
+  .catch(err => console.error(err))
+  .finally(() => hideLoader())
+```
+
+<Alert><AlertTriangle /><AlertTitle>Gotcha</AlertTitle><AlertDescription>Put .catch before .finally. Errors in .finally aren't caught by .catch after.</AlertDescription></Alert>
+
+## Static Methods
+
+<Tabs><TabsList><TabsTrigger value="all">all</TabsTrigger><TabsTrigger value="settled">allSettled</TabsTrigger><TabsTrigger value="race">race</TabsTrigger><TabsTrigger value="any">any</TabsTrigger></TabsList><TabsContent value="all">
+
+```javascript
+// Rejects on first rejection
+const [users, posts] = await Promise.all([
+  fetch("/api/users").then(r => r.json()),
+  fetch("/api/posts").then(r => r.json()),
+])
+```
+
+</TabsContent><TabsContent value="settled">
+
+```javascript
+// Never rejects — array of {status, value|reason}
+const r = await Promise.allSettled([fetch("/api/a")])
+```
+
+</TabsContent><TabsContent value="race">
+
+```javascript
+// First settled wins (fulfill or reject)
+await Promise.race([fetch(url), new Promise((_, rej) => setTimeout(() => rej("timeout"), 5000))])
+```
+
+</TabsContent><TabsContent value="any">
+
+```javascript
+// First fulfillment wins, only rejects if ALL reject
+await Promise.any([fetch("/api/us-east"), fetch("/api/eu-west")])
+```
+
+</TabsContent></Tabs>
+
+## Promise.withResolvers()
+
+External resolve/reject — clean for callback wrapping.
+
+```javascript
+const { promise, resolve, reject } = Promise.withResolvers()
+fs.readFile("data.txt", "utf-8", (err, data) => err ? reject(err) : resolve(data))
+await promise
+```
+
+## Interactive Exercise
+
+<InteractiveExercise
+  title="Implement Promise.all"
+  description="Write `myPromiseAll(iterable)` that resolves with results array in order, rejects on first failure."
+  starterCode={`function myPromiseAll(iterable) {
+  // Return single promise
+  // Resolve with results array in input order
+  // Reject immediately if any promise rejects
+}`}
+  language="javascript"
+  hints={["Use Promise.resolve() to wrap non-thenables", "Track results by index, use counter for completion"]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz questions={[
+  {
+    question: "Which resolves with first fulfillment, rejects only if all reject?",
+    options: ["race", "any", "allSettled", "all"],
+    correctIndex: 1,
+    explanation: "Promise.any resolves with first fulfillment. Rejects with AggregateError if all reject."
+  },
+  {
+    question: "What is NOT a promise state?",
+    options: ["pending", "fulfilled", "rejected", "resolved"],
+    correctIndex: 3,
+    explanation: "States: pending, fulfilled, rejected. 'Resolved' means no longer pending."
+  },
+  {
+    question: "Resolve a promise twice — what happens?",
+    options: ["Both returned", "Second ignored", "Error thrown"],
+    correctIndex: 1,
+    explanation: "Promise settles once. Subsequent calls ignored."
+  }
+]} />
+
+## Lesson Summary
+
+<LessonSummary points={[
+  "Promises settle once: pending → fulfilled or rejected",
+  ".then chains create new promises; .catch recovers; .finally cleans up",
+  "all (fail-fast), allSettled (all results), race (first), any (first success)",
+  "Promise.withResolvers() for clean external resolve/reject"
+]} />

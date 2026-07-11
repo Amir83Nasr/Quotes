@@ -1,0 +1,159 @@
+---
+title: Dark Mode
+description: Implement dark mode with Tailwind's dark: variant and next-themes
+difficulty: intermediate
+order: 6
+---
+
+<LearningObjectives
+  objectives={[
+    "Apply dark: variants to any utility class",
+    "Choose between class-based and media-based dark mode strategy",
+    "Integrate next-themes for theme toggling in Next.js",
+    "Build a cohesive dark mode color palette",
+    "Handle images and media for dark mode",
+  ]}
+/>
+
+## Dark Variant Basics
+
+Tailwind v4 uses `@custom-variant dark (&:is(.dark *))` — add `.dark` class to parent, use `dark:` prefixes.
+
+```html
+<div class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-6 rounded-lg">
+  <h2 class="text-lg font-semibold dark:text-white">Card Title</h2>
+  <p class="text-gray-600 dark:text-gray-400">Content adapts to both themes.</p>
+</div>
+```
+
+## Strategy: Class vs Media
+
+<Tabs defaultValue="class">
+  <TabsList>
+    <TabsTrigger value="class">Class (recommended)</TabsTrigger>
+    <TabsTrigger value="media">Media</TabsTrigger>
+  </TabsList>
+  <TabsContent value="class">
+    Toggle via `.dark` class on `<html>`. User controls the theme.
+
+    ```html
+    <button onclick="document.documentElement.classList.toggle('dark')">Toggle</button>
+    ```
+  </TabsContent>
+  <TabsContent value="media">
+    Uses OS `prefers-color-scheme`. No user toggle.
+
+    ```css
+    @custom-variant dark (&:where(prefers-color-scheme: dark));
+    ```
+  </TabsContent>
+</Tabs>
+
+## next-themes Integration
+
+```tsx
+// app/providers.tsx
+"use client"
+import { ThemeProvider } from "next-themes"
+export function Providers({ children }: { children: React.ReactNode }) {
+  return <ThemeProvider attribute="class" defaultTheme="system" enableSystem>{children}</ThemeProvider>
+}
+// Any component
+import { useTheme } from "next-themes"
+function Toggle() {
+  const { theme, setTheme } = useTheme()
+  return <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+    className="rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-800">Toggle</button>
+}
+```
+
+## Color Palette for Dark Mode
+
+Map every surface color with its dark counterpart.
+
+```html
+<div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+  <h3 class="text-gray-900 dark:text-white">Primary</h3>
+  <p class="text-gray-600 dark:text-gray-400">Secondary text</p>
+</div>
+<input class="w-full rounded-lg border border-gray-200 dark:border-gray-700
+              bg-white dark:bg-gray-800 px-4 py-2
+              text-gray-900 dark:text-gray-100
+              placeholder-gray-400 dark:placeholder-gray-500"
+       placeholder="Search..." />
+```
+
+<Alert>
+  <AlertTitle><Lightbulb className="inline h-4 w-4" /> Tip</AlertTitle>
+  <AlertDescription>Use subtle grays (gray-800, gray-900) for dark surfaces, not pure black. Pure black creates harsh contrast against other dark elements.</AlertDescription>
+</Alert>
+
+## Images in Dark Mode
+
+```html
+<img src="photo.jpg" alt="" class="rounded-lg dark:opacity-80 dark:brightness-90" />
+<picture>
+  <source srcset="logo-dark.svg" media="(prefers-color-scheme: dark)" />
+  <img src="logo-light.svg" alt="Logo" class="h-8" />
+</picture>
+```
+
+<Alert>
+  <AlertTitle><AlertTriangle className="inline h-4 w-4" /> Gotcha</AlertTitle>
+  <AlertDescription>Avoid flash of wrong theme. next-themes with enableSystem injects a script before React hydrates to prevent FOIT.</AlertDescription>
+</Alert>
+
+<InteractiveExercise
+  title="Dark Mode Toggle with Theme-Aware Cards"
+  description="Build a card grid with light/dark variants and a toggle button."
+  starterCode={`<div>
+  <button class="...">Toggle</button>
+  <div class="..."><h3>Card Title</h3><p>Content</p></div>
+</div>`}
+  solutionCode={`<div class="space-y-6 p-6">
+  <button class="rounded-lg border border-gray-200 dark:border-gray-700
+                 bg-white dark:bg-gray-800 px-4 py-2 text-sm
+                 text-gray-700 dark:text-gray-300
+                 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+    🌙 Toggle
+  </button>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="rounded-xl bg-white dark:bg-gray-800 p-5 shadow-sm border border-gray-200 dark:border-gray-700">
+      <h3 class="font-semibold text-gray-900 dark:text-white">Design</h3>
+      <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Theme-aware card.</p>
+    </div>
+    <div class="rounded-xl bg-white dark:bg-gray-800 p-5 shadow-sm border border-gray-200 dark:border-gray-700">
+      <h3 class="font-semibold text-gray-900 dark:text-white">Code</h3>
+      <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Same component, dark theme.</p>
+    </div>
+  </div>
+</div>`}
+  hints={["Every color needs a dark: counterpart", "Use dark:border-gray-700 and dark:bg-gray-800 for cards", "Button itself needs dark mode styles too"]}
+/>
+
+<Quiz
+  questions={[
+    {
+      question: "What does `dark:bg-gray-900` do?",
+      options: ["Always makes bg gray-900", "Applies gray-900 only when .dark class is on a parent", "Only works on mobile", "Requires prefers-color-scheme"],
+      correctIndex: 1,
+      explanation: "dark: activates when a parent has the .dark class (class strategy).",
+    },
+    {
+      question: "Why use gray-800 instead of black for dark surfaces?",
+      options: ["Smaller CSS", "Pure black creates harsh contrast against other dark elements", "Black doesn't work with borders", "Performance is better"],
+      correctIndex: 1,
+      explanation: "Pure black (#000) causes eye strain. Use dark grays for comfortable contrast.",
+    },
+  ]}
+/>
+
+<LessonSummary
+  points={[
+    "Use dark: variant on every color utility for theme-aware components",
+    "Class-based strategy gives users control; media matches OS only",
+    "next-themes (ThemeProvider attribute=\"class\") handles seamless toggling",
+    "Subtle grays for dark surfaces, not pure black",
+    "Dim images with dark:opacity-80 dark:brightness-90",
+  ]}
+/>
