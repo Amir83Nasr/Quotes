@@ -11,6 +11,7 @@
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "fix:mdx": "node scripts/fix-indented-mdx-tags.cjs",
     "typecheck": "tsc --noEmit",
     "validate:content": "node scripts/validate-content.mjs",
     "new:lesson": "node scripts/new-lesson.mjs"

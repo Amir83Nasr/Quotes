@@ -67,6 +67,16 @@ pre-commit:
       run: bash scripts/hooks/check-line-endings.sh {staged_files}
       stage_fixed: true
 
+    # ── MDX Content ─────────────────────────────────────────────────
+    # Auto-fix indented block-level closing tags that MDX misparses as
+    # indented code blocks or list continuation items.
+
+    fix-indented-mdx-tags:
+      tags: [content]
+      glob: "*.mdx"
+      run: node scripts/fix-indented-mdx-tags.cjs
+      stage_fixed: true
+
     # ── Frontend ─────────────────────────────────────────────────
     # Uses pnpm to resolve project-local tools.
     # stage_fixed: true re-stages files that Prettier/ESLint modify.
