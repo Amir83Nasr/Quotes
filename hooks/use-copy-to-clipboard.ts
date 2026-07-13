@@ -20,7 +20,7 @@ export function useCopyToClipboard(timeout = 2000) {
         /* clipboard unavailable (insecure context / denied permission) */
       }
     },
-    [timeout],
+    [timeout]
   )
 
   return { copied, copy }

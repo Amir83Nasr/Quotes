@@ -14,10 +14,7 @@ export const getContentTree = cache(async (): Promise<ContentNode[]> => {
   return root.children ?? []
 })
 
-async function buildTree(
-  dirPath: string,
-  depth: number,
-): Promise<ContentNode> {
+async function buildTree(dirPath: string, depth: number): Promise<ContentNode> {
   const entries = await fs.readdir(dirPath, { withFileTypes: true })
 
   const mdxFiles = entries
@@ -36,10 +33,7 @@ async function buildTree(
 
   // Process subdirectories first
   for (const subdir of subdirs) {
-    const child = await buildTree(
-      path.join(dirPath, subdir.name),
-      depth + 1,
-    )
+    const child = await buildTree(path.join(dirPath, subdir.name), depth + 1)
     children.push(child)
   }
 
@@ -93,7 +87,9 @@ async function buildTree(
     children,
     type: "category",
     // Pedagogical order for top-level categories; deeper nodes unaffected
-    ...(CATEGORY_ORDER[dirName] !== undefined && { order: CATEGORY_ORDER[dirName] }),
+    ...(CATEGORY_ORDER[dirName] !== undefined && {
+      order: CATEGORY_ORDER[dirName],
+    }),
   }
 }
 
@@ -130,5 +126,5 @@ export const getContentNode = cache(
       return null
     }
     return find(tree)
-  },
+  }
 )

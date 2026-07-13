@@ -1,7 +1,13 @@
 import { notFound } from "next/navigation"
 import { Suspense } from "react"
 import { compileMdx } from "@/lib/mdx"
-import { getMdxSource, getContentNode, extractToc, buildBreadcrumbs, buildLessonNavigation } from "@/lib/content"
+import {
+  getMdxSource,
+  getContentNode,
+  extractToc,
+  buildBreadcrumbs,
+  buildLessonNavigation,
+} from "@/lib/content"
 import { getLessonMdxComponents } from "@/components/lesson/mdx-registry"
 import { Breadcrumb } from "@/components/docs/Breadcrumb"
 import { TableOfContents } from "@/components/docs/TableOfContents"
@@ -14,7 +20,9 @@ interface PageProps {
   params: Promise<{ slug: string[] }>
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params
   const contentPath = slug.join("/")
   const source = await getMdxSource(contentPath)
@@ -75,7 +83,7 @@ export default async function LessonPage({ params }: PageProps) {
             )}
           </header>
 
-          <div className="prose-custom prose prose-neutral dark:prose-invert max-w-none">
+          <div className="prose-custom prose max-w-none prose-neutral dark:prose-invert">
             {content}
           </div>
 
@@ -85,7 +93,7 @@ export default async function LessonPage({ params }: PageProps) {
       </div>
 
       {/* Table of Contents — desktop only */}
-      <aside className="hidden xl:block xl:w-56 xl:shrink-0 xl:mr-4 2xl:mr-8">
+      <aside className="hidden xl:mr-4 xl:block xl:w-56 xl:shrink-0 2xl:mr-8">
         <Suspense fallback={null}>
           <TableOfContents headings={toc} />
         </Suspense>

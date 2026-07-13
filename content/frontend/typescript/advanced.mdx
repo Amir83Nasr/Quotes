@@ -12,12 +12,12 @@ TypeScript's type system is Turing-complete. These advanced patterns unlock powe
 
 ```typescript
 type IsString<T> = T extends string ? "yes" : "no"
-type A = IsString<"hello">   // "yes"
-type B = IsString<number>    // "no"
+type A = IsString<"hello"> // "yes"
+type B = IsString<number> // "no"
 
 // Extract return type from a function
 type ReturnOf<T> = T extends (...args: unknown[]) => infer R ? R : never
-type Num = ReturnOf<() => number>  // number
+type Num = ReturnOf<() => number> // number
 ```
 
 ## Mapped Types

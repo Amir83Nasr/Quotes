@@ -1,6 +1,13 @@
 "use client"
 
-import { createContext, useContext, useEffect, useSyncExternalStore, useState } from "react"
+import {
+  createContext,
+  useContext,
+  useSyncExternalStore,
+  useState,
+  useCallback,
+  useMemo,
+} from "react"
 import type { SidebarState } from "@/types/navigation"
 
 type SidebarContextType = {
@@ -9,8 +16,6 @@ type SidebarContextType = {
   open: () => void
   close: () => void
 }
-
-type MediaQueryHandler = (e: MediaQueryListEvent | MediaQueryList) => void
 
 const SidebarContext = createContext<SidebarContextType | null>(null)
 
@@ -27,34 +32,29 @@ function useIsMobile() {
     },
     () => window.matchMedia("(max-width: 768px)").matches,
     // Server fallback — assume desktop (sidebar open)
-    () => false,
+    () => false
   )
 }
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const isMobile = useIsMobile()
+  const [userWantsOpen, setUserWantsOpen] = useState(!isMobile)
 
-  const [state, setState] = useState<SidebarState>({
-    isOpen: !isMobile,
-    isCollapsed: false,
-  })
+  // Mobile overrides user preference: always closed on mobile, open on desktop.
+  // Derived during render — no effect or ref needed.
+  const isOpen = !isMobile && userWantsOpen
 
-  // Keep sidebar closed on mobile, open on desktop —
-  // handles window resize and orientation changes.
-  useEffect(() => {
-    setState((prev) => ({ ...prev, isOpen: !isMobile }))
-  }, [isMobile])
+  const toggle = useCallback(() => setUserWantsOpen((v) => !v), [])
+  const open = useCallback(() => setUserWantsOpen(true), [])
+  const close = useCallback(() => setUserWantsOpen(false), [])
+
+  const state: SidebarState = useMemo(
+    () => ({ isOpen, isCollapsed: false }),
+    [isOpen]
+  )
 
   return (
-    <SidebarContext.Provider
-      value={{
-        state,
-        toggle: () =>
-          setState((prev) => ({ ...prev, isOpen: !prev.isOpen })),
-        open: () => setState((prev) => ({ ...prev, isOpen: true })),
-        close: () => setState((prev) => ({ ...prev, isOpen: false })),
-      }}
-    >
+    <SidebarContext.Provider value={{ state, toggle, open, close }}>
       {children}
     </SidebarContext.Provider>
   )

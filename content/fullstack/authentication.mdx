@@ -9,22 +9,24 @@ order: 3
 
 Common authentication strategies for web apps.
 
-<LearningObjectives objectives={[
-  "Hash passwords on signup and verify them on login",
-  "Issue a JWT and store it in an httpOnly cookie",
-  "Protect route handlers by reading the cookie or Bearer header",
-  "Clear the session on logout",
-  "Test the full login → profile → logout flow locally with a curl cookie jar",
-]} />
+<LearningObjectives
+  objectives={[
+    "Hash passwords on signup and verify them on login",
+    "Issue a JWT and store it in an httpOnly cookie",
+    "Protect route handlers by reading the cookie or Bearer header",
+    "Clear the session on logout",
+    "Test the full login → profile → logout flow locally with a curl cookie jar",
+  ]}
+/>
 
 <Alert>
   <Lightbulb />
   <AlertTitle>Auth is stateful — test with a cookie jar</AlertTitle>
   <AlertDescription>
     Unlike plain data endpoints, auth carries a session across requests. In the
-    `curl` examples below, `-c cookies.txt` **saves** the cookie the server sets,
-    and `-b cookies.txt` **sends** it back — so you can log in once and reuse the
-    session for the next request, exactly like a browser.
+    `curl` examples below, `-c cookies.txt` **saves** the cookie the server
+    sets, and `-b cookies.txt` **sends** it back — so you can log in once and
+    reuse the session for the next request, exactly like a browser.
   </AlertDescription>
 </Alert>
 
@@ -63,7 +65,9 @@ export async function signToken(payload: SessionPayload): Promise<string> {
     .sign(secret)
 }
 
-export async function verifyToken(token: string): Promise<SessionPayload | null> {
+export async function verifyToken(
+  token: string
+): Promise<SessionPayload | null> {
   try {
     const { payload } = await jwtVerify(token, secret)
     return payload as SessionPayload
@@ -117,6 +121,7 @@ data store.
       return Response.json({ id: user.id, email: user.email }, { status: 201 })
     }
     ```
+
   </TabsContent>
   <TabsContent value="frontend">
     ```typescript
@@ -186,6 +191,7 @@ Compare the password against the stored hash, then set the token in an
       return Response.json({ id: user.id, email: user.email })
     }
     ```
+
   </TabsContent>
   <TabsContent value="frontend">
     ```typescript
@@ -245,6 +251,7 @@ it, and return `401` when it's missing or invalid.
       return Response.json({ id: session.userId, email: session.email })
     }
     ```
+
   </TabsContent>
   <TabsContent value="frontend">
     ```typescript
@@ -258,6 +265,7 @@ it, and return `401` when it's missing or invalid.
     // API client without cookies? Send the token explicitly:
     // fetch("/api/auth/profile", { headers: { Authorization: `Bearer ${token}` } })
     ```
+
   </TabsContent>
   <TabsContent value="curl">
     ```bash
@@ -267,6 +275,7 @@ it, and return `401` when it's missing or invalid.
     # Without the cookie → 401
     curl -i http://localhost:4000/api/auth/profile
     ```
+
   </TabsContent>
 </Tabs>
 
@@ -290,6 +299,7 @@ Overwrite the cookie with an immediate expiry.
       return Response.json({ ok: true })
     }
     ```
+
   </TabsContent>
   <TabsContent value="curl">
     ```bash
@@ -298,6 +308,7 @@ Overwrite the cookie with an immediate expiry.
     # Profile is now 401 again
     curl -i http://localhost:4000/api/auth/profile -b cookies.txt
     ```
+
   </TabsContent>
 </Tabs>
 
@@ -388,12 +399,12 @@ export function LoginForm() {
 
 ## Auth Strategies
 
-| Strategy | Storage | Best For |
-|----------|---------|----------|
-| JWT | httpOnly cookie | SPAs, APIs |
-| Session | httpOnly cookie | Server-rendered apps |
-| OAuth | Provider-managed | Social login |
-| API Keys | Header | Service-to-service |
+| Strategy | Storage          | Best For             |
+| -------- | ---------------- | -------------------- |
+| JWT      | httpOnly cookie  | SPAs, APIs           |
+| Session  | httpOnly cookie  | Server-rendered apps |
+| OAuth    | Provider-managed | Social login         |
+| API Keys | Header           | Service-to-service   |
 
 <Alert>
   <AlertTriangle />
@@ -442,9 +453,9 @@ export async function POST(request: Request) {
   const { email, password } = await request.json()
   const user = users.find((u) => u.email === email)
 
-  // TODO: verify the password with bcrypt.compare — return 401 if invalid
-  // TODO: sign a token and set it in an httpOnly "session" cookie
-  // TODO: return the user's id and email
+// TODO: verify the password with bcrypt.compare — return 401 if invalid
+// TODO: sign a token and set it in an httpOnly "session" cookie
+// TODO: return the user's id and email
 }`}
   solutionCode={`// app/api/auth/login/route.ts
 import bcrypt from "bcryptjs"
@@ -456,28 +467,28 @@ export async function POST(request: Request) {
   const user = users.find((u) => u.email === email)
   const ok = user && (await bcrypt.compare(password ?? "", user.passwordHash))
 
-  if (!ok) {
-    return Response.json({ message: "Invalid credentials" }, { status: 401 })
-  }
+if (!ok) {
+return Response.json({ message: "Invalid credentials" }, { status: 401 })
+}
 
-  const token = await signToken({ userId: user.id, email: user.email })
-  const cookieStore = await cookies()
-  cookieStore.set("session", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 7,
-  })
+const token = await signToken({ userId: user.id, email: user.email })
+const cookieStore = await cookies()
+cookieStore.set("session", token, {
+httpOnly: true,
+secure: process.env.NODE*ENV === "production",
+sameSite: "lax",
+path: "/",
+maxAge: 60 * 60 \_ 24 \* 7,
+})
 
-  return Response.json({ id: user.id, email: user.email })
+return Response.json({ id: user.id, email: user.email })
 }`}
-  hints={[
-    "bcrypt.compare(plaintext, hash) returns a Promise<boolean> — await it",
-    "Guard against a missing user before comparing so it doesn't throw",
-    "cookies() is async in the App Router — await it before calling .set()",
-  ]}
-  previewType="mixed"
+hints={[
+"bcrypt.compare(plaintext, hash) returns a Promise<boolean> — await it",
+"Guard against a missing user before comparing so it doesn't throw",
+"cookies() is async in the App Router — await it before calling .set()",
+]}
+previewType="mixed"
 />
 
 ## Lesson Summary

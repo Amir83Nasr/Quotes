@@ -16,7 +16,6 @@ export default function DocsError({
   reset: () => void
 }) {
   useEffect(() => {
-    // eslint-disable-next-line no-console
     console.error(error)
   }, [error])
 
@@ -25,7 +24,8 @@ export default function DocsError({
       <AlertTriangle className="h-10 w-10 text-red-500" />
       <h2 className="text-xl font-semibold">Failed to load this page</h2>
       <p className="text-sm text-muted-foreground">
-        {error.message || "An unexpected error occurred while rendering this lesson."}
+        {error.message ||
+          "An unexpected error occurred while rendering this lesson."}
       </p>
       <Button onClick={reset} variant="outline" size="sm">
         Try again

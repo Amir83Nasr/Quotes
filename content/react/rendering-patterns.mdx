@@ -14,7 +14,7 @@ order: 7
     "Use render props for sharing cross-cutting logic",
     "Build and apply Higher-Order Components (HOCs)",
     "Optimize renders with React.memo, useMemo, useCallback",
-    "Understand Server vs Client Component mental model"
+    "Understand Server vs Client Component mental model",
   ]}
 />
 
@@ -23,7 +23,11 @@ order: 7
 ### Ternaries and Guards
 
 ```tsx
-function StatusMessage({ status }: { status: "loading" | "error" | "success" }) {
+function StatusMessage({
+  status,
+}: {
+  status: "loading" | "error" | "success"
+}) {
   return (
     <div>
       {status === "loading" && <Spinner />}
@@ -31,11 +35,7 @@ function StatusMessage({ status }: { status: "loading" | "error" | "success" }) 
       {status === "success" && <SuccessCheck />}
 
       {/* or ternary for two branches */}
-      {items.length > 0 ? (
-        <ItemList items={items} />
-      ) : (
-        <EmptyState />
-      )}
+      {items.length > 0 ? <ItemList items={items} /> : <EmptyState />}
     </div>
   )
 }
@@ -46,10 +46,14 @@ function StatusMessage({ status }: { status: "loading" | "error" | "success" }) 
 ```tsx
 function PaymentStep({ step }: { step: number }) {
   switch (step) {
-    case 1: return <ShippingForm />
-    case 2: return <PaymentForm />
-    case 3: return <Confirmation />
-    default: return <ShippingForm />
+    case 1:
+      return <ShippingForm />
+    case 2:
+      return <PaymentForm />
+    case 3:
+      return <Confirmation />
+    default:
+      return <ShippingForm />
   }
 }
 ```
@@ -98,7 +102,7 @@ function MouseTracker({ children }: MouseTrackerProps) {
 
   return (
     <div
-      className="h-40 border rounded"
+      className="h-40 rounded border"
       onMouseMove={(e) => setPosition({ x: e.clientX, y: e.clientY })}
     >
       {children(position)}
@@ -109,7 +113,9 @@ function MouseTracker({ children }: MouseTrackerProps) {
 // Usage
 ;<MouseTracker>
   {({ x, y }) => (
-    <p className="p-4">Mouse at ({x}, {y})</p>
+    <p className="p-4">
+      Mouse at ({x}, {y})
+    </p>
   )}
 </MouseTracker>
 ```
@@ -144,9 +150,15 @@ function withTheme<P extends object>(
 }
 
 // Usage
-function Header({ theme, toggleTheme, ...props }: WithThemeProps & { title: string }) {
+function Header({
+  theme,
+  toggleTheme,
+  ...props
+}: WithThemeProps & { title: string }) {
   return (
-    <header className={theme === "dark" ? "bg-gray-900 text-white" : "bg-white"}>
+    <header
+      className={theme === "dark" ? "bg-gray-900 text-white" : "bg-white"}
+    >
       <h1>{props.title}</h1>
       <button onClick={toggleTheme}>Toggle theme</button>
     </header>
@@ -171,10 +183,16 @@ Prevent unnecessary re-renders with memoization.
 ```tsx
 import { memo } from "react"
 
-const ExpensiveList = memo(function ExpensiveList({ items }: { items: string[] }) {
+const ExpensiveList = memo(function ExpensiveList({
+  items,
+}: {
+  items: string[]
+}) {
   return (
     <ul>
-      {items.map((item, i) => <li key={i}>{item}</li>)}
+      {items.map((item, i) => (
+        <li key={i}>{item}</li>
+      ))}
     </ul>
   )
 })
@@ -189,11 +207,14 @@ const ExpensiveList = memo(function ExpensiveList({ items }: { items: string[] }
 import { useMemo } from "react"
 
 function Analytics({ data }: { data: number[] }) {
-  const stats = useMemo(() => ({
-    avg: data.reduce((a, b) => a + b, 0) / data.length,
-    max: Math.max(...data),
-    min: Math.min(...data),
-  }), [data])
+  const stats = useMemo(
+    () => ({
+      avg: data.reduce((a, b) => a + b, 0) / data.length,
+      max: Math.max(...data),
+      min: Math.min(...data),
+    }),
+    [data]
+  )
 
   return <pre>{JSON.stringify(stats, null, 2)}</pre>
 }
@@ -207,14 +228,14 @@ function Analytics({ data }: { data: number[] }) {
 ```tsx
 import { useCallback } from "react"
 
-function ProductList({ products, onAdd }: {
+function ProductList({
+  products,
+  onAdd,
+}: {
   products: Product[]
   onAdd: (id: string) => void
 }) {
-  const handleAdd = useCallback(
-    (id: string) => onAdd(id),
-    [onAdd]
-  )
+  const handleAdd = useCallback((id: string) => onAdd(id), [onAdd])
 
   return products.map((p) => (
     <ProductCard key={p.id} product={p} onAdd={handleAdd} />
@@ -231,12 +252,12 @@ function ProductList({ products, onAdd }: {
 
 Next.js App Router has two component types:
 
-| Server Component (default) | Client Component ("use client") |
-|---|---|
-| Renders on server, sends HTML | Renders on client (hydrates) |
-| Can't use state, effects, browser APIs | Can use hooks, event handlers |
-| Can be async (fetch data directly) | Can't be async |
-| Smaller bundle (no JS sent) | Sends JS to browser |
+| Server Component (default)             | Client Component ("use client") |
+| -------------------------------------- | ------------------------------- |
+| Renders on server, sends HTML          | Renders on client (hydrates)    |
+| Can't use state, effects, browser APIs | Can use hooks, event handlers   |
+| Can be async (fetch data directly)     | Can't be async                  |
+| Smaller bundle (no JS sent)            | Sends JS to browser             |
 
 ```tsx
 // Page.tsx — Server Component (default)
@@ -248,7 +269,7 @@ export default async function Page() {
 }
 
 // PostList.tsx — Client Component
-"use client"
+;("use client")
 
 function PostList({ posts }: { posts: Post[] }) {
   const [liked, setLiked] = useState<Set<string>>(new Set())
@@ -272,12 +293,12 @@ Rule: default to Server Component. Add `"use client"` only when you need interac
 
 ## HOC vs Render Props vs Hooks
 
-| Pattern | Use case |
-|---|---|
-| **Hooks** (modern) | Cross-cutting logic shared across components |
-| **Render Props** (legacy) | When consumer needs full rendering control |
-| **HOC** (legacy) | Wrapping multiple components with the same logic |
-| **Compound Components** | Complex coordinated UI (Tabs, Select) |
+| Pattern                   | Use case                                         |
+| ------------------------- | ------------------------------------------------ |
+| **Hooks** (modern)        | Cross-cutting logic shared across components     |
+| **Render Props** (legacy) | When consumer needs full rendering control       |
+| **HOC** (legacy)          | Wrapping multiple components with the same logic |
+| **Compound Components**   | Complex coordinated UI (Tabs, Select)            |
 
 Today, prefer **hooks** for sharing stateful logic. Render props and HOCs are still valid for specific cases (layout components, conditionally rendering different wrappers).
 
@@ -302,32 +323,33 @@ export default function Exercise() {
 import { useState, type ComponentType } from "react"
 
 interface MouseProps {
-  x: number
-  y: number
+x: number
+y: number
 }
 
 function withMouseTracking<P extends object>(
-  Component: ComponentType<P & MouseProps>
+Component: ComponentType<P & MouseProps>
 ) {
-  return function WithMouse(props: P) {
-    const [pos, setPos] = useState({ x: 0, y: 0 })
-    return (
-      <div
-        className="h-48 border rounded"
-        onMouseMove={(e) => setPos({ x: e.clientX, y: e.clientY })}
-      >
-        <Component {...props} x={pos.x} y={pos.y} />
-      </div>
-    )
-  }
+return function WithMouse(props: P) {
+const [pos, setPos] = useState({ x: 0, y: 0 })
+return (
+
+<div
+className="h-48 border rounded"
+onMouseMove={(e) => setPos({ x: e.clientX, y: e.clientY })} >
+<Component {...props} x={pos.x} y={pos.y} />
+</div>
+)
+}
 }
 
 function MouseDisplay({ x, y, label }: MouseProps & { label: string }) {
-  return (
-    <p className="p-4">
-      {label}: ({x}, {y})
-    </p>
-  )
+return (
+
+<p className="p-4">
+{label}: ({x}, {y})
+</p>
+)
 }
 
 const TrackedDisplay = withMouseTracking(MouseDisplay)
@@ -351,6 +373,6 @@ export default function Exercise() {
     "Render props: component accepts a function child to share logic",
     "HOC: function wraps a component and returns an enhanced version",
     "React.memo / useMemo / useCallback prevent unnecessary re-renders",
-    "Next.js defaults to Server Components — add 'use client' only for interactivity"
+    "Next.js defaults to Server Components — add 'use client' only for interactivity",
   ]}
 />

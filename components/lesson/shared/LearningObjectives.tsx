@@ -18,7 +18,7 @@ export function LearningObjectives({
     <div
       className={cn(
         "my-6 rounded-lg border border-primary/20 bg-primary/5 p-4",
-        className,
+        className
       )}
     >
       <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary">

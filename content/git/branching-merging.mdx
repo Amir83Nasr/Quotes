@@ -13,12 +13,14 @@ updated: "2026-07-11"
 
 Branches are Git's superpower. They let you build a feature, try a risky idea, or fix a bug in complete isolation — without touching the working code everyone else depends on. When it's ready, you merge it back.
 
-<LearningObjectives objectives={[
-  "Explain what a branch really is (it's cheaper than you think)",
-  "Create, switch, and delete branches",
-  "Merge a branch and understand fast-forward vs merge commits",
-  "Recognize when a merge conflict will happen",
-]} />
+<LearningObjectives
+  objectives={[
+    "Explain what a branch really is (it's cheaper than you think)",
+    "Create, switch, and delete branches",
+    "Merge a branch and understand fast-forward vs merge commits",
+    "Recognize when a merge conflict will happen",
+  ]}
+/>
 
 ## What Is a Branch, Really?
 
@@ -48,8 +50,12 @@ git branch                    # list branches (* marks the current one)
 ```
 
 <Alert>
-<AlertTitle>switch vs checkout</AlertTitle>
-<AlertDescription>You'll see `git checkout -b` in older tutorials — it still works. Modern Git split its jobs into two clearer commands: `git switch` (change branches) and `git restore` (undo file changes). Prefer them.</AlertDescription>
+  <AlertTitle>switch vs checkout</AlertTitle>
+  <AlertDescription>
+    You'll see `git checkout -b` in older tutorials — it still works. Modern Git
+    split its jobs into two clearer commands: `git switch` (change branches) and
+    `git restore` (undo file changes). Prefer them.
+  </AlertDescription>
 </Alert>
 
 ## Making Commits on a Branch
@@ -67,7 +73,7 @@ git commit -m "feat(auth): add login form"
 
 ## Merging Back
 
-When the feature is done, switch to the branch you want to merge *into* (usually `main`), then merge:
+When the feature is done, switch to the branch you want to merge _into_ (usually `main`), then merge:
 
 ```bash
 git switch main
@@ -83,7 +89,7 @@ before:  main → A   feature → A─B─C
 after:   main ─────────────→ C   (fast-forward)
 ```
 
-**Merge commit** — if `main` *has* moved on (someone else committed), Git creates a new commit that ties the two histories together.
+**Merge commit** — if `main` _has_ moved on (someone else committed), Git creates a new commit that ties the two histories together.
 
 ```text
 main    ─── A ─── B ─────── M   ← merge commit M
@@ -102,16 +108,22 @@ git branch -d feature/login
 If the same lines were changed on both branches, Git can't decide which version wins and pauses with a **merge conflict**. This is normal and expected on real teams — we cover exactly how to resolve them in the next lesson.
 
 <Alert>
-<AlertTitle>Branch naming conventions</AlertTitle>
-<AlertDescription>Teams commonly prefix branches by purpose: `feature/`, `fix/`, `chore/`. A name like `fix/cart-total-rounding` tells everyone what the branch is for at a glance.</AlertDescription>
+  <AlertTitle>Branch naming conventions</AlertTitle>
+  <AlertDescription>
+    Teams commonly prefix branches by purpose: `feature/`, `fix/`, `chore/`. A
+    name like `fix/cart-total-rounding` tells everyone what the branch is for at
+    a glance.
+  </AlertDescription>
 </Alert>
 
 ## Check Your Understanding
 
-<LessonSummary points={[
-  "A branch is a cheap, movable pointer to a commit — not a copy of your files",
-  "git switch -c creates and moves to a branch; commits land only on the current branch",
-  "Fast-forward merges just advance the pointer; diverged histories get a merge commit",
-  "Delete merged branches with git branch -d to keep the branch list clean",
-  "Editing the same lines on two branches causes a merge conflict (next lesson)",
-]} />
+<LessonSummary
+  points={[
+    "A branch is a cheap, movable pointer to a commit — not a copy of your files",
+    "git switch -c creates and moves to a branch; commits land only on the current branch",
+    "Fast-forward merges just advance the pointer; diverged histories get a merge commit",
+    "Delete merged branches with git branch -d to keep the branch list clean",
+    "Editing the same lines on two branches causes a merge conflict (next lesson)",
+  ]}
+/>

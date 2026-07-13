@@ -15,8 +15,8 @@ function first<T>(arr: T[]): T | undefined {
   return arr[0]
 }
 
-const num = first([1, 2, 3])    // type: number
-const str = first(["a", "b"])   // type: string
+const num = first([1, 2, 3]) // type: number
+const str = first(["a", "b"]) // type: string
 ```
 
 ## Generic Constraints
@@ -44,7 +44,7 @@ function List<T>({ items, renderItem }: ListProps<T>) {
 }
 
 // Usage — type inferred from items
-<List items={users} renderItem={(user) => <li>{user.name}</li>} />
+;<List items={users} renderItem={(user) => <li>{user.name}</li>} />
 ```
 
 ## Next Steps

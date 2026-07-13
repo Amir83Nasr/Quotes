@@ -14,7 +14,7 @@ order: 3
     "Apply conditional rendering patterns (&&, ternary, if/else)",
     "Render lists with proper keys",
     "Use fragments to avoid wrapper divs",
-    "Spread props onto components"
+    "Spread props onto components",
   ]}
 />
 
@@ -51,8 +51,12 @@ function Greeting({ user, unread }) {
 
   return (
     <div>
-      <h1>{timeGreeting}, {user.name}</h1>
-      <p>{user.name.length > 0 ? `You have ${unread} messages` : "No messages"}</p>
+      <h1>
+        {timeGreeting}, {user.name}
+      </h1>
+      <p>
+        {user.name.length > 0 ? `You have ${unread} messages` : "No messages"}
+      </p>
       <p>{Math.random().toFixed(2)}</p>
     </div>
   )
@@ -79,13 +83,12 @@ function NotificationBadge({ unread }) {
   return (
     <div>
       <p>Messages</p>
-      {unread > 0 && (
-        <span className="badge">{unread}</span>
-      )}
+      {unread > 0 && <span className="badge">{unread}</span>}
     </div>
   )
 }
 ```
+
 ⚠️ `{0 && <Component />}` renders `0`, not nothing. Compare with `{count > 0 && <C />}`.
 
   </TabsContent>
@@ -144,6 +147,7 @@ function TodoList({ items }: { items: Todo[] }) {
 ```
 
 Key requirements:
+
 - **Stable** across re-renders — use unique IDs from your data
 - Avoid `index` — it breaks when items reorder, causing stale state
 
@@ -151,7 +155,8 @@ Key requirements:
   <Info />
   <AlertTitle>When is index okay?</AlertTitle>
   <AlertDescription>
-    Only if the list is static and never reordered/filtered. Even then, prefer stable keys.
+    Only if the list is static and never reordered/filtered. Even then, prefer
+    stable keys.
   </AlertDescription>
 </Alert>
 
@@ -210,9 +215,9 @@ const user: User = { name: "Alice", email: "a@b.com", role: "admin" }
 }
 
 const team: Member[] = [
-  { id: "m1", name: "Alice", role: "Designer" },
-  { id: "m2", name: "Bob", role: "Developer" },
-  { id: "m3", name: "Charlie", role: "Developer" },
+{ id: "m1", name: "Alice", role: "Designer" },
+{ id: "m2", name: "Bob", role: "Developer" },
+{ id: "m3", name: "Charlie", role: "Developer" },
 ]
 
 export default function TeamList() {
@@ -228,49 +233,50 @@ export default function TeamList() {
 }
 
 const team: Member[] = [
-  { id: "m1", name: "Alice", role: "Designer" },
-  { id: "m2", name: "Bob", role: "Developer" },
-  { id: "m3", name: "Charlie", role: "Developer" },
+{ id: "m1", name: "Alice", role: "Designer" },
+{ id: "m2", name: "Bob", role: "Developer" },
+{ id: "m3", name: "Charlie", role: "Developer" },
 ]
 
 export default function TeamList() {
   const developers = team.filter((m) => m.role === "Developer")
 
-  return (
-    <ul>
-      {developers.map((member) => (
-        <li key={member.id}>
-          {member.name} — {member.role}
-        </li>
-      ))}
-    </ul>
-  )
+return (
+
+<ul>
+{developers.map((member) => (
+<li key={member.id}>
+{member.name} — {member.role}
+</li>
+))}
+</ul>
+)
 }`}
-  hints={[
-    "Filter first, then map",
-    "Use member.id as the key",
-    "Render each item inside <li>"
-  ]}
-  previewType="mixed"
+hints={[
+"Filter first, then map",
+"Use member.id as the key",
+"Render each item inside <li>"
+]}
+previewType="mixed"
 />
 
 }` render?",
-      options: ["Nothing", "The Component", "0", "An error"],
-      correctIndex: 2,
-      explanation: "0 is falsy in condition but truthy in JSX rendering — it prints '0'. Guard with explicit comparison."
-    },
-    {
-      question: "When would you use <> instead of a <div>?",
-      options: [
-        "To apply CSS classes",
-        "To group children without adding a DOM node",
-        "To pass a key to the group",
-        "To create a flex container"
-      ],
-      correctIndex: 1,
-      explanation: "Fragments (<>...</>) group elements without adding an extra DOM wrapper."
-    }
-  ]}
+options: ["Nothing", "The Component", "0", "An error"],
+correctIndex: 2,
+explanation: "0 is falsy in condition but truthy in JSX rendering — it prints '0'. Guard with explicit comparison."
+},
+{
+question: "When would you use <> instead of a <div>?",
+options: [
+"To apply CSS classes",
+"To group children without adding a DOM node",
+"To pass a key to the group",
+"To create a flex container"
+],
+correctIndex: 1,
+explanation: "Fragments (<>...</>) group elements without adding an extra DOM wrapper."
+}
+]}
 />
 
 <LessonSummary
@@ -280,6 +286,6 @@ export default function TeamList() {
     "Conditional rendering: && for one branch, ternary for two, if/early-return for exclusive branches",
     "Use stable, unique keys for list items — avoid index",
     "Fragments (<>...</>) group without extra DOM nodes",
-    "Spread props with {...obj} for clean prop forwarding"
+    "Spread props with {...obj} for clean prop forwarding",
   ]}
 />

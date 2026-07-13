@@ -5,13 +5,15 @@ difficulty: intermediate
 order: 7
 ---
 
-<LearningObjectives objectives={[
-"Write media queries for breakpoints, accessibility, and color scheme",
-"Use container queries for component-level responsiveness",
-"Apply clamp(), min(), max() for fluid typography and spacing",
-"Understand dvh, svh, lvh, dvw viewport units",
-"Build mobile-first responsive layouts with common patterns",
-]} />
+<LearningObjectives
+  objectives={[
+    "Write media queries for breakpoints, accessibility, and color scheme",
+    "Use container queries for component-level responsiveness",
+    "Apply clamp(), min(), max() for fluid typography and spacing",
+    "Understand dvh, svh, lvh, dvw viewport units",
+    "Build mobile-first responsive layouts with common patterns",
+  ]}
+/>
 
 ## Responsive Design Fundamentals
 
@@ -24,39 +26,60 @@ Media queries test device characteristics. Three common uses:
 ```css
 /* Min-width (mobile-first): apply above threshold */
 @media (min-width: 768px) {
-  .sidebar { display: block; }
+  .sidebar {
+    display: block;
+  }
 }
 
 /* Max-width (desktop-first): apply below threshold */
 @media (max-width: 767px) {
-  .nav-menu { display: none; }
+  .nav-menu {
+    display: none;
+  }
 }
 
 /* User preference queries */
 @media (prefers-reduced-motion: reduce) {
-  .animated { animation: none; }
+  .animated {
+    animation: none;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
-  body { background: #111; color: #eee; }
+  body {
+    background: #111;
+    color: #eee;
+  }
 }
 ```
 
-<Alert><AlertTitle>Mobile-First Wins</AlertTitle><AlertDescription>Start with base styles for small screens, then add media queries for larger breakpoints. Less code, fewer overrides, naturally accessible baseline.</AlertDescription></Alert>
+<Alert>
+  <AlertTitle>Mobile-First Wins</AlertTitle>
+  <AlertDescription>
+    Start with base styles for small screens, then add media queries for larger
+    breakpoints. Less code, fewer overrides, naturally accessible baseline.
+  </AlertDescription>
+</Alert>
 
 ## Container Queries
 
 Query the parent container's size, not the viewport.
 
 ```css
-.card-container { container-type: inline-size; }
+.card-container {
+  container-type: inline-size;
+}
 
 @container (min-width: 400px) {
-  .card { flex-direction: row; }
+  .card {
+    flex-direction: row;
+  }
 }
 
 @container (min-width: 600px) {
-  .card { grid-template-columns: 1fr 2fr; }
+  .card {
+    grid-template-columns: 1fr 2fr;
+  }
 }
 ```
 
@@ -65,25 +88,35 @@ Query the parent container's size, not the viewport.
 `clamp(MIN, PREFERRED, MAX)` — fluid values that stay within bounds.
 
 ```css
-h1 { font-size: clamp(1.5rem, 4vw + 1rem, 3rem); }
-.card { padding: clamp(1rem, 3vw, 2.5rem); }
-.container { width: min(90vw, 1200px); } /* never exceeds 1200px */
+h1 {
+  font-size: clamp(1.5rem, 4vw + 1rem, 3rem);
+}
+.card {
+  padding: clamp(1rem, 3vw, 2.5rem);
+}
+.container {
+  width: min(90vw, 1200px);
+} /* never exceeds 1200px */
 ```
 
 ## Modern Viewport Units
 
 `100vh` on mobile includes the browser chrome. New units fix this:
 
-| Unit | Meaning |
-|------|---------|
+| Unit  | Meaning                                                 |
+| ----- | ------------------------------------------------------- |
 | `dvh` | Dynamic viewport height (changes as chrome shows/hides) |
-| `svh` | Smallest viewport height (safe baseline) |
-| `lvh` | Largest viewport height (full screen) |
-| `dvw` | Dynamic viewport width |
+| `svh` | Smallest viewport height (safe baseline)                |
+| `lvh` | Largest viewport height (full screen)                   |
+| `dvw` | Dynamic viewport width                                  |
 
 ```css
-.hero { height: 100dvh; } /* adapts to mobile toolbars */
-.fixed-footer { height: 10svh; } /* safe minimum */
+.hero {
+  height: 100dvh;
+} /* adapts to mobile toolbars */
+.fixed-footer {
+  height: 10svh;
+} /* safe minimum */
 ```
 
 ## Common Responsive Pattern
@@ -119,8 +152,25 @@ Stacked layout on mobile, side-by-side on desktop:
   <div class="card">Card 5</div>
   <div class="card">Card 6</div>
 </div>`}
-  css={`.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(150px, 30vw, 300px), 1fr)); gap: 1rem; padding: 1rem; }
-.card { background: var(--color-primary, #6366f1); color: white; padding: 2rem; border-radius: 8px; text-align: center; font-weight: 600; }`}
+  css={`
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(
+        auto-fill,
+        minmax(clamp(150px, 30vw, 300px), 1fr)
+      );
+      gap: 1rem;
+      padding: 1rem;
+    }
+    .card {
+      background: var(--color-primary, #6366f1);
+      color: white;
+      padding: 2rem;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+    }
+  `}
 />
 
 <InteractiveExercise
@@ -143,8 +193,9 @@ Stacked layout on mobile, side-by-side on desktop:
   }
   .card { background: #6366f1; color: white; padding: 1.5rem; border-radius: 8px; text-align: center; }
 
-  @media (min-width: 600px) { .card-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 900px) { .card-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 600px) { .card-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 900px) { .card-grid { grid-template-columns: repeat(3, 1fr); } }
+
 </style>
 <div class="card-grid">
   <div class="card">Item 1</div>
@@ -158,10 +209,12 @@ Stacked layout on mobile, side-by-side on desktop:
   previewType="html"
 />
 
-<LessonSummary points={[
-"Use min-width media queries for mobile-first responsive design",
-"Container queries let components respond to their own container size",
-"clamp() creates fluid sizing that stays within defined bounds",
-"dvh/svh/lvh provide better viewport handling on mobile devices",
-"Start with single-column base, add columns at breakpoints",
-]} />
+<LessonSummary
+  points={[
+    "Use min-width media queries for mobile-first responsive design",
+    "Container queries let components respond to their own container size",
+    "clamp() creates fluid sizing that stays within defined bounds",
+    "dvh/svh/lvh provide better viewport handling on mobile devices",
+    "Start with single-column base, add columns at breakpoints",
+  ]}
+/>

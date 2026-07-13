@@ -5,14 +5,16 @@ difficulty: intermediate
 order: 9
 ---
 
-<LearningObjectives objectives={[
-"Use CSS transitions for property interpolation on state changes",
-"Write @keyframes for multi-step animations",
-"Configure animation properties: duration, timing, iteration, direction",
-"Understand easing functions including cubic-bezier and steps()",
-"Apply transform and will-change for GPU-accelerated performance",
-"Handle prefers-reduced-motion for accessibility",
-]} />
+<LearningObjectives
+  objectives={[
+    "Use CSS transitions for property interpolation on state changes",
+    "Write @keyframes for multi-step animations",
+    "Configure animation properties: duration, timing, iteration, direction",
+    "Understand easing functions including cubic-bezier and steps()",
+    "Apply transform and will-change for GPU-accelerated performance",
+    "Handle prefers-reduced-motion for accessibility",
+  ]}
+/>
 
 ## CSS Transitions
 
@@ -22,7 +24,9 @@ Transitions interpolate between states when a property changes.
 .button {
   background: #6366f1;
   transform: scale(1);
-  transition: background 0.3s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition:
+    background 0.3s ease,
+    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .button:hover {
@@ -52,26 +56,33 @@ Define multi-step animations with named keyframes.
 }
 
 @keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
 .animated-card {
-  animation: slide-in 0.5s ease-out, bounce 2s infinite 0.5s;
+  animation:
+    slide-in 0.5s ease-out,
+    bounce 2s infinite 0.5s;
 }
 ```
 
 ## Animation Properties
 
-| Property | Purpose | Example |
-|----------|---------|---------|
-| `animation-name` | Which @keyframes to use | `slide-in` |
-| `animation-duration` | Length of one cycle | `0.5s` |
-| `animation-timing-function` | Easing curve | `ease-in-out` |
-| `animation-iteration-count` | How many cycles | `infinite` |
-| `animation-direction` | Play forward, reverse, alternate | `alternate` |
-| `animation-delay` | Wait before starting | `0.2s` |
-| `animation-fill-mode` | State before/after animation | `forwards` |
+| Property                    | Purpose                          | Example       |
+| --------------------------- | -------------------------------- | ------------- |
+| `animation-name`            | Which @keyframes to use          | `slide-in`    |
+| `animation-duration`        | Length of one cycle              | `0.5s`        |
+| `animation-timing-function` | Easing curve                     | `ease-in-out` |
+| `animation-iteration-count` | How many cycles                  | `infinite`    |
+| `animation-direction`       | Play forward, reverse, alternate | `alternate`   |
+| `animation-delay`           | Wait before starting             | `0.2s`        |
+| `animation-fill-mode`       | State before/after animation     | `forwards`    |
 
 ```css
 .spinner {
@@ -79,7 +90,9 @@ Define multi-step animations with named keyframes.
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 ```
 
@@ -103,7 +116,9 @@ animation: typewriter 2s steps(10) forwards;
 ```css
 .card {
   will-change: transform, opacity;
-  transition: transform 0.3s, opacity 0.3s;
+  transition:
+    transform 0.3s,
+    opacity 0.3s;
 }
 
 .card:hover {
@@ -112,13 +127,21 @@ animation: typewriter 2s steps(10) forwards;
 }
 ```
 
-<Alert><AlertTitle>will-change Sparingly</AlertTitle><AlertDescription>Overuse creates memory pressure. Apply it right before animation starts, remove after. Or let the browser optimize on its own for simple transforms.</AlertDescription></Alert>
+<Alert>
+  <AlertTitle>will-change Sparingly</AlertTitle>
+  <AlertDescription>
+    Overuse creates memory pressure. Apply it right before animation starts,
+    remove after. Or let the browser optimize on its own for simple transforms.
+  </AlertDescription>
+</Alert>
 
 ## Accessibility: prefers-reduced-motion
 
 ```css
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -131,11 +154,41 @@ animation: typewriter 2s steps(10) forwards;
   <div class="pulse-box">Hover Me</div>
   <div class="loader"></div>
 </div>`}
-  css={`.anim-demo { display: flex; gap: 2rem; align-items: center; padding: 2rem; }
-.pulse-box { background: #6366f1; color: white; padding: 1.5rem 2rem; border-radius: 8px; cursor: pointer; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s; }
-.pulse-box:hover { transform: scale(1.1) rotate(2deg); box-shadow: 0 8px 24px rgba(99,102,241,0.4); }
-.loader { width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: #6366f1; border-radius: 50%; animation: spin 0.8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }`}
+  css={`
+    .anim-demo {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      padding: 2rem;
+    }
+    .pulse-box {
+      background: #6366f1;
+      color: white;
+      padding: 1.5rem 2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition:
+        transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.3s;
+    }
+    .pulse-box:hover {
+      transform: scale(1.1) rotate(2deg);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+    }
+    .loader {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e2e8f0;
+      border-top-color: #6366f1;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  `}
 />
 
 ## Try It Yourself
@@ -192,14 +245,20 @@ Try creating a custom animation with CSS keyframes:
     <p>This card slides in from below.</p>
   </div>
 </div>`}
-  hints={["Use @keyframes for both spin and slideUp", "Use animation property on both elements", "Add prefers-reduced-motion fallback"]}
+  hints={[
+    "Use @keyframes for both spin and slideUp",
+    "Use animation property on both elements",
+    "Add prefers-reduced-motion fallback",
+  ]}
   previewType="html"
 />
 
-<LessonSummary points={[
-"Transitions interpolate between states on property change",
-"@keyframes define multi-step animation sequences",
-"Use transform and opacity for GPU-accelerated animations",
-"cubic-bezier creates custom easing curves, steps() creates discrete frames",
-"Always provide a prefers-reduced-motion fallback",
-]} />
+<LessonSummary
+  points={[
+    "Transitions interpolate between states on property change",
+    "@keyframes define multi-step animation sequences",
+    "Use transform and opacity for GPU-accelerated animations",
+    "cubic-bezier creates custom easing curves, steps() creates discrete frames",
+    "Always provide a prefers-reduced-motion fallback",
+  ]}
+/>

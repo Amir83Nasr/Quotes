@@ -28,19 +28,21 @@ Unprefixed utilities apply at the smallest breakpoint. Add prefixes like `md:` t
 </div>
 ```
 
-| Prefix | Min-width | Target |
-|--------|-----------|--------|
-| `sm:` | 640px | Large phones |
-| `md:` | 768px | Tablets |
-| `lg:` | 1024px | Small laptops |
-| `xl:` | 1280px | Desktops |
+| Prefix | Min-width | Target        |
+| ------ | --------- | ------------- |
+| `sm:`  | 640px     | Large phones  |
+| `md:`  | 768px     | Tablets       |
+| `lg:`  | 1024px    | Small laptops |
+| `xl:`  | 1280px    | Desktops      |
 
 ## Typography Scaling & Stacked-to-Row
 
 ```html
 <article class="mx-auto max-w-prose px-4">
   <h1 class="text-2xl font-bold md:text-3xl lg:text-4xl">Responsive Heading</h1>
-  <p class="mt-4 text-sm leading-relaxed text-gray-600 md:text-base">Body text scales up.</p>
+  <p class="mt-4 text-sm leading-relaxed text-gray-600 md:text-base">
+    Body text scales up.
+  </p>
 </article>
 
 <!-- Most common responsive pattern -->
@@ -59,18 +61,28 @@ Unprefixed utilities apply at the smallest breakpoint. Add prefixes like `md:` t
 `hidden` then `{bp}:block` to show only at certain widths. `block` then `{bp}:hidden` to hide.
 
 ```html
-<button class="block md:hidden rounded bg-blue-500 px-4 py-2 text-white">☰ Menu</button>
-<aside class="hidden lg:block w-64 bg-gray-50 p-4">Sidebar</aside>
+<button class="block rounded bg-blue-500 px-4 py-2 text-white md:hidden">
+  ☰ Menu
+</button>
+<aside class="hidden w-64 bg-gray-50 p-4 lg:block">Sidebar</aside>
 ```
 
 <Alert>
-  <AlertTitle><AlertTriangle className="inline h-4 w-4" /> Gotcha</AlertTitle>
-  <AlertDescription>Responsive prefixes stack upward. `md:flex` applies from md and above, not only at md.</AlertDescription>
+  <AlertTitle>
+    <AlertTriangle className="inline h-4 w-4" /> Gotcha
+  </AlertTitle>
+  <AlertDescription>
+    Responsive prefixes stack upward. `md:flex` applies from md and above, not
+    only at md.
+  </AlertDescription>
 </Alert>
 
 ## Responsive Card Grid
 
-<SandboxPreview title="Responsive Card Grid" type="html" height={380}
+<SandboxPreview
+  title="Responsive Card Grid"
+  type="html"
+  height={380}
   html={`
 <script src="https://cdn.tailwindcss.com"><\/script>
 <div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -98,7 +110,7 @@ Tailwind v4 `@container` support — style based on container width, not viewpor
 
 ```html
 <div class="@container">
-  <div class="grid grid-cols-1 @lg:grid-cols-2 gap-4">
+  <div class="grid grid-cols-1 gap-4 @lg:grid-cols-2">
     <div class="rounded-lg bg-gray-100 p-4">Child adapts to container</div>
     <div class="rounded-lg bg-gray-100 p-4">Not viewport</div>
   </div>

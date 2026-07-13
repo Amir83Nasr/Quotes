@@ -7,13 +7,15 @@ order: 3
 
 # Layouts & Templates
 
-<LearningObjectives objectives={[
-  "Understand root layout vs nested layout behavior",
-  "Differentiate between layout.tsx and template.tsx",
-  "Implement parallel routes with @slot convention",
-  "Use intercepting routes with (...) syntax",
-  "Organize routes with route groups for shared layouts"
-]} />
+<LearningObjectives
+  objectives={[
+    "Understand root layout vs nested layout behavior",
+    "Differentiate between layout.tsx and template.tsx",
+    "Implement parallel routes with @slot convention",
+    "Use intercepting routes with (...) syntax",
+    "Organize routes with route groups for shared layouts",
+  ]}
+/>
 
 ## Root Layout
 
@@ -21,7 +23,11 @@ The root `app/layout.tsx` wraps every page. It replaces the HTML and body tags:
 
 ```tsx
 // app/layout.tsx
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html>
       <body>
@@ -48,7 +54,11 @@ app/
 
 ```tsx
 // app/dashboard/layout.tsx
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <div className="flex">
       <nav className="w-64">Dashboard Sidebar</nav>
@@ -86,7 +96,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 <Alert>
   <AlertTitle>Layout vs Template Gotcha</AlertTitle>
   <AlertDescription>
-    Use layout when state should persist across pages (sidebar, nav). Use template for page-transition effects or when you need useEffect to run on every navigation.
+    Use layout when state should persist across pages (sidebar, nav). Use
+    template for page-transition effects or when you need useEffect to run on
+    every navigation.
   </AlertDescription>
 </Alert>
 

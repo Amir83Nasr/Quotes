@@ -9,14 +9,16 @@ order: 7
 
 Built-in utility types solve common transformations. Understanding how they work lets you compose and create your own.
 
-<LearningObjectives objectives={[
-  "Use Partial, Required, Pick, Omit, Record for object transformations",
-  "Apply Extract, Exclude, NonNullable for union filtering",
-  "Extract types with ReturnType, Parameters, Awaited",
-  "Compose multiple utility types together",
-  "Create custom utility types",
-  "Use string manipulation types (Uppercase, Capitalize, ...)"
-]} />
+<LearningObjectives
+  objectives={[
+    "Use Partial, Required, Pick, Omit, Record for object transformations",
+    "Apply Extract, Exclude, NonNullable for union filtering",
+    "Extract types with ReturnType, Parameters, Awaited",
+    "Compose multiple utility types together",
+    "Create custom utility types",
+    "Use string manipulation types (Uppercase, Capitalize, ...)",
+  ]}
+/>
 
 ## Object Shape Utilities
 
@@ -82,7 +84,12 @@ type CreateUserParams = Parameters<typeof createUser>
 // [name: string, age: number, admin?: boolean]
 
 // ConstructorParameters — for classes
-class Logger { constructor(private prefix: string, private level: string) {} }
+class Logger {
+  constructor(
+    private prefix: string,
+    private level: string
+  ) {}
+}
 type LoggerParams = ConstructorParameters<typeof Logger>
 // [prefix: string, level: string]
 
@@ -171,7 +178,12 @@ type ByKeys<T, V> = {
 // Usage: pick keys whose values are strings
 type StringKeys<T> = ByKeys<T, string>
 
-interface Post { id: number; title: string; slug: string; published: boolean }
+interface Post {
+  id: number
+  title: string
+  slug: string
+  published: boolean
+}
 type PostStringKeys = StringKeys<Post>
 // "title" | "slug"
 
@@ -184,18 +196,19 @@ type Merged = Spread<{ a: string; b: number }, { b: string; c: boolean }>
 type Nullable<T> = T | null
 
 // AsyncReturnType — unwrap Promise from return type
-type AsyncReturnType<T extends (...args: unknown[]) => unknown> =
-  Awaited<ReturnType<T>>
+type AsyncReturnType<T extends (...args: unknown[]) => unknown> = Awaited<
+  ReturnType<T>
+>
 ```
 
 ## String Manipulation Types
 
 ```ts
 type Greeting = "helloWorld"
-type Upper = Uppercase<Greeting>       // "HELLOWORLD"
-type Lower = Lowercase<Upper>          // "helloworld"
-type Capital = Capitalize<Greeting>    // "HelloWorld"
-type Uncap = Uncapitalize<Capital>     // "helloWorld"
+type Upper = Uppercase<Greeting> // "HELLOWORLD"
+type Lower = Lowercase<Upper> // "helloworld"
+type Capital = Capitalize<Greeting> // "HelloWorld"
+type Uncap = Uncapitalize<Capital> // "helloWorld"
 
 // Real-world: generated API action types
 type Entity = "user" | "post" | "comment"
@@ -227,9 +240,9 @@ type ListResponse<T> = // use Pick and Omit from APIResponse
 interface User { id: number; name: string; email: string }
 type UserList = ListResponse<User>[]`}
   solutionCode={`interface APIResponse<T> {
-  data: T
-  meta?: { page: number; totalPages: number }
-  error?: { message: string; code: number }
+data: T
+meta?: { page: number; totalPages: number }
+error?: { message: string; code: number }
 }
 
 type UpdatePayload<T> = Partial<Pick<T, Exclude<keyof T, "id">>>
@@ -242,19 +255,21 @@ type UserUpdate = UpdatePayload<User>
 
 type UserList = ListResponse<User>
 // { data: User[]; meta?: { page: number; totalPages: number } }`}
-  hints={[
-    "Use Partial to make all properties optional.",
-    "Use Exclude<keyof T, 'id'> to exclude 'id' from the keys.",
-    "Use Omit<Type, 'error'> to create a success-only version.",
-    "Compose: Pick and Partial for updates, Omit for success responses."
-  ]}
+hints={[
+"Use Partial to make all properties optional.",
+"Use Exclude<keyof T, 'id'> to exclude 'id' from the keys.",
+"Use Omit<Type, 'error'> to create a success-only version.",
+"Compose: Pick and Partial for updates, Omit for success responses."
+]}
 />
 
-<LessonSummary points={[
-  "Partial, Required, Pick, Omit, Record transform object shapes.",
-  "Extract, Exclude, NonNullable filter union members.",
-  "ReturnType, Parameters, Awaited extract from functions and promises.",
-  "Utility types compose together (e.g., Partial<Pick<T, K>>).",
-  "String manipulation types (Uppercase, Capitalize, ...) transform string literals.",
-  "Create custom utilities by combining mapped types, conditionals, and key remapping."
-]} />
+<LessonSummary
+  points={[
+    "Partial, Required, Pick, Omit, Record transform object shapes.",
+    "Extract, Exclude, NonNullable filter union members.",
+    "ReturnType, Parameters, Awaited extract from functions and promises.",
+    "Utility types compose together (e.g., Partial<Pick<T, K>>).",
+    "String manipulation types (Uppercase, Capitalize, ...) transform string literals.",
+    "Create custom utilities by combining mapped types, conditionals, and key remapping.",
+  ]}
+/>

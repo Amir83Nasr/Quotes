@@ -30,13 +30,37 @@ export const SIDEBAR_LABELS: Record<string, string> = {
  * section. HTML/CSS/JS/TS live under the `frontend` wrapper dir, so the
  * `frontend` node alone carries the Foundations section.
  */
-export const SIDEBAR_SECTIONS: { label: string; order: number; categories: string[] }[] = [
+export const SIDEBAR_SECTIONS: {
+  label: string
+  order: number
+  categories: string[]
+}[] = [
   // `frontend` keeps the sidebar Foundations group (top-level content node),
   // while html/css/javascript/typescript are the CATEGORIES ids that render
   // as cards in the homepage "Your Learning Path" section 1.
-  { label: "Foundations", order: 1, categories: ["git", "web", "frontend", "html", "css", "javascript", "typescript"] },
-  { label: "Styling & UI", order: 2, categories: ["tailwind", "shadcn", "gallery"] },
+  {
+    label: "Foundations",
+    order: 1,
+    categories: [
+      "git",
+      "web",
+      "frontend",
+      "html",
+      "css",
+      "javascript",
+      "typescript",
+    ],
+  },
+  {
+    label: "Styling & UI",
+    order: 2,
+    categories: ["tailwind", "shadcn", "gallery"],
+  },
   { label: "Core Framework", order: 3, categories: ["react", "nextjs"] },
-  { label: "Advanced", order: 4, categories: ["advanced", "fullstack", "security"] },
+  {
+    label: "Advanced",
+    order: 4,
+    categories: ["advanced", "fullstack", "security"],
+  },
   { label: "Projects", order: 5, categories: ["practice"] },
 ]

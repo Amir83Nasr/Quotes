@@ -8,15 +8,17 @@ order: 11
 
 Browser APIs unlock features once impossible or library-dependent. Today most ship natively.
 
-<LearningObjectives objectives={[
-  "Use IntersectionObserver for lazy loading and infinite scroll",
-  "Track element resizes with ResizeObserver",
-  "Observe DOM mutations with MutationObserver",
-  "Access user location with Geolocation API",
-  "Persist data with Web Storage API",
-  "Run heavy computation off the main thread with Web Workers",
-  "Register Service Workers for offline support"
-]} />
+<LearningObjectives
+  objectives={[
+    "Use IntersectionObserver for lazy loading and infinite scroll",
+    "Track element resizes with ResizeObserver",
+    "Observe DOM mutations with MutationObserver",
+    "Access user location with Geolocation API",
+    "Persist data with Web Storage API",
+    "Run heavy computation off the main thread with Web Workers",
+    "Register Service Workers for offline support",
+  ]}
+/>
 
 ## IntersectionObserver
 
@@ -35,7 +37,7 @@ function useInView(threshold = 0.5) {
 
     const observer = new IntersectionObserver(
       ([entry]) => setInView(entry.isIntersecting),
-      { threshold },
+      { threshold }
     )
 
     observer.observe(el)
@@ -85,8 +87,12 @@ function InfiniteScroll({ loadMore }: { loadMore: () => Promise<void> }) {
 ```
 
 <Alert>
-<AlertTitle>Gotcha: threshold value</AlertTitle>
-<AlertDescription>threshold: 1.0 means 100% visible. For infinite scroll, 0.1 or even 0.0 is better — fires as soon as the sentinel enters the viewport, triggering the next load before user reaches bottom.</AlertDescription>
+  <AlertTitle>Gotcha: threshold value</AlertTitle>
+  <AlertDescription>
+    threshold: 1.0 means 100% visible. For infinite scroll, 0.1 or even 0.0 is
+    better — fires as soon as the sentinel enters the viewport, triggering the
+    next load before user reaches bottom.
+  </AlertDescription>
 </Alert>
 
 ## ResizeObserver
@@ -118,7 +124,9 @@ function ResponsiveContainer() {
 
   return (
     <div ref={ref} style={{ resize: "both", overflow: "auto" }}>
-      <p>Container: {width.toFixed(0)} x {height.toFixed(0)}px</p>
+      <p>
+        Container: {width.toFixed(0)} x {height.toFixed(0)}px
+      </p>
     </div>
   )
 }
@@ -171,7 +179,7 @@ function useGeolocation() {
     navigator.geolocation.getCurrentPosition(
       (pos) => setPosition(pos),
       (err) => setError(err.message),
-      { enableHighAccuracy: true, timeout: 5000 },
+      { enableHighAccuracy: true, timeout: 5000 }
     )
   }, [])
 
@@ -219,31 +227,37 @@ function useSortWorker() {
 // sw.ts — intercepts fetch, serves from cache
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open("v1").then((cache) =>
-      cache.addAll(["/", "/index.html", "/styles.css", "/app.js"]),
-    ),
+    caches
+      .open("v1")
+      .then((cache) =>
+        cache.addAll(["/", "/index.html", "/styles.css", "/app.js"])
+      )
   )
 })
 
 self.addEventListener("activate", (event) => {
   // Clean old caches
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== "v1").map((k) => caches.delete(k))),
-    ),
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(keys.filter((k) => k !== "v1").map((k) => caches.delete(k)))
+      )
   )
 })
 
 self.addEventListener("fetch", (event) => {
   event.respondWith(
-    caches.match(event.request).then((cached) =>
-      cached ?? fetch(event.request).then((response) => {
-        // Cache new requests
-        const clone = response.clone()
-        caches.open("v1").then((cache) => cache.put(event.request, clone))
-        return response
-      }),
-    ),
+    caches.match(event.request).then(
+      (cached) =>
+        cached ??
+        fetch(event.request).then((response) => {
+          // Cache new requests
+          const clone = response.clone()
+          caches.open("v1").then((cache) => cache.put(event.request, clone))
+          return response
+        })
+    )
   )
 })
 ```
@@ -261,12 +275,12 @@ Build an infinite scroll list using IntersectionObserver.
 type Item = { id: number; title: string }
 
 async function fetchItems(page: number): Promise<Item[]> {
-  // Simulates API call
-  await new Promise((r) => setTimeout(r, 800))
-  return Array.from({ length: 10 }, (_, i) => ({
-    id: page * 10 + i,
-    title: \`Item \${page * 10 + i}\`,
-  }))
+// Simulates API call
+await new Promise((r) => setTimeout(r, 800))
+return Array.from({ length: 10 }, (\_, i) => ({
+id: page _ 10 + i,
+title: \`Item \${page _ 10 + i}\`,
+}))
 }
 
 // Step 1: Create a ref for the sentinel element
@@ -291,11 +305,11 @@ export default function InfiniteList() {
 type Item = { id: number; title: string }
 
 async function fetchItems(page: number): Promise<Item[]> {
-  await new Promise((r) => setTimeout(r, 800))
-  return Array.from({ length: 10 }, (_, i) => ({
-    id: page * 10 + i,
-    title: \`Item \${page * 10 + i}\`,
-  }))
+await new Promise((r) => setTimeout(r, 800))
+return Array.from({ length: 10 }, (\_, i) => ({
+id: page _ 10 + i,
+title: \`Item \${page _ 10 + i}\`,
+}))
 }
 
 export default function InfiniteList() {
@@ -305,22 +319,22 @@ export default function InfiniteList() {
   const [hasMore, setHasMore] = useState(true)
   const sentinelRef = useRef<HTMLDivElement>(null!)
 
-  const loadMore = useCallback(async () => {
-    if (loading || !hasMore) return
-    setLoading(true)
-    try {
-      const newItems = await fetchItems(page)
-      setItems((prev) => [...prev, ...newItems])
-      setPage((p) => p + 1)
-      if (newItems.length < 10) setHasMore(false)
-    } finally {
-      setLoading(false)
-    }
-  }, [page, loading, hasMore])
+const loadMore = useCallback(async () => {
+if (loading || !hasMore) return
+setLoading(true)
+try {
+const newItems = await fetchItems(page)
+setItems((prev) => [...prev, ...newItems])
+setPage((p) => p + 1)
+if (newItems.length < 10) setHasMore(false)
+} finally {
+setLoading(false)
+}
+}, [page, loading, hasMore])
 
-  useEffect(() => {
-    const sentinel = sentinelRef.current
-    if (!sentinel) return
+useEffect(() => {
+const sentinel = sentinelRef.current
+if (!sentinel) return
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -331,39 +345,43 @@ export default function InfiniteList() {
 
     observer.observe(sentinel)
     return () => observer.disconnect()
-  }, [loadMore])
 
-  return (
-    <div>
-      <ul>
-        {items.map((item) => (
-          <li key={item.id}>
-            {item.title}
-          </li>
-        ))}
-      </ul>
-      <div ref={sentinelRef} style={{ textAlign: "center", padding: 20 }}>
-        {loading && <p>Loading...</p>}
-        {!hasMore && <p>No more items</p>}
-      </div>
-    </div>
-  )
+}, [loadMore])
+
+return (
+
+<div>
+<ul>
+{items.map((item) => (
+<li key={item.id}>
+{item.title}
+</li>
+))}
+</ul>
+<div ref={sentinelRef} style={{ textAlign: "center", padding: 20 }}>
+{loading && <p>Loading...</p>}
+{!hasMore && <p>No more items</p>}
+</div>
+</div>
+)
 }`}
-  hints={[
-    "Use IntersectionObserver with threshold: 0.1 to trigger early",
-    "Guard against double-fetch with a loading flag",
-    "hasMore prevents infinite API calls when list is exhausted",
-    "Remember to disconnect observer on cleanup",
-  ]}
+hints={[
+"Use IntersectionObserver with threshold: 0.1 to trigger early",
+"Guard against double-fetch with a loading flag",
+"hasMore prevents infinite API calls when list is exhausted",
+"Remember to disconnect observer on cleanup",
+]}
 />
 
-<LessonSummary points={[
-  "IntersectionObserver: lazy load images, infinite scroll — no scroll listeners",
-  "ResizeObserver: respond to individual element size changes",
-  "MutationObserver: detect DOM changes from scripts or user interaction",
-  "Geolocation API: getCurrentPosition with permission prompt",
-  "Web Workers: offload heavy CPU work off the main thread",
-  "Service Workers: intercept fetch, cache assets for offline support",
-  "Web Storage: localStorage (persistent) vs sessionStorage (tab-scoped)",
-  "All these APIs are native — no libraries required for basic usage",
-]} />
+<LessonSummary
+  points={[
+    "IntersectionObserver: lazy load images, infinite scroll — no scroll listeners",
+    "ResizeObserver: respond to individual element size changes",
+    "MutationObserver: detect DOM changes from scripts or user interaction",
+    "Geolocation API: getCurrentPosition with permission prompt",
+    "Web Workers: offload heavy CPU work off the main thread",
+    "Service Workers: intercept fetch, cache assets for offline support",
+    "Web Storage: localStorage (persistent) vs sessionStorage (tab-scoped)",
+    "All these APIs are native — no libraries required for basic usage",
+  ]}
+/>

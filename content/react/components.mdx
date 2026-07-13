@@ -64,7 +64,13 @@ function Button({ variant, children, onClick, disabled }: ButtonProps) {
 React encourages component composition over inheritance:
 
 ```tsx
-function Card({ title, children }: { title: string; children: React.ReactNode }) {
+function Card({
+  title,
+  children,
+}: {
+  title: string
+  children: React.ReactNode
+}) {
   return (
     <div className="rounded-lg border p-4 shadow-sm">
       <h2 className="mb-2 text-lg font-semibold">{title}</h2>
@@ -74,7 +80,7 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
 }
 
 // Usage
-<Card title="Welcome">
+;<Card title="Welcome">
   <p>Card content goes here.</p>
   <Button variant="primary">Learn More</Button>
 </Card>

@@ -13,12 +13,14 @@ updated: "2026-07-11"
 
 React 19 makes two long-awaited ref improvements: function components can accept `ref` as a normal prop (goodbye `forwardRef`), and ref callbacks can return a cleanup function. Both remove boilerplate you've probably written many times.
 
-<LearningObjectives objectives={[
-  "Accept ref as a regular prop without forwardRef",
-  "Migrate an existing forwardRef component to the new style",
-  "Return a cleanup function from a ref callback",
-  "Know what happens to forwardRef going forward",
-]} />
+<LearningObjectives
+  objectives={[
+    "Accept ref as a regular prop without forwardRef",
+    "Migrate an existing forwardRef component to the new style",
+    "Return a cleanup function from a ref callback",
+    "Know what happens to forwardRef going forward",
+  ]}
+/>
 
 ## ref Is Just a Prop Now
 
@@ -43,8 +45,12 @@ function Input({ ref, ...props }: Props & { ref?: Ref<HTMLInputElement> }) {
 Less ceremony, cleaner types, and it composes like every other prop.
 
 <Alert>
-<AlertTitle>forwardRef still works</AlertTitle>
-<AlertDescription>Existing `forwardRef` components keep functioning — nothing breaks. It's now deprecated in favor of ref-as-prop, and a future major version will remove it. Migrate at your leisure; new code should use the prop form.</AlertDescription>
+  <AlertTitle>forwardRef still works</AlertTitle>
+  <AlertDescription>
+    Existing `forwardRef` components keep functioning — nothing breaks. It's now
+    deprecated in favor of ref-as-prop, and a future major version will remove
+    it. Migrate at your leisure; new code should use the prop form.
+  </AlertDescription>
 </Alert>
 
 ## Ref Cleanup Functions
@@ -55,7 +61,9 @@ A ref callback runs when React attaches the element (with the node) and again wh
 <input
   ref={(node) => {
     // setup: node is the DOM element
-    const observer = new ResizeObserver(() => {/* ... */})
+    const observer = new ResizeObserver(() => {
+      /* ... */
+    })
     observer.observe(node)
 
     // cleanup: runs when the element detaches
@@ -72,8 +80,13 @@ element unmounts → cleanup function runs (teardown)
 ```
 
 <Alert>
-<AlertTitle>Return a function, not undefined</AlertTitle>
-<AlertDescription>If your ref callback returns a cleanup function, React will no longer call it a second time with <code>null</code>. Mixing the two styles in one callback can double-run teardown — pick the cleanup-return form and keep all teardown inside it.</AlertDescription>
+  <AlertTitle>Return a function, not undefined</AlertTitle>
+  <AlertDescription>
+    If your ref callback returns a cleanup function, React will no longer call
+    it a second time with <code>null</code>. Mixing the two styles in one
+    callback can double-run teardown — pick the cleanup-return form and keep all
+    teardown inside it.
+  </AlertDescription>
 </Alert>
 
 ## Putting It Together
@@ -98,10 +111,12 @@ function AutoFocusInput({ ref, ...props }: Props) {
 
 ## Check Your Understanding
 
-<LessonSummary points={[
-  "React 19 lets function components accept ref as a normal prop — no forwardRef",
-  "forwardRef still works but is deprecated; migrate at your own pace",
-  "Ref callbacks can return a cleanup function that runs on detach, like useEffect",
-  "The cleanup-return form replaces the old 'if (node === null)' teardown pattern",
-  "Don't mix styles: if you return cleanup, React won't also call the ref with null",
-]} />
+<LessonSummary
+  points={[
+    "React 19 lets function components accept ref as a normal prop — no forwardRef",
+    "forwardRef still works but is deprecated; migrate at your own pace",
+    "Ref callbacks can return a cleanup function that runs on detach, like useEffect",
+    "The cleanup-return form replaces the old 'if (node === null)' teardown pattern",
+    "Don't mix styles: if you return cleanup, React won't also call the ref with null",
+  ]}
+/>

@@ -62,7 +62,10 @@ order: 7
 <Alert>
   <AlertTitle>Tip</AlertTitle>
   <AlertDescription>
-    SSE is often the right default for Next.js apps. It uses plain HTTP, works with serverless functions, and handles one-direction streaming without WebSocket infrastructure overhead. Reach for WebSocket when the client needs to send data back over the same connection.
+    SSE is often the right default for Next.js apps. It uses plain HTTP, works
+    with serverless functions, and handles one-direction streaming without
+    WebSocket infrastructure overhead. Reach for WebSocket when the client needs
+    to send data back over the same connection.
   </AlertDescription>
 </Alert>
 
@@ -132,7 +135,9 @@ export function NotificationFeed() {
   return (
     <ul className="space-y-2">
       {notifications.map((msg, i) => (
-        <li key={i} className="p-2 bg-gray-100 rounded text-sm">{msg}</li>
+        <li key={i} className="rounded bg-gray-100 p-2 text-sm">
+          {msg}
+        </li>
       ))}
     </ul>
   )
@@ -194,7 +199,9 @@ export function ChatRoom() {
     s.on("message", (data: { userId: string; text: string }) => {
       setMessages((prev) => [...prev, `${data.userId}: ${data.text}`])
     })
-    return () => { s.close() }
+    return () => {
+      s.close()
+    }
   }, [])
 
   function send(text: string) {
@@ -213,7 +220,10 @@ export function ChatRoom() {
 <Alert>
   <AlertTitle>Gotcha</AlertTitle>
   <AlertDescription>
-    Socket.IO requires a persistent Node.js server. It won't run on Vercel's serverless functions. For serverless-friendly WebSocket, use a third-party provider like Pusher, Ably, or Supabase Realtime which manage the persistent connection infrastructure.
+    Socket.IO requires a persistent Node.js server. It won't run on Vercel's
+    serverless functions. For serverless-friendly WebSocket, use a third-party
+    provider like Pusher, Ably, or Supabase Realtime which manage the persistent
+    connection infrastructure.
   </AlertDescription>
 </Alert>
 
@@ -239,7 +249,9 @@ export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
   async function toggle(todo: Todo) {
     // Optimistic update — flip immediately
     setTodos((prev) =>
-      prev.map((t) => (t.id === todo.id ? { ...t, completed: !t.completed } : t))
+      prev.map((t) =>
+        t.id === todo.id ? { ...t, completed: !t.completed } : t
+      )
     )
 
     try {
@@ -252,7 +264,9 @@ export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
     } catch {
       // Rollback on failure
       setTodos((prev) =>
-        prev.map((t) => (t.id === todo.id ? { ...t, completed: todo.completed } : t))
+        prev.map((t) =>
+          t.id === todo.id ? { ...t, completed: todo.completed } : t
+        )
       )
     }
   }
@@ -278,19 +292,22 @@ export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
 
 ## When Real-Time Is Actually Needed
 
-| Scenario | Approach | Why |
-|----------|----------|-----|
-| AI response streaming | SSE | Server pushes tokens as they're generated — one direction only |
-| Live dashboard metrics | Polling (30s) | Data changes infrequently; extra infrastructure not worth it |
-| Chat application | WebSocket | Users send and receive in both directions; low latency needed |
-| Notification badge | SSE | Server pushes when new notification arrives; client just displays count |
-| Collaborative cursor | WebSocket | Both users send and receive position data continuously |
-| User is typing indicator | WebSocket | Need near-instant bidirectional signaling |
+| Scenario                 | Approach      | Why                                                                     |
+| ------------------------ | ------------- | ----------------------------------------------------------------------- |
+| AI response streaming    | SSE           | Server pushes tokens as they're generated — one direction only          |
+| Live dashboard metrics   | Polling (30s) | Data changes infrequently; extra infrastructure not worth it            |
+| Chat application         | WebSocket     | Users send and receive in both directions; low latency needed           |
+| Notification badge       | SSE           | Server pushes when new notification arrives; client just displays count |
+| Collaborative cursor     | WebSocket     | Both users send and receive position data continuously                  |
+| User is typing indicator | WebSocket     | Need near-instant bidirectional signaling                               |
 
 <Alert>
   <AlertTitle>Tip</AlertTitle>
   <AlertDescription>
-    Start with polling. If your polling interval is under 10 seconds and you have more than 1,000 concurrent users, switch to SSE. Upgrade to WebSocket only when the client needs to send data back. Premature optimization toward real-time adds significant complexity.
+    Start with polling. If your polling interval is under 10 seconds and you
+    have more than 1,000 concurrent users, switch to SSE. Upgrade to WebSocket
+    only when the client needs to send data back. Premature optimization toward
+    real-time adds significant complexity.
   </AlertDescription>
 </Alert>
 
@@ -303,10 +320,10 @@ export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
 import { useEffect, useState } from "react"
 
 interface Notification {
-  id: string
-  message: string
-  timestamp: string
-  read: boolean
+id: string
+message: string
+timestamp: string
+read: boolean
 }
 
 export default function NotificationBell() {
@@ -314,34 +331,35 @@ export default function NotificationBell() {
   const [connected, setConnected] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
 
-  // TODO: Connect to EventSource at /api/notifications/stream
-  // TODO: Update connected state on open/error
-  // TODO: Parse incoming events and prepend to notifications list
-  // TODO: Track unread count, mark as read on click
-  // TODO: Clean up on unmount
+// TODO: Connect to EventSource at /api/notifications/stream
+// TODO: Update connected state on open/error
+// TODO: Parse incoming events and prepend to notifications list
+// TODO: Track unread count, mark as read on click
+// TODO: Clean up on unmount
 
-  return (
-    <div>
-      {/* Your code here */}
-    </div>
-  )
+return (
+
+<div>
+{/* Your code here */}
+</div>
+)
 }`}
   solutionCode={`"use client"
 import { useEffect, useState } from "react"
 
 interface Notification {
-  id: string
-  message: string
-  timestamp: string
-  read: boolean
+id: string
+message: string
+timestamp: string
+read: boolean
 }
 
 export default function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [connected, setConnected] = useState(false)
 
-  useEffect(() => {
-    const eventSource = new EventSource("/api/notifications/stream")
+useEffect(() => {
+const eventSource = new EventSource("/api/notifications/stream")
 
     eventSource.onopen = () => setConnected(true)
 
@@ -362,57 +380,58 @@ export default function NotificationBell() {
     return () => {
       eventSource.close()
     }
-  }, [])
 
-  const unreadCount = notifications.filter((n) => !n.read).length
+}, [])
 
-  function markAllRead() {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
-  }
+const unreadCount = notifications.filter((n) => !n.read).length
 
-  return (
-    <div className="max-w-md mx-auto p-4">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold">Notifications</h2>
-        <div className="flex items-center gap-2">
-          <span className={\`w-2 h-2 rounded-full \${connected ? "bg-green-500" : "bg-red-500"}\`} />
-          <span className="text-sm text-gray-500">
-            {unreadCount > 0 ? \`\${unreadCount} unread\` : "All caught up"}
-          </span>
-          {unreadCount > 0 && (
-            <button onClick={markAllRead} className="text-xs text-blue-600 hover:underline">
-              Mark all read
-            </button>
-          )}
-        </div>
-      </div>
-      <ul className="space-y-2">
-        {notifications.map((n) => (
-          <li
-            key={n.id}
-            className={\`p-3 rounded text-sm cursor-pointer transition
-              \${n.read ? "bg-gray-50 text-gray-600" : "bg-blue-50 font-medium"}\`}
-            onClick={() => setNotifications((prev) =>
-              prev.map((x) => x.id === n.id ? { ...x, read: true } : x)
-            )}
-          >
-            {n.message}
-          </li>
-        ))}
-      </ul>
-      {notifications.length === 0 && (
-        <p className="text-center text-gray-400 py-8">Waiting for notifications...</p>
-      )}
-    </div>
-  )
+function markAllRead() {
+setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
+}
+
+return (
+
+<div className="max-w-md mx-auto p-4">
+<div className="flex items-center justify-between mb-4">
+<h2 className="text-lg font-semibold">Notifications</h2>
+<div className="flex items-center gap-2">
+<span className={\`w-2 h-2 rounded-full \${connected ? "bg-green-500" : "bg-red-500"}\`} />
+<span className="text-sm text-gray-500">
+{unreadCount > 0 ? \`\${unreadCount} unread\` : "All caught up"}
+</span>
+{unreadCount > 0 && (
+<button onClick={markAllRead} className="text-xs text-blue-600 hover:underline">
+Mark all read
+</button>
+)}
+</div>
+</div>
+<ul className="space-y-2">
+{notifications.map((n) => (
+<li
+key={n.id}
+className={\`p-3 rounded text-sm cursor-pointer transition
+\${n.read ? "bg-gray-50 text-gray-600" : "bg-blue-50 font-medium"}\`}
+onClick={() => setNotifications((prev) =>
+prev.map((x) => x.id === n.id ? { ...x, read: true } : x)
+)} >
+{n.message}
+</li>
+))}
+</ul>
+{notifications.length === 0 && (
+<p className="text-center text-gray-400 py-8">Waiting for notifications...</p>
+)}
+</div>
+)
 }`}
-  hints={[
-    "EventSource auto-reconnects on error — you just need to update the connection indicator",
-    "Prepend new notifications and slice to 100 to avoid memory leaks from long sessions",
-    "Clicking a notification should mark it as read (optimistic local state)",
-    "The green/red dot gives instant feedback on connection health",
-  ]}
-  language="tsx"
+hints={[
+"EventSource auto-reconnects on error — you just need to update the connection indicator",
+"Prepend new notifications and slice to 100 to avoid memory leaks from long sessions",
+"Clicking a notification should mark it as read (optimistic local state)",
+"The green/red dot gives instant feedback on connection health",
+]}
+language="tsx"
 />
 
 <LessonSummary

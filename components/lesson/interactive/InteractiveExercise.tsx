@@ -45,7 +45,6 @@ export function InteractiveExercise({
   previewHtml,
   previewCss,
   onValidate,
-  lessonPath,
   onComplete,
   className,
 }: InteractiveExerciseProps) {
@@ -103,16 +102,26 @@ export function InteractiveExercise({
   }, [hints, hintIndex])
 
   return (
-    <Card className={cn("my-6", className, completed && "ring-1 ring-green-500/50")}>
+    <Card
+      className={cn("my-6", className, completed && "ring-1 ring-green-500/50")}
+    >
       <CardHeader className="border-b bg-muted/30">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Lightbulb className={cn("h-4 w-4", completed ? "text-green-500" : "text-amber-500")} />
+            <Lightbulb
+              className={cn(
+                "h-4 w-4",
+                completed ? "text-green-500" : "text-amber-500"
+              )}
+            />
             <CardTitle className="text-base">{title}</CardTitle>
           </div>
           <div className="flex items-center gap-2">
             {completed && (
-              <Badge variant="outline" className="gap-1 border-green-500/30 text-green-600">
+              <Badge
+                variant="outline"
+                className="gap-1 border-green-500/30 text-green-600"
+              >
                 <CheckCircle2 className="h-3 w-3" />
                 Done
               </Badge>
@@ -166,7 +175,7 @@ export function InteractiveExercise({
                   <Button
                     variant="link"
                     size="sm"
-                    className="mt-1 h-auto p-0 gap-1"
+                    className="mt-1 h-auto gap-1 p-0"
                     onClick={nextHint}
                   >
                     Another hint <ChevronRight className="h-3 w-3" />
@@ -187,7 +196,7 @@ export function InteractiveExercise({
               feedback.type === "error" &&
                 "border-red-500/30 bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400",
               feedback.type === "info" &&
-                "border-blue-500/30 bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400",
+                "border-blue-500/30 bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400"
             )}
           >
             {feedback.message}
@@ -196,11 +205,24 @@ export function InteractiveExercise({
       </CardContent>
 
       <CardFooter className="flex flex-wrap gap-2 border-t pt-4">
-        <Button size="sm" onClick={handleCheck} disabled={validating || completed}>
-          {validating ? "Checking..." : completed ? "Completed" : "Check my answer"}
+        <Button
+          size="sm"
+          onClick={handleCheck}
+          disabled={validating || completed}
+        >
+          {validating
+            ? "Checking..."
+            : completed
+              ? "Completed"
+              : "Check my answer"}
         </Button>
 
-        <Button variant="outline" size="sm" onClick={handleReset} className="gap-1">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleReset}
+          className="gap-1"
+        >
           <RotateCcw className="h-3 w-3" />
           Reset
         </Button>

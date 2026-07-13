@@ -163,8 +163,8 @@ h6[id] {
   color: var(--code-fg);
   border: 1px solid var(--code-border);
   border-radius: var(--radius);
-  font-family: var(--font-mono), ui-monospace, "SFMono-Regular", "Menlo",
-    monospace;
+  font-family:
+    var(--font-mono), ui-monospace, "SFMono-Regular", "Menlo", monospace;
 }
 .code-surface code,
 .code-surface pre {
@@ -178,7 +178,8 @@ h6[id] {
 }
 
 /* Inline <code> — distinct from prose text */
-.prose-custom.prose :where(code):not(:where([class~="not-prose"] *)):not(pre code) {
+.prose-custom.prose
+  :where(code):not(:where([class~="not-prose"] *)):not(pre code) {
   background-color: color-mix(in oklch, var(--code-bg) 70%, transparent);
   color: oklch(0.55 0.15 270);
   padding: 0.15em 0.4em;
@@ -187,7 +188,9 @@ h6[id] {
   font-weight: 500;
   border: 1px solid color-mix(in oklch, var(--code-border) 60%, transparent);
 }
-.dark .prose-custom.prose :where(code):not(:where([class~="not-prose"] *)):not(pre code) {
+.dark
+  .prose-custom.prose
+  :where(code):not(:where([class~="not-prose"] *)):not(pre code) {
   color: oklch(0.75 0.12 260);
 }
 

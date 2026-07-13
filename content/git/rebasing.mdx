@@ -11,14 +11,16 @@ updated: "2026-07-11"
 
 # Rebasing
 
-Rebasing is Git's tool for *rewriting* history to keep it clean and linear. It's powerful and, for many teams, a daily habit — but it comes with one firm rule you must respect. Let's build the intuition first.
+Rebasing is Git's tool for _rewriting_ history to keep it clean and linear. It's powerful and, for many teams, a daily habit — but it comes with one firm rule you must respect. Let's build the intuition first.
 
-<LearningObjectives objectives={[
-  "Explain how rebase differs from merge",
-  "Rebase a feature branch onto an updated main",
-  "Use interactive rebase to squash and reword commits",
-  "State and apply the golden rule of rebasing",
-]} />
+<LearningObjectives
+  objectives={[
+    "Explain how rebase differs from merge",
+    "Rebase a feature branch onto an updated main",
+    "Use interactive rebase to squash and reword commits",
+    "State and apply the golden rule of rebasing",
+  ]}
+/>
 
 ## Rebase vs Merge
 
@@ -32,7 +34,7 @@ main    ─ A ─ B ─────── M
 feature        C ── D
 ```
 
-**Rebase** *replays* your commits on top of the latest target, as if you'd started your branch from there. The result is a straight line:
+**Rebase** _replays_ your commits on top of the latest target, as if you'd started your branch from there. The result is a straight line:
 
 ```text
 main    ─ A ─ B
@@ -62,8 +64,12 @@ git rebase --abort
 ```
 
 <Alert>
-<AlertTitle>Why bother?</AlertTitle>
-<AlertDescription>A rebased branch produces a clean, linear history with no "Merge branch 'main'" noise. When your PR merges, the project log reads like a tidy sequence of intentional changes rather than a tangle.</AlertDescription>
+  <AlertTitle>Why bother?</AlertTitle>
+  <AlertDescription>
+    A rebased branch produces a clean, linear history with no "Merge branch
+    'main'" noise. When your PR merges, the project log reads like a tidy
+    sequence of intentional changes rather than a tangle.
+  </AlertDescription>
 </Alert>
 
 ## Interactive Rebase: Polish Your Commits
@@ -95,7 +101,7 @@ The payoff: your PR shows one coherent commit instead of ten messy "wip" and "fi
 
 > **Never rebase commits that others have already pulled.**
 
-Because rebase creates *new* commits (`C'`, `D'`), the originals (`C`, `D`) still exist on your teammates' machines. Rebasing shared history forces everyone into a painful divergence. So:
+Because rebase creates _new_ commits (`C'`, `D'`), the originals (`C`, `D`) still exist on your teammates' machines. Rebasing shared history forces everyone into a painful divergence. So:
 
 - ✅ Rebase your **own local, unpushed** branch freely — clean it up before opening a PR.
 - ❌ Never rebase `main` or any branch others are building on.
@@ -106,16 +112,22 @@ Shared & pushed  → use merge/revert, leave history intact
 ```
 
 <Alert>
-<AlertTitle>If in doubt, merge</AlertTitle>
-<AlertDescription>Merge is always safe; rebase is safe only on private history. When you're unsure whether someone else has your commits, choose merge. You can always rebase local work before it's ever shared.</AlertDescription>
+  <AlertTitle>If in doubt, merge</AlertTitle>
+  <AlertDescription>
+    Merge is always safe; rebase is safe only on private history. When you're
+    unsure whether someone else has your commits, choose merge. You can always
+    rebase local work before it's ever shared.
+  </AlertDescription>
 </Alert>
 
 ## Check Your Understanding
 
-<LessonSummary points={[
-  "Merge preserves history with a merge commit; rebase replays commits for a linear history",
-  "Rebased commits get new SHAs — they are recreated, not moved",
-  "git rebase origin/main puts your feature branch on top of the latest main",
-  "Interactive rebase (-i) squashes, rewords, reorders, or drops your own commits before sharing",
-  "Golden rule: never rebase commits others have pulled — rebase private history only",
-]} />
+<LessonSummary
+  points={[
+    "Merge preserves history with a merge commit; rebase replays commits for a linear history",
+    "Rebased commits get new SHAs — they are recreated, not moved",
+    "git rebase origin/main puts your feature branch on top of the latest main",
+    "Interactive rebase (-i) squashes, rewords, reorders, or drops your own commits before sharing",
+    "Golden rule: never rebase commits others have pulled — rebase private history only",
+  ]}
+/>

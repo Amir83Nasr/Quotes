@@ -11,14 +11,16 @@ updated: "2026-07-11"
 
 # Staging & Commits
 
-You now know Git records snapshots. This lesson is about doing it *well*: staging exactly the right changes and writing commit messages that make your history readable months later.
+You now know Git records snapshots. This lesson is about doing it _well_: staging exactly the right changes and writing commit messages that make your history readable months later.
 
-<LearningObjectives objectives={[
-  "Stage specific files, whole directories, or nothing at all — on purpose",
-  "Inspect what's staged vs unstaged before committing",
-  "Unstage and discard changes safely",
-  "Write clear commit messages following the Conventional Commits standard",
-]} />
+<LearningObjectives
+  objectives={[
+    "Stage specific files, whole directories, or nothing at all — on purpose",
+    "Inspect what's staged vs unstaged before committing",
+    "Unstage and discard changes safely",
+    "Write clear commit messages following the Conventional Commits standard",
+  ]}
+/>
 
 ## The Add–Commit Loop
 
@@ -51,8 +53,12 @@ git diff --staged   # staged changes (staging vs last commit)
 ```
 
 <Alert>
-<AlertTitle>Stage hunks, not just files</AlertTitle>
-<AlertDescription>`git add -p` walks you through each change ("hunk") and asks whether to stage it. It's the pro move for splitting unrelated edits in the same file into separate, clean commits.</AlertDescription>
+  <AlertTitle>Stage hunks, not just files</AlertTitle>
+  <AlertDescription>
+    `git add -p` walks you through each change ("hunk") and asks whether to
+    stage it. It's the pro move for splitting unrelated edits in the same file
+    into separate, clean commits.
+  </AlertDescription>
 </Alert>
 
 ## Undoing Staging (Safely)
@@ -75,13 +81,17 @@ git restore file.txt            # discard unstaged edits (careful!)
 ```
 
 <Alert>
-<AlertTitle>Warning: restore discards work</AlertTitle>
-<AlertDescription>`git restore file.txt` permanently deletes uncommitted changes to that file. Unlike almost everything else in Git, this cannot be recovered. When unsure, commit or stash first.</AlertDescription>
+  <AlertTitle>Warning: restore discards work</AlertTitle>
+  <AlertDescription>
+    `git restore file.txt` permanently deletes uncommitted changes to that file.
+    Unlike almost everything else in Git, this cannot be recovered. When unsure,
+    commit or stash first.
+  </AlertDescription>
 </Alert>
 
 ## Anatomy of a Good Commit
 
-A commit does two things: it snapshots your code, and it *explains* the change. The message is documentation your future teammates (and future you) will read constantly.
+A commit does two things: it snapshots your code, and it _explains_ the change. The message is documentation your future teammates (and future you) will read constantly.
 
 This project follows **Conventional Commits** — a simple, structured format:
 
@@ -100,11 +110,11 @@ git commit -m "fix(ui): correct button alignment on mobile"
 
 The rules that matter most:
 
-| Rule | Bad | Good |
-|------|-----|------|
-| Imperative mood | `added login` | `add login` |
-| Lowercase, no period | `Fix bug.` | `fix: handle empty input` |
-| Explain *why* in the body | (nothing) | "Users hit a 500 when the cart was empty" |
+| Rule                      | Bad           | Good                                      |
+| ------------------------- | ------------- | ----------------------------------------- |
+| Imperative mood           | `added login` | `add login`                               |
+| Lowercase, no period      | `Fix bug.`    | `fix: handle empty input`                 |
+| Explain _why_ in the body | (nothing)     | "Users hit a 500 when the cart was empty" |
 
 Why bother? Structured messages give you auto-generated changelogs, readable history, and easy filtering:
 
@@ -127,10 +137,12 @@ Two focused commits instead of one muddled one. When someone later runs `git log
 
 ## Check Your Understanding
 
-<LessonSummary points={[
-  "git add stages at any granularity: a file, a directory, or individual hunks with -p",
-  "git diff shows unstaged changes; git diff --staged shows what's about to be committed",
-  "git restore --staged unstages but keeps edits; git restore discards edits permanently",
-  "Group related changes into focused commits, not one catch-all commit",
-  "Conventional Commits (type(scope): description) give readable history and auto-changelogs",
-]} />
+<LessonSummary
+  points={[
+    "git add stages at any granularity: a file, a directory, or individual hunks with -p",
+    "git diff shows unstaged changes; git diff --staged shows what's about to be committed",
+    "git restore --staged unstages but keeps edits; git restore discards edits permanently",
+    "Group related changes into focused commits, not one catch-all commit",
+    "Conventional Commits (type(scope): description) give readable history and auto-changelogs",
+  ]}
+/>

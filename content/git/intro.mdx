@@ -12,12 +12,14 @@ updated: "2026-07-11"
 
 Git is the tool that lets you save snapshots of your project, experiment without fear, and collaborate with other developers without overwriting each other's work. Nearly every software team on earth uses it — learning Git is not optional.
 
-<LearningObjectives objectives={[
-  "Explain what version control solves and why Git is distributed",
-  "Describe Git's three states: working directory, staging area, and repository",
-  "Initialize a repository and record your first commit",
-  "Read the output of git status and git log with confidence",
-]} />
+<LearningObjectives
+  objectives={[
+    "Explain what version control solves and why Git is distributed",
+    "Describe Git's three states: working directory, staging area, and repository",
+    "Initialize a repository and record your first commit",
+    "Read the output of git status and git log with confidence",
+  ]}
+/>
 
 ## Why Version Control?
 
@@ -25,16 +27,20 @@ Without version control, saving progress means copying folders: `project-final`,
 
 Version control solves this by recording **every change as a snapshot** you can return to, compare against, or branch away from.
 
-| Problem | Folder copies | Git |
-|---------|--------------|-----|
-| "What changed since yesterday?" | Diff folders by hand | `git diff` |
-| "Undo the last 3 changes" | Hope you kept a copy | `git revert` / `git reset` |
-| "Two people, one file" | Manual merge, overwrites | Automatic merge |
-| "Why was this line written?" | No idea | `git blame` |
+| Problem                         | Folder copies            | Git                        |
+| ------------------------------- | ------------------------ | -------------------------- |
+| "What changed since yesterday?" | Diff folders by hand     | `git diff`                 |
+| "Undo the last 3 changes"       | Hope you kept a copy     | `git revert` / `git reset` |
+| "Two people, one file"          | Manual merge, overwrites | Automatic merge            |
+| "Why was this line written?"    | No idea                  | `git blame`                |
 
 <Alert>
-<AlertTitle>Distributed, not centralized</AlertTitle>
-<AlertDescription>Git is *distributed*: every clone is a full copy of the entire history, not just the latest version. You can commit, branch, and view history with no network connection — the server (like GitHub) is just one more copy.</AlertDescription>
+  <AlertTitle>Distributed, not centralized</AlertTitle>
+  <AlertDescription>
+    Git is *distributed*: every clone is a full copy of the entire history, not
+    just the latest version. You can commit, branch, and view history with no
+    network connection — the server (like GitHub) is just one more copy.
+  </AlertDescription>
 </Alert>
 
 ## Git's Mental Model: Three States
@@ -50,7 +56,7 @@ Working Directory  →  Staging Area (Index)  →  Repository (.git)
 - **Staging area** — a holding zone where you assemble exactly what your next commit will contain. You move changes here with `git add`.
 - **Repository** — the permanent, immutable history. `git commit` takes what's staged and records it as a snapshot.
 
-The staging area is what makes Git feel different from other tools. It lets you commit *some* of your changes and leave others for later — you craft each commit deliberately instead of dumping everything at once.
+The staging area is what makes Git feel different from other tools. It lets you commit _some_ of your changes and leave others for later — you craft each commit deliberately instead of dumping everything at once.
 
 ## Your First Repository
 
@@ -107,16 +113,22 @@ git log --oneline
 `git status` is the command you'll run most — it always tells you what state your working directory and staging area are in, and usually hints at the next command to run. When in doubt, run `git status`.
 
 <Alert>
-<AlertTitle>Configure your identity once</AlertTitle>
-<AlertDescription>Before your first commit on a new machine, tell Git who you are — it stamps every commit with this: `git config --global user.name "Your Name"` and `git config --global user.email "you@example.com"`.</AlertDescription>
+  <AlertTitle>Configure your identity once</AlertTitle>
+  <AlertDescription>
+    Before your first commit on a new machine, tell Git who you are — it stamps
+    every commit with this: `git config --global user.name "Your Name"` and `git
+    config --global user.email "you@example.com"`.
+  </AlertDescription>
 </Alert>
 
 ## Check Your Understanding
 
-<LessonSummary points={[
-  "Version control records changes as snapshots you can compare, undo, and branch from",
-  "Git is distributed — every clone holds the full history and works offline",
-  "Files flow through three states: working directory → staging area → repository",
-  "git init starts a repo; git add stages changes; git commit records a snapshot",
-  "git status is your compass — run it whenever you're unsure what to do next",
-]} />
+<LessonSummary
+  points={[
+    "Version control records changes as snapshots you can compare, undo, and branch from",
+    "Git is distributed — every clone holds the full history and works offline",
+    "Files flow through three states: working directory → staging area → repository",
+    "git init starts a repo; git add stages changes; git commit records a snapshot",
+    "git status is your compass — run it whenever you're unsure what to do next",
+  ]}
+/>

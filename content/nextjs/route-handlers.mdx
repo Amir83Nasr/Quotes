@@ -7,13 +7,15 @@ order: 7
 
 # Route Handlers
 
-<LearningObjectives objectives={[
-  "Create GET, POST, PUT, DELETE handlers in app/api",
-  "Use Web API Request/Response standards",
-  "Build dynamic route handlers with params",
-  "Protect API routes with middleware",
-  "Stream responses from route handlers"
-]} />
+<LearningObjectives
+  objectives={[
+    "Create GET, POST, PUT, DELETE handlers in app/api",
+    "Use Web API Request/Response standards",
+    "Build dynamic route handlers with params",
+    "Protect API routes with middleware",
+    "Stream responses from route handlers",
+  ]}
+/>
 
 ## Basic Route Handler
 
@@ -123,7 +125,8 @@ export async function PUT(
   const { id } = await params
   const body = await request.json()
   const index = todos.findIndex((t) => t.id === Number(id))
-  if (index === -1) return Response.json({ error: "Not found" }, { status: 404 })
+  if (index === -1)
+    return Response.json({ error: "Not found" }, { status: 404 })
 
   todos[index] = { ...todos[index], ...body }
   return Response.json(todos[index])
@@ -135,7 +138,8 @@ export async function DELETE(
 ) {
   const { id } = await params
   const index = todos.findIndex((t) => t.id === Number(id))
-  if (index === -1) return Response.json({ error: "Not found" }, { status: 404 })
+  if (index === -1)
+    return Response.json({ error: "Not found" }, { status: 404 })
 
   const deleted = todos.splice(index, 1)[0]
   return Response.json(deleted)
@@ -151,7 +155,10 @@ import type { NextRequest } from "next/server"
 
 export function middleware(request: NextRequest) {
   const apiKey = request.headers.get("x-api-key")
-  if (request.nextUrl.pathname.startsWith("/api/admin") && apiKey !== process.env.ADMIN_KEY) {
+  if (
+    request.nextUrl.pathname.startsWith("/api/admin") &&
+    apiKey !== process.env.ADMIN_KEY
+  ) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 }

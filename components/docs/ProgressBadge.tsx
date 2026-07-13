@@ -18,7 +18,7 @@ export function ProgressBadge({ completed, className }: ProgressBadgeProps) {
     <span
       className={cn(
         "ml-auto flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-green-500",
-        className,
+        className
       )}
     >
       <Check className="h-3 w-3 text-white" strokeWidth={3} />

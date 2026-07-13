@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useCallback } from "react"
 
 const STORAGE_KEY = "quotes-progress"
 
@@ -13,22 +13,25 @@ interface ProgressReturn {
   completedCount: number
 }
 
+/** Read persisted progress — used as lazy state initializer. */
+function getInitialProgress(): ProgressMap {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored) return JSON.parse(stored) as ProgressMap
+  } catch {
+    // localStorage unavailable (SSR, private browsing)
+  }
+  return {}
+}
+
 /**
  * Track completed lessons via localStorage.
  * Persists across sessions with no backend required.
+ *
+ * Uses lazy useState initializer so no hydration effect is needed.
  */
 export function useProgress(): ProgressReturn {
-  const [progress, setProgress] = useState<ProgressMap>({})
-
-  // Load persisted progress on mount
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY)
-      if (stored) setProgress(JSON.parse(stored) as ProgressMap)
-    } catch {
-      // localStorage unavailable (SSR, private browsing)
-    }
-  }, [])
+  const [progress, setProgress] = useState<ProgressMap>(getInitialProgress)
 
   const markCompleted = useCallback((path: string) => {
     setProgress((prev) => {
@@ -44,7 +47,7 @@ export function useProgress(): ProgressReturn {
 
   const isCompleted = useCallback(
     (path: string) => !!progress[path],
-    [progress],
+    [progress]
   )
 
   return {

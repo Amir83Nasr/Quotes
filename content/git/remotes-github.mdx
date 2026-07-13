@@ -13,12 +13,14 @@ updated: "2026-07-11"
 
 So far everything has lived on your machine. A **remote** is a copy of your repository hosted elsewhere — usually GitHub — that you and your team sync with. This is how code gets shared, reviewed, and shipped.
 
-<LearningObjectives objectives={[
-  "Clone a remote repository and understand the 'origin' remote",
-  "Push local commits and pull remote changes",
-  "Set an upstream branch so push/pull just work",
-  "Describe the pull request (PR) collaboration workflow",
-]} />
+<LearningObjectives
+  objectives={[
+    "Clone a remote repository and understand the 'origin' remote",
+    "Push local commits and pull remote changes",
+    "Set an upstream branch so push/pull just work",
+    "Describe the pull request (PR) collaboration workflow",
+  ]}
+/>
 
 ## What Is a Remote?
 
@@ -55,8 +57,12 @@ git pull    # downloads and merges remote commits into your branch
 ```
 
 <Alert>
-<AlertTitle>fetch vs pull</AlertTitle>
-<AlertDescription>`git fetch` downloads remote commits but does *not* change your working files — it just updates your knowledge of the remote. `git pull` is `fetch` + `merge` in one step. When you want to look before you leap, fetch first.</AlertDescription>
+  <AlertTitle>fetch vs pull</AlertTitle>
+  <AlertDescription>
+    `git fetch` downloads remote commits but does *not* change your working
+    files — it just updates your knowledge of the remote. `git pull` is `fetch`
+    + `merge` in one step. When you want to look before you leap, fetch first.
+  </AlertDescription>
 </Alert>
 
 ## Staying in Sync
@@ -91,16 +97,22 @@ You almost never push directly to `main` on a team. Instead, you propose changes
 The PR is where code review happens: teammates read your diff, leave comments, request changes, and approve. It's the single most important collaboration ritual in professional development.
 
 <Alert>
-<AlertTitle>Keep PRs small</AlertTitle>
-<AlertDescription>A 50-line PR gets reviewed in minutes; a 2,000-line PR sits for days and hides bugs. Small, focused branches (one feature or fix each) are reviewed faster and merged sooner.</AlertDescription>
+  <AlertTitle>Keep PRs small</AlertTitle>
+  <AlertDescription>
+    A 50-line PR gets reviewed in minutes; a 2,000-line PR sits for days and
+    hides bugs. Small, focused branches (one feature or fix each) are reviewed
+    faster and merged sooner.
+  </AlertDescription>
 </Alert>
 
 ## Check Your Understanding
 
-<LessonSummary points={[
-  "A remote is a hosted copy of your repo; 'origin' is the default name after cloning",
-  "git push -u origin <branch> sets the upstream so later push/pull need no arguments",
-  "git fetch downloads without merging; git pull fetches and merges in one step",
-  "Pull the latest main before starting new work to stay in sync with the team",
-  "Pull requests are how changes get reviewed and merged — keep them small and focused",
-]} />
+<LessonSummary
+  points={[
+    "A remote is a hosted copy of your repo; 'origin' is the default name after cloning",
+    "git push -u origin <branch> sets the upstream so later push/pull need no arguments",
+    "git fetch downloads without merging; git pull fetches and merges in one step",
+    "Pull the latest main before starting new work to stay in sync with the team",
+    "Pull requests are how changes get reviewed and merged — keep them small and focused",
+  ]}
+/>

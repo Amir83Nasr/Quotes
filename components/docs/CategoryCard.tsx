@@ -65,7 +65,7 @@ export function CategoryCard({ category }: CategoryCardProps) {
 
   return (
     <Link href={category.href}>
-      <Card className="group h-full transition-all hover:shadow-md hover:border-primary/50">
+      <Card className="group h-full transition-all hover:border-primary/50 hover:shadow-md">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">

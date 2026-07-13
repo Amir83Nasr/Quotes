@@ -7,13 +7,15 @@ order: 9
 
 # Image & Font Optimization
 
-<LearningObjectives objectives={[
-  "Use next/image with remote patterns and sizes",
-  "Implement next/font with Google Fonts and local fonts",
-  "Understand responsive images with srcSet",
-  "Apply lazy loading strategies for images",
-  "Measure performance benefits of optimized assets"
-]} />
+<LearningObjectives
+  objectives={[
+    "Use next/image with remote patterns and sizes",
+    "Implement next/font with Google Fonts and local fonts",
+    "Understand responsive images with srcSet",
+    "Apply lazy loading strategies for images",
+    "Measure performance benefits of optimized assets",
+  ]}
+/>
 
 ## Next/Image
 
@@ -28,7 +30,7 @@ export default function Hero() {
     <Image
       src={heroImage}
       alt="Hero banner"
-      priority         // above-the-fold — skip lazy loading
+      priority // above-the-fold — skip lazy loading
       className="rounded-lg"
     />
   )
@@ -85,7 +87,9 @@ export default function RemoteImage() {
 <Alert>
   <AlertTitle>Remote Images Need Width/Height</AlertTitle>
   <AlertDescription>
-    Remote images require explicit width and height or fill prop. Without these, Next.js cannot generate the proper srcSet and responsive dimensions. Use fill with objectFit for container-based sizing.
+    Remote images require explicit width and height or fill prop. Without these,
+    Next.js cannot generate the proper srcSet and responsive dimensions. Use
+    fill with objectFit for container-based sizing.
   </AlertDescription>
 </Alert>
 
@@ -130,7 +134,7 @@ import { Inter, Roboto_Mono } from "next/font/google"
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-inter",    // use with Tailwind: font-sans
+  variable: "--font-inter", // use with Tailwind: font-sans
 })
 
 const robotoMono = Roboto_Mono({
@@ -138,7 +142,11 @@ const robotoMono = Roboto_Mono({
   variable: "--font-mono",
 })
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html className={`${inter.variable} ${robotoMono.variable}`}>
       <body>{children}</body>
@@ -155,7 +163,7 @@ import localFont from "next/font/local"
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff2",
   variable: "--font-geist-sans",
-  display: "swap",    // fallback text shows until font loads
+  display: "swap", // fallback text shows until font loads
 })
 
 const geistMono = localFont({
@@ -175,9 +183,9 @@ const geistMono = localFont({
   starterCode={`import Image from "next/image"
 
 const images = [
-  { id: 1, src: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97", alt: "Code" },
-  { id: 2, src: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6", alt: "Setup" },
-  { id: 3, src: "https://images.unsplash.com/photo-1504639725590-34d0984388bd", alt: "Brain" },
+{ id: 1, src: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97", alt: "Code" },
+{ id: 2, src: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6", alt: "Setup" },
+{ id: 3, src: "https://images.unsplash.com/photo-1504639725590-34d0984388bd", alt: "Brain" },
 ]
 
 export default function Gallery() {
@@ -192,9 +200,9 @@ export default function Gallery() {
   solutionCode={`import Image from "next/image"
 
 const images = [
-  { id: 1, src: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97", alt: "Code" },
-  { id: 2, src: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6", alt: "Setup" },
-  { id: 3, src: "https://images.unsplash.com/photo-1504639725590-34d0984388bd", alt: "Brain" },
+{ id: 1, src: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97", alt: "Code" },
+{ id: 2, src: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6", alt: "Setup" },
+{ id: 3, src: "https://images.unsplash.com/photo-1504639725590-34d0984388bd", alt: "Brain" },
 ]
 
 export default function Gallery() {

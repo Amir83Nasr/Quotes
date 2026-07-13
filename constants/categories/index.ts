@@ -11,7 +11,8 @@ export const CATEGORIES: Category[] = [
   {
     id: "git",
     title: "Git & Version Control",
-    description: "Track changes, collaborate, and never lose work — the developer's essential tool",
+    description:
+      "Track changes, collaborate, and never lose work — the developer's essential tool",
     icon: "GitBranch",
     color: "from-orange-600 to-red-500",
     href: "/git/intro",
@@ -28,7 +29,8 @@ export const CATEGORIES: Category[] = [
   {
     id: "web",
     title: "How the Web Works",
-    description: "The foundation beneath every website — HTTP, DNS, browsers, and caching",
+    description:
+      "The foundation beneath every website — HTTP, DNS, browsers, and caching",
     icon: "Globe",
     color: "from-sky-500 to-indigo-500",
     href: "/web/how-the-web-works",
@@ -45,7 +47,8 @@ export const CATEGORIES: Category[] = [
   {
     id: "react",
     title: "React",
-    description: "Build modern user interfaces with React — hooks, components, and beyond",
+    description:
+      "Build modern user interfaces with React — hooks, components, and beyond",
     icon: "Atom",
     color: "from-cyan-500 to-blue-500",
     href: "/react/intro",
@@ -66,15 +69,22 @@ export const CATEGORIES: Category[] = [
       { name: "Rendering Patterns", href: "/react/rendering-patterns" },
       { name: "React 19: use() API", href: "/react/react-19/use-api" },
       { name: "React 19: Form Actions", href: "/react/react-19/form-actions" },
-      { name: "React 19: useOptimistic", href: "/react/react-19/use-optimistic" },
-      { name: "React 19: useTransition", href: "/react/react-19/use-transition" },
+      {
+        name: "React 19: useOptimistic",
+        href: "/react/react-19/use-optimistic",
+      },
+      {
+        name: "React 19: useTransition",
+        href: "/react/react-19/use-transition",
+      },
       { name: "React 19: ref as Prop", href: "/react/react-19/ref-as-prop" },
     ],
   },
   {
     id: "nextjs",
     title: "Next.js",
-    description: "React framework for production — routing, SSR, server components",
+    description:
+      "React framework for production — routing, SSR, server components",
     icon: "FolderOpen",
     color: "from-neutral-800 to-neutral-600",
     href: "/nextjs/intro",
@@ -157,9 +167,18 @@ export const CATEGORIES: Category[] = [
       { name: "Introduction", href: "/frontend/javascript/intro" },
       { name: "Async/Await", href: "/frontend/javascript/async" },
       { name: "DOM Manipulation", href: "/frontend/javascript/dom" },
-      { name: "Scopes & Closures", href: "/frontend/javascript/scopes-closures" },
-      { name: "Prototypes & Classes", href: "/frontend/javascript/prototypes-classes" },
-      { name: "Promises Deep Dive", href: "/frontend/javascript/promises-deep" },
+      {
+        name: "Scopes & Closures",
+        href: "/frontend/javascript/scopes-closures",
+      },
+      {
+        name: "Prototypes & Classes",
+        href: "/frontend/javascript/prototypes-classes",
+      },
+      {
+        name: "Promises Deep Dive",
+        href: "/frontend/javascript/promises-deep",
+      },
       { name: "Async Patterns", href: "/frontend/javascript/async-patterns" },
       { name: "Event Loop", href: "/frontend/javascript/event-loop" },
       { name: "Array Methods", href: "/frontend/javascript/array-methods" },
@@ -178,18 +197,28 @@ export const CATEGORIES: Category[] = [
       { name: "Types & Interfaces", href: "/frontend/typescript/types" },
       { name: "Generics", href: "/frontend/typescript/generics" },
       { name: "Advanced Types", href: "/frontend/typescript/advanced" },
-      { name: "Union & Intersection", href: "/frontend/typescript/union-intersection" },
+      {
+        name: "Union & Intersection",
+        href: "/frontend/typescript/union-intersection",
+      },
       { name: "Type Guards", href: "/frontend/typescript/type-guards" },
-      { name: "Mapped & Conditional Types", href: "/frontend/typescript/mapped-types" },
+      {
+        name: "Mapped & Conditional Types",
+        href: "/frontend/typescript/mapped-types",
+      },
       { name: "Utility Types", href: "/frontend/typescript/utility-types" },
       { name: "Branded Types", href: "/frontend/typescript/branded-types" },
-      { name: "Declaration Files", href: "/frontend/typescript/declaration-files" },
+      {
+        name: "Declaration Files",
+        href: "/frontend/typescript/declaration-files",
+      },
     ],
   },
   {
     id: "advanced",
     title: "Advanced Concepts",
-    description: "State management, forms, performance, testing, and design patterns",
+    description:
+      "State management, forms, performance, testing, and design patterns",
     icon: "Zap",
     color: "from-purple-500 to-violet-500",
     href: "/advanced/state-management",
@@ -201,7 +230,10 @@ export const CATEGORIES: Category[] = [
       { name: "Accessibility", href: "/advanced/accessibility" },
       { name: "Design Patterns", href: "/advanced/design-patterns" },
       { name: "Form Libraries", href: "/advanced/form-libraries" },
-      { name: "State Mgmt Libraries", href: "/advanced/state-management-libraries" },
+      {
+        name: "State Mgmt Libraries",
+        href: "/advanced/state-management-libraries",
+      },
       { name: "Bundlers & Build", href: "/advanced/bundlers" },
       { name: "Monorepos", href: "/advanced/monorepos" },
       { name: "Modern Web APIs", href: "/advanced/web-apis" },
@@ -227,7 +259,8 @@ export const CATEGORIES: Category[] = [
   {
     id: "security",
     title: "Web Security",
-    description: "Defend your apps against the most common attacks — XSS, CSRF, injection, and more",
+    description:
+      "Defend your apps against the most common attacks — XSS, CSRF, injection, and more",
     icon: "ShieldAlert",
     color: "from-red-600 to-rose-500",
     href: "/security/threat-model",
@@ -280,7 +313,7 @@ export const CATEGORY_ORDER: Record<string, number> = {
 
 /** Map of content directories to route prefixes, derived from the registry. */
 export const CATEGORY_ROUTES: Record<string, string> = Object.fromEntries(
-  CATEGORY_SLUGS.map((slug) => [slug, `/${slug}`]),
+  CATEGORY_SLUGS.map((slug) => [slug, `/${slug}`])
 )
 
 /** Get route prefix for a content directory */

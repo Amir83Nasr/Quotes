@@ -32,7 +32,9 @@ h1 {
 
 ```html
 <style>
-  p { color: red; }
+  p {
+    color: red;
+  }
 </style>
 ```
 
@@ -40,28 +42,32 @@ h1 {
 
 ```css
 /* styles.css */
-p { color: red; }
+p {
+  color: red;
+}
 ```
 
 ```html
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
 ```
 
 ## Selectors
 
-| Selector | Example | Targets |
-|----------|---------|---------|
-| Element | `p` | All `<p>` elements |
-| Class | `.card` | Elements with `class="card"` |
-| ID | `#header` | Element with `id="header"` |
-| Descendant | `nav a` | Links inside `<nav>` |
-| Child | `ul > li` | Direct children of `<ul>` |
-| Attribute | `[type="text"]` | Inputs with type "text" |
-| Pseudo-class | `a:hover` | Links on hover |
+| Selector     | Example         | Targets                      |
+| ------------ | --------------- | ---------------------------- |
+| Element      | `p`             | All `<p>` elements           |
+| Class        | `.card`         | Elements with `class="card"` |
+| ID           | `#header`       | Element with `id="header"`   |
+| Descendant   | `nav a`         | Links inside `<nav>`         |
+| Child        | `ul > li`       | Direct children of `<ul>`    |
+| Attribute    | `[type="text"]` | Inputs with type "text"      |
+| Pseudo-class | `a:hover`       | Links on hover               |
 
 ```css
 /* Multiple selectors */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: sans-serif;
 }
 
@@ -88,9 +94,9 @@ Every element is a rectangular box with these layers:
 ```css
 .box {
   width: 200px;
-  padding: 16px;       /* Space inside the border */
+  padding: 16px; /* Space inside the border */
   border: 1px solid black;
-  margin: 16px;        /* Space outside the border */
+  margin: 16px; /* Space outside the border */
   box-sizing: border-box; /* Width includes padding + border */
 }
 ```
@@ -119,7 +125,7 @@ color: rgba(255, 0, 0, 0.5);
 
 ```css
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: 1.5;

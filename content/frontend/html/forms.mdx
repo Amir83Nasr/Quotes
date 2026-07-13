@@ -17,12 +17,12 @@ Forms collect user input. Well-structured forms improve accessibility and UX.
 
     <div>
       <label for="name">Full Name</label>
-      <input type="text" id="name" name="name" required>
+      <input type="text" id="name" name="name" required />
     </div>
 
     <div>
       <label for="email">Email</label>
-      <input type="email" id="email" name="email">
+      <input type="email" id="email" name="email" />
     </div>
   </fieldset>
 
@@ -32,22 +32,22 @@ Forms collect user input. Well-structured forms improve accessibility and UX.
 
 ## Input Types
 
-| Type | Purpose |
-|------|---------|
-| text | General text input |
-| email | Email address (validates @) |
-| password | Masked text input |
-| number | Numeric input with steppers |
-| tel | Phone numbers |
-| url | URLs (validates format) |
-| date | Date picker |
-| checkbox | Multiple selection |
-| radio | Single selection |
+| Type     | Purpose                     |
+| -------- | --------------------------- |
+| text     | General text input          |
+| email    | Email address (validates @) |
+| password | Masked text input           |
+| number   | Numeric input with steppers |
+| tel      | Phone numbers               |
+| url      | URLs (validates format)     |
+| date     | Date picker                 |
+| checkbox | Multiple selection          |
+| radio    | Single selection            |
 
 ## Validation Attributes
 
 ```html
-<input type="text" required minlength="2" maxlength="50" pattern="[A-Za-z]+">
+<input type="text" required minlength="2" maxlength="50" pattern="[A-Za-z]+" />
 ```
 
 ## Next Steps

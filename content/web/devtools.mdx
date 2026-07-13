@@ -13,12 +13,14 @@ updated: "2026-07-11"
 
 Every modern browser ships a full debugging suite — the DevTools. They're how you inspect the DOM, debug JavaScript, watch network requests, and find performance problems. Fluency here separates slow debugging from fast.
 
-<LearningObjectives objectives={[
-  "Open DevTools and navigate the core panels",
-  "Inspect and live-edit the DOM and CSS with Elements",
-  "Debug JavaScript with breakpoints in Sources",
-  "Diagnose requests with the Network panel and the Console",
-]} />
+<LearningObjectives
+  objectives={[
+    "Open DevTools and navigate the core panels",
+    "Inspect and live-edit the DOM and CSS with Elements",
+    "Debug JavaScript with breakpoints in Sources",
+    "Diagnose requests with the Network panel and the Console",
+  ]}
+/>
 
 ## Opening DevTools
 
@@ -37,8 +39,12 @@ Elements → pick a node → Styles pane → tweak CSS live (not saved to your f
 ```
 
 <Alert>
-<AlertTitle>Live edits are temporary</AlertTitle>
-<AlertDescription>Changes you make in Elements/Styles are experiments — they vanish on reload and never touch your source files. It's a sandbox for trying things, perfect for nailing a color or spacing before writing the real CSS.</AlertDescription>
+  <AlertTitle>Live edits are temporary</AlertTitle>
+  <AlertDescription>
+    Changes you make in Elements/Styles are experiments — they vanish on reload
+    and never touch your source files. It's a sandbox for trying things, perfect
+    for nailing a color or spacing before writing the real CSS.
+  </AlertDescription>
 </Alert>
 
 ## Console — Logs and a Live REPL
@@ -47,10 +53,10 @@ The Console shows `console.log` output, errors, and warnings — and it's a full
 
 ```js
 console.log("value:", myVariable)
-console.table(arrayOfObjects)   // render arrays/objects as a table
+console.table(arrayOfObjects) // render arrays/objects as a table
 console.error("something broke") // red, with a stack trace
-$0                               // the element currently selected in Elements
-document.querySelectorAll("a").length  // run any JS against the page
+$0 // the element currently selected in Elements
+document.querySelectorAll("a").length // run any JS against the page
 ```
 
 Errors here almost always include a clickable file:line link straight to the source.
@@ -81,16 +87,22 @@ set breakpoint → reload/trigger → paused → inspect scope, step through
 - The **Scope** pane shows all in-scope variables at the pause point.
 
 <Alert>
-<AlertTitle>Device toolbar for responsive testing</AlertTitle>
-<AlertDescription>The device icon (<code>Cmd/Ctrl + Shift + M</code>) emulates phones and tablets — viewport sizes, touch, and device pixel ratios — so you can test responsive layouts without real devices.</AlertDescription>
+  <AlertTitle>Device toolbar for responsive testing</AlertTitle>
+  <AlertDescription>
+    The device icon (<code>Cmd/Ctrl + Shift + M</code>) emulates phones and
+    tablets — viewport sizes, touch, and device pixel ratios — so you can test
+    responsive layouts without real devices.
+  </AlertDescription>
 </Alert>
 
 ## Check Your Understanding
 
-<LessonSummary points={[
-  "Open DevTools with F12 or Cmd/Ctrl+Shift+I; live in Elements, Console, Network, Sources",
-  "Elements shows the live DOM and lets you edit DOM/CSS temporarily to experiment",
-  "Console prints logs/errors and is a full REPL against the current page ($0 = selected element)",
-  "Network reveals every request's status, headers, response, and timing",
-  "Sources breakpoints pause execution to inspect variables and step through code",
-]} />
+<LessonSummary
+  points={[
+    "Open DevTools with F12 or Cmd/Ctrl+Shift+I; live in Elements, Console, Network, Sources",
+    "Elements shows the live DOM and lets you edit DOM/CSS temporarily to experiment",
+    "Console prints logs/errors and is a full REPL against the current page ($0 = selected element)",
+    "Network reveals every request's status, headers, response, and timing",
+    "Sources breakpoints pause execution to inspect variables and step through code",
+  ]}
+/>

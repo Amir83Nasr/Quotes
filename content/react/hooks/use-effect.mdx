@@ -34,11 +34,11 @@ export default function Timer() {
 
 ## Dependency Array
 
-| Deps | When effect runs |
-|------|-----------------|
-| `[]` | On mount, cleanup on unmount |
-| `[a, b]` | On mount + when a or b change |
-| omitted | On every render (avoid if possible) |
+| Deps     | When effect runs                    |
+| -------- | ----------------------------------- |
+| `[]`     | On mount, cleanup on unmount        |
+| `[a, b]` | On mount + when a or b change       |
+| omitted  | On every render (avoid if possible) |
 
 ## Fetching Data
 
@@ -52,7 +52,9 @@ useEffect(() => {
       if (!cancelled) setUser(data)
     })
 
-  return () => { cancelled = true }
+  return () => {
+    cancelled = true
+  }
 }, [userId])
 ```
 

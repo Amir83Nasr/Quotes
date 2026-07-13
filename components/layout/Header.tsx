@@ -5,7 +5,7 @@ import { BookOpen, Menu, Sun, Moon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useSidebar } from "@/hooks/use-sidebar"
 import { useTheme } from "next-themes"
-import { useEffect, useState } from "react"
+import { useSyncExternalStore, useCallback } from "react"
 import type { NavItem } from "@/types/navigation"
 import { Search } from "@/components/docs/Search"
 
@@ -13,15 +13,24 @@ interface HeaderProps {
   navItems?: NavItem[]
 }
 
+/**
+ * True once client-side hydration completes — avoids hydration mismatch for theme icon.
+ */
+function useMounted() {
+  return useSyncExternalStore(
+    useCallback(() => () => {}, []),
+    () => true,
+    () => false
+  )
+}
+
 export function Header({ navItems }: HeaderProps) {
   const { toggle } = useSidebar()
   const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => setMounted(true), [])
+  const mounted = useMounted()
 
   return (
-    <header className="supports-backdrop-blur:bg-background/60 sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-blur:bg-background/60">
       <div className="flex h-14 items-center gap-4 px-4 lg:px-6">
         <Button
           variant="ghost"
@@ -33,7 +42,10 @@ export function Header({ navItems }: HeaderProps) {
           <Menu className="h-5 w-5" />
         </Button>
 
-        <Link href="/" className="flex items-center gap-2 font-semibold shrink-0">
+        <Link
+          href="/"
+          className="flex shrink-0 items-center gap-2 font-semibold"
+        >
           <BookOpen className="h-5 w-5" />
           <span className="hidden sm:inline-block">Quotes</span>
         </Link>

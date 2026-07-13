@@ -5,7 +5,7 @@ import { getAllLessons, getContentNode } from "./tree"
 
 /** Build breadcrumbs from a content path */
 export async function buildBreadcrumbs(
-  contentPath: string,
+  contentPath: string
 ): Promise<BreadcrumbItem[]> {
   const parts = contentPath.split("/")
   const crumbs: BreadcrumbItem[] = []
@@ -63,5 +63,5 @@ export const buildLessonNavigation = cache(
         : null
 
     return { prev, next }
-  },
+  }
 )

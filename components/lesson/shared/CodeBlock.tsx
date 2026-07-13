@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useLayoutEffect } from "react"
 import { Check, Copy } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
@@ -41,7 +41,9 @@ async function loadLang(hljs: typeof import("highlight.js"), lang: string) {
   try {
     const mod = await import(`highlight.js/lib/languages/${p}`)
     hljs.default.registerLanguage(lang, mod.default)
-  } catch { /* noop */ }
+  } catch {
+    /* noop */
+  }
 }
 
 export function CodeBlock({
@@ -57,13 +59,10 @@ export function CodeBlock({
 
   const handleCopy = () => copy(code)
 
-  useEffect(() => {
-    let dead = false
-    if (!lang) {
-      setHighlighted(null)
-      return
-    }
+  useLayoutEffect(() => {
+    if (!lang) return // highlighted already starts as null
 
+    let dead = false
     import("highlight.js/lib/core").then(async (hljs) => {
       if (dead) return
       await loadLang(hljs, lang)
@@ -81,13 +80,20 @@ export function CodeBlock({
       }
     })
 
-    return () => { dead = true }
+    return () => {
+      dead = true
+    }
   }, [code, lang])
 
   const lines = code.split("\n")
 
   return (
-    <div className={cn("my-4 overflow-hidden rounded-lg border shadow-sm", className)}>
+    <div
+      className={cn(
+        "my-4 overflow-hidden rounded-lg border shadow-sm",
+        className
+      )}
+    >
       {(title || language) && (
         <div className="flex items-center justify-between border-b bg-muted px-4 py-2">
           <div className="flex items-center gap-2">
@@ -107,7 +113,11 @@ export function CodeBlock({
             onClick={handleCopy}
             aria-label={copied ? "Copied" : "Copy code"}
           >
-            {copied ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
+            {copied ? (
+              <Check className="h-3.5 w-3.5 text-green-500" />
+            ) : (
+              <Copy className="h-3.5 w-3.5" />
+            )}
           </Button>
         </div>
       )}
@@ -140,7 +150,9 @@ export function CodeBlock({
               dangerouslySetInnerHTML={{ __html: highlighted }}
             />
           ) : (
-            <code className={lang ? `language-${lang}` : undefined}>{code}</code>
+            <code className={lang ? `language-${lang}` : undefined}>
+              {code}
+            </code>
           )}
         </pre>
       </div>

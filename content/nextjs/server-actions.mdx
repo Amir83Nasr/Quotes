@@ -7,13 +7,15 @@ order: 10
 
 # Server Actions and Mutations
 
-<LearningObjectives objectives={[
-  "Use 'use server' directive for server actions",
-  "Differentiate server actions from route handlers",
-  "Build form actions with progressive enhancement",
-  "Revalidate data after mutations with revalidatePath and revalidateTag",
-  "Handle errors gracefully in server actions"
-]} />
+<LearningObjectives
+  objectives={[
+    "Use 'use server' directive for server actions",
+    "Differentiate server actions from route handlers",
+    "Build form actions with progressive enhancement",
+    "Revalidate data after mutations with revalidatePath and revalidateTag",
+    "Handle errors gracefully in server actions",
+  ]}
+/>
 
 ## "use server" Directive
 
@@ -27,7 +29,10 @@ export async function createPost(formData: FormData) {
   const title = formData.get("title") as string
   const content = formData.get("content") as string
 
-  await db.query("INSERT INTO posts (title, content) VALUES ($1, $2)", [title, content])
+  await db.query("INSERT INTO posts (title, content) VALUES ($1, $2)", [
+    title,
+    content,
+  ])
 }
 ```
 
@@ -43,7 +48,10 @@ export default function NewPostPage() {
 
     const title = formData.get("title")
     const content = formData.get("content")
-    await db.query("INSERT INTO posts (title, content) VALUES ($1, $2)", [title, content])
+    await db.query("INSERT INTO posts (title, content) VALUES ($1, $2)", [
+      title,
+      content,
+    ])
   }
 
   return (
@@ -58,13 +66,13 @@ export default function NewPostPage() {
 
 ## Server Action vs Route Handler
 
-| Aspect | Server Action | Route Handler |
-|--------|--------------|---------------|
-| Invocation | Direct function call | HTTP request |
-| URL | None (RPC-style) | /api/... endpoint |
-| Progressive enhancement | Built-in | Manual |
-| Revalidation | revalidatePath / revalidateTag | Manual fetch |
-| Best for | Form submissions, mutations | Webhooks, external API consumers |
+| Aspect                  | Server Action                  | Route Handler                    |
+| ----------------------- | ------------------------------ | -------------------------------- |
+| Invocation              | Direct function call           | HTTP request                     |
+| URL                     | None (RPC-style)               | /api/... endpoint                |
+| Progressive enhancement | Built-in                       | Manual                           |
+| Revalidation            | revalidatePath / revalidateTag | Manual fetch                     |
+| Best for                | Form submissions, mutations    | Webhooks, external API consumers |
 
 ## Form with Revalidation
 
@@ -86,7 +94,7 @@ export default function CreatePostForm() {
       return { error: "Failed to create post" }
     }
 
-    revalidatePath("/posts")   // refresh the posts page
+    revalidatePath("/posts") // refresh the posts page
     return { success: true }
   }
 
@@ -102,7 +110,9 @@ export default function CreatePostForm() {
 <Alert>
   <AlertTitle>Revalidation is Critical</AlertTitle>
   <AlertDescription>
-    Mutations without revalidation leave the UI stale. Always call revalidatePath() or revalidateTag() after successful mutations, or pass a revalidating action to the client.
+    Mutations without revalidation leave the UI stale. Always call
+    revalidatePath() or revalidateTag() after successful mutations, or pass a
+    revalidating action to the client.
   </AlertDescription>
 </Alert>
 
@@ -126,7 +136,10 @@ export async function addComment(prevState: unknown, formData: FormData) {
   }
 
   try {
-    await db.query("INSERT INTO comments (post_id, text) VALUES ($1, $2)", [postId, text])
+    await db.query("INSERT INTO comments (post_id, text) VALUES ($1, $2)", [
+      postId,
+      text,
+    ])
     revalidateTag(`comments-${postId}`)
     return { success: true }
   } catch (err) {
@@ -181,25 +194,25 @@ export async function addComment(formData: FormData) {
   const postId = formData.get("postId")
   const text = formData.get("text")
 
-  if (!text || typeof text !== "string" || text.trim() === "") {
-    return { error: "Comment text is required" }
-  }
+if (!text || typeof text !== "string" || text.trim() === "") {
+return { error: "Comment text is required" }
+}
 
-  if (text.length > 1000) {
-    return { error: "Comment must be under 1000 characters" }
-  }
+if (text.length > 1000) {
+return { error: "Comment must be under 1000 characters" }
+}
 
-  try {
-    // Simulated DB insert
-    console.log(\`Inserting comment for post \${postId}: \${text}\`)
-    revalidateTag(\`comments-\${postId}\`)
-    return { success: true }
-  } catch {
-    return { error: "Failed to save comment" }
-  }
+try {
+// Simulated DB insert
+console.log(\`Inserting comment for post \${postId}: \${text}\`)
+revalidateTag(\`comments-\${postId}\`)
+return { success: true }
+} catch {
+return { error: "Failed to save comment" }
+}
 }`}
-  hints={["Always validate inputs in server actions — they can be called outside the form", "Return error objects instead of throwing for form UX", "Use revalidateTag to target specific cached data"]}
-  previewType="mixed"
+hints={["Always validate inputs in server actions — they can be called outside the form", "Return error objects instead of throwing for form UX", "Use revalidateTag to target specific cached data"]}
+previewType="mixed"
 />
 
 ## Lesson Summary

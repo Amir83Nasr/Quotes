@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useRef, useEffect, useState } from "react"
+import { useRef, useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 import { useTheme } from "next-themes"
 
@@ -9,7 +9,12 @@ let _EV: typeof import("@codemirror/view").EditorView | null = null
 let _ES: typeof import("@codemirror/state").EditorState | null = null
 let _setup: import("@codemirror/state").Extension | null = null
 let _oneDark: import("@codemirror/state").Extension | null = null
-let _js: ((cfg?: { typescript?: boolean; jsx?: boolean }) => import("@codemirror/state").Extension) | null = null
+let _js:
+  | ((cfg?: {
+      typescript?: boolean
+      jsx?: boolean
+    }) => import("@codemirror/state").Extension)
+  | null = null
 let _html: import("@codemirror/state").Extension | null = null
 let _css: import("@codemirror/state").Extension | null = null
 
@@ -17,17 +22,20 @@ async function loadCodeMirror() {
   if (_EV) return
 
   // Import individual packages (all @6.x, avoids version conflicts from basic-setup@0.20.0)
-  const [view, state, dark, jsMod, htmlFn, cssFn, lang, cmds, ac] = await Promise.all([
-    import("@codemirror/view"),
-    import("@codemirror/state"),
-    import("@codemirror/theme-one-dark").then((m) => m.oneDark as import("@codemirror/state").Extension),
-    import("@codemirror/lang-javascript"),
-    import("@codemirror/lang-html"),
-    import("@codemirror/lang-css"),
-    import("@codemirror/language"),
-    import("@codemirror/commands"),
-    import("@codemirror/autocomplete"),
-  ])
+  const [view, state, dark, jsMod, htmlFn, cssFn, lang, cmds, ac] =
+    await Promise.all([
+      import("@codemirror/view"),
+      import("@codemirror/state"),
+      import("@codemirror/theme-one-dark").then(
+        (m) => m.oneDark as import("@codemirror/state").Extension
+      ),
+      import("@codemirror/lang-javascript"),
+      import("@codemirror/lang-html"),
+      import("@codemirror/lang-css"),
+      import("@codemirror/language"),
+      import("@codemirror/commands"),
+      import("@codemirror/autocomplete"),
+    ])
 
   _EV = view.EditorView
   _ES = state.EditorState
@@ -122,13 +130,20 @@ export default function CodeMirrorEditor({
       _EV.editable.of(!readOnly),
       _EV.theme(
         {
-          "&": { height: `${height}px`, fontSize: "14px", fontFamily: "var(--font-mono, monospace)" },
+          "&": {
+            height: `${height}px`,
+            fontSize: "14px",
+            fontFamily: "var(--font-mono, monospace)",
+          },
           ".cm-scroller": { fontFamily: "var(--font-mono, monospace)" },
-          ".cm-content": { caretColor: isDark ? "#fff" : "#000", padding: "8px 0" },
+          ".cm-content": {
+            caretColor: isDark ? "#fff" : "#000",
+            padding: "8px 0",
+          },
           "&.cm-editor.cm-focused": { outline: "none" },
           ".cm-gutters": { borderRight: "none" },
         },
-        { dark: isDark },
+        { dark: isDark }
       ),
       ...(isDark && _oneDark ? [_oneDark] : []),
       ...getLanguageExtension(language),
@@ -138,7 +153,7 @@ export default function CodeMirrorEditor({
       extensions.push(
         _EV.updateListener.of((update) => {
           if (update.docChanged) onChange(update.state.doc.toString())
-        }),
+        })
       )
     }
 
@@ -168,7 +183,10 @@ export default function CodeMirrorEditor({
   if (!loaded) {
     return (
       <div
-        className={cn("flex items-center justify-center rounded-lg border bg-muted/30 text-sm text-muted-foreground", className)}
+        className={cn(
+          "flex items-center justify-center rounded-lg border bg-muted/30 text-sm text-muted-foreground",
+          className
+        )}
         style={{ height }}
       >
         Loading editor...
@@ -179,7 +197,11 @@ export default function CodeMirrorEditor({
   return (
     <div
       ref={editorRef}
-      className={cn("overflow-hidden rounded-lg border bg-background", readOnly && "opacity-75", className)}
+      className={cn(
+        "overflow-hidden rounded-lg border bg-background",
+        readOnly && "opacity-75",
+        className
+      )}
     />
   )
 }

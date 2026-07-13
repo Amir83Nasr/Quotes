@@ -7,14 +7,16 @@ order: 8
 
 # Middleware
 
-<LearningObjectives objectives={[
-  "Implement middleware.ts at the project root",
-  "Configure matcher patterns for route targeting",
-  "Perform redirects and rewrites in middleware",
-  "Check authentication and protect routes",
-  "Manipulate cookies and request headers",
-  "Handle i18n routing with middleware"
-]} />
+<LearningObjectives
+  objectives={[
+    "Implement middleware.ts at the project root",
+    "Configure matcher patterns for route targeting",
+    "Perform redirects and rewrites in middleware",
+    "Check authentication and protect routes",
+    "Manipulate cookies and request headers",
+    "Handle i18n routing with middleware",
+  ]}
+/>
 
 ## Middleware Basics
 
@@ -38,9 +40,9 @@ Use the `matcher` export to target specific routes:
 ```tsx
 export const config = {
   matcher: [
-    "/dashboard/:path*",    // all dashboard routes
-    "/api/:path*",          // all API routes
-    "/((?!_next/static|favicon.ico).*)",  // exclude static assets
+    "/dashboard/:path*", // all dashboard routes
+    "/api/:path*", // all API routes
+    "/((?!_next/static|favicon.ico).*)", // exclude static assets
   ],
 }
 ```
@@ -90,7 +92,8 @@ export function middleware(request: NextRequest) {
 <Alert>
   <AlertTitle>308 vs 307 Redirect</AlertTitle>
   <AlertDescription>
-    Use 308 for permanent redirects (preserves request method, including POST). Use 307 for temporary redirects. NextResponse.redirect defaults to 307.
+    Use 308 for permanent redirects (preserves request method, including POST).
+    Use 307 for temporary redirects. NextResponse.redirect defaults to 307.
   </AlertDescription>
 </Alert>
 
@@ -130,7 +133,9 @@ const defaultLocale = "en"
 
 function getLocale(request: NextRequest): string {
   const negotiatorHeaders: Record<string, string> = {}
-  request.headers.forEach((value, key) => { negotiatorHeaders[key] = value })
+  request.headers.forEach((value, key) => {
+    negotiatorHeaders[key] = value
+  })
   const languages = new Negotiator({ headers: negotiatorHeaders }).languages()
   return match(languages, locales, defaultLocale)
 }
@@ -173,13 +178,13 @@ import type { NextRequest } from "next/server"
 export function middleware(request: NextRequest) {
   const session = request.cookies.get("session")?.value
 
-  if (!session) {
-    const loginUrl = new URL("/login", request.url)
-    loginUrl.searchParams.set("redirect", request.nextUrl.pathname)
-    return NextResponse.redirect(loginUrl)
-  }
+if (!session) {
+const loginUrl = new URL("/login", request.url)
+loginUrl.searchParams.set("redirect", request.nextUrl.pathname)
+return NextResponse.redirect(loginUrl)
+}
 
-  return NextResponse.next()
+return NextResponse.next()
 }
 
 export const config = {

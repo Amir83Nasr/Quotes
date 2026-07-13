@@ -13,9 +13,9 @@ JavaScript is a dynamic programming language that powers interactivity on the we
 Three ways to declare variables:
 
 ```javascript
-const name = "React"       // Cannot be reassigned (preferred)
-let count = 0               // Can be reassigned
-var old = "avoid"           // Function-scoped, avoid in modern code
+const name = "React" // Cannot be reassigned (preferred)
+let count = 0 // Can be reassigned
+var old = "avoid" // Function-scoped, avoid in modern code
 
 count = 1 // OK
 name = "Vue" // Error: can't reassign const
@@ -25,18 +25,18 @@ name = "Vue" // Error: can't reassign const
 
 ```javascript
 // Primitive types
-const str = "hello"          // string
-const num = 42               // number
-const bool = true            // boolean
-const und = undefined        // undefined
-const nul = null             // null
-const sym = Symbol("id")     // symbol
+const str = "hello" // string
+const num = 42 // number
+const bool = true // boolean
+const und = undefined // undefined
+const nul = null // null
+const sym = Symbol("id") // symbol
 const big = 9007199254740991n // bigint
 
 // Reference types
 const obj = { key: "value" } // object
-const arr = [1, 2, 3]        // array
-function greet() {}           // function
+const arr = [1, 2, 3] // array
+function greet() {} // function
 ```
 
 ## Functions
@@ -67,14 +67,14 @@ const user = {
 }
 
 // Access
-user.name      // "Alice"
-user["age"]    // 30
+user.name // "Alice"
+user["age"] // 30
 
 // Array
 const items = ["a", "b", "c"]
-items.push("d")     // Add to end
-items.pop()         // Remove from end
-items[0]            // "a"
+items.push("d") // Add to end
+items.pop() // Remove from end
+items[0] // "a"
 
 // Destructuring
 const { name, age } = user

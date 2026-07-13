@@ -5,14 +5,16 @@ difficulty: beginner
 order: 2
 ---
 
-<LearningObjectives objectives={[
-"Use header, nav, main, section, article, aside, footer correctly",
-"Structure proper heading hierarchy (h1-h6) for document outlines",
-"Apply figure, figcaption, time, address for rich semantics",
-"Understand landmark roles and browser/AT implications",
-"Recognize SEO benefits of semantic HTML",
-"Replace div soup with meaningful elements",
-]} />
+<LearningObjectives
+  objectives={[
+    "Use header, nav, main, section, article, aside, footer correctly",
+    "Structure proper heading hierarchy (h1-h6) for document outlines",
+    "Apply figure, figcaption, time, address for rich semantics",
+    "Understand landmark roles and browser/AT implications",
+    "Recognize SEO benefits of semantic HTML",
+    "Replace div soup with meaningful elements",
+  ]}
+/>
 
 ## The Semantic Layout
 
@@ -47,22 +49,24 @@ Semantic elements describe their content meaning, not just appearance.
   </main>
 
   <footer>
-    <address>Contact: <a href="mailto:hello@example.com">hello@example.com</a></address>
+    <address>
+      Contact: <a href="mailto:hello@example.com">hello@example.com</a>
+    </address>
   </footer>
 </body>
 ```
 
 ## Landmark Roles Browsers Derive
 
-| Element | Implicit Role | Purpose |
-|---------|---------------|---------|
-| `<header>` | `banner` (when not nested in article/section) | Site header |
-| `<nav>` | `navigation` | Navigation links |
-| `<main>` | `main` | Primary content (one per page) |
-| `<section>` | `region` (when has accessible name) | Thematic group |
-| `<article>` | `article` | Self-contained composition |
-| `<aside>` | `complementary` | Related content |
-| `<footer>` | `contentinfo` (when not nested) | Site footer |
+| Element     | Implicit Role                                 | Purpose                        |
+| ----------- | --------------------------------------------- | ------------------------------ |
+| `<header>`  | `banner` (when not nested in article/section) | Site header                    |
+| `<nav>`     | `navigation`                                  | Navigation links               |
+| `<main>`    | `main`                                        | Primary content (one per page) |
+| `<section>` | `region` (when has accessible name)           | Thematic group                 |
+| `<article>` | `article`                                     | Self-contained composition     |
+| `<aside>`   | `complementary`                               | Related content                |
+| `<footer>`  | `contentinfo` (when not nested)               | Site footer                    |
 
 ## Figure & Figcaption
 
@@ -78,13 +82,14 @@ Semantic elements describe their content meaning, not just appearance.
 ```html
 <!-- Good: hierarchical, no gaps -->
 <h1>Site Title</h1>
-  <h2>Latest Articles</h2>
-    <h3>Article Title</h3>
-      <h4>Section Within Article</h4>
+<h2>Latest Articles</h2>
+<h3>Article Title</h3>
+<h4>Section Within Article</h4>
 
 <!-- Bad: skips levels -->
 <h1>Site Title</h1>
-  <h4>Section</h4>  <!-- skipped h2, h3 -->
+<h4>Section</h4>
+<!-- skipped h2, h3 -->
 
 <!-- Bad: uses divs styled as headings -->
 <div class="heading-large">Section</div>
@@ -164,7 +169,11 @@ Semantic HTML signals content hierarchy to search engines:
   </article>
 </main>
 <footer style="padding:1rem;background:#1e293b;color:white;border-radius:0 0 8px 8px;font-size:0.875rem">&copy; 2026 Semantic Demo</footer>`}
-  css={`body { font-family: system-ui; }`}
+  css={`
+    body {
+      font-family: system-ui;
+    }
+  `}
 />
 
 <InteractiveExercise
@@ -223,15 +232,23 @@ Semantic HTML signals content hierarchy to search engines:
     <p>© 2026 My Site</p>
   </footer>
 </body>`}
-  hints={["Replace top-bar with <header>", "Replace nav-links with <nav> and <a> tags", "Use <article> for the post, <aside> for the sidebar", "Add <time> element with datetime attribute", "Wrap page content in <main>"]}
+  hints={[
+    "Replace top-bar with <header>",
+    "Replace nav-links with <nav> and <a> tags",
+    "Use <article> for the post, <aside> for the sidebar",
+    "Add <time> element with datetime attribute",
+    "Wrap page content in <main>",
+  ]}
   previewType="html"
 />
 
-<LessonSummary points={[
-"Semantic elements describe meaning, not just appearance",
-"Each landmark role has a specific purpose — use elements correctly",
-"Maintain logical heading hierarchy (h1 → h2 → h3, no skipping)",
-"Use figure + figcaption for self-contained media with captions",
-"Semantic HTML improves SEO with better content signals",
-"Replace div soup with header, nav, main, article, aside, footer",
-]} />
+<LessonSummary
+  points={[
+    "Semantic elements describe meaning, not just appearance",
+    "Each landmark role has a specific purpose — use elements correctly",
+    "Maintain logical heading hierarchy (h1 → h2 → h3, no skipping)",
+    "Use figure + figcaption for self-contained media with captions",
+    "Semantic HTML improves SEO with better content signals",
+    "Replace div soup with header, nav, main, article, aside, footer",
+  ]}
+/>

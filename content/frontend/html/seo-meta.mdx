@@ -5,49 +5,64 @@ difficulty: intermediate
 order: 5
 ---
 
-<LearningObjectives objectives={[
-"Write viewport meta tag for proper mobile rendering",
-"Implement Open Graph and Twitter Card meta tags for social sharing",
-"Add structured data with JSON-LD for rich search results",
-"Use canonical, noindex, and robots directives correctly",
-"Write effective <title> and <meta name=\"description\"> tags",
-"Set up favicons and app icons for all platforms",
-"Understand sitemaps and robots.txt files",
-]} />
+<LearningObjectives
+  objectives={[
+    "Write viewport meta tag for proper mobile rendering",
+    "Implement Open Graph and Twitter Card meta tags for social sharing",
+    "Add structured data with JSON-LD for rich search results",
+    "Use canonical, noindex, and robots directives correctly",
+    'Write effective <title> and <meta name="description"> tags',
+    "Set up favicons and app icons for all platforms",
+    "Understand sitemaps and robots.txt files",
+  ]}
+/>
 
 ## The Complete Head Section
 
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Primary SEO -->
-  <title>Complete CSS Grid Guide | Learn CSS Today</title>
-  <meta name="description" content="Master CSS Grid with hands-on examples. Covers grid-template, auto-fit, minmax, placement, and responsive layouts from beginner to advanced." />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://example.com/css-grid-guide" />
+    <!-- Primary SEO -->
+    <title>Complete CSS Grid Guide | Learn CSS Today</title>
+    <meta
+      name="description"
+      content="Master CSS Grid with hands-on examples. Covers grid-template, auto-fit, minmax, placement, and responsive layouts from beginner to advanced."
+    />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://example.com/css-grid-guide" />
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Complete CSS Grid Guide" />
-  <meta property="og:description" content="Master CSS Grid with hands-on examples." />
-  <meta property="og:image" content="https://example.com/og-css-grid.png" />
-  <meta property="og:url" content="https://example.com/css-grid-guide" />
-  <meta property="og:type" content="article" />
+    <!-- Open Graph -->
+    <meta property="og:title" content="Complete CSS Grid Guide" />
+    <meta
+      property="og:description"
+      content="Master CSS Grid with hands-on examples."
+    />
+    <meta property="og:image" content="https://example.com/og-css-grid.png" />
+    <meta property="og:url" content="https://example.com/css-grid-guide" />
+    <meta property="og:type" content="article" />
 
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Complete CSS Grid Guide" />
-  <meta name="twitter:description" content="Master CSS Grid with hands-on examples." />
-  <meta name="twitter:image" content="https://example.com/twitter-css-grid.png" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Complete CSS Grid Guide" />
+    <meta
+      name="twitter:description"
+      content="Master CSS Grid with hands-on examples."
+    />
+    <meta
+      name="twitter:image"
+      content="https://example.com/twitter-css-grid.png"
+    />
 
-  <!-- Icons -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-  <link rel="manifest" href="/site.webmanifest" />
-</head>
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+  </head>
+</html>
 ```
 
 ## Title & Description Best Practices
@@ -55,17 +70,23 @@ order: 5
 ```html
 <!-- Good: descriptive, keyword-rich, under 60 chars -->
 <title>CSS Grid Layout Guide | Learn CSS Today</title>
-<meta name="description" content="A step-by-step guide to CSS Grid layout with interactive examples. Covers grid-template, grid-area, auto-fit, minmax, and responsive design patterns." />
+<meta
+  name="description"
+  content="A step-by-step guide to CSS Grid layout with interactive examples. Covers grid-template, grid-area, auto-fit, minmax, and responsive design patterns."
+/>
 
 <!-- Bad: vague, keyword-stuffed -->
 <title>Home</title>
-<meta name="description" content="css grid css grid tutorial css grid guide css grid layout learn css grid best css grid tutorial" />
+<meta
+  name="description"
+  content="css grid css grid tutorial css grid guide css grid layout learn css grid best css grid tutorial"
+/>
 ```
 
-| Tag | Length Limit | Purpose |
-|-----|-------------|---------|
-| `<title>` | 50-60 chars | Search result headline |
-| `<meta description>` | 150-160 chars | Search result snippet |
+| Tag                  | Length Limit  | Purpose                |
+| -------------------- | ------------- | ---------------------- |
+| `<title>`            | 50-60 chars   | Search result headline |
+| `<meta description>` | 150-160 chars | Search result snippet  |
 
 ## Open Graph for Social Sharing
 
@@ -89,26 +110,32 @@ Google uses structured data for rich results (recipe stars, FAQ, breadcrumbs).
 
 ```html
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": "CSS Grid Layout Guide",
-  "description": "A step-by-step guide to CSS Grid layout.",
-  "author": {
-    "@type": "Person",
-    "name": "Jane Smith"
-  },
-  "datePublished": "2026-07-11",
-  "image": "https://example.com/og-css-grid.png",
-  "publisher": {
-    "@type": "Organization",
-    "name": "Learn CSS Today"
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "CSS Grid Layout Guide",
+    "description": "A step-by-step guide to CSS Grid layout.",
+    "author": {
+      "@type": "Person",
+      "name": "Jane Smith"
+    },
+    "datePublished": "2026-07-11",
+    "image": "https://example.com/og-css-grid.png",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Learn CSS Today"
+    }
   }
-}
 </script>
 ```
 
-<Alert><AlertTitle>Test Your Structured Data</AlertTitle><AlertDescription>Use Google's Rich Results Test or Schema.org validator. Invalid JSON-LD is silently ignored — no error is shown to users.</AlertDescription></Alert>
+<Alert>
+  <AlertTitle>Test Your Structured Data</AlertTitle>
+  <AlertDescription>
+    Use Google's Rich Results Test or Schema.org validator. Invalid JSON-LD is
+    silently ignored — no error is shown to users.
+  </AlertDescription>
+</Alert>
 
 ## Robots Directives
 
@@ -206,11 +233,13 @@ Sitemap: https://example.com/sitemap.xml
   previewType="html"
 />
 
-<LessonSummary points={[
-"viewport meta is essential for mobile rendering — always include it",
-"Open Graph and Twitter Card meta control social previews",
-"JSON-LD structured data enables rich search results",
-"Use noindex for pages you don't want in search results",
-"Favicon SVG is the modern standard, with PNG fallbacks for legacy",
-"canonical URLs prevent duplicate content issues",
-]} />
+<LessonSummary
+  points={[
+    "viewport meta is essential for mobile rendering — always include it",
+    "Open Graph and Twitter Card meta control social previews",
+    "JSON-LD structured data enables rich search results",
+    "Use noindex for pages you don't want in search results",
+    "Favicon SVG is the modern standard, with PNG fallbacks for legacy",
+    "canonical URLs prevent duplicate content issues",
+  ]}
+/>

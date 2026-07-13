@@ -12,13 +12,13 @@ Next.js uses a **file-system based router** where files and folders define route
 
 Next.js 13+ introduced the **App Router**, built on React Server Components.
 
-| Feature | App Router | Pages Router |
-|---------|-----------|-------------|
-| Server Components | ✅ Default | ❌ |
-| Nested Layouts | ✅ | ❌ |
-| Streaming | ✅ | ❌ |
-| File Conventions | `page.tsx`, `layout.tsx` | `index.tsx` |
-| Data Fetching | `fetch` + `cache()` | `getServerSideProps` |
+| Feature           | App Router               | Pages Router         |
+| ----------------- | ------------------------ | -------------------- |
+| Server Components | ✅ Default               | ❌                   |
+| Nested Layouts    | ✅                       | ❌                   |
+| Streaming         | ✅                       | ❌                   |
+| File Conventions  | `page.tsx`, `layout.tsx` | `index.tsx`          |
+| Data Fetching     | `fetch` + `cache()`      | `getServerSideProps` |
 
 ## Route Segments
 
@@ -105,7 +105,7 @@ export default function Loading() {
 }
 
 // app/blog/error.tsx — catches errors in the segment
-"use client"
+;("use client")
 export default function Error({
   error,
   reset,

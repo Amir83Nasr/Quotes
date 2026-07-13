@@ -1,0 +1,98 @@
+# ── Lefthook Configuration ─────────────────────────────────────────
+# https://lefthook.dev/configuration/
+#
+# Install hooks:
+#   make hooks-install             # or: pnpm lefthook install
+#
+# Run pre-commit on all files:
+#   make hooks-run                 # or: pnpm lefthook run pre-commit
+#
+# Skip hooks during commit:
+#   git commit --no-verify
+#
+# Extending:
+#   Add new commands under the appropriate pipeline or tag group.
+#   Use tags to run only a subset: pnpm lefthook run pre-commit --tag hygiene
+# ────────────────────────────────────────────────────────────────────
+
+min_version: "1.0"
+colors: true
+
+pre-commit:
+  parallel: true
+  commands:
+
+    # ── Repository Hygiene ────────────────────────────────────────
+    # These scripts run on all staged files.
+    # Files that are modified are re-staged via stage_fixed: true.
+
+    trailing-whitespace:
+      tags: [hygiene]
+      run: bash scripts/hooks/check-trailing-whitespace.sh {staged_files}
+      stage_fixed: true
+
+    eof-newline:
+      tags: [hygiene]
+      run: bash scripts/hooks/check-eof-newline.sh {staged_files}
+      stage_fixed: true
+
+    check-merge-conflict:
+      tags: [hygiene]
+      # Exclude the merge-conflicts lesson which intentionally contains markers
+      run: bash scripts/hooks/check-merge-conflict.sh {staged_files}
+      exclude: "content/git/merge-conflicts.mdx"
+
+    check-json:
+      tags: [hygiene]
+      glob: "*.json"
+      # </dev/null prevents Python from hanging on stdin
+      run: bash scripts/hooks/check-json.sh {staged_files} </dev/null
+
+    check-yaml:
+      tags: [hygiene]
+      glob: "*.{yaml,yml}"
+      run: bash scripts/hooks/check-yaml.sh {staged_files}
+
+    check-toml:
+      tags: [hygiene]
+      glob: "*.toml"
+      run: bash scripts/hooks/check-toml.sh {staged_files}
+
+    detect-private-key:
+      tags: [hygiene]
+      run: bash scripts/hooks/check-private-key.sh {staged_files}
+
+    line-endings:
+      tags: [hygiene]
+      run: bash scripts/hooks/check-line-endings.sh {staged_files}
+      stage_fixed: true
+
+    # ── Frontend ─────────────────────────────────────────────────
+    # Uses pnpm to resolve project-local tools.
+    # stage_fixed: true re-stages files that Prettier/ESLint modify.
+
+    prettier:
+      tags: [frontend, format]
+      glob: "*.{ts,tsx,js,mjs,cjs,jsx,json,css,md,mdx}"
+      run: pnpm prettier --write {staged_files}
+      stage_fixed: true
+
+    eslint:
+      tags: [frontend, lint]
+      glob: "*.{ts,tsx,js,mjs,cjs,jsx}"
+      run: pnpm eslint --fix {staged_files}
+      stage_fixed: true
+
+    # ── Placeholder: Python / Ruff / Pytest ──────────────────────
+    # Uncomment and adjust when Python files are added:
+    #
+    # ruff:
+    #   tags: [python, lint]
+    #   glob: "*.py"
+    #   run: pnpm ruff check --fix {staged_files}
+    #   stage_fixed: true
+    #
+    # pytest:
+    #   tags: [python, test]
+    #   glob: "*.py"
+    #   run: pnpm pytest {staged_files}

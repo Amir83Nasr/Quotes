@@ -29,7 +29,6 @@ export class ErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error) {
-    // eslint-disable-next-line no-console
     console.error("Lesson content error:", error)
   }
 
@@ -40,7 +39,9 @@ export class ErrorBoundary extends Component<
         <div className="my-8 flex items-start gap-3 rounded-lg border border-red-500/30 bg-red-500/5 p-4">
           <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-red-500" />
           <div>
-            <p className="text-sm font-medium">Something went wrong rendering this content.</p>
+            <p className="text-sm font-medium">
+              Something went wrong rendering this content.
+            </p>
             <p className="mt-1 text-sm text-muted-foreground">
               {this.state.error?.message ?? "An unexpected error occurred."}
             </p>

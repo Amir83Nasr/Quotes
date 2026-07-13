@@ -122,15 +122,20 @@ async function main() {
     const isRootFile = ROOT_FILES.has(cp)
     if (!isRootFile && !KNOWN_CATEGORIES.has(topSegment)) {
       errors.push(
-        `${rel}: orphaned — top-level dir "${topSegment}" is not a known category (won't appear in any sidebar section)`,
+        `${rel}: orphaned — top-level dir "${topSegment}" is not a known category (won't appear in any sidebar section)`
       )
     }
 
     // 6. Prerequisites resolve to a real lesson.
     if (Array.isArray(data.prerequisites)) {
       for (const pre of data.prerequisites) {
-        if (typeof pre === "string" && !validPaths.has(pre.replace(/^\//, ""))) {
-          errors.push(`${rel}: prerequisite "${pre}" does not resolve to a lesson`)
+        if (
+          typeof pre === "string" &&
+          !validPaths.has(pre.replace(/^\//, ""))
+        ) {
+          errors.push(
+            `${rel}: prerequisite "${pre}" does not resolve to a lesson`
+          )
         }
       }
     }
@@ -153,7 +158,7 @@ async function main() {
         const lang = line.replace(/^\s*```/, "").trim()
         if (lang === "") {
           errors.push(
-            `${rel}: fenced code block without a language (highlight.js needs one)`,
+            `${rel}: fenced code block without a language (highlight.js needs one)`
           )
         }
         continue
@@ -166,7 +171,7 @@ async function main() {
         const level = h[1].length
         if (prevHeadingLevel > 0 && level > prevHeadingLevel + 1) {
           errors.push(
-            `${rel}: heading level jumps from h${prevHeadingLevel} to h${level} ("${line.trim().slice(0, 48)}")`,
+            `${rel}: heading level jumps from h${prevHeadingLevel} to h${level} ("${line.trim().slice(0, 48)}")`
           )
         }
         prevHeadingLevel = level
@@ -187,14 +192,16 @@ async function main() {
     for (const [order, paths] of m) {
       if (paths.length > 1) {
         errors.push(
-          `${dir}: duplicate order ${order} shared by ${paths.length} lessons (${paths.join(", ")})`,
+          `${dir}: duplicate order ${order} shared by ${paths.length} lessons (${paths.join(", ")})`
         )
       }
     }
   }
 
   if (errors.length > 0) {
-    console.error(`\n✖ Content validation failed — ${errors.length} issue(s):\n`)
+    console.error(
+      `\n✖ Content validation failed — ${errors.length} issue(s):\n`
+    )
     for (const e of errors) console.error(`  • ${e}`)
     console.error("")
     process.exit(1)

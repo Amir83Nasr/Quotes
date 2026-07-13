@@ -5,28 +5,42 @@ difficulty: intermediate
 order: 10
 ---
 
-<LearningObjectives objectives={[
-"Write colors in hex, rgb, hsl, and oklch notation",
-"Understand why oklch and oklab are perceptually uniform",
-"Use color-mix() to blend colors in any color space",
-"Apply relative color syntax with the from keyword",
-"Use currentColor and system colors for theme integration",
-"Check color contrast against WCAG guidelines",
-"Set color-scheme and handle forced-colors mode",
-]} />
+<LearningObjectives
+  objectives={[
+    "Write colors in hex, rgb, hsl, and oklch notation",
+    "Understand why oklch and oklab are perceptually uniform",
+    "Use color-mix() to blend colors in any color space",
+    "Apply relative color syntax with the from keyword",
+    "Use currentColor and system colors for theme integration",
+    "Check color contrast against WCAG guidelines",
+    "Set color-scheme and handle forced-colors mode",
+  ]}
+/>
 
 ## Color Formats Compared
 
 ```css
 /* Legacy formats */
-.element { color: #6366f1; }                   /* hex */
-.element { color: rgb(99, 102, 241); }         /* rgb */
-.element { color: rgba(99, 102, 241, 0.8); }  /* rgb with alpha */
-.element { color: hsl(239, 84%, 67%); }       /* hsl */
+.element {
+  color: #6366f1;
+} /* hex */
+.element {
+  color: rgb(99, 102, 241);
+} /* rgb */
+.element {
+  color: rgba(99, 102, 241, 0.8);
+} /* rgb with alpha */
+.element {
+  color: hsl(239, 84%, 67%);
+} /* hsl */
 
 /* Modern formats */
-.element { color: oklch(59% 0.19 275); }      /* oklch — modern, perceptual */
-.element { color: oklab(59% 0.06 -0.18); }     /* oklab */
+.element {
+  color: oklch(59% 0.19 275);
+} /* oklch — modern, perceptual */
+.element {
+  color: oklab(59% 0.06 -0.18);
+} /* oklab */
 ```
 
 ## oklch — Perceptually Uniform
@@ -37,9 +51,9 @@ OKLCH stands for Lightness-Chroma-Hue. Unlike HSL, equal changes in values look 
 /* oklch(L C H) — L 0-100%, C 0-0.4, H 0-360 */
 :root {
   --indigo: oklch(59% 0.19 275);
-  --indigo-light: oklch(75% 0.13 275);    /* same hue, lighter */
-  --indigo-dark: oklch(35% 0.15 275);     /* same hue, darker */
-  --gray: oklch(50% 0.01 275);            /* same hue, 0 chroma = gray */
+  --indigo-light: oklch(75% 0.13 275); /* same hue, lighter */
+  --indigo-dark: oklch(35% 0.15 275); /* same hue, darker */
+  --gray: oklch(50% 0.01 275); /* same hue, 0 chroma = gray */
 }
 ```
 
@@ -52,9 +66,15 @@ OKLCH stands for Lightness-Chroma-Hue. Unlike HSL, equal changes in values look 
 
 ```css
 /* OKLCH — same lightness = same perceived brightness */
-.bg-1 { background: oklch(60% 0.2 30); }     /* orange */
-.bg-2 { background: oklch(60% 0.2 150); }    /* green — same perceived brightness */
-.bg-3 { background: oklch(60% 0.2 270); }    /* blue — same perceived brightness */
+.bg-1 {
+  background: oklch(60% 0.2 30);
+} /* orange */
+.bg-2 {
+  background: oklch(60% 0.2 150);
+} /* green — same perceived brightness */
+.bg-3 {
+  background: oklch(60% 0.2 270);
+} /* blue — same perceived brightness */
 ```
 
 </TabsContent>
@@ -62,9 +82,15 @@ OKLCH stands for Lightness-Chroma-Hue. Unlike HSL, equal changes in values look 
 
 ```css
 /* HSL — same lightness ≠ same perceived brightness */
-.bg-1 { background: hsl(30, 80%, 60%); }      /* orange — looks brighter */
-.bg-2 { background: hsl(150, 80%, 60%); }     /* green */
-.bg-3 { background: hsl(270, 80%, 60%); }     /* blue — looks darker */
+.bg-1 {
+  background: hsl(30, 80%, 60%);
+} /* orange — looks brighter */
+.bg-2 {
+  background: hsl(150, 80%, 60%);
+} /* green */
+.bg-3 {
+  background: hsl(270, 80%, 60%);
+} /* blue — looks darker */
 ```
 
 </TabsContent>
@@ -105,29 +131,38 @@ Derive new colors from existing ones using the `from` keyword.
 `currentColor` inherits the element's text color. System colors respect OS theme.
 
 ```css
-.card { color: #1e293b; }
-.card .icon { fill: currentColor; }          /* matches parent text color */
+.card {
+  color: #1e293b;
+}
+.card .icon {
+  fill: currentColor;
+} /* matches parent text color */
 
 /* System colors — adapt to user's OS */
 @media (forced-colors: active) {
-  .card { border: 2px solid CanvasText; }
-  .btn { background: ButtonFace; color: ButtonText; }
+  .card {
+    border: 2px solid CanvasText;
+  }
+  .btn {
+    background: ButtonFace;
+    color: ButtonText;
+  }
 }
 ```
 
 ## Color Contrast & WCAG
 
-| Level | Ratio | Applies to |
-|-------|-------|------------|
-| AA | 4.5:1 | Normal text (< 18px) |
-| AA Large | 3:1 | Text >= 18px bold or >= 24px |
-| AAA | 7:1 | All text |
+| Level    | Ratio | Applies to                   |
+| -------- | ----- | ---------------------------- |
+| AA       | 4.5:1 | Normal text (< 18px)         |
+| AA Large | 3:1   | Text >= 18px bold or >= 24px |
+| AAA      | 7:1   | All text                     |
 
 ```css
 /* Use high-contrast colors for accessibility */
 .btn-primary {
-  background: oklch(55% 0.2 275);       /* AA pass against white */
-  color: white;                          /* contrast ratio ~5.5:1 */
+  background: oklch(55% 0.2 275); /* AA pass against white */
+  color: white; /* contrast ratio ~5.5:1 */
 }
 ```
 
@@ -155,7 +190,28 @@ This enables native form controls, scrollbars, and default colors to match the s
   <div class="swatch" style="background: oklch(55% 0.2 300)">oklch(55% 0.2 300)</div>
   <div class="swatch mixed">color-mix</div>
 </div>`}
-  css={`.palette { display: flex; gap: 0.5rem; flex-wrap: wrap; } .swatch { width: 120px; height: 80px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: white; font-size: 0.7rem; text-align: center; padding: 0.25rem; } .mixed { background: color-mix(in oklch, #6366f1, #ef4444); }`}
+  css={`
+    .palette {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .swatch {
+      width: 120px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      color: white;
+      font-size: 0.7rem;
+      text-align: center;
+      padding: 0.25rem;
+    }
+    .mixed {
+      background: color-mix(in oklch, #6366f1, #ef4444);
+    }
+  `}
 />
 
 <InteractiveExercise
@@ -179,11 +235,13 @@ This enables native form controls, scrollbars, and default colors to match the s
   previewType="html"
 />
 
-<LessonSummary points={[
-"oklch() and oklab() are perceptually uniform — use for design systems",
-"color-mix() blends colors in any color space with proportional mixing",
-"Relative color syntax (from) derives new colors from existing references",
-"currentColor inherits text color — useful for SVG icons",
-"WCAG requires 4.5:1 contrast for normal text (AA)",
-"color-scheme meta signals light/dark support to the browser",
-]} />
+<LessonSummary
+  points={[
+    "oklch() and oklab() are perceptually uniform — use for design systems",
+    "color-mix() blends colors in any color space with proportional mixing",
+    "Relative color syntax (from) derives new colors from existing references",
+    "currentColor inherits text color — useful for SVG icons",
+    "WCAG requires 4.5:1 contrast for normal text (AA)",
+    "color-scheme meta signals light/dark support to the browser",
+  ]}
+/>

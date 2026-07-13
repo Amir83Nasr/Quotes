@@ -22,7 +22,7 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
           }
         }
       },
-      { rootMargin: "-80px 0px -80% 0px" },
+      { rootMargin: "-80px 0px -80% 0px" }
     )
 
     for (const heading of headings) {
@@ -41,7 +41,7 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
       aria-label="Table of contents"
     >
       <div className="overflow-y-auto py-8 pr-4">
-        <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        <h3 className="mb-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
           On this page
         </h3>
         <ul className="space-y-1.5">
@@ -53,7 +53,7 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
                   "block text-sm transition-colors",
                   activeId === heading.id
                     ? "font-medium text-foreground"
-                    : "text-muted-foreground hover:text-foreground",
+                    : "text-muted-foreground hover:text-foreground"
                 )}
                 style={{ paddingLeft: `${(heading.level - 2) * 12}px` }}
               >

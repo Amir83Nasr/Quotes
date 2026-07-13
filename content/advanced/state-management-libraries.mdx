@@ -8,14 +8,16 @@ order: 8
 
 React built-ins (`useState`, Context) cover many cases. Libraries add perf, ergonomics, and middleware.
 
-<LearningObjectives objectives={[
-  "Create Zustand stores with selectors and actions",
-  "Build Jotai atoms with derived state",
-  "Compare Context vs Zustand vs Jotai vs Redux tradeoffs",
-  "Use localStorage persistence middleware",
-  "Integrate devtools for debugging",
-  "Choose the right tool for different app scales"
-]} />
+<LearningObjectives
+  objectives={[
+    "Create Zustand stores with selectors and actions",
+    "Build Jotai atoms with derived state",
+    "Compare Context vs Zustand vs Jotai vs Redux tradeoffs",
+    "Use localStorage persistence middleware",
+    "Integrate devtools for debugging",
+    "Choose the right tool for different app scales",
+  ]}
+/>
 
 ## Zustand Basics
 
@@ -70,14 +72,20 @@ import { atom, useAtom } from "jotai"
 
 const countAtom = atom(0)
 const doubledAtom = atom((get) => get(countAtom) * 2)
-const incrementAtom = atom(null, (get, set) => set(countAtom, get(countAtom) + 1))
+const incrementAtom = atom(null, (get, set) =>
+  set(countAtom, get(countAtom) + 1)
+)
 
 function Counter() {
   const [count] = useAtom(countAtom)
   const [doubled] = useAtom(doubledAtom)
   const [, increment] = useAtom(incrementAtom)
 
-  return <button onClick={increment}>{count} (doubled: {doubled})</button>
+  return (
+    <button onClick={increment}>
+      {count} (doubled: {doubled})
+    </button>
+  )
 }
 ```
 
@@ -117,6 +125,7 @@ const bears = useStore((s) => s.bears)
 // Write anywhere
 const addBear = useStore.getState().addBear
 ```
+
 </TabsContent>
 <TabsContent value="jotai">
 
@@ -131,6 +140,7 @@ const doubled = atom((get) => get(countAtom) * 2)
 // Re-renders only when consumed atom changes
 const [count] = useAtom(countAtom)
 ```
+
 </TabsContent>
 <TabsContent value="context">
 
@@ -144,38 +154,46 @@ const Ctx = createContext({ count: 0, setCount: () => {} })
 // Every consumer re-renders when count changes
 const { count } = useContext(Ctx)
 ```
+
 </TabsContent>
 </Tabs>
 
-| Feature | Context | Zustand | Jotai | Redux |
-|---------|---------|---------|-------|-------|
-| Bundle size | 0 | ~1KB | ~3KB | ~11KB |
-| Re-renders | All consumers | By selector | By atom | By selector |
-| Boilerplate | None | Minimal | Minimal | Actions/reducers |
-| Middleware | No | Yes (persist, devtools) | Yes | Yes (redux-saga, thunk) |
-| SSR friendly | Yes | Yes | Yes | Yes |
-| Async | Manual | Built-in | Built-in | Thunks/sagas |
+| Feature      | Context       | Zustand                 | Jotai    | Redux                   |
+| ------------ | ------------- | ----------------------- | -------- | ----------------------- |
+| Bundle size  | 0             | ~1KB                    | ~3KB     | ~11KB                   |
+| Re-renders   | All consumers | By selector             | By atom  | By selector             |
+| Boilerplate  | None          | Minimal                 | Minimal  | Actions/reducers        |
+| Middleware   | No            | Yes (persist, devtools) | Yes      | Yes (redux-saga, thunk) |
+| SSR friendly | Yes           | Yes                     | Yes      | Yes                     |
+| Async        | Manual        | Built-in                | Built-in | Thunks/sagas            |
 
 ## Reaching for a Library
 
 Use Context when:
+
 - State changes infrequently (theme, locale, auth)
 - Small subtree of consumers
 - No need for devtools/persistence
 
 Use Zustand when:
+
 - Frequent updates across many components
 - Need middleware (persist, devtools)
 - Want actions outside React
 
 Use Jotai when:
+
 - Highly granular state (form fields, UI toggles)
 - Composable derived state
 - Each value has different update frequency
 
 <Alert>
-<AlertTitle>Over-engineering Trap</AlertTitle>
-<AlertDescription>If two components share state, start with lifted useState. Only reach for a library when lifting becomes painful or perf degrades. Don't put server data in global state — use TanStack Query or SWR.</AlertDescription>
+  <AlertTitle>Over-engineering Trap</AlertTitle>
+  <AlertDescription>
+    If two components share state, start with lifted useState. Only reach for a
+    library when lifting becomes painful or perf degrades. Don't put server data
+    in global state — use TanStack Query or SWR.
+  </AlertDescription>
 </Alert>
 
 ## Persisting Store State
@@ -197,8 +215,8 @@ const useTheme = create<ThemeStore>()(
       theme: "light",
       setTheme: (theme) => set({ theme }),
     }),
-    { name: "theme-preference" },
-  ),
+    { name: "theme-preference" }
+  )
 )
 // Theme survives page reloads
 ```
@@ -215,8 +233,8 @@ const useStore = create<Store>()(
       login: (user) => set({ user }, false, "auth/login"),
       logout: () => set({ user: null }, false, "auth/logout"),
     }),
-    { name: "AppStore" },
-  ),
+    { name: "AppStore" }
+  )
 )
 // Visible in Redux DevTools browser extension
 ```
@@ -251,65 +269,66 @@ export function Cart() {
 import { devtools } from "zustand/middleware"
 
 type CartItem = {
-  id: string
-  name: string
-  price: number
-  quantity: number
+id: string
+name: string
+price: number
+quantity: number
 }
 
 type CartStore = {
-  items: CartItem[]
-  addItem: (item: Omit<CartItem, "quantity">) => void
-  removeItem: (id: string) => void
-  updateQuantity: (id: string, quantity: number) => void
-  clearCart: () => void
+items: CartItem[]
+addItem: (item: Omit<CartItem, "quantity">) => void
+removeItem: (id: string) => void
+updateQuantity: (id: string, quantity: number) => void
+clearCart: () => void
 }
 
 const useCart = create<CartStore>()(
-  devtools(
-    (set) => ({
-      items: [],
-      addItem: (item) =>
-        set((state) => {
-          const existing = state.items.find((i) => i.id === item.id)
-          if (existing) {
-            return {
-              items: state.items.map((i) =>
-                i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i,
-              ),
-            }
-          }
-          return { items: [...state.items, { ...item, quantity: 1 }] }
-        }),
-      removeItem: (id) =>
-        set((state) => ({ items: state.items.filter((i) => i.id !== id) })),
-      updateQuantity: (id, quantity) =>
-        set((state) => ({
-          items: state.items.map((i) =>
-            i.id === id ? { ...i, quantity: Math.max(0, quantity) } : i,
-          ),
-        })),
-      clearCart: () => set({ items: [] }),
-    }),
-    { name: "shopping-cart" },
-  ),
+devtools(
+(set) => ({
+items: [],
+addItem: (item) =>
+set((state) => {
+const existing = state.items.find((i) => i.id === item.id)
+if (existing) {
+return {
+items: state.items.map((i) =>
+i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i,
+),
+}
+}
+return { items: [...state.items, { ...item, quantity: 1 }] }
+}),
+removeItem: (id) =>
+set((state) => ({ items: state.items.filter((i) => i.id !== id) })),
+updateQuantity: (id, quantity) =>
+set((state) => ({
+items: state.items.map((i) =>
+i.id === id ? { ...i, quantity: Math.max(0, quantity) } : i,
+),
+})),
+clearCart: () => set({ items: [] }),
+}),
+{ name: "shopping-cart" },
+),
 )
 
 function CartItem({ item }: { item: CartItem }) {
-  const { removeItem, updateQuantity } = useCart()
-  return (
-    <li>
-      {item.name} - ${item.price} x
-      <input
-        type="number"
-        value={item.quantity}
-        onChange={(e) => updateQuantity(item.id, Number(e.target.value))}
-        min={0}
-      />
-      = ${(item.price * item.quantity).toFixed(2)}
-      <button onClick={() => removeItem(item.id)}>Remove</button>
-    </li>
-  )
+const { removeItem, updateQuantity } = useCart()
+return (
+
+<li>
+{item.name} - ${item.price} x
+<input
+type="number"
+value={item.quantity}
+onChange={(e) => updateQuantity(item.id, Number(e.target.value))}
+min={0}
+/>
+= ${(item.price \* item.quantity).toFixed(2)}
+<button onClick={() => removeItem(item.id)}>Remove</button>
+</li>
+)
 }
 
 export function Cart() {
@@ -318,43 +337,46 @@ export function Cart() {
   const addItem = useCart((state) => state.addItem)
   const clearCart = useCart((state) => state.clearCart)
 
-  return (
-    <div>
-      <h2>Shopping Cart</h2>
-      {items.length === 0 ? (
-        <p>Cart is empty</p>
-      ) : (
-        <>
-          <ul>
-            {items.map((item) => <CartItem key={item.id} item={item} />)}
-          </ul>
-          <p>Total: <strong>${total.toFixed(2)}</strong></p>
-          <button onClick={clearCart}>Clear Cart</button>
-        </>
-      )}
-      <button onClick={() => addItem({ id: "hat", name: "Cool Hat", price: 19.99 })}>
-        Add Hat ($19.99)
-      </button>
-      <button onClick={() => addItem({ id: "shirt", name: "T-Shirt", price: 29.99 })}>
-        Add Shirt ($29.99)
-      </button>
-    </div>
-  )
+return (
+
+<div>
+<h2>Shopping Cart</h2>
+{items.length === 0 ? (
+<p>Cart is empty</p>
+) : (
+<>
+<ul>
+{items.map((item) => <CartItem key={item.id} item={item} />)}
+</ul>
+<p>Total: <strong>${total.toFixed(2)}</strong></p>
+<button onClick={clearCart}>Clear Cart</button>
+</>
+)}
+<button onClick={() => addItem({ id: "hat", name: "Cool Hat", price: 19.99 })}>
+Add Hat ($19.99)
+</button>
+<button onClick={() => addItem({ id: "shirt", name: "T-Shirt", price: 29.99 })}>
+Add Shirt ($29.99)
+</button>
+</div>
+)
 }`}
-  hints={[
-    "Use devtools middleware to inspect state changes",
-    "AddItem should check for existing items and increment quantity",
-    "Total is a computed value — no need to store it, derive from items",
-    "Use selectors to prevent unnecessary re-renders",
-  ]}
+hints={[
+"Use devtools middleware to inspect state changes",
+"AddItem should check for existing items and increment quantity",
+"Total is a computed value — no need to store it, derive from items",
+"Use selectors to prevent unnecessary re-renders",
+]}
 />
 
-<LessonSummary points={[
-  "Zustand: minimal store with selectors for targeted re-renders",
-  "Jotai: composable atoms for fine-grained state",
-  "Context re-renders all consumers — use for infrequent changes only",
-  "persist middleware saves/loads from localStorage automatically",
-  "devtools middleware enables Redux DevTools debugging",
-  "Start simple (useState/Context); reach for a library when it hurts",
-  "Server state belongs in TanStack Query/SWR, not global store",
-]} />
+<LessonSummary
+  points={[
+    "Zustand: minimal store with selectors for targeted re-renders",
+    "Jotai: composable atoms for fine-grained state",
+    "Context re-renders all consumers — use for infrequent changes only",
+    "persist middleware saves/loads from localStorage automatically",
+    "devtools middleware enables Redux DevTools debugging",
+    "Start simple (useState/Context); reach for a library when it hurts",
+    "Server state belongs in TanStack Query/SWR, not global store",
+  ]}
+/>

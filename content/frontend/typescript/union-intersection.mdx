@@ -9,14 +9,16 @@ order: 3
 
 TypeScript's type combinators let you mix existing types into new ones.
 
-<LearningObjectives objectives={[
-  "Model data with union types (A | B)",
-  "Combine objects with intersection types (A & B)",
-  "Use discriminated unions with literal type discriminants",
-  "Write exhaustive switch statements with never",
-  "Apply template literal types to create string unions",
-  "Build real-world patterns like Result and AsyncState"
-]} />
+<LearningObjectives
+  objectives={[
+    "Model data with union types (A | B)",
+    "Combine objects with intersection types (A & B)",
+    "Use discriminated unions with literal type discriminants",
+    "Write exhaustive switch statements with never",
+    "Apply template literal types to create string unions",
+    "Build real-world patterns like Result and AsyncState",
+  ]}
+/>
 
 ## Union Types
 
@@ -33,7 +35,10 @@ function getID(id: ID): string {
 
 <Alert>
   <AlertTitle>Gotcha</AlertTitle>
-  <AlertDescription>When accessing a union property, TypeScript only allows methods common to **all** members. Use narrowing to access specific members.</AlertDescription>
+  <AlertDescription>
+    When accessing a union property, TypeScript only allows methods common to
+    **all** members. Use narrowing to access specific members.
+  </AlertDescription>
 </Alert>
 
 ## Intersection Types
@@ -41,8 +46,12 @@ function getID(id: ID): string {
 A value satisfies **all** types simultaneously.
 
 ```ts
-interface Named { name: string }
-interface Aged { age: number }
+interface Named {
+  name: string
+}
+interface Aged {
+  age: number
+}
 
 type Person = Named & Aged
 // { name: string; age: number }
@@ -87,10 +96,14 @@ function assertNever(x: never): never {
 
 function areaSafe(shape: Shape): number {
   switch (shape.kind) {
-    case "circle": return Math.PI * shape.radius ** 2
-    case "rectangle": return shape.width * shape.height
-    case "triangle": return (shape.base * shape.height) / 2
-    default: return assertNever(shape)
+    case "circle":
+      return Math.PI * shape.radius ** 2
+    case "rectangle":
+      return shape.width * shape.height
+    case "triangle":
+      return (shape.base * shape.height) / 2
+    default:
+      return assertNever(shape)
     // ^ TypeScript error if a new Shape variant is added
   }
 }
@@ -165,9 +178,7 @@ type UserState = State<User, APIError>
 ## Real-World: Result and AsyncState
 
 ```ts
-type Result<T, E = Error> =
-  | { ok: true; value: T }
-  | { ok: false; error: E }
+type Result<T, E = Error> = { ok: true; value: T } | { ok: false; error: E }
 
 function safeParseJSON<T>(json: string): Result<T> {
   try {
@@ -186,10 +197,14 @@ type AsyncState<T> =
 
 function renderState<T>(s: AsyncState<T>): string {
   switch (s.status) {
-    case "idle":      return "Awaiting action..."
-    case "loading":   return "Please wait..."
-    case "success":   return `Loaded ${JSON.stringify(s.data)}`
-    case "error":     return `Error ${s.code}: ${s.message}`
+    case "idle":
+      return "Awaiting action..."
+    case "loading":
+      return "Please wait..."
+    case "success":
+      return `Loaded ${JSON.stringify(s.data)}`
+    case "error":
+      return `Error ${s.code}: ${s.message}`
   }
 }
 ```
@@ -204,41 +219,43 @@ function renderState<T>(s: AsyncState<T>): string {
   // ... add remaining states
 
 function getSubmitButtonText(state: FormState): string {
-  // Return:
-  // idle -> "Submit"
-  // validating -> "Validating..."
-  // submitting -> "Submitting..."
-  // success -> "Done!"
-  // error -> "Retry"
+// Return:
+// idle -> "Submit"
+// validating -> "Validating..."
+// submitting -> "Submitting..."
+// success -> "Done!"
+// error -> "Retry"
 }`}
   solutionCode={`type FormState =
-  | { status: "idle" }
-  | { status: "validating" }
-  | { status: "submitting" }
-  | { status: "success"; message: string }
-  | { status: "error"; field: string; message: string }
+| { status: "idle" }
+| { status: "validating" }
+| { status: "submitting" }
+| { status: "success"; message: string }
+| { status: "error"; field: string; message: string }
 
 function getSubmitButtonText(state: FormState): string {
-  switch (state.status) {
-    case "idle":       return "Submit"
-    case "validating": return "Validating..."
-    case "submitting": return "Submitting..."
-    case "success":    return "Done!"
-    case "error":      return "Retry"
-  }
+switch (state.status) {
+case "idle": return "Submit"
+case "validating": return "Validating..."
+case "submitting": return "Submitting..."
+case "success": return "Done!"
+case "error": return "Retry"
+}
 }`}
-  hints={[
-    "Each state is an object literal with a discriminant property named status.",
-    "success needs a message string; error needs field and message strings.",
-    "Use a switch on state.status — TypeScript narrows the type in each case."
-  ]}
+hints={[
+"Each state is an object literal with a discriminant property named status.",
+"success needs a message string; error needs field and message strings.",
+"Use a switch on state.status — TypeScript narrows the type in each case."
+]}
 />
 
-<LessonSummary points={[
-  "Union types (A | B) model values that can be one of several types.",
-  "Intersection types (A & B) merge multiple types into one.",
-  "Discriminated unions use a literal discriminant for type-safe narrowing.",
-  "assertNever + exhaustiveness checking catches unhandled variants at compile time.",
-  "Template literal types derive string unions from other types.",
-  "Pattern Result<T, E> and AsyncState<T> are ubiquitous in production TypeScript."
-]} />
+<LessonSummary
+  points={[
+    "Union types (A | B) model values that can be one of several types.",
+    "Intersection types (A & B) merge multiple types into one.",
+    "Discriminated unions use a literal discriminant for type-safe narrowing.",
+    "assertNever + exhaustiveness checking catches unhandled variants at compile time.",
+    "Template literal types derive string unions from other types.",
+    "Pattern Result<T, E> and AsyncState<T> are ubiquitous in production TypeScript.",
+  ]}
+/>

@@ -11,9 +11,12 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
 import { CodeBlock } from "../shared/CodeBlock"
-import { Checklist, difficultyColors, type Difficulty } from "../shared/Checklist"
+import {
+  Checklist,
+  difficultyColors,
+  type Difficulty,
+} from "../shared/Checklist"
 import { Target, CheckCircle2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -41,7 +44,7 @@ export function StaticChallenge({
 
   const toggleRequirement = (req: string) => {
     setCompleted((prev) =>
-      prev.includes(req) ? prev.filter((r) => r !== req) : [...prev, req],
+      prev.includes(req) ? prev.filter((r) => r !== req) : [...prev, req]
     )
   }
 
@@ -53,7 +56,9 @@ export function StaticChallenge({
             <Target className="h-4 w-4 text-rose-500" />
             <CardTitle className="text-base">{title}</CardTitle>
           </div>
-          <Badge className={cn("text-xs font-medium", difficultyColors[difficulty])}>
+          <Badge
+            className={cn("text-xs font-medium", difficultyColors[difficulty])}
+          >
             {difficulty}
           </Badge>
         </div>
@@ -95,7 +100,7 @@ export function StaticChallenge({
 
       {showSolution && solution && (
         <CardContent className="border-t pt-4">
-          <div className="flex items-center gap-2 mb-2">
+          <div className="mb-2 flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 text-green-500" />
             <span className="text-sm font-medium">Reference Solution</span>
           </div>

@@ -11,18 +11,20 @@ updated: "2026-07-11"
 
 # Resolving Merge Conflicts
 
-Merge conflicts feel scary the first time, but they're routine — a normal part of collaborating. A conflict simply means Git found two different changes to the same lines and needs *you* to decide which to keep. Nothing is broken.
+Merge conflicts feel scary the first time, but they're routine — a normal part of collaborating. A conflict simply means Git found two different changes to the same lines and needs _you_ to decide which to keep. Nothing is broken.
 
-<LearningObjectives objectives={[
-  "Explain exactly when Git raises a merge conflict",
-  "Read conflict markers and identify each side",
-  "Resolve a conflict and complete the merge",
-  "Abort a merge to get back to a clean state",
-]} />
+<LearningObjectives
+  objectives={[
+    "Explain exactly when Git raises a merge conflict",
+    "Read conflict markers and identify each side",
+    "Resolve a conflict and complete the merge",
+    "Abort a merge to get back to a clean state",
+  ]}
+/>
 
 ## Why Conflicts Happen
 
-Git merges changes automatically when they touch *different* lines. A conflict occurs only when **the same lines were changed differently on both branches** — Git won't guess which version is correct.
+Git merges changes automatically when they touch _different_ lines. A conflict occurs only when **the same lines were changed differently on both branches** — Git won't guess which version is correct.
 
 ```text
 main:     const greeting = "Hello"
@@ -30,7 +32,7 @@ feature:  const greeting = "Hi there"
           → both edited the same line → CONFLICT
 ```
 
-If one branch edited line 5 and the other edited line 50, Git merges them cleanly with no conflict. Conflicts are about *overlap*, not just "both branches changed the file."
+If one branch edited line 5 and the other edited line 50, Git merges them cleanly with no conflict. Conflicts are about _overlap_, not just "both branches changed the file."
 
 ## What a Conflict Looks Like
 
@@ -82,8 +84,12 @@ git commit        # completes the merge (Git pre-fills a message)
 ```
 
 <Alert>
-<AlertTitle>Check your work with git status</AlertTitle>
-<AlertDescription>During a conflict, `git status` lists every file still "unmerged". When that list is empty, all conflicts are resolved and you can commit. It's your checklist.</AlertDescription>
+  <AlertTitle>Check your work with git status</AlertTitle>
+  <AlertDescription>
+    During a conflict, `git status` lists every file still "unmerged". When that
+    list is empty, all conflicts are resolved and you can commit. It's your
+    checklist.
+  </AlertDescription>
 </Alert>
 
 ## Escaping a Merge
@@ -97,16 +103,22 @@ git merge --abort
 Nothing is lost — it's as if the merge never happened.
 
 <Alert>
-<AlertTitle>Prevent conflicts by staying current</AlertTitle>
-<AlertDescription>Conflicts get worse the longer a branch drifts from main. Pulling `main` into your feature branch frequently (or keeping branches short-lived) means fewer, smaller conflicts.</AlertDescription>
+  <AlertTitle>Prevent conflicts by staying current</AlertTitle>
+  <AlertDescription>
+    Conflicts get worse the longer a branch drifts from main. Pulling `main`
+    into your feature branch frequently (or keeping branches short-lived) means
+    fewer, smaller conflicts.
+  </AlertDescription>
 </Alert>
 
 ## Check Your Understanding
 
-<LessonSummary points={[
-  "Conflicts arise only when the same lines change differently on both branches",
-  "Conflict markers show HEAD (your branch) above ======= and the incoming branch below",
-  "Resolve by editing the file to the desired result and deleting all three markers",
-  "git add the resolved files, then git commit to finish the merge",
-  "git merge --abort safely cancels a merge; frequent pulls keep conflicts small",
-]} />
+<LessonSummary
+  points={[
+    "Conflicts arise only when the same lines change differently on both branches",
+    "Conflict markers show HEAD (your branch) above ======= and the incoming branch below",
+    "Resolve by editing the file to the desired result and deleting all three markers",
+    "git add the resolved files, then git commit to finish the merge",
+    "git merge --abort safely cancels a merge; frequent pulls keep conflicts small",
+  ]}
+/>

@@ -13,12 +13,14 @@ updated: "2026-07-11"
 
 HTTPS is HTTP wrapped in encryption. It's why you can log into your bank over public Wi-Fi without a stranger reading your password. Understanding TLS — the protocol underneath the "S" — demystifies certificates, the padlock icon, and a whole class of security warnings.
 
-<LearningObjectives objectives={[
-  "Explain what HTTPS protects and what it doesn't",
-  "Describe the three guarantees TLS provides",
-  "Walk through the TLS handshake at a high level",
-  "Explain the role of certificates and certificate authorities",
-]} />
+<LearningObjectives
+  objectives={[
+    "Explain what HTTPS protects and what it doesn't",
+    "Describe the three guarantees TLS provides",
+    "Walk through the TLS handshake at a high level",
+    "Explain the role of certificates and certificate authorities",
+  ]}
+/>
 
 ## HTTP vs HTTPS
 
@@ -54,8 +56,12 @@ Before any HTTP data flows, client and server perform a handshake to agree on ke
 The clever part: TLS uses slow **asymmetric** crypto (public/private keys) just to safely establish a shared secret, then switches to fast **symmetric** crypto for the actual data. Best of both worlds.
 
 <Alert>
-<AlertTitle>Asymmetric to bootstrap, symmetric to run</AlertTitle>
-<AlertDescription>Public-key cryptography is expensive, so it's used only during the handshake to exchange a session key. The bulk data transfer then uses that single shared key with fast symmetric encryption.</AlertDescription>
+  <AlertTitle>Asymmetric to bootstrap, symmetric to run</AlertTitle>
+  <AlertDescription>
+    Public-key cryptography is expensive, so it's used only during the handshake
+    to exchange a session key. The bulk data transfer then uses that single
+    shared key with fast symmetric encryption.
+  </AlertDescription>
 </Alert>
 
 ## Certificates and Trust
@@ -72,16 +78,23 @@ Certificate Authority (trusted root)
 If the certificate is expired, self-signed, or doesn't match the domain, the browser throws the scary "Your connection is not private" warning — TLS's authentication guarantee doing its job.
 
 <Alert>
-<AlertTitle>HTTPS doesn't mean "safe site"</AlertTitle>
-<AlertDescription>The padlock means the *connection* is encrypted and the domain is authenticated — not that the site is trustworthy. A phishing site can have a valid certificate too. HTTPS protects the channel, not your judgment about who's on the other end.</AlertDescription>
+  <AlertTitle>HTTPS doesn't mean "safe site"</AlertTitle>
+  <AlertDescription>
+    The padlock means the *connection* is encrypted and the domain is
+    authenticated — not that the site is trustworthy. A phishing site can have a
+    valid certificate too. HTTPS protects the channel, not your judgment about
+    who's on the other end.
+  </AlertDescription>
 </Alert>
 
 ## Check Your Understanding
 
-<LessonSummary points={[
-  "HTTP is cleartext; HTTPS wraps it in TLS encryption",
-  "TLS guarantees encryption, integrity, and authentication",
-  "The handshake uses asymmetric crypto to establish a key, then fast symmetric crypto for data",
-  "Certificates, signed by trusted Certificate Authorities, prove a server owns its domain",
-  "The padlock secures the connection — it doesn't vouch for the site's honesty",
-]} />
+<LessonSummary
+  points={[
+    "HTTP is cleartext; HTTPS wraps it in TLS encryption",
+    "TLS guarantees encryption, integrity, and authentication",
+    "The handshake uses asymmetric crypto to establish a key, then fast symmetric crypto for data",
+    "Certificates, signed by trusted Certificate Authorities, prove a server owns its domain",
+    "The padlock secures the connection — it doesn't vouch for the site's honesty",
+  ]}
+/>

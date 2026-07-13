@@ -10,12 +10,12 @@ Accessibility ensures your app works for everyone, regardless of ability.
 
 ## Core Principles
 
-| Principle | Description |
-|-----------|-------------|
-| Perceivable | Content must be available to senses |
-| Operable | UI must work with various input methods |
-| Understandable | Content and UI must be clear |
-| Robust | Works with assistive technologies |
+| Principle      | Description                             |
+| -------------- | --------------------------------------- |
+| Perceivable    | Content must be available to senses     |
+| Operable       | UI must work with various input methods |
+| Understandable | Content and UI must be clear            |
+| Robust         | Works with assistive technologies       |
 
 ## Semantic HTML
 
@@ -30,13 +30,11 @@ Accessibility ensures your app works for everyone, regardless of ability.
 ## ARIA Attributes
 
 ```html
-<button aria-label="Close dialog" onClick={close}>
+<button aria-label="Close dialog" onClick="{close}">
   <XIcon />
 </button>
 
-<div role="alert" aria-live="polite">
-  Form submitted successfully
-</div>
+<div role="alert" aria-live="polite">Form submitted successfully</div>
 ```
 
 ## Keyboard Navigation

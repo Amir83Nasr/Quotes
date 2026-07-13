@@ -73,10 +73,18 @@ function DemoRenderer({ name }: { name: string }) {
     ),
     buttonIcons: (
       <div className="flex items-center gap-2">
-        <ButtonDemo size="icon" aria-label="Settings">⚙</ButtonDemo>
-        <ButtonDemo size="icon" aria-label="Search">🔍</ButtonDemo>
-        <ButtonDemo size="icon" aria-label="Menu">☰</ButtonDemo>
-        <ButtonDemo size="icon" aria-label="Close">✕</ButtonDemo>
+        <ButtonDemo size="icon" aria-label="Settings">
+          ⚙
+        </ButtonDemo>
+        <ButtonDemo size="icon" aria-label="Search">
+          🔍
+        </ButtonDemo>
+        <ButtonDemo size="icon" aria-label="Menu">
+          ☰
+        </ButtonDemo>
+        <ButtonDemo size="icon" aria-label="Close">
+          ✕
+        </ButtonDemo>
       </div>
     ),
     cardBasic: (
@@ -104,15 +112,13 @@ function DemoRenderer({ name }: { name: string }) {
         </CardContent>
       </Card>
     ),
-    cardInteractive: (
-      <InteractiveCard />
-    ),
+    cardInteractive: <InteractiveCard />,
     formInputs: (
       <div className="w-full max-w-sm space-y-3">
         <div>
           <label className="mb-1.5 block text-sm font-medium">Email</label>
           <input
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
             placeholder="you@example.com"
           />
         </div>
@@ -120,7 +126,7 @@ function DemoRenderer({ name }: { name: string }) {
           <label className="mb-1.5 block text-sm font-medium">Password</label>
           <input
             type="password"
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
             placeholder="••••••••"
           />
         </div>
@@ -134,11 +140,17 @@ function DemoRenderer({ name }: { name: string }) {
         <CardContent className="space-y-4">
           <div>
             <label className="mb-1.5 block text-sm font-medium">Name</label>
-            <input className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" placeholder="John Doe" />
+            <input
+              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
+              placeholder="John Doe"
+            />
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium">Message</label>
-            <textarea className="flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" placeholder="Your message..." />
+            <textarea
+              className="flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
+              placeholder="Your message..."
+            />
           </div>
         </CardContent>
       </Card>
@@ -199,13 +211,15 @@ function DemoRenderer({ name }: { name: string }) {
         <AccordionItem value="item-2">
           <AccordionTrigger>What are hooks?</AccordionTrigger>
           <AccordionContent>
-            Hooks let you use state and other React features without writing a class.
+            Hooks let you use state and other React features without writing a
+            class.
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-3">
           <AccordionTrigger>What is JSX?</AccordionTrigger>
           <AccordionContent>
-            JSX is a syntax extension that lets you write HTML-like markup in JavaScript.
+            JSX is a syntax extension that lets you write HTML-like markup in
+            JavaScript.
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -219,11 +233,14 @@ function DemoRenderer({ name }: { name: string }) {
           <DialogHeader>
             <DialogTitle>Confirm Action</DialogTitle>
             <DialogDescription>
-              Are you sure you want to proceed with this action? This cannot be undone.
+              Are you sure you want to proceed with this action? This cannot be
+              undone.
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end gap-2">
-            <Button variant="outline" size="sm">Cancel</Button>
+            <Button variant="outline" size="sm">
+              Cancel
+            </Button>
             <Button size="sm">Confirm</Button>
           </div>
         </DialogContent>
@@ -231,7 +248,13 @@ function DemoRenderer({ name }: { name: string }) {
     ),
   }
 
-  return <>{demos[name] ?? <p className="text-sm text-muted-foreground">Demo not found: {name}</p>}</>
+  return (
+    <>
+      {demos[name] ?? (
+        <p className="text-sm text-muted-foreground">Demo not found: {name}</p>
+      )}
+    </>
+  )
 }
 
 /* Inline helpers to avoid circular deps with shadcn button */
@@ -243,7 +266,8 @@ function ButtonDemo({
   children,
   ...props
 }: {
-  variant?: "default" | "secondary" | "destructive" | "outline" | "ghost" | "link"
+  variant?:
+    "default" | "secondary" | "destructive" | "outline" | "ghost" | "link"
   size?: "default" | "sm" | "lg" | "icon"
   children: React.ReactNode
   [key: string]: unknown
@@ -269,8 +293,12 @@ function InteractiveCard() {
           Cards can have interactive elements like buttons and links.
         </p>
         <div className="flex gap-2">
-          <Button size="sm" onClick={primaryAction}>Primary</Button>
-          <Button size="sm" variant="outline" onClick={secondaryAction}>Secondary</Button>
+          <Button size="sm" onClick={primaryAction}>
+            Primary
+          </Button>
+          <Button size="sm" variant="outline" onClick={secondaryAction}>
+            Secondary
+          </Button>
         </div>
       </CardContent>
     </Card>

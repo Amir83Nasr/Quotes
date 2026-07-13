@@ -1,7 +1,16 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import { Code, Play, Eye, FileText, Copy, Check, RotateCcw, ChevronDown } from "lucide-react"
+import {
+  Code,
+  Play,
+  Eye,
+  FileText,
+  Copy,
+  Check,
+  RotateCcw,
+  ChevronDown,
+} from "lucide-react"
 import { cn } from "@/lib/utils"
 import { CodeBlock } from "./CodeBlock"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
@@ -9,8 +18,11 @@ import dynamic from "next/dynamic"
 
 // Lazy-load SandboxPreview — pulls in iframe logic, not CodeMirror
 const SandboxPreview = dynamic(
-  () => import("../interactive/SandboxPreview").then((m) => ({ default: m.SandboxPreview })),
-  { ssr: false },
+  () =>
+    import("../interactive/SandboxPreview").then((m) => ({
+      default: m.SandboxPreview,
+    })),
+  { ssr: false }
 )
 
 interface LessonCodeExampleProps {
@@ -79,7 +91,13 @@ export function LessonCodeExample({
       const logs: string[] = []
       const mockConsole = {
         log: (...args: unknown[]) =>
-          logs.push(args.map((a) => (typeof a === "object" ? JSON.stringify(a, null, 2) : String(a))).join(" ")),
+          logs.push(
+            args
+              .map((a) =>
+                typeof a === "object" ? JSON.stringify(a, null, 2) : String(a)
+              )
+              .join(" ")
+          ),
         error: (...args: unknown[]) =>
           logs.push(`%cerror%c ${args.map((a) => String(a)).join(" ")}`),
         warn: (...args: unknown[]) =>
@@ -88,7 +106,11 @@ export function LessonCodeExample({
 
       const fn = new Function("console", code)
       fn(mockConsole)
-      setOutput(logs.length > 0 ? logs.join("\n") : "✓ Code executed successfully (no console output)")
+      setOutput(
+        logs.length > 0
+          ? logs.join("\n")
+          : "✓ Code executed successfully (no console output)"
+      )
     } catch (e) {
       setOutput(`✗ Error: ${e instanceof Error ? e.message : String(e)}`)
     }
@@ -96,14 +118,35 @@ export function LessonCodeExample({
 
   const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
     { id: "code", label: "Code", icon: <Code className="h-3.5 w-3.5" /> },
-    ...(preview ? [{ id: "output" as const, label: "Output", icon: <Eye className="h-3.5 w-3.5" /> }] : []),
-    ...((explanation ?? children) ? [{ id: "explanation" as const, label: "Explanation", icon: <FileText className="h-3.5 w-3.5" /> }] : []),
+    ...(preview
+      ? [
+          {
+            id: "output" as const,
+            label: "Output",
+            icon: <Eye className="h-3.5 w-3.5" />,
+          },
+        ]
+      : []),
+    ...((explanation ?? children)
+      ? [
+          {
+            id: "explanation" as const,
+            label: "Explanation",
+            icon: <FileText className="h-3.5 w-3.5" />,
+          },
+        ]
+      : []),
   ]
 
   const showActionBar = executable || preview
 
   return (
-    <div className={cn("my-6 overflow-hidden rounded-xl border bg-card shadow-sm", className)}>
+    <div
+      className={cn(
+        "my-6 overflow-hidden rounded-xl border bg-card shadow-sm",
+        className
+      )}
+    >
       {/* Title bar */}
       {title && (
         <div className="flex items-center gap-2 border-b bg-muted/30 px-4 py-2.5">
@@ -123,7 +166,7 @@ export function LessonCodeExample({
                 "flex items-center gap-1.5 px-4 py-2 text-xs font-medium transition-colors",
                 activeTab === tab.id
                   ? "border-b-2 border-primary text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
+                  : "text-muted-foreground hover:text-foreground"
               )}
             >
               {tab.icon}
@@ -152,7 +195,13 @@ export function LessonCodeExample({
           <div key={previewKey}>
             <SandboxPreview
               html={code}
-              type={language === "css" ? "css" : language === "javascript" || language === "js" ? "javascript" : "mixed"}
+              type={
+                language === "css"
+                  ? "css"
+                  : language === "javascript" || language === "js"
+                    ? "javascript"
+                    : "mixed"
+              }
               height={280}
             />
           </div>
@@ -162,7 +211,7 @@ export function LessonCodeExample({
         {activeTab === "explanation" && (
           <div className="px-4 py-4">
             {explanation && (
-              <div className="prose prose-sm prose-neutral dark:prose-invert max-w-none">
+              <div className="prose prose-sm max-w-none prose-neutral dark:prose-invert">
                 <p>{explanation}</p>
               </div>
             )}
@@ -203,7 +252,11 @@ export function LessonCodeExample({
               className="inline-flex items-center gap-1 rounded-md border bg-background px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent"
               aria-label={copied ? "Copied" : "Copy code"}
             >
-              {copied ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
+              {copied ? (
+                <Check className="h-3 w-3 text-green-500" />
+              ) : (
+                <Copy className="h-3 w-3" />
+              )}
               {copied ? "Copied" : "Copy"}
             </button>
 
@@ -225,9 +278,11 @@ export function LessonCodeExample({
         <div className="border-t bg-[#1e1e1e] dark:bg-black/80">
           <div className="flex items-center gap-2 border-b border-white/10 px-4 py-1.5">
             <Code className="h-3 w-3 text-green-400" />
-            <span className="text-[11px] font-medium text-green-400">Console</span>
+            <span className="text-[11px] font-medium text-green-400">
+              Console
+            </span>
           </div>
-          <pre className="overflow-x-auto p-4 text-xs leading-relaxed text-green-400 [font-family:var(--font-mono,monospace)]">
+          <pre className="overflow-x-auto p-4 [font-family:var(--font-mono,monospace)] text-xs leading-relaxed text-green-400">
             {output.split("\n").map((line, i) => (
               <div key={i} className="whitespace-pre-wrap">
                 {line.startsWith("%c") ? (
@@ -259,14 +314,14 @@ export function LessonCodeExample({
             <ChevronDown
               className={cn(
                 "h-3.5 w-3.5 transition-transform",
-                showExplanation && "rotate-180",
+                showExplanation && "rotate-180"
               )}
             />
           </button>
           {showExplanation && (
             <div className="border-t bg-muted/20 px-4 py-3">
               {explanation && (
-                <div className="prose prose-sm prose-neutral dark:prose-invert max-w-none">
+                <div className="prose prose-sm max-w-none prose-neutral dark:prose-invert">
                   <p>{explanation}</p>
                 </div>
               )}

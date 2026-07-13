@@ -26,7 +26,7 @@ export function PreWithCopy({
       <button
         onClick={handleCopy}
         className={
-          "absolute right-2 top-2 z-10 flex size-7 items-center justify-center rounded-md " +
+          "absolute top-2 right-2 z-10 flex size-7 items-center justify-center rounded-md " +
           "bg-background/80 text-muted-foreground opacity-0 transition-opacity " +
           "hover:bg-accent hover:text-accent-foreground " +
           "group-hover:opacity-100 " +

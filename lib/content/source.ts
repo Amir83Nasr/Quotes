@@ -10,7 +10,7 @@ export const CONTENT_DIR = path.join(process.cwd(), "content")
 
 /** Read frontmatter from a single MDX file */
 export async function readFrontmatter(
-  filePath: string,
+  filePath: string
 ): Promise<Frontmatter | null> {
   try {
     const raw = await fs.readFile(filePath, "utf-8")
@@ -22,7 +22,7 @@ export async function readFrontmatter(
       const { ok, errors } = validateFrontmatter(data)
       if (!ok) {
         console.warn(
-          `[content] frontmatter issues in ${filePath}:\n  - ${errors.join("\n  - ")}`,
+          `[content] frontmatter issues in ${filePath}:\n  - ${errors.join("\n  - ")}`
         )
       }
     }
@@ -41,5 +41,5 @@ export const getMdxSource = cache(
     } catch {
       return null
     }
-  },
+  }
 )

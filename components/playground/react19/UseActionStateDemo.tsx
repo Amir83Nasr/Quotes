@@ -26,7 +26,7 @@ export function UseActionStateDemo() {
       }
       return { ok: true, message: `Subscribed ${email} ✓` }
     },
-    { ok: false, message: "" },
+    { ok: false, message: "" }
   )
 
   return (

@@ -74,8 +74,16 @@ export default function Page() {
 }
 
 async function Posts() {
-  const posts = await fetch("https://api.example.com/posts").then((r) => r.json())
-  return <ul>{posts.map((p) => <li key={p.id}>{p.title}</li>)}</ul>
+  const posts = await fetch("https://api.example.com/posts").then((r) =>
+    r.json()
+  )
+  return (
+    <ul>
+      {posts.map((p) => (
+        <li key={p.id}>{p.title}</li>
+      ))}
+    </ul>
+  )
 }
 ```
 

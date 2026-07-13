@@ -15,7 +15,7 @@ interface User {
   id: string
   name: string
   email: string
-  readonly createdAt: Date  // Can't be modified after creation
+  readonly createdAt: Date // Can't be modified after creation
 }
 
 interface Admin extends User {
@@ -23,7 +23,12 @@ interface Admin extends User {
   permissions: string[]
 }
 
-const user: User = { id: "1", name: "Alice", email: "alice@example.com", createdAt: new Date() }
+const user: User = {
+  id: "1",
+  name: "Alice",
+  email: "alice@example.com",
+  createdAt: new Date(),
+}
 ```
 
 ## Type Alias
@@ -42,20 +47,20 @@ type Result<T> = { success: true; data: T } | { success: false; error: string }
 
 ## Interface vs Type
 
-| Aspect | Interface | Type |
-|--------|-----------|------|
-| Extending | `extends` | `&` intersection |
-| Declaration merging | Yes | No |
-| Union types | No | Yes |
-| Performance | Better | Good |
+| Aspect              | Interface | Type             |
+| ------------------- | --------- | ---------------- |
+| Extending           | `extends` | `&` intersection |
+| Declaration merging | Yes       | No               |
+| Union types         | No        | Yes              |
+| Performance         | Better    | Good             |
 
 ## Utility Types
 
 ```typescript
-type Partial<T> = { [P in keyof T]?: T[P] }  // All optional
-type Required<T> = { [P in keyof T]-?: T[P] }  // All required
-type Pick<T, K extends keyof T> = { [P in K]: T[P] }  // Subset
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>  // Exclude
+type Partial<T> = { [P in keyof T]?: T[P] } // All optional
+type Required<T> = { [P in keyof T]-?: T[P] } // All required
+type Pick<T, K extends keyof T> = { [P in K]: T[P] } // Subset
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>> // Exclude
 ```
 
 ## Next Steps

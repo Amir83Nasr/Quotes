@@ -24,7 +24,12 @@ interface ChecklistProps {
  * Toggleable requirements checklist shared by static and interactive challenges.
  * Each item is a checkbox button; completed items are struck through.
  */
-export function Checklist({ items, completed, onToggle, title }: ChecklistProps) {
+export function Checklist({
+  items,
+  completed,
+  onToggle,
+  title,
+}: ChecklistProps) {
   return (
     <div>
       {title && <h4 className="mb-2 text-sm font-medium">{title}</h4>}
@@ -37,7 +42,7 @@ export function Checklist({ items, completed, onToggle, title }: ChecklistProps)
                 onClick={() => onToggle(item)}
                 className={cn(
                   "flex w-full items-start gap-2 rounded-md px-2 py-1 text-left text-sm transition-colors hover:bg-accent/50",
-                  done && "text-muted-foreground line-through",
+                  done && "text-muted-foreground line-through"
                 )}
                 aria-checked={done}
                 role="checkbox"
@@ -45,7 +50,7 @@ export function Checklist({ items, completed, onToggle, title }: ChecklistProps)
                 <CheckCircle2
                   className={cn(
                     "mt-0.5 h-4 w-4 shrink-0",
-                    done ? "text-green-500" : "text-muted-foreground/30",
+                    done ? "text-green-500" : "text-muted-foreground/30"
                   )}
                 />
                 {item}

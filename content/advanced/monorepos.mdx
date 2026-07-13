@@ -8,14 +8,16 @@ order: 10
 
 One repo, many packages. Share code, run tools across them, coordinate releases.
 
-<LearningObjectives objectives={[
-  "Understand monorepo vs multirepo tradeoffs",
-  "Set up pnpm workspaces for package management",
-  "Configure Turborepo for build orchestration",
-  "Share TypeScript configs and packages across projects",
-  "Manage dependencies across workspaces",
-  "Decide when a monorepo makes sense"
-]} />
+<LearningObjectives
+  objectives={[
+    "Understand monorepo vs multirepo tradeoffs",
+    "Set up pnpm workspaces for package management",
+    "Configure Turborepo for build orchestration",
+    "Share TypeScript configs and packages across projects",
+    "Manage dependencies across workspaces",
+    "Decide when a monorepo makes sense",
+  ]}
+/>
 
 ## Monorepo vs Multirepo
 
@@ -36,11 +38,12 @@ my-project/
   pnpm-workspace.yaml
   turbo.json
 ```
+
 - Single CI pipeline
 - Cross-package refactoring in one commit
 - Shared tooling configs
 - Atomic releases
-</TabsContent>
+  </TabsContent>
 <TabsContent value="multi">
 
 ```text
@@ -50,20 +53,21 @@ my-project/
   api-server/    # Separate repo
   ui-library/    # Separate repo
 ```
+
 - Independent CI per repo
 - Cross-repo changes = multiple PRs
 - Each repo manages own deps
 - Stricter boundaries
-</TabsContent>
+  </TabsContent>
 </Tabs>
 
-| Aspect | Monorepo | Multirepo |
-|--------|----------|-----------|
-| Code sharing | Direct workspace import | npm published package |
-| Refactoring | One commit across packages | Multiple PRs across repos |
-| CI complexity | Smart caching needed | Simple per-repo |
-| Ownership | Shared visibility | Clear boundaries |
-| Build time | Can be parallelized with caching | Independent builds |
+| Aspect        | Monorepo                         | Multirepo                 |
+| ------------- | -------------------------------- | ------------------------- |
+| Code sharing  | Direct workspace import          | npm published package     |
+| Refactoring   | One commit across packages       | Multiple PRs across repos |
+| CI complexity | Smart caching needed             | Simple per-repo           |
+| Ownership     | Shared visibility                | Clear boundaries          |
+| Build time    | Can be parallelized with caching | Independent builds        |
 
 ## pnpm Workspaces Setup
 
@@ -178,8 +182,12 @@ With caching:       Only changed packages rebuild
 ```
 
 <Alert>
-<AlertTitle>Turborepo Caching</AlertTitle>
-<AlertDescription>Turborepo hashes inputs (source, deps, env vars). If hash matches a previous run, it restores outputs from cache instead of rebuilding. Configure outputs in turbo.json so cache knows what to save.</AlertDescription>
+  <AlertTitle>Turborepo Caching</AlertTitle>
+  <AlertDescription>
+    Turborepo hashes inputs (source, deps, env vars). If hash matches a previous
+    run, it restores outputs from cache instead of rebuilding. Configure outputs
+    in turbo.json so cache knows what to save.
+  </AlertDescription>
 </Alert>
 
 ## Dependency Management
@@ -218,12 +226,14 @@ pnpm -r run build
 ## When Monorepo Makes Sense
 
 **Good fit:**
+
 - Multiple apps sharing UI components and types
 - Backend + frontend in same ecosystem (e.g., all TypeScript)
 - Coordinated releases across packages
 - Small team (< 20) where cross-package visibility helps
 
 **Bad fit:**
+
 - Teams with independent release cycles
 - Different tech stacks per package (Java + Node + Python)
 - Giant repos causing slow CI (10k+ packages)
@@ -242,9 +252,9 @@ Set up a basic workspace with a shared types package consumed by two apps.
 
 // Step 2: Create packages/shared/src/types.ts
 export type User = {
-  id: string
-  name: string
-  email: string
+id: string
+name: string
+email: string
 }
 
 // Step 3: Create packages/shared/package.json
@@ -268,9 +278,9 @@ export type User = {
 
 // packages/shared/src/types.ts
 export type User = {
-  id: string
-  name: string
-  email: string
+id: string
+name: string
+email: string
 }
 
 // packages/web/src/app.ts — TODO: import User and render
@@ -282,9 +292,9 @@ export type User = {
 // "build": "turbo build"`}
   solutionCode={`// packages/shared/src/index.ts
 export type User = {
-  id: string
-  name: string
-  email: string
+id: string
+name: string
+email: string
 }
 
 export type ApiResponse<T> = {
@@ -296,8 +306,8 @@ export type ApiResponse<T> = {
 import { User } from "@my-project/shared"
 
 const users: User[] = [
-  { id: "1", name: "Alice", email: "alice@example.com" },
-  { id: "2", name: "Bob", email: "bob@example.com" },
+{ id: "1", name: "Alice", email: "alice@example.com" },
+{ id: "2", name: "Bob", email: "bob@example.com" },
 ]
 
 export default function UserList() {
@@ -316,7 +326,7 @@ export default function UserList() {
 import { User, ApiResponse } from "@my-project/shared"
 
 const users: User[] = [
-  { id: "1", name: "Alice", email: "alice@example.com" },
+{ id: "1", name: "Alice", email: "alice@example.com" },
 ]
 
 export function getUsers(): ApiResponse<User[]> {
@@ -325,34 +335,36 @@ export function getUsers(): ApiResponse<User[]> {
 
 // pnpm-workspace.yaml
 // packages:
-//   - "packages/*"
+// - "packages/\*"
 
 // turbo.json
 {
-  "tasks": {
-    "build": { "dependsOn": ["^build"], "outputs": ["dist/**"] },
-    "dev": { "cache": false, "persistent": true }
-  }
+"tasks": {
+"build": { "dependsOn": ["^build"], "outputs": ["dist/**"] },
+"dev": { "cache": false, "persistent": true }
+}
 }
 
 // Usage:
 // pnpm add @my-project/shared --filter @my-project/web
 // pnpm add @my-project/shared --filter @my-project/api
-// pnpm build  # Builds shared first, then web+api in parallel`}
-  hints={[
-    "pnpm-workspace.yaml declares which directories contain packages",
-    "Each workspace package needs its own package.json with a name",
-    "Use --filter to install a workspace dependency into another package",
-    "Turborepo dependsOn: ['^build'] means 'build dependencies first'",
-  ]}
+// pnpm build # Builds shared first, then web+api in parallel`}
+hints={[
+"pnpm-workspace.yaml declares which directories contain packages",
+"Each workspace package needs its own package.json with a name",
+"Use --filter to install a workspace dependency into another package",
+"Turborepo dependsOn: ['^build'] means 'build dependencies first'",
+]}
 />
 
-<LessonSummary points={[
-  "pnpm workspaces link local packages without npm publish",
-  "Turborepo caches build outputs — only rebuilds changed packages",
-  "^build dependency means build upstream deps first",
-  "Shared config packages (tsconfig, eslint) reduce duplication",
-  "--filter scopes commands to specific workspace packages",
-  "Monorepo works best: same ecosystem, shared code, coordinated releases",
-  "Monorepo hurts: different stacks, independent teams, strict boundaries",
-]} />
+<LessonSummary
+  points={[
+    "pnpm workspaces link local packages without npm publish",
+    "Turborepo caches build outputs — only rebuilds changed packages",
+    "^build dependency means build upstream deps first",
+    "Shared config packages (tsconfig, eslint) reduce duplication",
+    "--filter scopes commands to specific workspace packages",
+    "Monorepo works best: same ecosystem, shared code, coordinated releases",
+    "Monorepo hurts: different stacks, independent teams, strict boundaries",
+  ]}
+/>

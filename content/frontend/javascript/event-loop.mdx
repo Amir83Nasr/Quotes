@@ -6,23 +6,34 @@ order: 8
 
 # Event Loop & Concurrency
 
-<LearningObjectives objectives={["Explain call stack", "Distinguish macrotasks from microtasks", "Predict execution order", "Avoid starving the event loop"]} />
+<LearningObjectives
+  objectives={[
+    "Explain call stack",
+    "Distinguish macrotasks from microtasks",
+    "Predict execution order",
+    "Avoid starving the event loop",
+  ]}
+/>
 
 ## The Call Stack
 
 JavaScript runs one thing at a time. The call stack tracks execution.
 
 ```javascript
-function square(n) { return n * n }
-function logSquare(n) { console.log(square(n)) }
-logSquare(4)  // Stack: [square, logSquare, main]
+function square(n) {
+  return n * n
+}
+function logSquare(n) {
+  console.log(square(n))
+}
+logSquare(4) // Stack: [square, logSquare, main]
 ```
 
 Blocking the stack blocks everything (including rendering):
 
 ```javascript
 const start = Date.now()
-while (Date.now() - start < 5000) {}  // Blocks for 5 seconds
+while (Date.now() - start < 5000) {} // Blocks for 5 seconds
 ```
 
 ## Task Queue (Macrotasks)
@@ -52,7 +63,10 @@ Microtasks drain fully — nested microtasks run before next macrotask:
 
 ```javascript
 setTimeout(() => console.log(1), 0)
-Promise.resolve().then(() => { console.log(2); queueMicrotask(() => console.log(3)) })
+Promise.resolve().then(() => {
+  console.log(2)
+  queueMicrotask(() => console.log(3))
+})
 console.log(4)
 // 4, 2, 3, 1
 ```
@@ -83,12 +97,12 @@ NODE: timers → I/O → poll → check(setImmediate) → close
 
 ```javascript
 // BAD — blocks everything
-items.forEach(item => heavy(item))
+items.forEach((item) => heavy(item))
 
 // BETTER — yield every N items
 for (let i = 0; i < items.length; i++) {
   heavy(items[i])
-  if (i % 50 === 0) await new Promise(r => setTimeout(r, 0))
+  if (i % 50 === 0) await new Promise((r) => setTimeout(r, 0))
 }
 ```
 
@@ -108,11 +122,11 @@ setTimeout(() => console.log(6), 0)
 console.log(7)
 
 // Expected output order: 1, 7, 3, 4, 2, 6, 5`}
-  language="javascript"
-  title="Execution Order"
-  executable
-  showLineNumbers
-  explanation="Synchronous code (1, 7) runs first. Then microtasks (Promise callbacks — 3, 4) drain before the next macrotask. Macrotasks (setTimeout — 2, 6, 5) each go to the back of the macrotask queue. Nested microtask (4 → queueMicrotask'd 8) would also drain before any remaining macrotask."
+language="javascript"
+title="Execution Order"
+executable
+showLineNumbers
+explanation="Synchronous code (1, 7) runs first. Then microtasks (Promise callbacks — 3, 4) drain before the next macrotask. Macrotasks (setTimeout — 2, 6, 5) each go to the back of the macrotask queue. Nested microtask (4 → queueMicrotask'd 8) would also drain before any remaining macrotask."
 />
 
 ## Interactive Exercise
@@ -128,15 +142,20 @@ queueMicrotask(() => { console.log(7); queueMicrotask(() => console.log(8)) })
 console.log(9)
 // Write expected output:`}
   language="javascript"
-  hints={["Sync first; all microtasks drain before next macrotask", "Nested microtasks also run before next macrotask"]}
+  hints={[
+    "Sync first; all microtasks drain before next macrotask",
+    "Nested microtasks also run before next macrotask",
+  ]}
   previewType="mixed"
 />
 
 ## Lesson Summary
 
-<LessonSummary points={[
-  "Single call stack — one thing at a time",
-  "Macrotasks (setTimeout, I/O) wait; microtasks (Promise) drain fully between tasks",
-  "Nested microtasks also run before the next macrotask",
-  "Chunk long work and yield to avoid starvation"
-]} />
+<LessonSummary
+  points={[
+    "Single call stack — one thing at a time",
+    "Macrotasks (setTimeout, I/O) wait; microtasks (Promise) drain fully between tasks",
+    "Nested microtasks also run before the next macrotask",
+    "Chunk long work and yield to avoid starvation",
+  ]}
+/>

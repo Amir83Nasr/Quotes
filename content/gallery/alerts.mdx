@@ -18,7 +18,7 @@ Alert components display brief messages for user feedback.
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Terminal } from "lucide-react"
 
-<Alert>
+;<Alert>
   <Terminal className="h-4 w-4" />
   <AlertTitle>Heads up!</AlertTitle>
   <AlertDescription>
@@ -26,8 +26,10 @@ import { Terminal } from "lucide-react"
   </AlertDescription>
 </Alert>
 
-{/* Destructive variant */}
-<Alert variant="destructive">
+{
+  /* Destructive variant */
+}
+;<Alert variant="destructive">
   <TriangleAlert className="h-4 w-4" />
   <AlertTitle>Error</AlertTitle>
   <AlertDescription>
@@ -38,7 +40,7 @@ import { Terminal } from "lucide-react"
 
 ## Props
 
-| Prop | Type | Default |
-|------|------|---------|
-| variant | `"default" \| "destructive"` | `"default"` |
-| children | `React.ReactNode` | required |
+| Prop     | Type                         | Default     |
+| -------- | ---------------------------- | ----------- |
+| variant  | `"default" \| "destructive"` | `"default"` |
+| children | `React.ReactNode`            | required    |

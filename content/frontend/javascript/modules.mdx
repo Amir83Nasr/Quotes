@@ -3,16 +3,26 @@ title: ES Modules
 description: export/import, dynamic imports, tree-shaking, CJS vs ESM
 order: 10
 ---
+
 # ES Modules
 
-<LearningObjectives objectives={["Use named and default exports/imports", "Dynamically import with import()", "Explain tree-shaking", "Compare CommonJS vs ESM"]} />
+<LearningObjectives
+  objectives={[
+    "Use named and default exports/imports",
+    "Dynamically import with import()",
+    "Explain tree-shaking",
+    "Compare CommonJS vs ESM",
+  ]}
+/>
 
 ## Named Exports
 
 ```javascript
 // math.js
 export const PI = 3.14159
-export function add(a, b) { return a + b }
+export function add(a, b) {
+  return a + b
+}
 // app.js
 import { PI, add } from "./math.js"
 import * as math from "./math.js"
@@ -25,10 +35,12 @@ One per module. No name required at import.
 
 ```javascript
 // logger.js
-export default function log(msg) { console.log("[LOG]", msg) }
+export default function log(msg) {
+  console.log("[LOG]", msg)
+}
 // app.js
-import log from "./logger.js"     // any name works
-import User, { ROLES } from "./user.js"  // mix default + named
+import log from "./logger.js" // any name works
+import User, { ROLES } from "./user.js" // mix default + named
 ```
 
 ## Dynamic import()
@@ -45,13 +57,19 @@ if (isAdmin) {
 }
 ```
 
-<Alert><Lightbulb /><AlertTitle>Code Splitting</AlertTitle><AlertDescription>Dynamic import() creates separate chunks loaded only when needed.</AlertDescription></Alert>
+<Alert>
+  <Lightbulb />
+  <AlertTitle>Code Splitting</AlertTitle>
+  <AlertDescription>
+    Dynamic import() creates separate chunks loaded only when needed.
+  </AlertDescription>
+</Alert>
 
 ## Module Resolution
 
 ```javascript
-import { useEffect } from "react"      // bare specifier → node_modules
-import { helper } from "./utils.js"     // relative — extension required
+import { useEffect } from "react" // bare specifier → node_modules
+import { helper } from "./utils.js" // relative — extension required
 ```
 
 ## Tree-Shaking
@@ -61,11 +79,18 @@ Bundlers remove unused exports traced from static imports.
 ```javascript
 // ✅ Named exports: tree-shakeable
 export function used() {}
-export function unused() {}  // eliminated
+export function unused() {} // eliminated
 // ❌ export default { a, b } — hard to tree-shake
 ```
 
-<Alert><AlertTriangle /><AlertTitle>Anti-Pattern</AlertTitle><AlertDescription>`export * from "./utils"` (barrel files) kills tree-shaking. Direct imports are safer.</AlertDescription></Alert>
+<Alert>
+  <AlertTriangle />
+  <AlertTitle>Anti-Pattern</AlertTitle>
+  <AlertDescription>
+    `export * from "./utils"` (barrel files) kills tree-shaking. Direct imports
+    are safer.
+  </AlertDescription>
+</Alert>
 
 ## CommonJS vs ESM
 
@@ -94,12 +119,12 @@ import { PI } from "./math.js"
   </TabsContent>
 </Tabs>
 
-| Feature | CJS | ESM |
-|---------|-----|-----|
-| Syntax | require/exports | import/export |
-| Loading | Sync, runtime | Async, parse-time |
-| Tree-shaking | No | Yes |
-| Top-level await | No | Yes |
+| Feature         | CJS             | ESM               |
+| --------------- | --------------- | ----------------- |
+| Syntax          | require/exports | import/export     |
+| Loading         | Sync, runtime   | Async, parse-time |
+| Tree-shaking    | No              | Yes               |
+| Top-level await | No              | Yes               |
 
 ## Interactive Exercise
 
@@ -122,16 +147,22 @@ async function renderUser(id) {
 }
 renderUser(1)`}
   language="javascript"
-  hints={["Pure functions go in utils", "API fetch logic in data", "app.js imports and runs"]}
+  hints={[
+    "Pure functions go in utils",
+    "API fetch logic in data",
+    "app.js imports and runs",
+  ]}
   previewType="mixed"
 />
 
 ## Lesson Summary
 
-<LessonSummary points={[
-  "Named exports for tree-shaking; one default export per module",
-  "Dynamic import() for code splitting and lazy loading",
-  "Tree-shaking removes unused exports via static analysis",
-  "CJS: require (sync, runtime). ESM: import (async, static)",
-  "Barrel files kill tree-shaking — prefer direct imports"
-]} />
+<LessonSummary
+  points={[
+    "Named exports for tree-shaking; one default export per module",
+    "Dynamic import() for code splitting and lazy loading",
+    "Tree-shaking removes unused exports via static analysis",
+    "CJS: require (sync, runtime). ESM: import (async, static)",
+    "Barrel files kill tree-shaking — prefer direct imports",
+  ]}
+/>

@@ -12,7 +12,7 @@ order: 5
     "Render content outside the parent DOM tree with createPortal",
     "Use React.lazy and Suspense for code splitting",
     "Understand Suspense as a boundary for async operations",
-    "Apply useTransition for deferring non-urgent updates"
+    "Apply useTransition for deferring non-urgent updates",
   ]}
 />
 
@@ -37,7 +37,7 @@ function Modal({ open, onClose, children }: ModalProps) {
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="fixed inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-lg p-6 shadow-xl z-10">
+      <div className="relative z-10 rounded-lg bg-white p-6 shadow-xl">
         {children}
       </div>
     </div>,
@@ -47,6 +47,7 @@ function Modal({ open, onClose, children }: ModalProps) {
 ```
 
 Why portals?
+
 - Modal overlays that shouldn't inherit `overflow: hidden` from a parent
 - Tooltips that need to break out of a clipped container
 - Dropdowns that render over other elements
@@ -55,7 +56,8 @@ Why portals?
   <AlertTriangle />
   <AlertTitle>Portal gotcha</AlertTitle>
   <AlertDescription>
-    Event propagation still follows React tree, not DOM tree. Click inside a portal bubbles up through React ancestors, not DOM ancestors.
+    Event propagation still follows React tree, not DOM tree. Click inside a
+    portal bubbles up through React ancestors, not DOM ancestors.
   </AlertDescription>
 </Alert>
 
@@ -73,7 +75,7 @@ const HeavyChart = lazy(() => import("./HeavyChart"))
 
 function Dashboard() {
   return (
-    <Suspense fallback={<div className="animate-pulse h-64 bg-gray-200" />}>
+    <Suspense fallback={<div className="h-64 animate-pulse bg-gray-200" />}>
       <HeavyChart />
     </Suspense>
   )
@@ -133,7 +135,11 @@ function SearchPage() {
     <div>
       <input value={query} onChange={handleChange} placeholder="Search..." />
       {isPending && <p className="text-gray-400">Updating...</p>}
-      <ul>{results.map((r) => <li key={r}>{r}</li>)}</ul>
+      <ul>
+        {results.map((r) => (
+          <li key={r}>{r}</li>
+        ))}
+      </ul>
     </div>
   )
 }
@@ -165,32 +171,34 @@ import { useState, lazy, Suspense } from "react"
 import { createPortal } from "react-dom"
 
 const ExpensiveContent = lazy(async () => {
-  // Simulate a 2s network load
-  await new Promise((r) => setTimeout(r, 2000))
-  return {
-    default: () => (
-      <div>
-        <h3 className="font-bold text-lg">Expensive Content</h3>
-        <p>This was lazy-loaded inside a portal!</p>
-      </div>
-    ),
-  }
+// Simulate a 2s network load
+await new Promise((r) => setTimeout(r, 2000))
+return {
+default: () => (
+
+<div>
+<h3 className="font-bold text-lg">Expensive Content</h3>
+<p>This was lazy-loaded inside a portal!</p>
+</div>
+),
+}
 })
 
 function Modal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  if (!open) return null
-  return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="fixed inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-lg p-6 shadow-xl min-w-[400px]">
-        <button onClick={onClose} className="absolute top-2 right-2">X</button>
-        <Suspense fallback={<div className="h-20 animate-pulse bg-gray-100 rounded" />}>
-          <ExpensiveContent />
-        </Suspense>
-      </div>
-    </div>,
-    document.body
-  )
+if (!open) return null
+return createPortal(
+
+<div className="fixed inset-0 z-50 flex items-center justify-center">
+<div className="fixed inset-0 bg-black/50" onClick={onClose} />
+<div className="relative bg-white rounded-lg p-6 shadow-xl min-w-[400px]">
+<button onClick={onClose} className="absolute top-2 right-2">X</button>
+<Suspense fallback={<div className="h-20 animate-pulse bg-gray-100 rounded" />}>
+<ExpensiveContent />
+</Suspense>
+</div>
+</div>,
+document.body
+)
 }
 
 export default function Exercise() {
@@ -217,6 +225,6 @@ export default function Exercise() {
     "React.lazy + Suspense enables code splitting — components load on demand",
     "Multiple Suspense boundaries load parts independently",
     "useTransition marks state updates as non-urgent to keep UI responsive",
-    "Combine portals with lazy loading for patterns like modals with heavy content"
+    "Combine portals with lazy loading for patterns like modals with heavy content",
   ]}
 />

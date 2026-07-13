@@ -23,12 +23,16 @@ import { cn } from "@/lib/utils"
 
 function Badge({ variant = "default", className, children }) {
   return (
-    <span className={cn(
-      "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
-      variant === "default" && "bg-gray-100 text-gray-700",
-      variant === "success" && "bg-green-100 text-green-700",
-      className, // caller overrides — tailwind-merge handles px conflicts
-    )}>{children}</span>
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+        variant === "default" && "bg-gray-100 text-gray-700",
+        variant === "success" && "bg-green-100 text-green-700",
+        className // caller overrides — tailwind-merge handles px conflicts
+      )}
+    >
+      {children}
+    </span>
   )
 }
 ```
@@ -49,15 +53,25 @@ const button = cva(
         secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300",
         ghost: "bg-transparent hover:bg-gray-100",
       },
-      size: { sm: "h-8 px-3 text-sm", md: "h-10 px-4 text-base", lg: "h-12 px-6 text-lg" },
+      size: {
+        sm: "h-8 px-3 text-sm",
+        md: "h-10 px-4 text-base",
+        lg: "h-12 px-6 text-lg",
+      },
     },
-    compoundVariants: [{ variant: "primary", size: "lg", className: "shadow-md" }],
+    compoundVariants: [
+      { variant: "primary", size: "lg", className: "shadow-md" },
+    ],
     defaultVariants: { variant: "primary", size: "md" },
-  },
+  }
 )
 
 function Button({ variant, size, className, children }: ButtonProps) {
-  return <button className={cn(button({ variant, size }), className)}>{children}</button>
+  return (
+    <button className={cn(button({ variant, size }), className)}>
+      {children}
+    </button>
+  )
 }
 ```
 
@@ -65,14 +79,26 @@ function Button({ variant, size, className, children }: ButtonProps) {
 
 ```css
 /* CSS boundaries only — styling markdown prose */
-.prose h2 { @apply mt-8 mb-4 text-2xl font-bold tracking-tight; }
-.prose p { @apply mb-4 leading-relaxed text-gray-600; }
-.prose code { @apply rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono; }
+.prose h2 {
+  @apply mt-8 mb-4 text-2xl font-bold tracking-tight;
+}
+.prose p {
+  @apply mb-4 leading-relaxed text-gray-600;
+}
+.prose code {
+  @apply rounded bg-gray-100 px-1.5 py-0.5 font-mono text-sm;
+}
 ```
 
 <Alert>
-  <AlertTitle><AlertTriangle className="inline h-4 w-4" /> Avoid this anti-pattern</AlertTitle>
-  <AlertDescription>Using @apply for every component defeats utility composability. Inline + cn()/cva is better. Reserve @apply for CSS boundaries (prose, third-party widgets).</AlertDescription>
+  <AlertTitle>
+    <AlertTriangle className="inline h-4 w-4" /> Avoid this anti-pattern
+  </AlertTitle>
+  <AlertDescription>
+    Using @apply for every component defeats utility composability. Inline +
+    cn()/cva is better. Reserve @apply for CSS boundaries (prose, third-party
+    widgets).
+  </AlertDescription>
 </Alert>
 
 ## Pattern Comparison
@@ -130,7 +156,11 @@ function Button({ variant, size, className, children }: ButtonProps) {
 function Button({ variant, size, className, children, ...props }) {
   return <button className={cn(buttonVariants({ variant, size }), className)} {...props}>{children}</button>
 }`}
-  hints={["Define base styles first, then variants", "Accept className and merge with cn()", "Spread remaining props"]}
+  hints={[
+    "Define base styles first, then variants",
+    "Accept className and merge with cn()",
+    "Spread remaining props",
+  ]}
 />
 
 <LessonSummary

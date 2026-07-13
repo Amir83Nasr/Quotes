@@ -4,7 +4,10 @@ import { useState, useTransition, useDeferredValue, useMemo } from "react"
 import { Loader2 } from "lucide-react"
 
 /** Build a large list once, filtered on each keystroke to simulate heavy work. */
-const ITEMS = Array.from({ length: 8000 }, (_, i) => `Item ${i} — widget component`)
+const ITEMS = Array.from(
+  { length: 8000 },
+  (_, i) => `Item ${i} — widget component`
+)
 
 /**
  * Live demo for the useTransition / useDeferredValue lesson.
@@ -43,7 +46,7 @@ export function UseTransitionDemo() {
           className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
         />
         {(isPending || isStale) && (
-          <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />
+          <Loader2 className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />
         )}
       </div>
       <ul

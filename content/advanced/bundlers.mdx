@@ -8,14 +8,16 @@ order: 9
 
 Bundlers transform your dev-friendly code into production-optimized bundles.
 
-<LearningObjectives objectives={[
-  "Understand Webpack core concepts: entry, output, loaders, plugins",
-  "Compare Vite's ESM dev server vs traditional bundler approach",
-  "Use dynamic imports for code splitting",
-  "Explain tree shaking and dead code elimination",
-  "Configure environment variables for different modes",
-  "Analyze and optimize bundle size"
-]} />
+<LearningObjectives
+  objectives={[
+    "Understand Webpack core concepts: entry, output, loaders, plugins",
+    "Compare Vite's ESM dev server vs traditional bundler approach",
+    "Use dynamic imports for code splitting",
+    "Explain tree shaking and dead code elimination",
+    "Configure environment variables for different modes",
+    "Analyze and optimize bundle size",
+  ]}
+/>
 
 ## Webpack Core Concepts
 
@@ -29,23 +31,21 @@ module.exports = {
   },
   module: {
     rules: [
-      { test: /\.tsx?$/, use: "ts-loader" },        // loader
+      { test: /\.tsx?$/, use: "ts-loader" }, // loader
       { test: /\.css$/, use: ["style-loader", "css-loader"] },
     ],
   },
-  plugins: [
-    new HtmlWebpackPlugin({ template: "./public/index.html" }),
-  ],
+  plugins: [new HtmlWebpackPlugin({ template: "./public/index.html" })],
 }
 ```
 
-| Concept | Role |
-|---------|------|
-| Entry | Where bundler starts resolving deps |
-| Output | Where final bundles go |
-| Loaders | Transform files (TS → JS, SCSS → CSS) |
+| Concept | Role                                            |
+| ------- | ----------------------------------------------- |
+| Entry   | Where bundler starts resolving deps             |
+| Output  | Where final bundles go                          |
+| Loaders | Transform files (TS → JS, SCSS → CSS)           |
 | Plugins | Extend behavior (HTML generation, minification) |
-| Chunks | Split output files |
+| Chunks  | Split output files                              |
 
 ## Vite Approach
 
@@ -97,11 +97,10 @@ module.exports = {
       { test: /\.css$/, use: ["style-loader", "css-loader"] },
     ],
   },
-  plugins: [
-    new HtmlWebpackPlugin({ template: "./public/index.html" }),
-  ],
+  plugins: [new HtmlWebpackPlugin({ template: "./public/index.html" })],
 }
 ```
+
 </TabsContent>
 <TabsContent value="vite">
 
@@ -118,6 +117,7 @@ export default defineConfig({
 // No loaders needed — Vite handles TS, CSS natively
 // Dev server cold-starts in < 1s (native ESM)
 ```
+
 </TabsContent>
 </Tabs>
 
@@ -162,21 +162,30 @@ Dead code elimination relies on ES module static analysis:
 
 ```ts
 // utils.ts
-export function usedFn() { return 42 }
-export function deadFn() { return "never called" } // Removed in build
+export function usedFn() {
+  return 42
+}
+export function deadFn() {
+  return "never called"
+} // Removed in build
 
 // app.ts — only imports usedFn
 import { usedFn } from "./utils"
 ```
 
 Tree shaking works when:
+
 - ES module syntax (`import`/`export`), not CommonJS (`require`)
 - `sideEffects: false` in `package.json`
 - No dynamic imports that defeat static analysis
 
 <Alert>
-<AlertTitle>Gotcha: Side Effects</AlertTitle>
-<AlertDescription>If a module modifies global state (e.g., polyfill), set `"sideEffects": ["./polyfill.js"]` in package.json — otherwise tree shaker might remove it thinking it's unused.</AlertDescription>
+  <AlertTitle>Gotcha: Side Effects</AlertTitle>
+  <AlertDescription>
+    If a module modifies global state (e.g., polyfill), set `"sideEffects":
+    ["./polyfill.js"]` in package.json — otherwise tree shaker might remove it
+    thinking it's unused.
+  </AlertDescription>
 </Alert>
 
 ## Environment Variables
@@ -184,7 +193,7 @@ Tree shaking works when:
 ```ts
 // Vite
 console.log(import.meta.env.VITE_API_URL)
-console.log(import.meta.env.DEV)  // true in dev
+console.log(import.meta.env.DEV) // true in dev
 console.log(import.meta.env.PROD) // true in production
 
 // Webpack (via DefinePlugin or dotenv-webpack)
@@ -205,6 +214,7 @@ next dev --turbo
 ```
 
 Benefits vs Webpack:
+
 - Rust-based — 10-100x faster for large apps
 - Incremental computation — only rebuilds changed cells
 - Caching at function level, not file level
@@ -221,75 +231,77 @@ Identify optimization opportunities in this bundle config.
 const path = require("path")
 
 module.exports = {
-  entry: "./src/index.tsx",
-  output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "bundle.js",
-  },
-  module: {
-    rules: [
-      { test: /\\.tsx?$/, use: "ts-loader" },
+entry: "./src/index.tsx",
+output: {
+path: path.resolve(\_\_dirname, "dist"),
+filename: "bundle.js",
+},
+module: {
+rules: [
+{ test: /\\.tsx?$/, use: "ts-loader" },
       { test: /\\.css$/, use: ["style-loader", "css-loader"] },
-    ],
-  },
-  resolve: {
-    extensions: [".ts", ".tsx", ".js"],
-  },
-  // Issues to fix:
-  // 1. No content hash in filename (cache busting)
-  // 2. No optimization.splitChunks (vendor bundle)
-  // 3. No mode set (no minification)
-  // 4. No HtmlWebpackPlugin
-  // Bonus: Add bundle analyzer
+],
+},
+resolve: {
+extensions: [".ts", ".tsx", ".js"],
+},
+// Issues to fix:
+// 1. No content hash in filename (cache busting)
+// 2. No optimization.splitChunks (vendor bundle)
+// 3. No mode set (no minification)
+// 4. No HtmlWebpackPlugin
+// Bonus: Add bundle analyzer
 }`}
   solutionCode={`const path = require("path")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer")
 
 module.exports = {
-  mode: "production",
-  entry: "./src/index.tsx",
-  output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "[name].[contenthash].js", // Cache busting
-    clean: true,
-  },
-  module: {
-    rules: [
-      { test: /\\.tsx?$/, use: "ts-loader", exclude: /node_modules/ },
+mode: "production",
+entry: "./src/index.tsx",
+output: {
+path: path.resolve(\_\_dirname, "dist"),
+filename: "[name].[contenthash].js", // Cache busting
+clean: true,
+},
+module: {
+rules: [
+{ test: /\\.tsx?$/, use: "ts-loader", exclude: /node_modules/ },
       { test: /\\.css$/, use: ["style-loader", "css-loader"] },
-    ],
-  },
-  resolve: {
-    extensions: [".ts", ".tsx", ".js"],
-  },
-  plugins: [
-    new HtmlWebpackPlugin({ template: "./public/index.html" }),
-    new BundleAnalyzerPlugin(), // Visualize bundle size
-  ],
-  optimization: {
-    splitChunks: {
-      chunks: "all",         // Separate vendor chunks
-      cacheGroups: {
-        vendor: { test: /[\\\\/]node_modules[\\\\/]/, name: "vendors" },
-      },
-    },
-  },
+],
+},
+resolve: {
+extensions: [".ts", ".tsx", ".js"],
+},
+plugins: [
+new HtmlWebpackPlugin({ template: "./public/index.html" }),
+new BundleAnalyzerPlugin(), // Visualize bundle size
+],
+optimization: {
+splitChunks: {
+chunks: "all", // Separate vendor chunks
+cacheGroups: {
+vendor: { test: /[\\\\/]node_modules[\\\\/]/, name: "vendors" },
+},
+},
+},
 }`}
-  hints={[
-    "Without mode: 'production', Webpack doesn't minify output",
-    "[contenthash] in filename enables long-term caching — browser re-downloads only when file changes",
-    "splitChunks separates vendor code (react, lodash) from app code so users cache them separately",
-    "BundleAnalyzerPlugin shows a treemap of your bundle contents",
-  ]}
+hints={[
+"Without mode: 'production', Webpack doesn't minify output",
+"[contenthash] in filename enables long-term caching — browser re-downloads only when file changes",
+"splitChunks separates vendor code (react, lodash) from app code so users cache them separately",
+"BundleAnalyzerPlugin shows a treemap of your bundle contents",
+]}
 />
 
-<LessonSummary points={[
-  "Webpack: entry, loaders, plugins, output — full control, more config",
-  "Vite: native ESM in dev (fast), Rollup for production (efficient)",
-  "Dynamic imports create separate chunks loaded on demand",
-  "Tree shaking removes dead ES module exports",
-  "Turbopack: Rust-based incremental engine in Next.js",
-  "Analyze bundles with webpack-bundle-analyzer or vite-bundle-visualizer",
-  "Use contenthash for cache busting, splitChunks for vendor separation",
-]} />
+<LessonSummary
+  points={[
+    "Webpack: entry, loaders, plugins, output — full control, more config",
+    "Vite: native ESM in dev (fast), Rollup for production (efficient)",
+    "Dynamic imports create separate chunks loaded on demand",
+    "Tree shaking removes dead ES module exports",
+    "Turbopack: Rust-based incremental engine in Next.js",
+    "Analyze bundles with webpack-bundle-analyzer or vite-bundle-visualizer",
+    "Use contenthash for cache busting, splitChunks for vendor separation",
+  ]}
+/>

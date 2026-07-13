@@ -9,13 +9,15 @@ order: 6
 
 Memoization caches a value so it's only recomputed when dependencies change. `useMemo` caches computed values; `useCallback` caches function references.
 
-<LearningObjectives objectives={[
-  "Use useMemo to skip expensive recalculations",
-  "Use useCallback to stabilize function references",
-  "Combine React.memo with useCallback to prevent child re-renders",
-  "Recognize when memoization is overhead, not optimization",
-  "Measure before optimizing — rely on profiling, not intuition"
-]} />
+<LearningObjectives
+  objectives={[
+    "Use useMemo to skip expensive recalculations",
+    "Use useCallback to stabilize function references",
+    "Combine React.memo with useCallback to prevent child re-renders",
+    "Recognize when memoization is overhead, not optimization",
+    "Measure before optimizing — rely on profiling, not intuition",
+  ]}
+/>
 
 ## useMemo: Expensive Computations
 
@@ -29,7 +31,10 @@ import { useState, useMemo } from "react"
 export default function SearchList() {
   const [query, setQuery] = useState("")
   const [items] = useState(() =>
-    Array.from({ length: 10000 }, (_, i) => `Item ${i}: ${Math.random().toString(36).slice(2)}`)
+    Array.from(
+      { length: 10000 },
+      (_, i) => `Item ${i}: ${Math.random().toString(36).slice(2)}`
+    )
   )
 
   // Without useMemo: filtered runs on every keystroke
@@ -62,7 +67,9 @@ export default function SearchList() {
   <AlertTriangle />
   <AlertTitle>Don't memoize everything</AlertTitle>
   <AlertDescription>
-    `useMemo` adds memory overhead (cached result + dependency tracking). For trivial computations like `a + b`, the cache check costs more than recomputing. Profile first — if the computation is under 1ms, skip the memo.
+    `useMemo` adds memory overhead (cached result + dependency tracking). For
+    trivial computations like `a + b`, the cache check costs more than
+    recomputing. Profile first — if the computation is under 1ms, skip the memo.
   </AlertDescription>
 </Alert>
 
@@ -88,8 +95,12 @@ export default function CallbackDemo() {
 
 // React.memo: only re-render if props change
 const SlowButton = React.memo(function SlowButton({
-  onClick, label
-}: { onClick: () => void; label: string }) {
+  onClick,
+  label,
+}: {
+  onClick: () => void
+  label: string
+}) {
   console.log("SlowButton rendered")
   return <button onClick={onClick}>{label}</button>
 })
@@ -128,10 +139,7 @@ function Parent() {
   const [count, setCount] = useState(0)
 
   // Same function reference across renders
-  const increment = useCallback(
-    () => setCount((c) => c + 1),
-    []
-  )
+  const increment = useCallback(() => setCount((c) => c + 1), [])
 
   return <MemoChild onClick={increment} />
 }
@@ -150,10 +158,12 @@ Memoization is not free. Every `useMemo`/`useCallback` call does:
 3. Either returns cached value (fast) or recomputes (slow path)
 
 **Memoization wins when:**
+
 - Computation is expensive (arrays > 10k items, complex math, deep object creation)
 - Referential stability prevents cascading child re-renders
 
 **Memoization loses when:**
+
 - Computation is cheap (string concat, simple arithmetic, boolean logic)
 - Dependencies change on every render anyway (memoized value is never reused)
 - Component tree is shallow (no memoized children to benefit)
@@ -183,14 +193,13 @@ export default function ProductList({ products }: { products: Product[] }) {
 
   // Memoize the filtered product list
   const visible = useMemo(() => {
-    const filtered = category === "all"
-      ? products
-      : products.filter((p) => p.category === category)
+    const filtered =
+      category === "all"
+        ? products
+        : products.filter((p) => p.category === category)
 
     return [...filtered].sort((a, b) =>
-      sortBy === "name"
-        ? a.name.localeCompare(b.name)
-        : a.price - b.price
+      sortBy === "name" ? a.name.localeCompare(b.name) : a.price - b.price
     )
   }, [products, category, sortBy])
 
@@ -200,7 +209,8 @@ export default function ProductList({ products }: { products: Product[] }) {
     []
   )
   const onSortChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => setSortBy(e.target.value as "name" | "price"),
+    (e: React.ChangeEvent<HTMLSelectElement>) =>
+      setSortBy(e.target.value as "name" | "price"),
     []
   )
 
@@ -221,12 +231,16 @@ export default function ProductList({ products }: { products: Product[] }) {
 }
 
 const ProductGrid = React.memo(function ProductGrid({
-  products
-}: { products: Product[] }) {
+  products,
+}: {
+  products: Product[]
+}) {
   return (
     <ul>
       {products.map((p) => (
-        <li key={p.id}>{p.name} — ${p.price}</li>
+        <li key={p.id}>
+          {p.name} — ${p.price}
+        </li>
       ))}
     </ul>
   )
@@ -245,10 +259,10 @@ Optimize a list component that renders search results. The list receives a filte
 
 import { useState } from "react"
 
-const ITEMS = Array.from({ length: 1000 }, (_, i) => ({
-  id: i,
-  title: \`Item \${i}: \${["Apple", "Banana", "Cherry", "Date", "Elderberry"][i % 5]}\`,
-  description: \`Description for item \${i}\`
+const ITEMS = Array.from({ length: 1000 }, (\_, i) => ({
+id: i,
+title: \`Item \${i}: \${["Apple", "Banana", "Cherry", "Date", "Elderberry"][i % 5]}\`,
+description: \`Description for item \${i}\`
 }))
 
 // TODO: use useMemo to filter items, useCallback for onChange
@@ -256,93 +270,99 @@ const ITEMS = Array.from({ length: 1000 }, (_, i) => ({
 export default function SearchPage() {
   const [query, setQuery] = useState("")
 
-  return (
-    <div>
-      <input
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search items..."
-      />
-      <ResultList items={ITEMS} />
-    </div>
-  )
+return (
+
+<div>
+<input
+value={query}
+onChange={(e) => setQuery(e.target.value)}
+placeholder="Search items..."
+/>
+<ResultList items={ITEMS} />
+</div>
+)
 }
 
 // TODO: wrap with React.memo
 function ResultList({ items }: { items: typeof ITEMS }) {
-  console.log("ResultList rendered")
-  return (
-    <ul>
-      {items.slice(0, 50).map((item) => (
-        <li key={item.id}>{item.title}</li>
-      ))}
-    </ul>
-  )
+console.log("ResultList rendered")
+return (
+
+<ul>
+{items.slice(0, 50).map((item) => (
+<li key={item.id}>{item.title}</li>
+))}
+</ul>
+)
 }`}
   solutionCode={`"use client"
 
 import { useState, useMemo, useCallback } from "react"
 
-const ITEMS = Array.from({ length: 1000 }, (_, i) => ({
-  id: i,
-  title: \`Item \${i}: \${["Apple", "Banana", "Cherry", "Date", "Elderberry"][i % 5]}\`,
-  description: \`Description for item \${i}\`
+const ITEMS = Array.from({ length: 1000 }, (\_, i) => ({
+id: i,
+title: \`Item \${i}: \${["Apple", "Banana", "Cherry", "Date", "Elderberry"][i % 5]}\`,
+description: \`Description for item \${i}\`
 }))
 
 export default function SearchPage() {
   const [query, setQuery] = useState("")
 
-  const filtered = useMemo(() => {
-    if (!query.trim()) return ITEMS
-    const lower = query.toLowerCase()
-    return ITEMS.filter(
-      (item) =>
-        item.title.toLowerCase().includes(lower) ||
-        item.description.toLowerCase().includes(lower)
-    )
-  }, [query])
+const filtered = useMemo(() => {
+if (!query.trim()) return ITEMS
+const lower = query.toLowerCase()
+return ITEMS.filter(
+(item) =>
+item.title.toLowerCase().includes(lower) ||
+item.description.toLowerCase().includes(lower)
+)
+}, [query])
 
-  const onChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value),
-    []
-  )
+const onChange = useCallback(
+(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value),
+[]
+)
 
-  return (
-    <div>
-      <input
+return (
+
+<div>
+<input
         value={query}
         onChange={onChange}
         placeholder="Search items..."
       />
-      <ResultList items={filtered} />
-    </div>
-  )
+<ResultList items={filtered} />
+</div>
+)
 }
 
 const ResultList = React.memo(function ResultList({
-  items
+items
 }: { items: typeof ITEMS }) {
-  console.log("ResultList rendered")
-  return (
-    <ul>
-      {items.slice(0, 50).map((item) => (
-        <li key={item.id}>{item.title}</li>
-      ))}
-    </ul>
-  )
+console.log("ResultList rendered")
+return (
+
+<ul>
+{items.slice(0, 50).map((item) => (
+<li key={item.id}>{item.title}</li>
+))}
+</ul>
+)
 })`}
-  hints={[
-    "Pass query to the filtered useMemo dependency array",
-    "Wrap ResultList with React.memo to skip re-renders when items reference hasn't changed",
-    "The input onChange doesn't need query in deps — use setState's function form or the computed value is managed in filtered useMemo"
-  ]}
-  previewType="mixed"
+hints={[
+"Pass query to the filtered useMemo dependency array",
+"Wrap ResultList with React.memo to skip re-renders when items reference hasn't changed",
+"The input onChange doesn't need query in deps — use setState's function form or the computed value is managed in filtered useMemo"
+]}
+previewType="mixed"
 />
 
-<LessonSummary points={[
-  "useMemo caches computed values; useCallback caches function references",
-  "Pair useCallback with React.memo to prevent unnecessary child re-renders",
-  "Memoization adds overhead — only use it when profiling shows a bottleneck",
-  "Cheap computations (< 1ms) and always-changing deps are signs you don't need it",
-  "React DevTools Profiler shows exactly which components re-render and why"
-]} />
+<LessonSummary
+  points={[
+    "useMemo caches computed values; useCallback caches function references",
+    "Pair useCallback with React.memo to prevent unnecessary child re-renders",
+    "Memoization adds overhead — only use it when profiling shows a bottleneck",
+    "Cheap computations (< 1ms) and always-changing deps are signs you don't need it",
+    "React DevTools Profiler shows exactly which components re-render and why",
+  ]}
+/>

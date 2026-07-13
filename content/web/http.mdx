@@ -13,24 +13,26 @@ updated: "2026-07-11"
 
 Every request carries a **method** (what you want to do) and every response carries a **status code** (how it went). Master these two vocabularies and HTTP APIs stop feeling mysterious.
 
-<LearningObjectives objectives={[
-  "Choose the right HTTP method for an operation",
-  "Explain idempotency and safety",
-  "Read status codes by their category (2xx–5xx)",
-  "Recognize the most common individual codes",
-]} />
+<LearningObjectives
+  objectives={[
+    "Choose the right HTTP method for an operation",
+    "Explain idempotency and safety",
+    "Read status codes by their category (2xx–5xx)",
+    "Recognize the most common individual codes",
+  ]}
+/>
 
 ## HTTP Methods
 
 The method is the verb — it states your intent. The common ones map neatly to CRUD operations:
 
-| Method | Intent | CRUD |
-|--------|--------|------|
-| `GET` | Retrieve a resource | Read |
-| `POST` | Create a resource / submit data | Create |
-| `PUT` | Replace a resource entirely | Update |
-| `PATCH` | Partially update a resource | Update |
-| `DELETE` | Remove a resource | Delete |
+| Method   | Intent                          | CRUD   |
+| -------- | ------------------------------- | ------ |
+| `GET`    | Retrieve a resource             | Read   |
+| `POST`   | Create a resource / submit data | Create |
+| `PUT`    | Replace a resource entirely     | Update |
+| `PATCH`  | Partially update a resource     | Update |
+| `DELETE` | Remove a resource               | Delete |
 
 ```text
 GET    /users        → list users
@@ -45,7 +47,7 @@ DELETE /users/42     → delete user 42
 Two properties tell you whether a method is "dangerous" to repeat:
 
 - **Safe** — doesn't change server state. `GET` is safe; you can fetch a page a thousand times without side effects.
-- **Idempotent** — repeating it has the same effect as doing it once. `PUT` and `DELETE` are idempotent (deleting user 42 twice leaves it deleted). `POST` is *not* — submitting a form twice may create two records.
+- **Idempotent** — repeating it has the same effect as doing it once. `PUT` and `DELETE` are idempotent (deleting user 42 twice leaves it deleted). `POST` is _not_ — submitting a form twice may create two records.
 
 ```text
 GET     safe + idempotent
@@ -55,21 +57,25 @@ POST    neither — repeating may duplicate
 ```
 
 <Alert>
-<AlertTitle>Why it matters</AlertTitle>
-<AlertDescription>Browsers and proxies can safely retry idempotent requests after a network hiccup. They won't auto-retry a POST — which is why "don't refresh or you'll be charged twice" warnings exist on payment pages.</AlertDescription>
+  <AlertTitle>Why it matters</AlertTitle>
+  <AlertDescription>
+    Browsers and proxies can safely retry idempotent requests after a network
+    hiccup. They won't auto-retry a POST — which is why "don't refresh or you'll
+    be charged twice" warnings exist on payment pages.
+  </AlertDescription>
 </Alert>
 
 ## Status Codes by Category
 
 The first digit tells you the category — learn the ranges before the specifics:
 
-| Range | Meaning | Mnemonic |
-|-------|---------|----------|
-| `1xx` | Informational | "hold on" |
-| `2xx` | Success | "here you go" |
-| `3xx` | Redirection | "go look over there" |
-| `4xx` | Client error | "you messed up" |
-| `5xx` | Server error | "I messed up" |
+| Range | Meaning       | Mnemonic             |
+| ----- | ------------- | -------------------- |
+| `1xx` | Informational | "hold on"            |
+| `2xx` | Success       | "here you go"        |
+| `3xx` | Redirection   | "go look over there" |
+| `4xx` | Client error  | "you messed up"      |
+| `5xx` | Server error  | "I messed up"        |
 
 The `4xx` vs `5xx` distinction is crucial: **4xx is the client's fault** (bad request, not logged in), **5xx is the server's fault** (it crashed). When debugging, the category tells you which side to look at.
 
@@ -91,16 +97,22 @@ The `4xx` vs `5xx` distinction is crucial: **4xx is the client's fault** (bad re
 ```
 
 <Alert>
-<AlertTitle>401 vs 403</AlertTitle>
-<AlertDescription>A common mix-up: <code>401 Unauthorized</code> means "I don't know who you are — log in." <code>403 Forbidden</code> means "I know who you are, and you're not allowed." Authentication vs authorization.</AlertDescription>
+  <AlertTitle>401 vs 403</AlertTitle>
+  <AlertDescription>
+    A common mix-up: <code>401 Unauthorized</code> means "I don't know who you
+    are — log in." <code>403 Forbidden</code> means "I know who you are, and
+    you're not allowed." Authentication vs authorization.
+  </AlertDescription>
 </Alert>
 
 ## Check Your Understanding
 
-<LessonSummary points={[
-  "HTTP methods express intent: GET reads, POST creates, PUT/PATCH update, DELETE removes",
-  "Safe methods don't change state; idempotent methods are safe to repeat",
-  "POST is neither safe nor idempotent — repeating it can duplicate data",
-  "Status categories: 2xx success, 3xx redirect, 4xx client error, 5xx server error",
-  "Know the greatest hits — 200, 201, 301, 304, 400, 401, 403, 404, 429, 500, 503",
-]} />
+<LessonSummary
+  points={[
+    "HTTP methods express intent: GET reads, POST creates, PUT/PATCH update, DELETE removes",
+    "Safe methods don't change state; idempotent methods are safe to repeat",
+    "POST is neither safe nor idempotent — repeating it can duplicate data",
+    "Status categories: 2xx success, 3xx redirect, 4xx client error, 5xx server error",
+    "Know the greatest hits — 200, 201, 301, 304, 400, 401, 403, 404, 429, 500, 503",
+  ]}
+/>

@@ -9,14 +9,16 @@ order: 9
 
 Declaration files describe the shape of JavaScript code to TypeScript. They enable type safety for libraries without TypeScript source.
 
-<LearningObjectives objectives={[
-  "Structure .d.ts declaration files",
-  "Use declare module, declare namespace, and declare global",
-  "Augment third-party modules with additional types",
-  "Write ambient declarations for global APIs",
-  "Use triple-slash directives for type references",
-  "Understand how types are published with npm packages"
-]} />
+<LearningObjectives
+  objectives={[
+    "Structure .d.ts declaration files",
+    "Use declare module, declare namespace, and declare global",
+    "Augment third-party modules with additional types",
+    "Write ambient declarations for global APIs",
+    "Use triple-slash directives for type references",
+    "Understand how types are published with npm packages",
+  ]}
+/>
 
 ## .d.ts Structure
 
@@ -42,7 +44,10 @@ Add types for libraries without built-in types.
 // declarations/analytics.d.ts
 declare module "analytics" {
   export function track(event: string, data?: Record<string, unknown>): void
-  export function identify(userId: string, traits?: Record<string, unknown>): void
+  export function identify(
+    userId: string,
+    traits?: Record<string, unknown>
+  ): void
   export function page(name: string): void
 }
 
@@ -74,7 +79,10 @@ declare module "express" {
 
 <Alert>
   <AlertTitle>Tip</AlertTitle>
-  <AlertDescription>Module augmentation uses declaration merging. The `import` line makes TypeScript treat the file as a module, not a global script.</AlertDescription>
+  <AlertDescription>
+    Module augmentation uses declaration merging. The `import` line makes
+    TypeScript treat the file as a module, not a global script.
+  </AlertDescription>
 </Alert>
 
 ## Ambient Declarations
@@ -115,6 +123,7 @@ Legacy way to reference other type files. Still used in some libraries.
 ```
 
 Modern code uses `tsconfig.json` instead:
+
 - `compilerOptions.types` for type packages
 - `compilerOptions.typeRoots` for custom declaration directories
 
@@ -185,38 +194,40 @@ declare module "simple-logger" {
 
 }`}
   solutionCode={`declare module "simple-logger" {
-  type LogLevel = "debug" | "info" | "warn" | "error"
-  type LogContext = Record<string, unknown>
+type LogLevel = "debug" | "info" | "warn" | "error"
+type LogContext = Record<string, unknown>
 
-  interface LoggerOptions {
-    level?: LogLevel
-    format?: "text" | "json"
-  }
+interface LoggerOptions {
+level?: LogLevel
+format?: "text" | "json"
+}
 
-  interface Logger {
-    log(message: string, context?: LogContext): void
-    warn(message: string, context?: LogContext): void
-    error(message: string, context?: LogContext): void
-    debug(message: string, context?: LogContext): void
-    setLevel(level: LogLevel): void
-  }
+interface Logger {
+log(message: string, context?: LogContext): void
+warn(message: string, context?: LogContext): void
+error(message: string, context?: LogContext): void
+debug(message: string, context?: LogContext): void
+setLevel(level: LogLevel): void
+}
 
-  export function createLogger(name: string, options?: LoggerOptions): Logger
+export function createLogger(name: string, options?: LoggerOptions): Logger
 }`}
-  hints={[
-    "Use declare module to wrap all the types.",
-    "Define a LogLevel union type for the level parameter.",
-    "Define LoggerOptions interface for the createLogger options.",
-    "Define Logger interface with all methods matching the JS API.",
-    "Export createLogger function with name and optional options."
-  ]}
+hints={[
+"Use declare module to wrap all the types.",
+"Define a LogLevel union type for the level parameter.",
+"Define LoggerOptions interface for the createLogger options.",
+"Define Logger interface with all methods matching the JS API.",
+"Export createLogger function with name and optional options."
+]}
 />
 
-<LessonSummary points={[
-  ".d.ts files contain type declarations without implementations.",
-  "declare module adds types for untyped libraries without modifying them.",
-  "Module augmentation (declare module 'x') extends third-party types.",
-  "declare global augments global interfaces like Window or NodeJS.ProcessEnv.",
-  "Triple-slash directives reference other type files (legacy; use tsconfig instead).",
-  "The types field in package.json tells TypeScript where to find a package's declarations."
-]} />
+<LessonSummary
+  points={[
+    ".d.ts files contain type declarations without implementations.",
+    "declare module adds types for untyped libraries without modifying them.",
+    "Module augmentation (declare module 'x') extends third-party types.",
+    "declare global augments global interfaces like Window or NodeJS.ProcessEnv.",
+    "Triple-slash directives reference other type files (legacy; use tsconfig instead).",
+    "The types field in package.json tells TypeScript where to find a package's declarations.",
+  ]}
+/>

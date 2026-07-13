@@ -13,7 +13,7 @@ The `useState` hook lets you add state to functional components.
 `useState` is a built-in React hook that lets you add state to functional components.
 
 ```jsx
-import { useState } from 'react'
+import { useState } from "react"
 
 function Counter() {
   const [count, setCount] = useState(0)
@@ -29,13 +29,8 @@ You can initialize state with a default value:
 
 ```jsx
 function NameInput() {
-  const [name, setName] = useState('Guest')
-  return (
-    <input
-      value={name}
-      onChange={(e) => setName(e.target.value)}
-    />
-  )
+  const [name, setName] = useState("Guest")
+  return <input value={name} onChange={(e) => setName(e.target.value)} />
 }
 ```
 
@@ -62,7 +57,7 @@ function Counter() {
   const [count, setCount] = useState(0)
   // ✅ Correct: use function form
   const increment = () => {
-    setCount(prevCount => prevCount + 1)
+    setCount((prevCount) => prevCount + 1)
   }
   return <button onClick={increment}>Count: {count}</button>
 }
@@ -74,8 +69,8 @@ You can use multiple useState hooks:
 
 ```jsx
 function Form() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
   const [age, setAge] = useState(0)
 
   return (
@@ -124,11 +119,11 @@ To fix this, use the function form:
 
 ```jsx
 const handleClick = () => {
-  setCount(prevCount => {
+  setCount((prevCount) => {
     const newState = prevCount + 1
-    setCount(prevCount => {
+    setCount((prevCount) => {
       const newState2 = prevCount + 1
-      setCount(prevCount => {
+      setCount((prevCount) => {
         return prevCount + 1 // Now prints 3
       })
       return newState2
@@ -149,7 +144,11 @@ function Person({ firstName, lastName }) {
 
 // ✅ Correct: compute on the fly
 function Person({ firstName, lastName }) {
-  return <div>{firstName} {lastName}</div>
+  return (
+    <div>
+      {firstName} {lastName}
+    </div>
+  )
 }
 ```
 
@@ -158,19 +157,21 @@ function Person({ firstName, lastName }) {
 ```jsx
 function TodoList() {
   const [todos, setTodos] = useState([
-    { id: 1, text: 'Learn React', completed: false },
-    { id: 2, text: 'Build projects', completed: false }
+    { id: 1, text: "Learn React", completed: false },
+    { id: 2, text: "Build projects", completed: false },
   ])
 
   const toggleTodo = (id) => {
-    setTodos(todos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    ))
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    )
   }
 
   return (
     <ul>
-      {todos.map(todo => (
+      {todos.map((todo) => (
         <li key={todo.id}>
           <input
             type="checkbox"
@@ -191,12 +192,12 @@ function TodoList() {
 
 ```jsx
 function Form() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
 
   const resetForm = () => {
-    setName('')
-    setEmail('')
+    setName("")
+    setEmail("")
   }
 
   return (
@@ -219,18 +220,18 @@ When you delete an item from a list, React reuses the array index. To preserve s
 ```jsx
 function TodoList() {
   const [todos, setTodos] = useState([
-    { id: 1, text: 'Task 1' },
-    { id: 2, text: 'Task 2' },
-    { id: 3, text: 'Task 3' }
+    { id: 1, text: "Task 1" },
+    { id: 2, text: "Task 2" },
+    { id: 3, text: "Task 3" },
   ])
 
   const deleteTodo = (id) => {
-    setTodos(todos.filter(todo => todo.id !== id))
+    setTodos(todos.filter((todo) => todo.id !== id))
   }
 
   return (
     <ul>
-      {todos.map(todo => (
+      {todos.map((todo) => (
         <li key={todo.id}>
           {todo.text}
           <button onClick={() => deleteTodo(todo.id)}>Delete</button>
@@ -246,6 +247,7 @@ function TodoList() {
 ## Exercise
 
 Create a counter component that:
+
 1. Has a count state initialized to 0
 2. Has an increment button (+1)
 3. Has a decrement button (-1)

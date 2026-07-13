@@ -46,7 +46,9 @@ order: 5
 <Alert>
   <AlertTitle>Tip</AlertTitle>
   <AlertDescription>
-    Most production Next.js apps use PostgreSQL + Prisma. Serverless DB providers like Neon and PlanetScale scale to zero when idle — cost-effective for indie projects.
+    Most production Next.js apps use PostgreSQL + Prisma. Serverless DB
+    providers like Neon and PlanetScale scale to zero when idle — cost-effective
+    for indie projects.
   </AlertDescription>
 </Alert>
 
@@ -234,7 +236,9 @@ export const prisma = new PrismaClient({ adapter })
 <Alert>
   <AlertTitle>Gotcha</AlertTitle>
   <AlertDescription>
-    Edge Runtime does not support TCP connections. Use HTTP-based adapters (Neon HTTP, PlanetScale serverless driver) when deploying to Vercel Edge Functions or Cloudflare Workers.
+    Edge Runtime does not support TCP connections. Use HTTP-based adapters (Neon
+    HTTP, PlanetScale serverless driver) when deploying to Vercel Edge Functions
+    or Cloudflare Workers.
   </AlertDescription>
 </Alert>
 
@@ -250,7 +254,7 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+provider = "prisma-client-js"
 }
 
 // TODO: Add User model (id, name, email, posts)
@@ -260,65 +264,65 @@ generator client {
 // TODO: Add Comment model (id, content, author, post)
 `}
   solutionCode={`model User {
-  id        String    @id @default(cuid())
-  name      String
-  email     String    @unique
-  posts     Post[]
-  comments  Comment[]
-  createdAt DateTime  @default(now())
+id String @id @default(cuid())
+name String
+email String @unique
+posts Post[]
+comments Comment[]
+createdAt DateTime @default(now())
 }
 
 model Post {
-  id        String    @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean   @default(false)
-  author    User      @relation(fields: [authorId], references: [id])
-  authorId  String
-  category  Category? @relation(fields: [categoryId], references: [id])
-  categoryId String?
-  tags      TagOnPost[]
-  comments  Comment[]
-  createdAt DateTime  @default(now())
+id String @id @default(cuid())
+title String
+content String?
+published Boolean @default(false)
+author User @relation(fields: [authorId], references: [id])
+authorId String
+category Category? @relation(fields: [categoryId], references: [id])
+categoryId String?
+tags TagOnPost[]
+comments Comment[]
+createdAt DateTime @default(now())
 }
 
 model Category {
-  id    String @id @default(cuid())
-  name  String @unique
-  slug  String @unique
-  posts Post[]
+id String @id @default(cuid())
+name String @unique
+slug String @unique
+posts Post[]
 }
 
 model Tag {
-  id    String      @id @default(cuid())
-  name  String      @unique
-  posts TagOnPost[]
+id String @id @default(cuid())
+name String @unique
+posts TagOnPost[]
 }
 
 model TagOnPost {
-  post   Post   @relation(fields: [postId], references: [id])
-  postId String
-  tag    Tag    @relation(fields: [tagId], references: [id])
-  tagId  String
-  @@id([postId, tagId])
+post Post @relation(fields: [postId], references: [id])
+postId String
+tag Tag @relation(fields: [tagId], references: [id])
+tagId String
+@@id([postId, tagId])
 }
 
 model Comment {
-  id        String   @id @default(cuid())
-  content   String
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  String
-  post      Post     @relation(fields: [postId], references: [id])
-  postId    String
-  createdAt DateTime @default(now())
+id String @id @default(cuid())
+content String
+author User @relation(fields: [authorId], references: [id])
+authorId String
+post Post @relation(fields: [postId], references: [id])
+postId String
+createdAt DateTime @default(now())
 }`}
-  hints={[
-    "Use @relation for foreign keys — specify fields and references",
-    "Many-to-many between Post and Tag needs a junction table (TagOnPost) with @@id([postId, tagId])",
-    "Category is optional (Category?) — a post might not have one",
-    "Comment has two foreign keys: authorId → User, postId → Post",
-  ]}
-  language="prisma"
+hints={[
+"Use @relation for foreign keys — specify fields and references",
+"Many-to-many between Post and Tag needs a junction table (TagOnPost) with @@id([postId, tagId])",
+"Category is optional (Category?) — a post might not have one",
+"Comment has two foreign keys: authorId → User, postId → Post",
+]}
+language="prisma"
 />
 
 <LessonSummary

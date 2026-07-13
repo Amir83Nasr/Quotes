@@ -48,11 +48,7 @@ The simplest form of state. Use it when state only affects one component.
 ```tsx
 function Toggle() {
   const [isOn, setIsOn] = useState(false)
-  return (
-    <button onClick={() => setIsOn(!isOn)}>
-      {isOn ? "ON" : "OFF"}
-    </button>
-  )
+  return <button onClick={() => setIsOn(!isOn)}>{isOn ? "ON" : "OFF"}</button>
 }
 ```
 
@@ -61,16 +57,16 @@ function Toggle() {
 Use when state updates follow multiple paths:
 
 ```tsx
-type Action =
-  | { type: "increment" }
-  | { type: "decrement" }
-  | { type: "reset" }
+type Action = { type: "increment" } | { type: "decrement" } | { type: "reset" }
 
 function reducer(state: number, action: Action): number {
   switch (action.type) {
-    case "increment": return state + 1
-    case "decrement": return state - 1
-    case "reset": return 0
+    case "increment":
+      return state + 1
+    case "decrement":
+      return state - 1
+    case "reset":
+      return 0
   }
 }
 
@@ -109,14 +105,14 @@ function Toolbar() {
 
 ## When to Use What
 
-| Pattern | When |
-|---------|------|
-| `useState` | Single component, independent values |
-| `useReducer` | Complex state logic, multiple update paths |
-| Context | Shared state across a subtree, few consumers |
+| Pattern       | When                                             |
+| ------------- | ------------------------------------------------ |
+| `useState`    | Single component, independent values             |
+| `useReducer`  | Complex state logic, multiple update paths       |
+| Context       | Shared state across a subtree, few consumers     |
 | Zustand/Redux | Many consumers, frequent updates, app-wide state |
-| URL params | Shareable, bookmarkable state |
-| Server state | Data from API (use SWR/React Query) |
+| URL params    | Shareable, bookmarkable state                    |
+| Server state  | Data from API (use SWR/React Query)              |
 
 ## Common Mistakes
 

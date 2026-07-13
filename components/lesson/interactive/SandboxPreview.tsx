@@ -17,7 +17,12 @@ interface SandboxPreviewProps {
   className?: string
 }
 
-function buildSrcdoc(html: string, css: string, js: string, type: PreviewType): string {
+function buildSrcdoc(
+  html: string,
+  css: string,
+  js: string,
+  type: PreviewType
+): string {
   const safeHtml = html || ""
   const styleTag = css ? `<style>${css}</style>` : ""
   // Use a unique sentinel to avoid </script> issues in srcdoc
@@ -44,7 +49,7 @@ function buildSrcdoc(html: string, css: string, js: string, type: PreviewType): 
     "<head>",
     baseHead,
     styleTag,
-    '<style>body{font-family:system-ui,sans-serif;padding:16px;margin:0}pre{background:#f5f5f5;padding:8px;border-radius:4px;overflow-x:auto}</style>',
+    "<style>body{font-family:system-ui,sans-serif;padding:16px;margin:0}pre{background:#f5f5f5;padding:8px;border-radius:4px;overflow-x:auto}</style>",
     "</head>",
     "<body>",
     safeHtml,
@@ -77,7 +82,7 @@ export function SandboxPreview({
 
   const srcdoc = useMemo(
     () => buildSrcdoc(html, css, js, type),
-    [html, css, js, type],
+    [html, css, js, type]
   )
 
   const handleRefresh = useCallback(() => {
@@ -121,7 +126,11 @@ export function SandboxPreview({
             onClick={toggleExpand}
             aria-label={expanded ? "Collapse" : "Expand"}
           >
-            {expanded ? <Minimize2 className="h-3 w-3" /> : <Maximize2 className="h-3 w-3" />}
+            {expanded ? (
+              <Minimize2 className="h-3 w-3" />
+            ) : (
+              <Maximize2 className="h-3 w-3" />
+            )}
           </Button>
         </div>
       </div>

@@ -6,18 +6,29 @@ order: 5
 
 # Promises Deep Dive
 
-<LearningObjectives objectives={["Understand promise states (pending, fulfilled, rejected)", "Chain with .then, .catch, .finally", "Choose between all, allSettled, race, any", "Implement Promise.all from scratch"]} />
+<LearningObjectives
+  objectives={[
+    "Understand promise states (pending, fulfilled, rejected)",
+    "Chain with .then, .catch, .finally",
+    "Choose between all, allSettled, race, any",
+    "Implement Promise.all from scratch",
+  ]}
+/>
 
 ## Promise States
 
 Three states, settle once, one-way.
 
 ```javascript
-new Promise((resolve, reject) => { /* pending */
+new Promise((resolve, reject) => {
+  /* pending */
   resolve("done") // → fulfilled
   // reject("err") // → rejected
 })
-new Promise((r) => { r("first"); r("second") }) // "first" — second ignored
+new Promise((r) => {
+  r("first")
+  r("second")
+}) // "first" — second ignored
 ```
 
 ## Chaining
@@ -26,14 +37,24 @@ Each .then returns new promise. Rejections skip to nearest .catch.
 
 ```javascript
 fetch("/api/user/1")
-  .then(r => { if (!r.ok) throw Error('HTTP ' + r.status); return r.json() })
-  .then(user => fetch('/api/posts?userId=' + user.id))
-  .then(r => r.json())
-  .catch(err => console.error(err))
+  .then((r) => {
+    if (!r.ok) throw Error("HTTP " + r.status)
+    return r.json()
+  })
+  .then((user) => fetch("/api/posts?userId=" + user.id))
+  .then((r) => r.json())
+  .catch((err) => console.error(err))
   .finally(() => hideLoader())
 ```
 
-<Alert><AlertTriangle /><AlertTitle>Gotcha</AlertTitle><AlertDescription>Put .catch before .finally. Errors in .finally aren't caught by .catch after.</AlertDescription></Alert>
+<Alert>
+  <AlertTriangle />
+  <AlertTitle>Gotcha</AlertTitle>
+  <AlertDescription>
+    Put .catch before .finally. Errors in .finally aren't caught by .catch
+    after.
+  </AlertDescription>
+</Alert>
 
 ## Static Methods
 
@@ -50,8 +71,8 @@ fetch("/api/user/1")
 ```javascript
 // Rejects on first rejection
 const [users, posts] = await Promise.all([
-  fetch("/api/users").then(r => r.json()),
-  fetch("/api/posts").then(r => r.json()),
+  fetch("/api/users").then((r) => r.json()),
+  fetch("/api/posts").then((r) => r.json()),
 ])
 ```
 
@@ -70,7 +91,10 @@ const r = await Promise.allSettled([fetch("/api/a")])
 
 ```javascript
 // First settled wins (fulfill or reject)
-await Promise.race([fetch(url), new Promise((_, rej) => setTimeout(() => rej("timeout"), 5000))])
+await Promise.race([
+  fetch(url),
+  new Promise((_, rej) => setTimeout(() => rej("timeout"), 5000)),
+])
 ```
 
   </TabsContent>
@@ -91,7 +115,9 @@ External resolve/reject — clean for callback wrapping.
 
 ```javascript
 const { promise, resolve, reject } = Promise.withResolvers()
-fs.readFile("data.txt", "utf-8", (err, data) => err ? reject(err) : resolve(data))
+fs.readFile("data.txt", "utf-8", (err, data) =>
+  err ? reject(err) : resolve(data)
+)
 await promise
 ```
 
@@ -124,15 +150,20 @@ See promise chaining in action — each `.then` receives the previous return val
   // Reject immediately if any promise rejects
 }`}
   language="javascript"
-  hints={["Use Promise.resolve() to wrap non-thenables", "Track results by index, use counter for completion"]}
+  hints={[
+    "Use Promise.resolve() to wrap non-thenables",
+    "Track results by index, use counter for completion",
+  ]}
   previewType="mixed"
 />
 
 ## Lesson Summary
 
-<LessonSummary points={[
-  "Promises settle once: pending → fulfilled or rejected",
-  ".then chains create new promises; .catch recovers; .finally cleans up",
-  "all (fail-fast), allSettled (all results), race (first), any (first success)",
-  "Promise.withResolvers() for clean external resolve/reject"
-]} />
+<LessonSummary
+  points={[
+    "Promises settle once: pending → fulfilled or rejected",
+    ".then chains create new promises; .catch recovers; .finally cleans up",
+    "all (fail-fast), allSettled (all results), race (first), any (first success)",
+    "Promise.withResolvers() for clean external resolve/reject",
+  ]}
+/>

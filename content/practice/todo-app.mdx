@@ -86,8 +86,8 @@ Use `crypto.randomUUID()` or `Date.now().toString()` to generate unique IDs for 
 const toggleTodo = (id: string) => {
   setTodos((prev) =>
     prev.map((todo) =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo,
-    ),
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    )
   )
 }
 ```

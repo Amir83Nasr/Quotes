@@ -20,30 +20,40 @@ order: 7
 Control transition-property, duration, timing, and delay with utility classes.
 
 ```html
-<button class="bg-blue-500 transition-colors duration-200 hover:bg-blue-600
-               rounded-lg px-4 py-2 text-white">Hover Me</button>
+<button
+  class="rounded-lg bg-blue-500 px-4 py-2 text-white transition-colors duration-200 hover:bg-blue-600"
+>
+  Hover Me
+</button>
 
-<div class="transition-all duration-300 ease-out hover:scale-105 hover:shadow-lg
-            rounded-xl bg-white p-6 shadow-sm">Content with smooth scale</div>
+<div
+  class="rounded-xl bg-white p-6 shadow-sm transition-all duration-300 ease-out hover:scale-105 hover:shadow-lg"
+>
+  Content with smooth scale
+</div>
 ```
 
-| Utility | CSS Property |
-|---------|-------------|
-| `transition-all` | `transition: all` |
-| `transition-colors` | color, background-color, border-color |
-| `transition-transform` | `transition: transform` |
-| `duration-200` | `transition-duration: 200ms` |
-| `ease-in-out` | `transition-timing-function: ease-in-out` |
+| Utility                | CSS Property                              |
+| ---------------------- | ----------------------------------------- |
+| `transition-all`       | `transition: all`                         |
+| `transition-colors`    | color, background-color, border-color     |
+| `transition-transform` | `transition: transform`                   |
+| `duration-200`         | `transition-duration: 200ms`              |
+| `ease-in-out`          | `transition-timing-function: ease-in-out` |
 
 ## Built-in Animations
 
 ```html
 <div class="flex items-center gap-6 p-6">
   <!-- Spinning loader -->
-  <div class="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-blue-500"></div>
+  <div
+    class="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-blue-500"
+  ></div>
   <!-- Ping notification dot -->
   <span class="relative flex h-4 w-4">
-    <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+    <span
+      class="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"
+    ></span>
     <span class="relative inline-flex h-4 w-4 rounded-full bg-red-500"></span>
   </span>
   <!-- Pulse skeleton loader -->
@@ -59,19 +69,33 @@ Define in globals.css:
 
 ```css
 @keyframes wiggle {
-  0%, 100% { transform: rotate(-3deg); }
-  50% { transform: rotate(3deg); }
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
 }
-@theme { --animate-wiggle: wiggle 1s ease-in-out infinite; }
+@theme {
+  --animate-wiggle: wiggle 1s ease-in-out infinite;
+}
 ```
 
 ```html
-<button class="animate-wiggle rounded-lg bg-purple-500 px-4 py-2 text-white">Wobble</button>
+<button class="animate-wiggle rounded-lg bg-purple-500 px-4 py-2 text-white">
+  Wobble
+</button>
 ```
 
 <Alert>
-  <AlertTitle><Lightbulb className="inline h-4 w-4" /> Performance Rule</AlertTitle>
-  <AlertDescription>Animate transform and opacity only. Avoid width, height, margin — those trigger layout recalculations.</AlertDescription>
+  <AlertTitle>
+    <Lightbulb className="inline h-4 w-4" /> Performance Rule
+  </AlertTitle>
+  <AlertDescription>
+    Animate transform and opacity only. Avoid width, height, margin — those
+    trigger layout recalculations.
+  </AlertDescription>
 </Alert>
 
 ## Group Hover Animations
@@ -79,19 +103,29 @@ Define in globals.css:
 Animate children when parent is hovered with `group` + `group-hover:`.
 
 ```html
-<div class="group relative cursor-pointer rounded-xl border p-6 transition-shadow hover:shadow-lg">
-  <div class="mb-3 h-32 rounded-lg bg-linear-to-br from-blue-400 to-purple-500
-              transition-transform duration-300 group-hover:scale-105"></div>
-  <h3 class="font-semibold transition-colors group-hover:text-blue-600">Interactive Card</h3>
+<div
+  class="group relative cursor-pointer rounded-xl border p-6 transition-shadow hover:shadow-lg"
+>
+  <div
+    class="mb-3 h-32 rounded-lg bg-linear-to-br from-blue-400 to-purple-500 transition-transform duration-300 group-hover:scale-105"
+  ></div>
+  <h3 class="font-semibold transition-colors group-hover:text-blue-600">
+    Interactive Card
+  </h3>
   <p class="mt-1 text-sm text-gray-500">Children animate on parent hover.</p>
-  <span class="mt-2 inline-block text-sm font-medium text-blue-500
-               transition-transform duration-200 group-hover:translate-x-1">Learn →</span>
+  <span
+    class="mt-2 inline-block text-sm font-medium text-blue-500 transition-transform duration-200 group-hover:translate-x-1"
+    >Learn →</span
+  >
 </div>
 ```
 
 ## Animated Elements Showcase
 
-<SandboxPreview title="Animated Elements" type="html" height={300}
+<SandboxPreview
+  title="Animated Elements"
+  type="html"
+  height={300}
   html={`
 <script src="https://cdn.tailwindcss.com"><\/script>
 <div class="flex flex-wrap items-center gap-8 p-8">

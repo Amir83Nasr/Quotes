@@ -1,6 +1,10 @@
 import type { ContentNode } from "@/types/content"
 import type { NavItem } from "@/types/navigation"
-import { contentPathToUrl, SIDEBAR_LABELS, SIDEBAR_SECTIONS } from "@/constants/categories"
+import {
+  contentPathToUrl,
+  SIDEBAR_LABELS,
+  SIDEBAR_SECTIONS,
+} from "@/constants/categories"
 import { getContentTree } from "./content"
 import { cache } from "react"
 
@@ -24,7 +28,7 @@ function buildSectionLookup(): Record<string, string> {
 function contentNodeToNavItem(
   node: ContentNode,
   currentPath?: string,
-  sectionLookup?: Record<string, string>,
+  sectionLookup?: Record<string, string>
 ): NavItem {
   const isLesson = node.type === "lesson"
   const href = isLesson ? contentPathToUrl(node.contentPath) : "#"
@@ -32,13 +36,16 @@ function contentNodeToNavItem(
   // Recursively process children
   const children =
     node.children.length > 0
-      ? node.children.map((child) => contentNodeToNavItem(child, currentPath, sectionLookup))
+      ? node.children.map((child) =>
+          contentNodeToNavItem(child, currentPath, sectionLookup)
+        )
       : undefined
 
   // Active if this node matches the current path, or a descendant is active
   const isActive = currentPath ? href === currentPath : false
   const isExpanded =
-    isActive || (children ? children.some((c) => c.isActive || c.isExpanded) : false)
+    isActive ||
+    (children ? children.some((c) => c.isActive || c.isExpanded) : false)
 
   // Apply friendly label from SIDEBAR_LABELS, fall back to node title
   const title = SIDEBAR_LABELS[node.slug] ?? node.title
@@ -52,7 +59,9 @@ function contentNodeToNavItem(
     depth: node.depth,
     difficulty: node.difficulty,
     // Map top-level categories and their nested lessons to a section
-    section: sectionLookup?.[node.slug] ?? sectionLookup?.[node.contentPath.split("/")[0]],
+    section:
+      sectionLookup?.[node.slug] ??
+      sectionLookup?.[node.contentPath.split("/")[0]],
   }
 }
 
@@ -63,8 +72,10 @@ export const getSidebarNav = cache(
   async (currentPath?: string): Promise<NavItem[]> => {
     const sectionLookup = buildSectionLookup()
     const tree = await getContentTree()
-    return tree.map((node) => contentNodeToNavItem(node, currentPath, sectionLookup))
-  },
+    return tree.map((node) =>
+      contentNodeToNavItem(node, currentPath, sectionLookup)
+    )
+  }
 )
 
 /**
@@ -72,7 +83,9 @@ export const getSidebarNav = cache(
  * Returns [{ section: "Foundations", items: [...] }, ...]
  */
 export const getSidebarSections = cache(
-  async (currentPath?: string): Promise<{ label: string; items: NavItem[] }[]> => {
+  async (
+    currentPath?: string
+  ): Promise<{ label: string; items: NavItem[] }[]> => {
     const nav = await getSidebarNav(currentPath)
     const sectionMap = new Map<string, NavItem[]>()
     const nullItems: NavItem[] = []
@@ -91,7 +104,7 @@ export const getSidebarSections = cache(
       label,
       items: sectionMap.get(label) ?? [],
     })).filter((s) => s.items.length > 0)
-  },
+  }
 )
 
 /** Flatten nav tree for search indexing */

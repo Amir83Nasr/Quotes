@@ -6,7 +6,14 @@ order: 2
 
 # Scopes & Closures
 
-<LearningObjectives objectives={["Understand scope types (global, function, block)", "Explain hoisting and temporal dead zone", "Use closures for private state", "Fix the loop + closure gotcha"]} />
+<LearningObjectives
+  objectives={[
+    "Understand scope types (global, function, block)",
+    "Explain hoisting and temporal dead zone",
+    "Use closures for private state",
+    "Fix the loop + closure gotcha",
+  ]}
+/>
 
 ## Scope Types
 
@@ -16,21 +23,27 @@ function outer() {
   const f = "function scope"
   if (true) {
     let b = "block scope"
-    var v = "NOT block"  // var ignores blocks
+    var v = "NOT block" // var ignores blocks
   }
-  console.log(v)  // "NOT block"
+  console.log(v) // "NOT block"
 }
 ```
 
-<Alert><AlertTriangle /><AlertTitle>Gotcha</AlertTitle><AlertDescription>`var` is function-scoped. Use `let`/`const`.</AlertDescription></Alert>
+<Alert>
+  <AlertTriangle />
+  <AlertTitle>Gotcha</AlertTitle>
+  <AlertDescription>
+    `var` is function-scoped. Use `let`/`const`.
+  </AlertDescription>
+</Alert>
 
 ## Hoisting & TDZ
 
 ```javascript
-console.log(a)          // undefined (hoisted)
+console.log(a) // undefined (hoisted)
 // console.log(b)       // ReferenceError: TDZ
 var a = 1
-let b = 2  // hoisted but uninitialized until this line
+let b = 2 // hoisted but uninitialized until this line
 ```
 
 ## Closures
@@ -43,14 +56,17 @@ function createCounter() {
   return { increment: () => ++count, getCount: () => count }
 }
 const c = createCounter()
-c.increment()      // 1
+c.increment() // 1
 // No direct access to count
 
 // Private state
 function createBankAccount(initial) {
   let balance = initial
   return {
-    deposit: (amt) => { balance += amt; return balance },
+    deposit: (amt) => {
+      balance += amt
+      return balance
+    },
     getBalance: () => balance,
   }
 }
@@ -58,17 +74,16 @@ function createBankAccount(initial) {
 // Memoization
 function memoize(fn) {
   const cache = new Map()
-  return (arg) => cache.has(arg) ? cache.get(arg) : (cache.set(arg, fn(arg)), cache.get(arg))
+  return (arg) =>
+    cache.has(arg) ? cache.get(arg) : (cache.set(arg, fn(arg)), cache.get(arg))
 }
 ```
 
 ## Loop + Closure Gotcha
 
 ```javascript
-for (var i = 0; i < 3; i++)
-  setTimeout(() => console.log(i), 0)  // 3, 3, 3 (shared binding)
-for (let i = 0; i < 3; i++)
-  setTimeout(() => console.log(i), 0)  // 0, 1, 2 (per-iteration binding)
+for (var i = 0; i < 3; i++) setTimeout(() => console.log(i), 0) // 3, 3, 3 (shared binding)
+for (let i = 0; i < 3; i++) setTimeout(() => console.log(i), 0) // 0, 1, 2 (per-iteration binding)
 ```
 
 ## Interactive Exercise
@@ -81,15 +96,20 @@ for (let i = 0; i < 3; i++)
   // throw if step <= 0
 }`}
   language="javascript"
-  hints={["Use closure to keep count private", "Validate step before modifying count"]}
+  hints={[
+    "Use closure to keep count private",
+    "Validate step before modifying count",
+  ]}
   previewType="mixed"
 />
 
 ## Lesson Summary
 
-<LessonSummary points={[
-  "Global, function (var), and block (let/const) scope",
-  "let/const have TDZ — access before declaration throws",
-  "Closures enable private state and memoization",
-  "var in loops shares binding; let creates per-iteration bindings"
-]} />
+<LessonSummary
+  points={[
+    "Global, function (var), and block (let/const) scope",
+    "let/const have TDZ — access before declaration throws",
+    "Closures enable private state and memoization",
+    "var in loops shares binding; let creates per-iteration bindings",
+  ]}
+/>

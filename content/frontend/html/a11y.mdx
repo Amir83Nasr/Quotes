@@ -5,24 +5,26 @@ difficulty: intermediate
 order: 6
 ---
 
-<LearningObjectives objectives={[
-"Use ARIA landmarks, roles, states, and properties correctly",
-"Apply aria-label, aria-labelledby, and aria-describedby for accessible names",
-"Use aria-live regions for dynamic content updates",
-"Implement keyboard navigation with tabindex and focus management",
-"Add skip links for keyboard and screen reader users",
-"Apply WCAG principles: Perceivable, Operable, Understandable, Robust",
-"Test accessibility with screen readers and tools",
-]} />
+<LearningObjectives
+  objectives={[
+    "Use ARIA landmarks, roles, states, and properties correctly",
+    "Apply aria-label, aria-labelledby, and aria-describedby for accessible names",
+    "Use aria-live regions for dynamic content updates",
+    "Implement keyboard navigation with tabindex and focus management",
+    "Add skip links for keyboard and screen reader users",
+    "Apply WCAG principles: Perceivable, Operable, Understandable, Robust",
+    "Test accessibility with screen readers and tools",
+  ]}
+/>
 
 ## WCAG Principles (POUR)
 
-| Principle | Meaning | Example |
-|-----------|---------|---------|
-| **P**erceivable | Content must be presentable to senses | Alt text on images, captions on video |
-| **O**perable | UI must work with various input methods | Keyboard navigation, enough time |
-| **U**nderstandable | Content and UI must be clear | Consistent navigation, error messages |
-| **R**obust | Content works with current/future tools | Valid HTML, proper ARIA usage |
+| Principle          | Meaning                                 | Example                               |
+| ------------------ | --------------------------------------- | ------------------------------------- |
+| **P**erceivable    | Content must be presentable to senses   | Alt text on images, captions on video |
+| **O**perable       | UI must work with various input methods | Keyboard navigation, enough time      |
+| **U**nderstandable | Content and UI must be clear            | Consistent navigation, error messages |
+| **R**obust         | Content works with current/future tools | Valid HTML, proper ARIA usage         |
 
 ## ARIA Landmarks
 
@@ -47,9 +49,7 @@ Use HTML semantic elements first. Add ARIA roles only when HTML semantics are in
 
 ```html
 <!-- aria-label on elements without visible text -->
-<button aria-label="Close dialog">
-  ✕
-</button>
+<button aria-label="Close dialog">✕</button>
 
 <!-- aria-labelledby: reference a visible label -->
 <div role="dialog" aria-labelledby="dialog-title">
@@ -58,10 +58,7 @@ Use HTML semantic elements first. Add ARIA roles only when HTML semantics are in
 </div>
 
 <!-- aria-describedby: provide extended description -->
-<input
-  type="password"
-  aria-describedby="password-hint"
-/>
+<input type="password" aria-describedby="password-hint" />
 <p id="password-hint">Must be at least 8 characters with one number</p>
 ```
 
@@ -76,29 +73,25 @@ Announce content changes to screen readers.
 </div>
 ```
 
-| Value | Behavior |
-|-------|----------|
-| `off` | Default — no announcement |
-| `polite` | Announce when user is idle |
-| `assertive` | Interrupt current announcement |
+| Value           | Behavior                                      |
+| --------------- | --------------------------------------------- |
+| `off`           | Default — no announcement                     |
+| `polite`        | Announce when user is idle                    |
+| `assertive`     | Interrupt current announcement                |
 | `atomic="true"` | Announce entire region, not just changed part |
 
 ## Keyboard Navigation & tabindex
 
 ```html
 <!-- Natural tab order: tabindex="0" makes element focusable -->
-<div tabindex="0" role="button" class="custom-button">
-  Click Me
-</div>
+<div tabindex="0" role="button" class="custom-button">Click Me</div>
 
 <!-- Positive tabindex creates custom order (avoid unless necessary) -->
 <input tabindex="1" />
 <input tabindex="2" />
 
 <!-- tabindex="-1" makes element programmatically focusable but not tabbable -->
-<div tabindex="-1" id="focus-target">
-  Focus me with JavaScript
-</div>
+<div tabindex="-1" id="focus-target">Focus me with JavaScript</div>
 ```
 
 <Alert><AlertTitle>Don't Use Positive tabindex</AlertTitle><AlertDescription>Values > 0 create an unexpected tab order for keyboard users. The natural DOM order is almost always correct. Use `tabindex="0"` to make a non-interactive element focusable, use `tabindex="-1"` for scripted focus.</AlertDescription></Alert>
@@ -110,9 +103,7 @@ Allow keyboard users to skip repetitive navigation.
 ```html
 <body>
   <!-- First focusable element on page -->
-  <a href="#main-content" class="skip-link">
-    Skip to main content
-  </a>
+  <a href="#main-content" class="skip-link"> Skip to main content </a>
 
   <header>
     <nav><!-- repetitive navigation --></nav>
@@ -136,7 +127,7 @@ Allow keyboard users to skip repetitive navigation.
 }
 
 .skip-link:focus {
-  top: 0;  /* visible when focused */
+  top: 0; /* visible when focused */
 }
 ```
 
@@ -156,7 +147,14 @@ Allow keyboard users to skip repetitive navigation.
     <p id="name-hint" style="font-size:0.75rem;color:#64748b">Enter your full name (min 2 characters)</p>
   </div>
 </div>`}
-  css={`body { font-family: system-ui; } .a11y-demo .skip:focus { top: 0; }`}
+  css={`
+    body {
+      font-family: system-ui;
+    }
+    .a11y-demo .skip:focus {
+      top: 0;
+    }
+  `}
 />
 
 <InteractiveExercise
@@ -201,15 +199,23 @@ Allow keyboard users to skip repetitive navigation.
     <p>JS content</p>
   </div>
 </div>`}
-  hints={["Add role=\"tablist\" on the tab container", "Add role=\"tab\" to each button with aria-selected", "Add role=\"tabpanel\" to each panel", "Link tabs to panels with aria-controls and aria-labelledby", "Use tabindex=\"-1\" on inactive tabs, tabindex=\"0\" on active"]}
+  hints={[
+    'Add role="tablist" on the tab container',
+    'Add role="tab" to each button with aria-selected',
+    'Add role="tabpanel" to each panel',
+    "Link tabs to panels with aria-controls and aria-labelledby",
+    'Use tabindex="-1" on inactive tabs, tabindex="0" on active',
+  ]}
   previewType="html"
 />
 
-<LessonSummary points={[
-"WCAG POUR: Perceivable, Operable, Understandable, Robust",
-"Use semantic HTML first — ARIA only when HTML is insufficient",
-"aria-label, aria-labelledby, aria-describedby provide accessible names",
-"aria-live regions announce dynamic content to screen readers",
-"tabindex=\"0\" follows DOM order, tabindex=\"-1\" enables scripted focus",
-"Skip links let keyboard users bypass repetitive navigation",
-]} />
+<LessonSummary
+  points={[
+    "WCAG POUR: Perceivable, Operable, Understandable, Robust",
+    "Use semantic HTML first — ARIA only when HTML is insufficient",
+    "aria-label, aria-labelledby, aria-describedby provide accessible names",
+    "aria-live regions announce dynamic content to screen readers",
+    'tabindex="0" follows DOM order, tabindex="-1" enables scripted focus',
+    "Skip links let keyboard users bypass repetitive navigation",
+  ]}
+/>

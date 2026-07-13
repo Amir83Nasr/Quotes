@@ -100,7 +100,7 @@ Control how items grow or shrink:
 ### Centered content (both axes):
 
 ```html
-<div class="flex items-center justify-center h-64">
+<div class="flex h-64 items-center justify-center">
   <div>Centered</div>
 </div>
 ```
@@ -108,7 +108,7 @@ Control how items grow or shrink:
 ### Sticky footer:
 
 ```html
-<div class="flex flex-col min-h-svh">
+<div class="flex min-h-svh flex-col">
   <header class="h-16">Header</header>
   <main class="flex-1">Content</main>
   <footer class="h-16">Footer</footer>
@@ -119,9 +119,9 @@ Control how items grow or shrink:
 
 ```html
 <div class="flex flex-wrap gap-4">
-  <div class="flex-1 min-w-64">Card 1</div>
-  <div class="flex-1 min-w-64">Card 2</div>
-  <div class="flex-1 min-w-64">Card 3</div>
+  <div class="min-w-64 flex-1">Card 1</div>
+  <div class="min-w-64 flex-1">Card 2</div>
+  <div class="min-w-64 flex-1">Card 3</div>
 </div>
 ```
 

@@ -13,12 +13,14 @@ updated: "2026-07-11"
 
 React 19 lets a `<form>` call a function directly through its `action` prop, and pairs it with `useActionState` to manage the result, error, and pending state automatically. The manual `useState` + `isLoading` + `try/catch` dance is largely gone.
 
-<LearningObjectives objectives={[
-  "Pass a function to a form's action prop",
-  "Manage form result and pending state with useActionState",
-  "Read the built-in pending flag without a manual loading state",
-  "Try a live form and watch the pending state in action",
-]} />
+<LearningObjectives
+  objectives={[
+    "Pass a function to a form's action prop",
+    "Manage form result and pending state with useActionState",
+    "Read the built-in pending flag without a manual loading state",
+    "Try a live form and watch the pending state in action",
+  ]}
+/>
 
 ## Forms That Call Functions
 
@@ -63,7 +65,7 @@ function Newsletter() {
       await saveEmail(email)
       return { success: `Subscribed ${email}` }
     },
-    {},
+    {}
   )
 
   return (
@@ -88,8 +90,12 @@ This is the exact pattern running as a real component. Submit an email without a
 <UseActionStateDemo />
 
 <Alert>
-<AlertTitle>Pairs perfectly with Server Actions</AlertTitle>
-<AlertDescription>In Next.js, the action function can be a Server Action (`"use server"`). The same `useActionState` code then runs the mutation on the server, with progressive enhancement — the form even works before JavaScript loads.</AlertDescription>
+  <AlertTitle>Pairs perfectly with Server Actions</AlertTitle>
+  <AlertDescription>
+    In Next.js, the action function can be a Server Action (`"use server"`). The
+    same `useActionState` code then runs the mutation on the server, with
+    progressive enhancement — the form even works before JavaScript loads.
+  </AlertDescription>
 </Alert>
 
 ## Bonus: useFormStatus for Nested Buttons
@@ -107,10 +113,12 @@ function SubmitButton() {
 
 ## Check Your Understanding
 
-<LessonSummary points={[
-  "<form action={fn}> calls fn with FormData — no onSubmit or preventDefault",
-  "useActionState returns [state, formAction, isPending] to manage result and loading",
-  "The action gets (previousState, formData), enabling stateful form logic",
-  "isPending replaces manual loading flags; useFormStatus reads it from nested buttons",
-  "The same pattern upgrades to Server Actions with progressive enhancement in Next.js",
-]} />
+<LessonSummary
+  points={[
+    "<form action={fn}> calls fn with FormData — no onSubmit or preventDefault",
+    "useActionState returns [state, formAction, isPending] to manage result and loading",
+    "The action gets (previousState, formData), enabling stateful form logic",
+    "isPending replaces manual loading flags; useFormStatus reads it from nested buttons",
+    "The same pattern upgrades to Server Actions with progressive enhancement in Next.js",
+  ]}
+/>

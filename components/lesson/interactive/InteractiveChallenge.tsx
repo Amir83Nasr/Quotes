@@ -11,17 +11,15 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import {
-  Target,
-  CheckCircle2,
-  RotateCcw,
-  ChevronRight,
-  Sparkles,
-} from "lucide-react"
+import { Target, CheckCircle2, RotateCcw, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { LiveEditor } from "./LiveEditor"
 import { SandboxPreview } from "./SandboxPreview"
-import { Checklist, difficultyColors, type Difficulty } from "../shared/Checklist"
+import {
+  Checklist,
+  difficultyColors,
+  type Difficulty,
+} from "../shared/Checklist"
 
 interface InteractiveChallengeProps {
   title: string
@@ -59,7 +57,6 @@ export function InteractiveChallenge({
   const [code, setCode] = useState(starterCode)
   const [completed, setCompleted] = useState<string[]>([])
   const [showSolution, setShowSolution] = useState(false)
-  const [allDone, setAllDone] = useState(false)
 
   const toggleRequirement = useCallback((req: string) => {
     setCompleted((prev) => {
@@ -78,7 +75,6 @@ export function InteractiveChallenge({
     setCode(starterCode)
     setCompleted([])
     setShowSolution(false)
-    setAllDone(false)
   }, [starterCode])
 
   return (
@@ -86,7 +82,7 @@ export function InteractiveChallenge({
       className={cn(
         "my-6",
         allRequirementsDone && "ring-1 ring-amber-500/50",
-        className,
+        className
       )}
     >
       <CardHeader className="border-b bg-muted/30">
@@ -97,7 +93,10 @@ export function InteractiveChallenge({
           </div>
           <div className="flex items-center gap-2">
             <Badge
-              className={cn("text-xs font-medium", difficultyColors[difficulty])}
+              className={cn(
+                "text-xs font-medium",
+                difficultyColors[difficulty]
+              )}
             >
               {difficultyEmoji[difficulty]} {difficulty}
             </Badge>

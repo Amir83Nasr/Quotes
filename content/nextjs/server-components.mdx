@@ -10,13 +10,13 @@ React Server Components (RSC) let you render components on the server, sending o
 
 ## Server vs Client Components
 
-| Aspect | Server Component | Client Component |
-|--------|-----------------|-----------------|
-| Rendering | Server only | Browser + server |
-| Bundle size | Zero JS | Full JS included |
-| State / Effects | Not supported | Full support |
-| Database access | Direct | Via API |
-| Hooks | No | Yes |
+| Aspect          | Server Component | Client Component |
+| --------------- | ---------------- | ---------------- |
+| Rendering       | Server only      | Browser + server |
+| Bundle size     | Zero JS          | Full JS included |
+| State / Effects | Not supported    | Full support     |
+| Database access | Direct           | Via API          |
+| Hooks           | No               | Yes              |
 
 ## Default: Server Components
 
@@ -73,7 +73,7 @@ export default async function Page() {
 }
 
 // Client Component
-"use client"
+;("use client")
 function ClientList({ items }: { items: Item[] }) {
   const [filter, setFilter] = useState("")
   // ... interactive filtering

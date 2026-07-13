@@ -7,13 +7,15 @@ order: 11
 
 # Streaming & Suspense
 
-<LearningObjectives objectives={[
-  "Understand streaming architecture in Next.js",
-  "Use Suspense boundaries to stream page sections independently",
-  "Implement loading UI components with Suspense",
-  "Stream responses from API route handlers",
-  "Measure performance impact of streaming"
-]} />
+<LearningObjectives
+  objectives={[
+    "Understand streaming architecture in Next.js",
+    "Use Suspense boundaries to stream page sections independently",
+    "Implement loading UI components with Suspense",
+    "Stream responses from API route handlers",
+    "Measure performance impact of streaming",
+  ]}
+/>
 
 ## Streaming Architecture
 
@@ -50,7 +52,9 @@ export default function BlogPage() {
 }
 
 async function BlogPosts() {
-  const posts = await fetch("https://api.example.com/posts").then((r) => r.json())
+  const posts = await fetch("https://api.example.com/posts").then((r) =>
+    r.json()
+  )
   return <ul>{/* ... */}</ul>
 }
 ```
@@ -164,7 +168,10 @@ async function UserActivity() {
 <Alert>
   <AlertTitle>SEO and Streaming</AlertTitle>
   <AlertDescription>
-    Streaming is fully SEO-compatible. Search engines see the fully rendered HTML because the crawler waits for the stream to complete. Next.js sends a complete HTML response even with streaming — it's just delivered progressively.
+    Streaming is fully SEO-compatible. Search engines see the fully rendered
+    HTML because the crawler waits for the stream to complete. Next.js sends a
+    complete HTML response even with streaming — it's just delivered
+    progressively.
   </AlertDescription>
 </Alert>
 
@@ -176,7 +183,7 @@ PPR combines static prerendering with dynamic streaming:
 // next.config.ts
 const nextConfig: NextConfig = {
   experimental: {
-    ppr: true,   // enable per-route
+    ppr: true, // enable per-route
     ppr: "incremental", // or incremental opt-in
   },
 }
@@ -187,9 +194,9 @@ const nextConfig: NextConfig = {
 export default function Page() {
   return (
     <div>
-      <Header />          {/* Prerendered at build time */}
+      <Header /> {/* Prerendered at build time */}
       <Suspense fallback={<Skeleton />}>
-        <DynamicContent />  {/* Streamed at request time */}
+        <DynamicContent /> {/* Streamed at request time */}
       </Suspense>
     </div>
   )
@@ -223,26 +230,28 @@ export default function Dashboard() {
   solutionCode={`import { Suspense } from "react"
 
 function Skeleton({ className = "h-32" }: { className?: string }) {
-  return <div className={\`bg-gray-200 rounded animate-pulse \${className}\`} />
+return <div className={\`bg-gray-200 rounded animate-pulse \${className}\`} />
 }
 
 async function StatsCards() {
-  await new Promise((r) => setTimeout(r, 2000))
-  return <div className="grid grid-cols-3 gap-4">
-    <div className="p-4 bg-blue-100 rounded">Revenue: $12,000</div>
-    <div className="p-4 bg-green-100 rounded">Users: 1,234</div>
-    <div className="p-4 bg-purple-100 rounded">Orders: 56</div>
+await new Promise((r) => setTimeout(r, 2000))
+return <div className="grid grid-cols-3 gap-4">
+
+<div className="rounded bg-blue-100 p-4">Revenue: $12,000</div>
+<div className="rounded bg-green-100 p-4">Users: 1,234</div>
+<div className="rounded bg-purple-100 p-4">Orders: 56</div>
+
   </div>
 }
 
 async function RecentActivity() {
-  await new Promise((r) => setTimeout(r, 3000))
-  return <ul className="space-y-2"><li>User signed up</li><li>Order placed</li></ul>
+await new Promise((r) => setTimeout(r, 3000))
+return <ul className="space-y-2"><li>User signed up</li><li>Order placed</li></ul>
 }
 
 async function TopProducts() {
-  await new Promise((r) => setTimeout(r, 1000))
-  return <div className="p-4 bg-yellow-100 rounded">Widget A — 200 sold</div>
+await new Promise((r) => setTimeout(r, 1000))
+return <div className="p-4 bg-yellow-100 rounded">Widget A — 200 sold</div>
 }
 
 export default function Dashboard() {

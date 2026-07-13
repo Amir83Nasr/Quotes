@@ -8,27 +8,32 @@ order: 7
 
 Forms are everywhere. React Hook Form (RHF) + Zod cuts boilerplate by 60% vs manual state.
 
-<LearningObjectives objectives={[
-  "Understand why form libraries improve DX and perf",
-  "Set up RHF with register, handleSubmit, and formState",
-  "Define Zod schemas for type-safe validation",
-  "Integrate RHF with Zod via @hookform/resolvers",
-  "Handle complex forms: arrays, nested objects, conditional fields",
-  "Build a multi-field registration form with validation"
-]} />
+<LearningObjectives
+  objectives={[
+    "Understand why form libraries improve DX and perf",
+    "Set up RHF with register, handleSubmit, and formState",
+    "Define Zod schemas for type-safe validation",
+    "Integrate RHF with Zod via @hookform/resolvers",
+    "Handle complex forms: arrays, nested objects, conditional fields",
+    "Build a multi-field registration form with validation",
+  ]}
+/>
 
 ## Why Form Libraries?
 
-| Problem | Manual Approach | RHF Approach |
-|---------|----------------|--------------|
+| Problem               | Manual Approach                       | RHF Approach                          |
+| --------------------- | ------------------------------------- | ------------------------------------- |
 | Controlled re-renders | Every keystroke re-renders whole form | Uncontrolled inputs, isolated renders |
-| Validation | Write from scratch | Zod/Yup schemas |
-| Error display | Custom state per field | `formState.errors` auto-wired |
-| Field arrays | Manual add/remove logic | `useFieldArray` |
+| Validation            | Write from scratch                    | Zod/Yup schemas                       |
+| Error display         | Custom state per field                | `formState.errors` auto-wired         |
+| Field arrays          | Manual add/remove logic               | `useFieldArray`                       |
 
 <Alert>
-<AlertTitle>Key Insight</AlertTitle>
-<AlertDescription>RHF uses uncontrolled inputs by default. Means zero re-renders on keystroke. Only re-renders the field that changes.</AlertDescription>
+  <AlertTitle>Key Insight</AlertTitle>
+  <AlertDescription>
+    RHF uses uncontrolled inputs by default. Means zero re-renders on keystroke.
+    Only re-renders the field that changes.
+  </AlertDescription>
 </Alert>
 
 ## Basic Setup
@@ -42,17 +47,23 @@ type FormData = {
 }
 
 function SimpleForm() {
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>()
   const onSubmit = (data: FormData) => console.log(data)
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <input {...register("name", { required: "Name is required" })} />
       {errors.name && <p>{errors.name.message}</p>}
-      <input {...register("email", {
-        required: true,
-        pattern: { value: /^\S+@\S+$/i, message: "Invalid email" }
-      })} />
+      <input
+        {...register("email", {
+          required: true,
+          pattern: { value: /^\S+@\S+$/i, message: "Invalid email" },
+        })}
+      />
       {errors.email && <p>{errors.email.message}</p>}
       <button type="submit">Submit</button>
     </form>
@@ -92,7 +103,11 @@ const schema = z.object({
 type Schema = z.infer<typeof schema>
 
 function ValidatedForm() {
-  const { register, handleSubmit, formState: { errors } } = useForm<Schema>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Schema>({
     resolver: zodResolver(schema),
   })
 
@@ -111,8 +126,11 @@ function ValidatedForm() {
 ```
 
 <Alert>
-<AlertTitle>Gotcha: Number Inputs</AlertTitle>
-<AlertDescription>HTML inputs return strings. Use `z.coerce.number()` to parse correctly. Without coerce, a number field validates as string and fails.</AlertDescription>
+  <AlertTitle>Gotcha: Number Inputs</AlertTitle>
+  <AlertDescription>
+    HTML inputs return strings. Use `z.coerce.number()` to parse correctly.
+    Without coerce, a number field validates as string and fails.
+  </AlertDescription>
 </Alert>
 
 ## Controlled vs Uncontrolled
@@ -132,6 +150,7 @@ function RHFInput() {
 }
 // Zero re-renders on sibling field change
 ```
+
 </TabsContent>
 <TabsContent value="manual">
 
@@ -143,6 +162,7 @@ function ManualInput() {
 }
 // Entire component re-renders every keystroke
 ```
+
 </TabsContent>
 </Tabs>
 
@@ -168,10 +188,15 @@ function Invoice() {
           <input {...register(`items.${index}.name`)} placeholder="Item name" />
           <input type="number" {...register(`items.${index}.quantity`)} />
           <input type="number" {...register(`items.${index}.price`)} />
-          <button type="button" onClick={() => remove(index)}>Remove</button>
+          <button type="button" onClick={() => remove(index)}>
+            Remove
+          </button>
         </div>
       ))}
-      <button type="button" onClick={() => append({ name: "", quantity: 1, price: 0 })}>
+      <button
+        type="button"
+        onClick={() => append({ name: "", quantity: 1, price: 0 })}
+      >
         Add Item
       </button>
     </>
@@ -198,10 +223,10 @@ import { z } from "zod"
 // Step 4: Render fields with register + error messages
 
 type FormValues = {
-  email: string
-  password: string
-  confirmPassword: string
-  acceptTerms: boolean
+email: string
+password: string
+confirmPassword: string
+acceptTerms: boolean
 }
 
 export default function RegisterForm() {
@@ -234,15 +259,15 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 
 const schema = z.object({
-  email: z.string().email("Valid email required"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  confirmPassword: z.string(),
-  acceptTerms: z.literal(true, {
-    errorMap: () => ({ message: "You must accept the terms" }),
-  }),
+email: z.string().email("Valid email required"),
+password: z.string().min(8, "Password must be at least 8 characters"),
+confirmPassword: z.string(),
+acceptTerms: z.literal(true, {
+errorMap: () => ({ message: "You must accept the terms" }),
+}),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
+message: "Passwords do not match",
+path: ["confirmPassword"],
 })
 
 type FormValues = z.infer<typeof schema>
@@ -258,49 +283,52 @@ export default function RegisterForm() {
     },
   })
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Registered:", data)
-  }
+const onSubmit = (data: FormValues) => {
+console.log("Registered:", data)
+}
 
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div>
-        <label>Email</label>
-        <input type="email" {...register("email")} />
-        {errors.email && <p role="alert">{errors.email.message}</p>}
-      </div>
-      <div>
-        <label>Password</label>
-        <input type="password" {...register("password")} />
-        {errors.password && <p role="alert">{errors.password.message}</p>}
-      </div>
-      <div>
-        <label>Confirm Password</label>
-        <input type="password" {...register("confirmPassword")} />
-        {errors.confirmPassword && <p role="alert">{errors.confirmPassword.message}</p>}
-      </div>
-      <div>
-        <label>
-          <input type="checkbox" {...register("acceptTerms")} /> I accept the terms
-        </label>
-        {errors.acceptTerms && <p role="alert">{errors.acceptTerms.message}</p>}
-      </div>
-      <button type="submit">Register</button>
-    </form>
-  )
+return (
+
+<form onSubmit={handleSubmit(onSubmit)}>
+<div>
+<label>Email</label>
+<input type="email" {...register("email")} />
+{errors.email && <p role="alert">{errors.email.message}</p>}
+</div>
+<div>
+<label>Password</label>
+<input type="password" {...register("password")} />
+{errors.password && <p role="alert">{errors.password.message}</p>}
+</div>
+<div>
+<label>Confirm Password</label>
+<input type="password" {...register("confirmPassword")} />
+{errors.confirmPassword && <p role="alert">{errors.confirmPassword.message}</p>}
+</div>
+<div>
+<label>
+<input type="checkbox" {...register("acceptTerms")} /> I accept the terms
+</label>
+{errors.acceptTerms && <p role="alert">{errors.acceptTerms.message}</p>}
+</div>
+<button type="submit">Register</button>
+</form>
+)
 }`}
-  hints={[
-    "Use z.object({...}).refine() to compare password fields",
-    "Set path in refine options to attach error to confirmPassword field",
-    "z.literal(true) forces the checkbox to be checked",
-  ]}
+hints={[
+"Use z.object({...}).refine() to compare password fields",
+"Set path in refine options to attach error to confirmPassword field",
+"z.literal(true) forces the checkbox to be checked",
+]}
 />
 
-<LessonSummary points={[
-  "RHF uses uncontrolled inputs via refs — zero re-renders on keystroke",
-  "Zod schemas define both validation rules and TypeScript types",
-  "@hookform/resolvers/zod bridges RHF and Zod",
-  "useFieldArray handles dynamic lists of form fields",
-  "z.coerce.number() parses string inputs before validation",
-  "z.literal(true) enforces boolean checkbox acceptance",
-]} />
+<LessonSummary
+  points={[
+    "RHF uses uncontrolled inputs via refs — zero re-renders on keystroke",
+    "Zod schemas define both validation rules and TypeScript types",
+    "@hookform/resolvers/zod bridges RHF and Zod",
+    "useFieldArray handles dynamic lists of form fields",
+    "z.coerce.number() parses string inputs before validation",
+    "z.literal(true) enforces boolean checkbox acceptance",
+  ]}
+/>

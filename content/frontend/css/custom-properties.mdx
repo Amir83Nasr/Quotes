@@ -5,14 +5,16 @@ difficulty: intermediate
 order: 8
 ---
 
-<LearningObjectives objectives={[
-"Define and use custom properties with the -- prefix",
-"Understand inheritance and cascading behavior of custom properties",
-"Use var() with fallback values for resilient styles",
-"Build a dynamic theme system with custom properties",
-"Register typed custom properties with @property",
-"Animate custom properties efficiently",
-]} />
+<LearningObjectives
+  objectives={[
+    "Define and use custom properties with the -- prefix",
+    "Understand inheritance and cascading behavior of custom properties",
+    "Use var() with fallback values for resilient styles",
+    "Build a dynamic theme system with custom properties",
+    "Register typed custom properties with @property",
+    "Animate custom properties efficiently",
+  ]}
+/>
 
 ## Defining Custom Properties
 
@@ -37,12 +39,25 @@ Custom properties (CSS variables) start with `--` and are accessed via `var()`.
 Custom properties inherit through the DOM. Override at any level.
 
 ```css
-.card { --border-radius: 8px; }
-.card.featured { --border-radius: 16px; }
-.card * { border-radius: var(--border-radius); } /* all children inherit */
+.card {
+  --border-radius: 8px;
+}
+.card.featured {
+  --border-radius: 16px;
+}
+.card * {
+  border-radius: var(--border-radius);
+} /* all children inherit */
 ```
 
-<Alert><AlertTitle>Gotcha</AlertTitle><AlertDescription>Custom properties cascade normally, so a value defined on an element applies to its children. Use `:root` for globals, specific selectors for scoped overrides.</AlertDescription></Alert>
+<Alert>
+  <AlertTitle>Gotcha</AlertTitle>
+  <AlertDescription>
+    Custom properties cascade normally, so a value defined on an element applies
+    to its children. Use `:root` for globals, specific selectors for scoped
+    overrides.
+  </AlertDescription>
+</Alert>
 
 ## var() with Fallbacks
 
@@ -73,7 +88,10 @@ Swap property values at a higher level to change the entire theme.
   --color-text: #1e293b;
   --color-accent: #6366f1;
 }
-body { background: var(--color-bg); color: var(--color-text); }
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
 ```
 
 <Tabs>
@@ -135,7 +153,9 @@ Register custom properties with a syntax type, initial value, and inheritance. E
   transition: --gradient-angle 1s;
 }
 
-.box:hover { --gradient-angle: 360deg; }
+.box:hover {
+  --gradient-angle: 360deg;
+}
 ```
 
 <InteractiveExercise
@@ -183,14 +203,20 @@ Register custom properties with a syntax type, initial value, and inheritance. E
     <p>This card uses CSS custom properties for colors.</p>
   </div>
 </div>`}
-  hints={["Define all colors as custom properties on .theme-section", "Use .dark class to override property values", "Apply var() to all color declarations"]}
+  hints={[
+    "Define all colors as custom properties on .theme-section",
+    "Use .dark class to override property values",
+    "Apply var() to all color declarations",
+  ]}
   previewType="html"
 />
 
-<LessonSummary points={[
-"Custom properties use -- prefix and are read with var()",
-"Properties inherit and cascade through the DOM tree",
-"var() accepts fallback values for resilience",
-"Theming swaps property values at a container level",
-"@property enables typed custom properties with animation support",
-]} />
+<LessonSummary
+  points={[
+    "Custom properties use -- prefix and are read with var()",
+    "Properties inherit and cascade through the DOM tree",
+    "var() accepts fallback values for resilience",
+    "Theming swaps property values at a container level",
+    "@property enables typed custom properties with animation support",
+  ]}
+/>

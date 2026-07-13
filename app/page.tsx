@@ -5,11 +5,19 @@ import { CATEGORIES, SIDEBAR_SECTIONS } from "@/constants"
 import { CategoryCard } from "@/components/docs/CategoryCard"
 import { Footer } from "@/components/layout/Footer"
 import { Button } from "@/components/ui/button"
-import { SITE_CONFIG } from "@/constants/site"
-import { BookOpen, ArrowRight, ChevronRight, Sparkles, Sun, Moon, Target, Trophy } from "lucide-react"
+import {
+  BookOpen,
+  ArrowRight,
+  ChevronRight,
+  Sparkles,
+  Sun,
+  Moon,
+  Target,
+  Trophy,
+} from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useTheme } from "next-themes"
-import { useEffect, useState } from "react"
+import { useSyncExternalStore, useCallback } from "react"
 import type { Category } from "@/types/content"
 
 /** Build a lookup of category id → category object */
@@ -24,10 +32,18 @@ const SECTION_ICONS: Record<string, React.ElementType> = {
   Projects: Trophy,
 }
 
+/** True once client-side hydration completes — avoids hydration mismatch for theme icon */
+function useMounted() {
+  return useSyncExternalStore(
+    useCallback(() => () => {}, []),
+    () => true,
+    () => false
+  )
+}
+
 export default function HomePage() {
   const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
+  const mounted = useMounted()
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -72,9 +88,9 @@ export default function HomePage() {
                 Master Web Development
               </h1>
               <p className="mb-8 text-lg text-muted-foreground md:text-xl">
-                A guided, example-driven curriculum. Learn HTML &rarr; CSS &rarr;
-                JavaScript &rarr; TypeScript &rarr; React &rarr; Next.js. Build real
-                projects at every step.
+                A guided, example-driven curriculum. Learn HTML &rarr; CSS
+                &rarr; JavaScript &rarr; TypeScript &rarr; React &rarr; Next.js.
+                Build real projects at every step.
               </p>
               <div className="flex items-center justify-center gap-4">
                 <Button size="lg" asChild>
@@ -93,14 +109,17 @@ export default function HomePage() {
         {/* ── Learning Path Steps ── */}
         <section className="border-b bg-muted">
           <div className="mx-auto max-w-6xl px-4 py-12 md:px-6 md:py-16">
-            <h2 className="mb-2 text-2xl font-bold tracking-tight">Your Learning Path</h2>
+            <h2 className="mb-2 text-2xl font-bold tracking-tight">
+              Your Learning Path
+            </h2>
             <p className="mb-10 text-muted-foreground">
-              A carefully sequenced curriculum — each section builds on the last.
+              A carefully sequenced curriculum — each section builds on the
+              last.
             </p>
 
             <div className="relative">
               {/* Connecting line (desktop) */}
-              <div className="absolute left-7 top-0 hidden h-full w-px bg-linear-to-b from-primary/40 via-primary/20 to-transparent md:block" />
+              <div className="absolute top-0 left-7 hidden h-full w-px bg-linear-to-b from-primary/40 via-primary/20 to-transparent md:block" />
 
               <div className="space-y-10">
                 {SIDEBAR_SECTIONS.map((section, idx) => {
@@ -117,14 +136,14 @@ export default function HomePage() {
                       {/* Step dot */}
                       <div
                         className={cn(
-                          "absolute left-4.5 top-1 hidden h-5 w-5 rounded-full border-2 bg-background md:flex md:items-center md:justify-center",
-                          idx === 0 && "border-primary",
+                          "absolute top-1 left-4.5 hidden h-5 w-5 rounded-full border-2 bg-background md:flex md:items-center md:justify-center",
+                          idx === 0 && "border-primary"
                         )}
                       >
                         <div
                           className={cn(
                             "h-2 w-2 rounded-full",
-                            idx === 0 ? "bg-primary" : "bg-muted-foreground/30",
+                            idx === 0 ? "bg-primary" : "bg-muted-foreground/30"
                           )}
                         />
                       </div>
@@ -136,7 +155,7 @@ export default function HomePage() {
                             "flex h-9 w-9 items-center justify-center rounded-lg md:hidden",
                             idx === 0
                               ? "bg-primary text-primary-foreground"
-                              : "bg-muted-foreground/10 text-muted-foreground",
+                              : "bg-muted-foreground/10 text-muted-foreground"
                           )}
                         >
                           <Icon className="h-4 w-4" />
@@ -146,7 +165,8 @@ export default function HomePage() {
                             {idx + 1}. {section.label}
                           </h3>
                           <p className="text-xs text-muted-foreground">
-                            {cats.length} {cats.length === 1 ? "topic" : "topics"}
+                            {cats.length}{" "}
+                            {cats.length === 1 ? "topic" : "topics"}
                           </p>
                         </div>
                       </div>
@@ -178,8 +198,8 @@ export default function HomePage() {
                 </div>
                 <h3 className="font-semibold">Follow the Path</h3>
                 <p className="text-sm text-muted-foreground">
-                  Start with Foundations and work your way up. Each lesson assumes you
-                  know the previous topic.
+                  Start with Foundations and work your way up. Each lesson
+                  assumes you know the previous topic.
                 </p>
               </div>
               <div className="space-y-2">
@@ -188,8 +208,8 @@ export default function HomePage() {
                 </div>
                 <h3 className="font-semibold">Learn by Doing</h3>
                 <p className="text-sm text-muted-foreground">
-                  Every concept comes with code examples, interactive exercises, and
-                  challenges. Write code, not just read.
+                  Every concept comes with code examples, interactive exercises,
+                  and challenges. Write code, not just read.
                 </p>
               </div>
               <div className="space-y-2">
@@ -198,8 +218,8 @@ export default function HomePage() {
                 </div>
                 <h3 className="font-semibold">Build Projects</h3>
                 <p className="text-sm text-muted-foreground">
-                  After each major section, apply everything in a real project. From
-                  landing pages to full-stack apps.
+                  After each major section, apply everything in a real project.
+                  From landing pages to full-stack apps.
                 </p>
               </div>
             </div>
@@ -213,7 +233,8 @@ export default function HomePage() {
               Ready to start your journey?
             </h2>
             <p className="mb-6 text-muted-foreground">
-              No setup, no account needed. Just open your first lesson and start coding.
+              No setup, no account needed. Just open your first lesson and start
+              coding.
             </p>
             <Button size="lg" asChild>
               <Link href="/frontend/html/intro">

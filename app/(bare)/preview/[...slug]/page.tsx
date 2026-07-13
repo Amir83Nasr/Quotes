@@ -9,7 +9,9 @@ interface PageProps {
   params: Promise<{ slug: string[] }>
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params
   const contentPath = slug.join("/")
   const source = await getMdxSource(contentPath)
@@ -64,7 +66,7 @@ export default async function PreviewPage({ params }: PageProps) {
         )}
       </header>
 
-      <div className="prose-custom prose prose-neutral dark:prose-invert max-w-none">
+      <div className="prose-custom prose max-w-none prose-neutral dark:prose-invert">
         {content}
       </div>
     </article>

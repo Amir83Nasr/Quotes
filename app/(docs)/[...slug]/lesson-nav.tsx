@@ -53,7 +53,9 @@ export function LessonNav({ navigation }: LessonNavProps) {
                 <Link href={prev.href} className="flex items-center gap-1">
                   <ChevronLeft className="h-4 w-4" />
                   <div className="flex flex-col items-start text-left">
-                    <span className="text-xs text-muted-foreground">Previous</span>
+                    <span className="text-xs text-muted-foreground">
+                      Previous
+                    </span>
                     <span className="text-sm font-medium">{prev.title}</span>
                   </div>
                 </Link>

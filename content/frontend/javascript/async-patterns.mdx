@@ -6,14 +6,20 @@ order: 7
 
 # Async/Await Patterns
 
-<LearningObjectives objectives={["Use async/await and error handling", "Choose sequential vs parallel execution", "Apply timeout and retry patterns"]} />
+<LearningObjectives
+  objectives={[
+    "Use async/await and error handling",
+    "Choose sequential vs parallel execution",
+    "Apply timeout and retry patterns",
+  ]}
+/>
 
 ## Async/Await
 
 ```javascript
 async function fetchUser(id) {
-  const res = await fetch('/api/users/' + id)
-  if (!res.ok) throw Error('HTTP ' + res.status)
+  const res = await fetch("/api/users/" + id)
+  if (!res.ok) throw Error("HTTP " + res.status)
   return res.json()
 }
 // Always returns a promise
@@ -23,11 +29,18 @@ async function fetchUser(id) {
 
 ```javascript
 // try/catch for per-op recovery
-try { return await fetchUser(id) }
-catch (err) { console.error(err); return null }
+try {
+  return await fetchUser(id)
+} catch (err) {
+  console.error(err)
+  return null
+}
 
 // .catch for fallback chains
-fetchUser(id).catch(err => { console.error(err); return null })
+fetchUser(id).catch((err) => {
+  console.error(err)
+  return null
+})
 ```
 
 ## Sequential vs Parallel
@@ -42,7 +55,7 @@ fetchUser(id).catch(err => { console.error(err); return null })
 
 ```javascript
 // Each needs previous result
-const user = await fetchUser(id)     // 100ms
+const user = await fetchUser(id) // 100ms
 const posts = await fetchPosts(user) // 200ms (needs user)
 // Total: ~300ms
 ```
@@ -54,8 +67,8 @@ const posts = await fetchPosts(user) // 200ms (needs user)
 ```javascript
 // Independent — run concurrently
 const [users, posts] = await Promise.all([
-  fetch("/api/users").then(r => r.json()),  // 100ms
-  fetch("/api/posts").then(r => r.json()),   // 200ms
+  fetch("/api/users").then((r) => r.json()), // 100ms
+  fetch("/api/posts").then((r) => r.json()), // 200ms
 ])
 // Total: ~200ms
 ```
@@ -67,9 +80,11 @@ const [users, posts] = await Promise.all([
 
 ```javascript
 async function dashboard(id) {
-  const user = await fetchUser(id)                            // serial
-  const [posts, fol] = await Promise.all([                    // parallel
-    fetchUserPosts(user.id), fetchFollowers(user.id),
+  const user = await fetchUser(id) // serial
+  const [posts, fol] = await Promise.all([
+    // parallel
+    fetchUserPosts(user.id),
+    fetchFollowers(user.id),
   ])
   return { user, posts, fol }
 }
@@ -81,8 +96,11 @@ async function dashboard(id) {
 async function fetchWithTimeout(url, timeout = 5000) {
   const ctrl = new AbortController()
   const id = setTimeout(() => ctrl.abort(), timeout)
-  try { return await fetch(url, { signal: ctrl.signal }) }
-  finally { clearTimeout(id) }
+  try {
+    return await fetch(url, { signal: ctrl.signal })
+  } finally {
+    clearTimeout(id)
+  }
 }
 ```
 
@@ -93,11 +111,11 @@ async function fetchWithRetry(url, { retries = 3, delay = 1000 } = {}) {
   for (let i = 0; i <= retries; i++) {
     try {
       const r = await fetch(url)
-      if (!r.ok) throw Error('HTTP ' + r.status)
+      if (!r.ok) throw Error("HTTP " + r.status)
       return await r.json()
     } catch (err) {
       if (i === retries) throw err
-      await new Promise(r => setTimeout(r, delay * 2 ** i))
+      await new Promise((r) => setTimeout(r, delay * 2 ** i))
     }
   }
 }
@@ -114,14 +132,19 @@ async function fetchWithRetry(url, { retries = 3, delay = 1000 } = {}) {
   // Only retry 5xx, throw 4xx immediately
 }`}
   language="javascript"
-  hints={["New AbortController per attempt", "Exponential backoff: delay * 2^attempt"]}
+  hints={[
+    "New AbortController per attempt",
+    "Exponential backoff: delay * 2^attempt",
+  ]}
   previewType="mixed"
 />
 
 ## Lesson Summary
 
-<LessonSummary points={[
-  "Async functions return promises; await pauses until settlement",
-  "Sequential for dependencies; Promise.all for parallel work",
-  "AbortController for timeouts; exponential backoff for retries"
-]} />
+<LessonSummary
+  points={[
+    "Async functions return promises; await pauses until settlement",
+    "Sequential for dependencies; Promise.all for parallel work",
+    "AbortController for timeouts; exponential backoff for retries",
+  ]}
+/>

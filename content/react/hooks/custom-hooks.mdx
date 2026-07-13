@@ -9,13 +9,15 @@ order: 7
 
 Custom hooks let you extract component logic into reusable functions. They compose built-in hooks (useState, useEffect, useRef, etc.) into higher-level abstractions.
 
-<LearningObjectives objectives={[
-  "Extract reusable logic from components into custom hooks",
-  "Follow the use* naming convention and rules of hooks",
-  "Build progressively complex hooks: useLocalStorage, useMediaQuery, useDebounce",
-  "Compose multiple hooks together inside a custom hook",
-  "Write testable hooks and understand testing strategies"
-]} />
+<LearningObjectives
+  objectives={[
+    "Extract reusable logic from components into custom hooks",
+    "Follow the use* naming convention and rules of hooks",
+    "Build progressively complex hooks: useLocalStorage, useMediaQuery, useDebounce",
+    "Compose multiple hooks together inside a custom hook",
+    "Write testable hooks and understand testing strategies",
+  ]}
+/>
 
 ## The Pattern
 
@@ -52,7 +54,9 @@ function Accordion() {
   <Info />
   <AlertTitle>Rules still apply</AlertTitle>
   <AlertDescription>
-    Custom hooks must follow the Rules of Hooks: call hooks unconditionally at the top level, never inside loops, conditions, or nested functions. Your custom hook is still a hook.
+    Custom hooks must follow the Rules of Hooks: call hooks unconditionally at
+    the top level, never inside loops, conditions, or nested functions. Your
+    custom hook is still a hook.
   </AlertDescription>
 </Alert>
 
@@ -163,9 +167,10 @@ function SearchResults() {
 
   useEffect(() => {
     if (debouncedQuery.length < 2) return
-    fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}`)
-      .then((r) => r.json())
-      // ... update results state
+    fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}`).then((r) =>
+      r.json()
+    )
+    // ... update results state
   }, [debouncedQuery])
 
   return <input value={query} onChange={(e) => setQuery(e.target.value)} />
@@ -220,7 +225,10 @@ test("toggles on and off", () => {
   <Lightbulb />
   <AlertTitle>Hook testing tips</AlertTitle>
   <AlertDescription>
-    Use `renderHook` to test hook behavior in isolation. For async hooks (like useDebounce), wrap state updates in `act()` and use `waitFor` or `jest.useFakeTimers()` for time-based logic. Mock `window.matchMedia` for useMediaQuery tests.
+    Use `renderHook` to test hook behavior in isolation. For async hooks (like
+    useDebounce), wrap state updates in `act()` and use `waitFor` or
+    `jest.useFakeTimers()` for time-based logic. Mock `window.matchMedia` for
+    useMediaQuery tests.
   </AlertDescription>
 </Alert>
 
@@ -241,13 +249,14 @@ import { useState, useEffect } from "react"
 export default function ResponsiveDisplay() {
   // TODO: use the hook and display width, height, and breakpoint
 
-  return (
-    <div>
-      <p>Width: ???</p>
-      <p>Height: ???</p>
-      <p>Breakpoint: ???</p>
-    </div>
-  )
+return (
+
+<div>
+<p>Width: ???</p>
+<p>Height: ???</p>
+<p>Breakpoint: ???</p>
+</div>
+)
 }`}
   solutionCode={`"use client"
 
@@ -256,53 +265,57 @@ import { useState, useEffect } from "react"
 type WindowSize = { width: number; height: number }
 
 function useWindowSize(): WindowSize {
-  const [size, setSize] = useState<WindowSize>(() => ({
-    width: typeof window !== "undefined" ? window.innerWidth : 0,
-    height: typeof window !== "undefined" ? window.innerHeight : 0,
-  }))
+const [size, setSize] = useState<WindowSize>(() => ({
+width: typeof window !== "undefined" ? window.innerWidth : 0,
+height: typeof window !== "undefined" ? window.innerHeight : 0,
+}))
 
-  useEffect(() => {
-    const handler = () => {
-      setSize({ width: window.innerWidth, height: window.innerHeight })
-    }
+useEffect(() => {
+const handler = () => {
+setSize({ width: window.innerWidth, height: window.innerHeight })
+}
 
     window.addEventListener("resize", handler)
     return () => window.removeEventListener("resize", handler)
-  }, [])
 
-  return size
+}, [])
+
+return size
 }
 
 function breakpoint(width: number): string {
-  if (width < 640) return "Mobile"
-  if (width < 768) return "Tablet"
-  if (width < 1024) return "Small Desktop"
-  return "Large Desktop"
+if (width < 640) return "Mobile"
+if (width < 768) return "Tablet"
+if (width < 1024) return "Small Desktop"
+return "Large Desktop"
 }
 
 export default function ResponsiveDisplay() {
   const { width, height } = useWindowSize()
 
-  return (
-    <div>
-      <p>Width: {width}px</p>
-      <p>Height: {height}px</p>
-      <p>Breakpoint: {breakpoint(width)}</p>
-    </div>
-  )
+return (
+
+<div>
+<p>Width: {width}px</p>
+<p>Height: {height}px</p>
+<p>Breakpoint: {breakpoint(width)}</p>
+</div>
+)
 }`}
-  hints={[
-    "Initialize width/height with window.innerWidth/innerHeight",
-    "Add a resize listener in useEffect and remove it on cleanup",
-    "Compute breakpoint string from width using a helper function"
-  ]}
-  previewType="mixed"
+hints={[
+"Initialize width/height with window.innerWidth/innerHeight",
+"Add a resize listener in useEffect and remove it on cleanup",
+"Compute breakpoint string from width using a helper function"
+]}
+previewType="mixed"
 />
 
-<LessonSummary points={[
-  "Custom hooks extract reusable stateful logic — follow the use* naming convention",
-  "Compose any built-in hooks inside a custom hook (useState, useEffect, useRef, etc.)",
-  "Build hooks incrementally: start with a concrete need, generalize when you see repetition",
-  "Test hooks in isolation with renderHook from @testing-library/react",
-  "Use TypeScript generics for type-safe hooks like useLocalStorage<T>"
-]} />
+<LessonSummary
+  points={[
+    "Custom hooks extract reusable stateful logic — follow the use* naming convention",
+    "Compose any built-in hooks inside a custom hook (useState, useEffect, useRef, etc.)",
+    "Build hooks incrementally: start with a concrete need, generalize when you see repetition",
+    "Test hooks in isolation with renderHook from @testing-library/react",
+    "Use TypeScript generics for type-safe hooks like useLocalStorage<T>",
+  ]}
+/>

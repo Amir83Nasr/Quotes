@@ -13,12 +13,14 @@ updated: "2026-07-11"
 
 React 19 introduced `use()` — a function that reads the value of a resource like a Promise or context. Unlike hooks, `use()` can be called **conditionally** and inside loops, which unlocks patterns the old rules forbade.
 
-<LearningObjectives objectives={[
-  "Read a promise's value with use() and integrate it with Suspense",
-  "Explain how use() differs from useContext and other hooks",
-  "Call use() conditionally — something hooks can't do",
-  "Know where the promise should come from (and where it shouldn't)",
-]} />
+<LearningObjectives
+  objectives={[
+    "Read a promise's value with use() and integrate it with Suspense",
+    "Explain how use() differs from useContext and other hooks",
+    "Call use() conditionally — something hooks can't do",
+    "Know where the promise should come from (and where it shouldn't)",
+  ]}
+/>
 
 ## Reading a Promise
 
@@ -45,13 +47,17 @@ function Page() {
 No `useEffect`, no `useState`, no manual loading flag — `use()` plus Suspense handles the pending state declaratively.
 
 <Alert>
-<AlertTitle>Don't create the promise inside the component</AlertTitle>
-<AlertDescription>Creating `fetchUser()` in the component body means a new promise on every render — an infinite loop. Create it in a Server Component, a cache, or an event handler, and pass it down. (Or use a framework's data layer.)</AlertDescription>
+  <AlertTitle>Don't create the promise inside the component</AlertTitle>
+  <AlertDescription>
+    Creating `fetchUser()` in the component body means a new promise on every
+    render — an infinite loop. Create it in a Server Component, a cache, or an
+    event handler, and pass it down. (Or use a framework's data layer.)
+  </AlertDescription>
 </Alert>
 
 ## use() Breaks the Hook Rules — On Purpose
 
-The Rules of Hooks say: no calling hooks conditionally or in loops. `use()` is *not* a hook, so those restrictions don't apply. This is the whole point.
+The Rules of Hooks say: no calling hooks conditionally or in loops. `use()` is _not_ a hook, so those restrictions don't apply. This is the whole point.
 
 ```tsx
 function Note({ show, notePromise }: Props) {
@@ -82,16 +88,23 @@ function Item({ premium }: { premium: boolean }) {
 With `useContext`, you'd have to call it unconditionally at the top even if you rarely use the value.
 
 <Alert>
-<AlertTitle>use() complements Suspense and Server Components</AlertTitle>
-<AlertDescription>The most common pattern: a Server Component starts a fetch (without awaiting it) and passes the promise to a Client Component that reads it with `use()`. Data starts loading early; the client unwraps it with a clean Suspense fallback.</AlertDescription>
+  <AlertTitle>use() complements Suspense and Server Components</AlertTitle>
+  <AlertDescription>
+    The most common pattern: a Server Component starts a fetch (without awaiting
+    it) and passes the promise to a Client Component that reads it with `use()`.
+    Data starts loading early; the client unwraps it with a clean Suspense
+    fallback.
+  </AlertDescription>
 </Alert>
 
 ## Check Your Understanding
 
-<LessonSummary points={[
-  "use() reads a resource — a promise or context — and integrates with Suspense",
-  "When a promise is pending, use() suspends and the nearest Suspense fallback renders",
-  "use() is not a hook, so it can be called conditionally or inside loops",
-  "Reading context with use() lets you access it only when needed",
-  "Create the promise upstream (Server Component/cache/prop), never in the render body",
-]} />
+<LessonSummary
+  points={[
+    "use() reads a resource — a promise or context — and integrates with Suspense",
+    "When a promise is pending, use() suspends and the nearest Suspense fallback renders",
+    "use() is not a hook, so it can be called conditionally or inside loops",
+    "Reading context with use() lets you access it only when needed",
+    "Create the promise upstream (Server Component/cache/prop), never in the render body",
+  ]}
+/>

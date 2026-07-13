@@ -24,16 +24,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 
-<Dialog>
+;<Dialog>
   <DialogTrigger asChild>
     <Button variant="outline">Open</Button>
   </DialogTrigger>
   <DialogContent>
     <DialogHeader>
       <DialogTitle>Title</DialogTitle>
-      <DialogDescription>
-        Description of the dialog purpose.
-      </DialogDescription>
+      <DialogDescription>Description of the dialog purpose.</DialogDescription>
     </DialogHeader>
     {/* Dialog content */}
   </DialogContent>
@@ -42,7 +40,7 @@ import {
 
 ## Props
 
-| Prop | Type | Default |
-|------|------|---------|
-| open | `boolean` | controlled or uncontrolled |
-| onOpenChange | `(open: boolean) => void` | — |
+| Prop         | Type                      | Default                    |
+| ------------ | ------------------------- | -------------------------- |
+| open         | `boolean`                 | controlled or uncontrolled |
+| onOpenChange | `(open: boolean) => void` | —                          |

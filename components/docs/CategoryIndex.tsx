@@ -20,13 +20,9 @@ export function CategoryIndex({ node }: CategoryIndexProps) {
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8 md:px-8">
       <header className="mb-8">
-        <h1 className="mb-2 text-3xl font-bold tracking-tight">
-          {node.title}
-        </h1>
+        <h1 className="mb-2 text-3xl font-bold tracking-tight">{node.title}</h1>
         {node.description && (
-          <p className="text-lg text-muted-foreground">
-            {node.description}
-          </p>
+          <p className="text-lg text-muted-foreground">{node.description}</p>
         )}
       </header>
 
@@ -45,7 +41,7 @@ export function CategoryIndex({ node }: CategoryIndexProps) {
                     <div>
                       <p className="font-medium">{lesson.title}</p>
                       {lesson.description && (
-                        <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">
+                        <p className="mt-0.5 line-clamp-1 text-sm text-muted-foreground">
                           {lesson.description}
                         </p>
                       )}
@@ -87,9 +83,7 @@ export function CategoryIndex({ node }: CategoryIndexProps) {
               return (
                 <Card key={sub.contentPath}>
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-lg">
-                      {sub.title}
-                    </CardTitle>
+                    <CardTitle className="text-lg">{sub.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-2">

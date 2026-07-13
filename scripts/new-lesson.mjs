@@ -105,8 +105,8 @@ Build on the concept. Use an <Alert> for a key insight when it helps:
 ## Check Your Understanding
 
 <LessonCodeExample
-  code={`// Replace with a runnable example
-console.log("Test your understanding")`}
+  code={${"`"} // Replace with a runnable example
+  console.log("Test your understanding")${"`"}}
   language="javascript"
   title="Try it yourself"
   executable
@@ -127,7 +127,9 @@ async function main() {
   const target = positional[0]
 
   if (!target || !target.includes("/")) {
-    console.error("Usage: pnpm new:lesson <category/slug> [--difficulty <d>] [--minutes <n>] [--title \"...\"] [--desc \"...\"]")
+    console.error(
+      'Usage: pnpm new:lesson <category/slug> [--difficulty <d>] [--minutes <n>] [--title "..."] [--desc "..."]'
+    )
     console.error(`  difficulty: ${DIFFICULTIES.join(" | ")}`)
     process.exit(1)
   }
@@ -142,7 +144,9 @@ async function main() {
   // Refuse to overwrite.
   try {
     await readFile(fileAbs, "utf-8")
-    console.error(`✖ Refusing to overwrite existing lesson: content/${parts.join("/")}.mdx`)
+    console.error(
+      `✖ Refusing to overwrite existing lesson: content/${parts.join("/")}.mdx`
+    )
     process.exit(1)
   } catch {
     // good — file doesn't exist
@@ -150,7 +154,9 @@ async function main() {
 
   const difficulty = flags.difficulty ?? "beginner"
   if (!DIFFICULTIES.includes(difficulty)) {
-    console.error(`✖ Invalid --difficulty "${difficulty}". Use one of: ${DIFFICULTIES.join(", ")}`)
+    console.error(
+      `✖ Invalid --difficulty "${difficulty}". Use one of: ${DIFFICULTIES.join(", ")}`
+    )
     process.exit(1)
   }
 
@@ -162,18 +168,31 @@ async function main() {
   const updated = flags.updated ?? new Date().toISOString().slice(0, 10)
 
   await mkdir(dirAbs, { recursive: true })
-  await writeFile(fileAbs, skeleton({ title, description, order, difficulty, minutes, updated }))
+  await writeFile(
+    fileAbs,
+    skeleton({ title, description, order, difficulty, minutes, updated })
+  )
 
-  console.log(`✓ Created content/${parts.join("/")}.mdx (order ${order}, ${difficulty})`)
+  console.log(
+    `✓ Created content/${parts.join("/")}.mdx (order ${order}, ${difficulty})`
+  )
 
   if (!CATEGORY_SLUGS.includes(topCategory)) {
     console.log("")
-    console.log(`⚠ "${topCategory}" is a new top-level category. To make it appear in the`)
+    console.log(
+      `⚠ "${topCategory}" is a new top-level category. To make it appear in the`
+    )
     console.log("  sidebar and pass validation, register it in:")
-    console.log("    • constants/categories/registry.mjs  → add to CATEGORY_SLUGS")
+    console.log(
+      "    • constants/categories/registry.mjs  → add to CATEGORY_SLUGS"
+    )
     console.log("    • constants/categories/index.ts       → add to CATEGORIES")
-    console.log("    • constants/categories/sidebar.ts     → add to SIDEBAR_LABELS + SIDEBAR_SECTIONS")
-    console.log("    • constants/categories/icons.ts       → add CATEGORY_ICONS + CATEGORY_COLORS")
+    console.log(
+      "    • constants/categories/sidebar.ts     → add to SIDEBAR_LABELS + SIDEBAR_SECTIONS"
+    )
+    console.log(
+      "    • constants/categories/icons.ts       → add CATEGORY_ICONS + CATEGORY_COLORS"
+    )
   }
 }
 

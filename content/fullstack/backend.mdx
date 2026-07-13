@@ -9,13 +9,15 @@ order: 2
 
 Connect your frontend to backend services.
 
-<LearningObjectives objectives={[
-  "Pair every frontend fetch with the route handler that answers it",
-  "Read and validate JSON request bodies on the server",
-  "Handle dynamic params, query strings, and FormData uploads",
-  "Send auth headers and cookies from the client",
-  "Test every endpoint locally with curl before wiring up the UI",
-]} />
+<LearningObjectives
+  objectives={[
+    "Pair every frontend fetch with the route handler that answers it",
+    "Read and validate JSON request bodies on the server",
+    "Handle dynamic params, query strings, and FormData uploads",
+    "Send auth headers and cookies from the client",
+    "Test every endpoint locally with curl before wiring up the UI",
+  ]}
+/>
 
 <Alert>
   <Lightbulb />
@@ -38,7 +40,10 @@ and error handling in one place.
 // lib/api.ts
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"
 
-export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+export async function apiFetch<T>(
+  path: string,
+  options?: RequestInit
+): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
     headers: { "Content-Type": "application/json", ...options?.headers },
     ...options,
@@ -59,7 +64,10 @@ Wrap responses so callers get typed, actionable errors instead of a bare
 ```typescript
 // lib/api-error.ts
 export class ApiError extends Error {
-  constructor(public status: number, message: string) {
+  constructor(
+    public status: number,
+    message: string
+  ) {
     super(message)
   }
 }
@@ -113,6 +121,7 @@ sends a JSON **body**; the backend reads it with `await request.json()`.
       return Response.json(user, { status: 201 })
     }
     ```
+
   </TabsContent>
   <TabsContent value="frontend">
     ```typescript
@@ -129,6 +138,7 @@ sends a JSON **body**; the backend reads it with `await request.json()`.
     const created = await createUser("Grace Hopper", "grace@example.com")
     console.log(created) // { id: 2, name: "Grace Hopper", ... }
     ```
+
   </TabsContent>
   <TabsContent value="curl">
     ```bash
@@ -140,6 +150,7 @@ sends a JSON **body**; the backend reads it with `await request.json()`.
       -H "Content-Type: application/json" \
       -d '{"name":"Grace Hopper","email":"grace@example.com"}'
     ```
+
   </TabsContent>
 </Tabs>
 
@@ -187,6 +198,7 @@ return `400` with a helpful message when it's wrong.
       return Response.json({ email: parsed.data.email }, { status: 201 })
     }
     ```
+
   </TabsContent>
   <TabsContent value="curl">
     ```bash
@@ -200,12 +212,15 @@ return `400` with a helpful message when it's wrong.
       -H "Content-Type: application/json" \
       -d '{"email":"dev@example.com","password":"short"}'
     ```
+
   </TabsContent>
 </Tabs>
 
 <Alert>
   <Info />
-  <AlertTitle>Add <code>-i</code> to see status codes</AlertTitle>
+  <AlertTitle>
+    Add <code>-i</code> to see status codes
+  </AlertTitle>
   <AlertDescription>
     `curl -i` prints response headers including the status line, so you can
     confirm you got `201 Created` or `400 Bad Request` — not just the body.
@@ -256,6 +271,7 @@ Router, `params` is a **Promise** — remember to `await` it.
       return Response.json(deleted)
     }
     ```
+
   </TabsContent>
   <TabsContent value="frontend">
     ```typescript
@@ -271,6 +287,7 @@ Router, `params` is a **Promise** — remember to `await` it.
       return apiFetch<User>(`/api/users/${id}`, { method: "DELETE" })
     }
     ```
+
   </TabsContent>
   <TabsContent value="curl">
     ```bash
@@ -282,6 +299,7 @@ Router, `params` is a **Promise** — remember to `await` it.
     # Delete user 1
     curl -X DELETE http://localhost:4000/api/users/1
     ```
+
   </TabsContent>
 </Tabs>
 
@@ -319,6 +337,7 @@ Filtering and paging live in the query string, read via `request.nextUrl.searchP
       })
     }
     ```
+
   </TabsContent>
   <TabsContent value="frontend">
     ```typescript
@@ -331,6 +350,7 @@ Filtering and paging live in the query string, read via `request.nextUrl.searchP
 
     const { items, hasMore } = await searchProducts("laptop", 1)
     ```
+
   </TabsContent>
   <TabsContent value="curl">
     ```bash
@@ -372,6 +392,7 @@ yourself; the browser adds the multipart boundary automatically.
       )
     }
     ```
+
   </TabsContent>
   <TabsContent value="frontend">
     ```typescript
@@ -386,6 +407,7 @@ yourself; the browser adds the multipart boundary automatically.
       return res.json()
     }
     ```
+
   </TabsContent>
   <TabsContent value="curl">
     ```bash
@@ -422,6 +444,7 @@ cookie). The client attaches it on every request.
       return Response.json({ id: 1, name: "Ada Lovelace" })
     }
     ```
+
   </TabsContent>
   <TabsContent value="frontend">
     ```typescript
@@ -436,6 +459,7 @@ cookie). The client attaches it on every request.
 
     const me = await authFetch<User>("/api/me", "dev-token-123")
     ```
+
   </TabsContent>
   <TabsContent value="curl">
     ```bash
@@ -446,6 +470,7 @@ cookie). The client attaches it on every request.
     curl http://localhost:4000/api/me \
       -H "Authorization: Bearer dev-token-123"
     ```
+
   </TabsContent>
 </Tabs>
 
@@ -582,20 +607,20 @@ let nextId = 1
 export async function POST(request: Request) {
   const body = (await request.json().catch(() => null)) as { text?: unknown } | null
 
-  if (!body || typeof body.text !== "string" || body.text.trim() === "") {
-    return Response.json({ message: "text is required" }, { status: 400 })
-  }
+if (!body || typeof body.text !== "string" || body.text.trim() === "") {
+return Response.json({ message: "text is required" }, { status: 400 })
+}
 
-  const note = { id: nextId++, text: body.text }
-  notes.push(note)
-  return Response.json(note, { status: 201 })
+const note = { id: nextId++, text: body.text }
+notes.push(note)
+return Response.json(note, { status: 201 })
 }`}
-  hints={[
-    "Use await request.json() — wrap it in .catch(() => null) so malformed JSON doesn't throw",
-    "Guard the type: typeof body.text !== 'string' catches missing and wrong-type input",
-    "Return Response.json(data, { status: 201 }) for a successful create",
-  ]}
-  previewType="mixed"
+hints={[
+"Use await request.json() — wrap it in .catch(() => null) so malformed JSON doesn't throw",
+"Guard the type: typeof body.text !== 'string' catches missing and wrong-type input",
+"Return Response.json(data, { status: 201 }) for a successful create",
+]}
+previewType="mixed"
 />
 
 ## Lesson Summary

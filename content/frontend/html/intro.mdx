@@ -15,15 +15,15 @@ Every HTML document follows a basic structure:
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Page Title</title>
-</head>
-<body>
-  <h1>Hello, World!</h1>
-  <p>This is a paragraph.</p>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page Title</title>
+  </head>
+  <body>
+    <h1>Hello, World!</h1>
+    <p>This is a paragraph.</p>
+  </body>
 </html>
 ```
 
@@ -31,15 +31,15 @@ Every HTML document follows a basic structure:
 
 Semantic HTML gives meaning to content, improving accessibility and SEO.
 
-| Element | Purpose |
-|---------|---------|
-| `<header>` | Introductory content or navigation |
-| `<nav>` | Navigation links |
-| `<main>` | Primary content of the page |
-| `<section>` | Thematic grouping of content |
-| `<article>` | Self-contained composition |
-| `<aside>` | Sidebar or related content |
-| `<footer>` | Footer for a section or page |
+| Element     | Purpose                            |
+| ----------- | ---------------------------------- |
+| `<header>`  | Introductory content or navigation |
+| `<nav>`     | Navigation links                   |
+| `<main>`    | Primary content of the page        |
+| `<section>` | Thematic grouping of content       |
+| `<article>` | Self-contained composition         |
+| `<aside>`   | Sidebar or related content         |
+| `<footer>`  | Footer for a section or page       |
 
 ```html
 <body>
@@ -66,14 +66,14 @@ Semantic HTML gives meaning to content, improving accessibility and SEO.
 
 ## Text Elements
 
-| Element | Description |
-|---------|-------------|
+| Element          | Description                     |
+| ---------------- | ------------------------------- |
 | `<h1>` to `<h6>` | Headings (h1 is most important) |
-| `<p>` | Paragraph |
-| `<strong>` | Bold / important text |
-| `<em>` | Italic / emphasized text |
-| `<a>` | Hyperlink |
-| `<span>` | Inline container for styling |
+| `<p>`            | Paragraph                       |
+| `<strong>`       | Bold / important text           |
+| `<em>`           | Italic / emphasized text        |
+| `<a>`            | Hyperlink                       |
+| `<span>`         | Inline container for styling    |
 
 ## Lists
 
@@ -95,7 +95,7 @@ Semantic HTML gives meaning to content, improving accessibility and SEO.
 
 ```html
 <!-- Image -->
-<img src="photo.jpg" alt="Description of the photo" width="400">
+<img src="photo.jpg" alt="Description of the photo" width="400" />
 
 <!-- Link -->
 <a href="https://example.com" target="_blank" rel="noopener noreferrer">
@@ -110,10 +110,10 @@ Forms collect user input. Always pair inputs with `<label>` for accessibility.
 ```html
 <form action="/submit" method="POST">
   <label for="name">Name:</label>
-  <input type="text" id="name" name="name" required>
+  <input type="text" id="name" name="name" required />
 
   <label for="email">Email:</label>
-  <input type="email" id="email" name="email">
+  <input type="email" id="email" name="email" />
 
   <button type="submit">Submit</button>
 </form>

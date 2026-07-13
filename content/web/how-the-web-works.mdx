@@ -12,19 +12,21 @@ updated: "2026-07-11"
 
 Before any framework, there's the web itself: clients asking servers for resources over a network. Understanding this request–response cycle makes everything above it — HTML, APIs, caching, deploys — click into place.
 
-<LearningObjectives objectives={[
-  "Describe the client–server model of the web",
-  "Trace what happens when you enter a URL",
-  "Break a URL into its parts and explain each",
-  "Explain why the web is built on a request–response cycle",
-]} />
+<LearningObjectives
+  objectives={[
+    "Describe the client–server model of the web",
+    "Trace what happens when you enter a URL",
+    "Break a URL into its parts and explain each",
+    "Explain why the web is built on a request–response cycle",
+  ]}
+/>
 
 ## Clients and Servers
 
 The web runs on a simple relationship:
 
-- A **client** (your browser) *requests* resources.
-- A **server** *responds* with them — HTML, images, JSON, whatever.
+- A **client** (your browser) _requests_ resources.
+- A **server** _responds_ with them — HTML, images, JSON, whatever.
 
 The client always initiates. Servers don't push pages at you unprompted; they wait for requests and answer. Everything else is detail on top of this.
 
@@ -49,8 +51,12 @@ Type `https://example.com/about` and press Enter. Roughly this sequence fires:
 Each step is its own topic in this track — DNS, TLS, HTTP, and rendering all get their own lesson. Right now, just hold the shape of the whole journey.
 
 <Alert>
-<AlertTitle>It's requests all the way down</AlertTitle>
-<AlertDescription>That single page load triggers *many* requests: one for the HTML, then more for each stylesheet, script, font, and image the HTML references. A typical page makes dozens of requests.</AlertDescription>
+  <AlertTitle>It's requests all the way down</AlertTitle>
+  <AlertDescription>
+    That single page load triggers *many* requests: one for the HTML, then more
+    for each stylesheet, script, font, and image the HTML references. A typical
+    page makes dozens of requests.
+  </AlertDescription>
 </Alert>
 
 ## Anatomy of a URL
@@ -63,30 +69,38 @@ https://api.example.com:443/users?page=2#top
 scheme     host       port  path  query  fragment
 ```
 
-| Part | Example | Meaning |
-|------|---------|---------|
-| Scheme | `https` | Protocol to use |
-| Host | `api.example.com` | Which server (resolved via DNS) |
-| Port | `443` | Which "door" on the server (443 = HTTPS default) |
-| Path | `/users` | Which resource |
-| Query | `?page=2` | Parameters for the request |
-| Fragment | `#top` | A spot within the page (never sent to the server) |
+| Part     | Example           | Meaning                                           |
+| -------- | ----------------- | ------------------------------------------------- |
+| Scheme   | `https`           | Protocol to use                                   |
+| Host     | `api.example.com` | Which server (resolved via DNS)                   |
+| Port     | `443`             | Which "door" on the server (443 = HTTPS default)  |
+| Path     | `/users`          | Which resource                                    |
+| Query    | `?page=2`         | Parameters for the request                        |
+| Fragment | `#top`            | A spot within the page (never sent to the server) |
 
 ## Stateless by Design
 
 HTTP is **stateless**: each request stands alone, and the server doesn't inherently remember previous ones. That's why mechanisms like cookies and tokens exist — they re-attach identity to each otherwise-independent request. Statelessness is what lets the web scale to billions of requests across many servers.
 
 <Alert>
-<AlertTitle>Frontend and backend are two halves of one conversation</AlertTitle>
-<AlertDescription>Everything you build — a React app, an API, a database query — is ultimately serving or making requests in this cycle. Keeping the request–response model in mind is the fastest way to reason about bugs.</AlertDescription>
+  <AlertTitle>
+    Frontend and backend are two halves of one conversation
+  </AlertTitle>
+  <AlertDescription>
+    Everything you build — a React app, an API, a database query — is ultimately
+    serving or making requests in this cycle. Keeping the request–response model
+    in mind is the fastest way to reason about bugs.
+  </AlertDescription>
 </Alert>
 
 ## Check Your Understanding
 
-<LessonSummary points={[
-  "The web is client–server: clients request, servers respond — the client always initiates",
-  "Loading a URL triggers DNS lookup, connection, TLS, an HTTP request, and rendering",
-  "A single page load fans out into many requests (HTML, CSS, JS, fonts, images)",
-  "A URL has structured parts: scheme, host, port, path, query, and fragment",
-  "HTTP is stateless; cookies and tokens re-attach identity to each request",
-]} />
+<LessonSummary
+  points={[
+    "The web is client–server: clients request, servers respond — the client always initiates",
+    "Loading a URL triggers DNS lookup, connection, TLS, an HTTP request, and rendering",
+    "A single page load fans out into many requests (HTML, CSS, JS, fonts, images)",
+    "A URL has structured parts: scheme, host, port, path, query, and fragment",
+    "HTTP is stateless; cookies and tokens re-attach identity to each request",
+  ]}
+/>

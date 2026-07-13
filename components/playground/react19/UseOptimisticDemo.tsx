@@ -26,7 +26,7 @@ export function UseOptimisticDemo() {
     (current, text: string) => [
       ...current,
       { id: Date.now(), text, status: "sending" as const },
-    ],
+    ]
   )
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -38,10 +38,7 @@ export function UseOptimisticDemo() {
     addOptimistic(text)
     // Simulate a slow server so the optimistic state is visible.
     await new Promise((r) => setTimeout(r, 1200))
-    setMessages((prev) => [
-      ...prev,
-      { id: Date.now(), text, status: "sent" },
-    ])
+    setMessages((prev) => [...prev, { id: Date.now(), text, status: "sent" }])
   }
 
   return (
@@ -56,7 +53,7 @@ export function UseOptimisticDemo() {
             <span
               className={
                 m.status === "sending"
-                  ? "text-xs italic text-muted-foreground"
+                  ? "text-xs text-muted-foreground italic"
                   : "text-xs text-green-600"
               }
             >

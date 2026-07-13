@@ -9,14 +9,16 @@ order: 8
 
 TypeScript has structural typing — any type with the same shape is compatible. Branded types add nominal behavior for extra safety.
 
-<LearningObjectives objectives={[
-  "Understand structural vs nominal typing",
-  "Implement the brand pattern (T & { __brand: B })",
-  "Use flavoring for lightweight nominal typing",
-  "Add runtime validation paired with branded types",
-  "Prevent mixing up IDs, emails, and other primitives",
-  "Apply branding to real-world function signatures"
-]} />
+<LearningObjectives
+  objectives={[
+    "Understand structural vs nominal typing",
+    "Implement the brand pattern (T & { __brand: B })",
+    "Use flavoring for lightweight nominal typing",
+    "Add runtime validation paired with branded types",
+    "Prevent mixing up IDs, emails, and other primitives",
+    "Apply branding to real-world function signatures",
+  ]}
+/>
 
 ## The Problem: Structural Typing
 
@@ -27,8 +29,12 @@ type UserID = string
 type Email = string
 type PostID = string
 
-function getUser(id: UserID) { /* ... */ }
-function sendEmail(to: Email) { /* ... */ }
+function getUser(id: UserID) {
+  /* ... */
+}
+function sendEmail(to: Email) {
+  /* ... */
+}
 
 const userId: UserID = "user_123"
 // Oops — no error, but wrong semantic type
@@ -46,21 +52,28 @@ type UserID = Brand<string, "UserID">
 type Email = Brand<string, "Email">
 type PostID = Brand<string, "PostID">
 
-function getUser(id: UserID): void { /* ... */ }
-function sendEmail(to: Email): void { /* ... */ }
+function getUser(id: UserID): void {
+  /* ... */
+}
+function sendEmail(to: Email): void {
+  /* ... */
+}
 
 const userId = "user_123" as UserID
 const email = "alice@example.com" as Email
 
 getUser(userId) // OK
-getUser(email)  // Type error: Email is not UserID
+getUser(email) // Type error: Email is not UserID
 sendEmail(email) // OK
 sendEmail(userId) // Type error: UserID is not Email
 ```
 
 <Alert>
   <AlertTitle>Gotcha</AlertTitle>
-  <AlertDescription>The `as` cast is a type-level assertion. For real safety, create constructor functions that validate at runtime and return the branded type.</AlertDescription>
+  <AlertDescription>
+    The `as` cast is a type-level assertion. For real safety, create constructor
+    functions that validate at runtime and return the branded type.
+  </AlertDescription>
 </Alert>
 
 ## Runtime Validation + Compile-Time Safety
@@ -113,7 +126,7 @@ const price = 29.99 as USD
 const rate = 0.92 as EUR
 
 formatMoney(price) // OK
-formatMoney(rate)  // Type error (flavored)
+formatMoney(rate) // Type error (flavored)
 ```
 
 ## Real-World: Domain Primitives
@@ -183,58 +196,60 @@ type UserId = Brand<string, "UserId">
 type Email = Brand<string, "Email">
 
 interface SafeUser {
-  id: UserId
-  email: Email
+id: UserId
+email: Email
 }
 
 type SafeResult =
-  | { ok: true; user: SafeUser }
-  | { ok: false; error: string }
+| { ok: true; user: SafeUser }
+| { ok: false; error: string }
 
 // Implement safeUser that validates raw input
 function safeUser(input: unknown): SafeResult {
 
 }`}
-  solutionCode={`type Brand<T, B> = T & { __brand: B }
+  solutionCode={`type Brand<T, B> = T & { \_\_brand: B }
 type UserId = Brand<string, "UserId">
 type Email = Brand<string, "Email">
 
 interface SafeUser { id: UserId; email: Email }
 
 type SafeResult =
-  | { ok: true; user: SafeUser }
-  | { ok: false; error: string }
+| { ok: true; user: SafeUser }
+| { ok: false; error: string }
 
 function safeUser(input: unknown): SafeResult {
-  if (typeof input !== "object" || input === null) {
-    return { ok: false, error: "Input must be an object" }
-  }
-  const obj = input as Record<string, unknown>
-  if (typeof obj.id !== "string" || !obj.id.startsWith("user_")) {
-    return { ok: false, error: "Invalid user ID" }
-  }
-  if (typeof obj.email !== "string" || !obj.email.includes("@")) {
-    return { ok: false, error: "Invalid email" }
-  }
-  return {
-    ok: true,
-    user: { id: obj.id as UserId, email: obj.email as Email }
-  }
+if (typeof input !== "object" || input === null) {
+return { ok: false, error: "Input must be an object" }
+}
+const obj = input as Record<string, unknown>
+if (typeof obj.id !== "string" || !obj.id.startsWith("user*")) {
+return { ok: false, error: "Invalid user ID" }
+}
+if (typeof obj.email !== "string" || !obj.email.includes("@")) {
+return { ok: false, error: "Invalid email" }
+}
+return {
+ok: true,
+user: { id: obj.id as UserId, email: obj.email as Email }
+}
 }`}
-  hints={[
-    "Check typeof input === 'object' and !== null first.",
-    "Cast to Record<string, unknown> for safe property access.",
-    "Validate the id prefix (e.g. 'user_') before casting to UserId.",
-    "Validate the email contains '@' before casting to Email.",
-    "Return { ok: false, error: message } for invalid cases."
-  ]}
+hints={[
+"Check typeof input === 'object' and !== null first.",
+"Cast to Record<string, unknown> for safe property access.",
+"Validate the id prefix (e.g. 'user*') before casting to UserId.",
+"Validate the email contains '@' before casting to Email.",
+"Return { ok: false, error: message } for invalid cases."
+]}
 />
 
-<LessonSummary points={[
-  "Structural typing treats same-shape types as identical — branding adds nominal distinctions.",
-  "The Brand pattern (T & { __brand: B }) adds a phantom type property.",
-  "Flavoring uses optional flavors for lighter-weight nominal distinctions.",
-  "Pair branded types with runtime validation constructors for defense in depth.",
-  "Domain primitives (Email, UserID, Phone) prevent mixing up semantically different values.",
-  "Branded function signatures force callers to be explicit about which domain type they're passing."
-]} />
+<LessonSummary
+  points={[
+    "Structural typing treats same-shape types as identical — branding adds nominal distinctions.",
+    "The Brand pattern (T & { __brand: B }) adds a phantom type property.",
+    "Flavoring uses optional flavors for lighter-weight nominal distinctions.",
+    "Pair branded types with runtime validation constructors for defense in depth.",
+    "Domain primitives (Email, UserID, Phone) prevent mixing up semantically different values.",
+    "Branded function signatures force callers to be explicit about which domain type they're passing.",
+  ]}
+/>

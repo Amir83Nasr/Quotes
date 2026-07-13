@@ -9,14 +9,16 @@ order: 4
 
 Type narrowing refines a broad type to a more specific one within a code block.
 
-<LearningObjectives objectives={[
-  "Use typeof, instanceof, and in operators for runtime checks",
-  "Write custom type predicate functions (is)",
-  "Narrow discriminated unions with switch and if",
-  "Use assertion functions to narrow after validation",
-  "Apply never for exhaustiveness checking",
-  "Build reusable custom type guards"
-]} />
+<LearningObjectives
+  objectives={[
+    "Use typeof, instanceof, and in operators for runtime checks",
+    "Write custom type predicate functions (is)",
+    "Narrow discriminated unions with switch and if",
+    "Use assertion functions to narrow after validation",
+    "Apply never for exhaustiveness checking",
+    "Build reusable custom type guards",
+  ]}
+/>
 
 ## Built-in Guards: typeof, instanceof, in
 
@@ -47,8 +49,14 @@ function speak(animal: Cat | Dog): void {
 Custom functions that tell TypeScript what a value is.
 
 ```ts
-interface User { name: string; email: string }
-interface Admin extends User { role: "admin"; permissions: string[] }
+interface User {
+  name: string
+  email: string
+}
+interface Admin extends User {
+  role: "admin"
+  permissions: string[]
+}
 
 function isAdmin(user: User): user is Admin {
   return "role" in user && user.role === "admin"
@@ -83,7 +91,10 @@ function handleResponse(res: APIResponse): string {
 
 <Alert>
   <AlertTitle>Tip</AlertTitle>
-  <AlertDescription>Use switch on a discriminant property — TypeScript narrows per case. Add a `default: assertNever(x)` to catch unhandled variants.</AlertDescription>
+  <AlertDescription>
+    Use switch on a discriminant property — TypeScript narrows per case. Add a
+    `default: assertNever(x)` to catch unhandled variants.
+  </AlertDescription>
 </Alert>
 
 ## Assertion Functions
@@ -104,11 +115,16 @@ function process(input: unknown) {
 }
 
 // Asserting object shape
-interface Config { endpoint: string; timeout: number }
+interface Config {
+  endpoint: string
+  timeout: number
+}
 function assertConfig(obj: unknown): asserts obj is Config {
   if (typeof obj !== "object" || obj === null) throw new Error("Not object")
-  if (!("endpoint" in obj) || typeof (obj as any).endpoint !== "string") throw new Error("Missing endpoint")
-  if (!("timeout" in obj) || typeof (obj as any).timeout !== "number") throw new Error("Missing timeout")
+  if (!("endpoint" in obj) || typeof (obj as any).endpoint !== "string")
+    throw new Error("Missing endpoint")
+  if (!("timeout" in obj) || typeof (obj as any).timeout !== "number")
+    throw new Error("Missing timeout")
 }
 ```
 
@@ -139,10 +155,14 @@ type Event =
 
 function handleEvent(event: Event): string {
   switch (event.type) {
-    case "click":  return `Click at (${event.x}, ${event.y})`
-    case "keydown": return `Key pressed: ${event.key}`
-    case "focus":   return "Element focused"
-    default:       return assertNever(event)
+    case "click":
+      return `Click at (${event.x}, ${event.y})`
+    case "keydown":
+      return `Key pressed: ${event.key}`
+    case "focus":
+      return "Element focused"
+    default:
+      return assertNever(event)
   }
 }
 
@@ -162,32 +182,34 @@ function assertNever(value: never): never {
   | { kind: "scroll"; deltaX: number; deltaY: number }
 
 function handleUIEvent(event: UIEvent): string {
-  // Use switch on event.kind and return a description for each variant
+// Use switch on event.kind and return a description for each variant
 }`}
   solutionCode={`type UIEvent =
-  | { kind: "click"; button: "left" | "right" }
-  | { kind: "hover"; x: number; y: number }
-  | { kind: "scroll"; deltaX: number; deltaY: number }
+| { kind: "click"; button: "left" | "right" }
+| { kind: "hover"; x: number; y: number }
+| { kind: "scroll"; deltaX: number; deltaY: number }
 
 function handleUIEvent(event: UIEvent): string {
-  switch (event.kind) {
-    case "click":  return \`\${event.button} click\`
-    case "hover":  return \`Hover at (\${event.x}, \${event.y})\`
-    case "scroll": return \`Scroll (\${event.deltaX}, \${event.deltaY})\`
-  }
+switch (event.kind) {
+case "click": return \`\${event.button} click\`
+case "hover": return \`Hover at (\${event.x}, \${event.y})\`
+case "scroll": return \`Scroll (\${event.deltaX}, \${event.deltaY})\`
+}
 }`}
-  hints={[
-    "Use switch(event.kind) — each case narrows the type automatically.",
-    "Access variant-specific fields inside each case block.",
-    "Template literals work great for building the display strings."
-  ]}
+hints={[
+"Use switch(event.kind) — each case narrows the type automatically.",
+"Access variant-specific fields inside each case block.",
+"Template literals work great for building the display strings."
+]}
 />
 
-<LessonSummary points={[
-  "typeof narrows primitives, instanceof narrows classes, in narrows object shapes.",
-  "Type predicates (x is T) let you write reusable custom narrowing functions.",
-  "Discriminated unions narrow cleanly with switch on the discriminant.",
-  "Assertion functions (asserts x is T) throw on invalid input and narrow after return.",
-  "never + exhaustiveness checking catches missing branches at compile time.",
-  "Custom guards like isDefined compose well with Array.filter for type-safe collections."
-]} />
+<LessonSummary
+  points={[
+    "typeof narrows primitives, instanceof narrows classes, in narrows object shapes.",
+    "Type predicates (x is T) let you write reusable custom narrowing functions.",
+    "Discriminated unions narrow cleanly with switch on the discriminant.",
+    "Assertion functions (asserts x is T) throw on invalid input and narrow after return.",
+    "never + exhaustiveness checking catches missing branches at compile time.",
+    "Custom guards like isDefined compose well with Array.filter for type-safe collections.",
+  ]}
+/>

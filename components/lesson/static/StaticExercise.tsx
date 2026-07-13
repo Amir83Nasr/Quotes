@@ -115,7 +115,7 @@ export function StaticExercise({
 
       {showSolution && solution && (
         <CardContent className="border-t pt-4">
-          <div className="flex items-center gap-2 mb-2">
+          <div className="mb-2 flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 text-green-500" />
             <span className="text-sm font-medium">Solution</span>
           </div>

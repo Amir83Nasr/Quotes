@@ -1,9 +1,14 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useRef, useCallback, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { SearchIcon, FileText, ArrowRight } from "lucide-react"
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { NavItem } from "@/types/navigation"
@@ -28,7 +33,7 @@ export function Search({ items, className }: SearchProps) {
 
   const results = query.trim()
     ? flatItems.filter((item) =>
-        item.title.toLowerCase().includes(query.toLowerCase()),
+        item.title.toLowerCase().includes(query.toLowerCase())
       )
     : flatItems.slice(0, 5)
 
@@ -44,13 +49,15 @@ export function Search({ items, className }: SearchProps) {
     return () => document.removeEventListener("keydown", handler)
   }, [])
 
-  useEffect(() => {
-    if (open) {
-      setTimeout(() => inputRef.current?.focus(), 50)
-    } else {
+  // Reset query and focus input on dialog open/close (event handler, not effect)
+  const handleOpenChange = useCallback((nextOpen: boolean) => {
+    setOpen(nextOpen)
+    if (!nextOpen) {
       setQuery("")
+    } else {
+      setTimeout(() => inputRef.current?.focus(), 50)
     }
-  }, [open])
+  }, [])
 
   const navigate = useCallback(
     (href: string) => {
@@ -91,23 +98,23 @@ export function Search({ items, className }: SearchProps) {
       }
       requestAnimationFrame(tick)
     },
-    [router],
+    [router]
   )
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button
           variant="outline"
           size="sm"
           className={cn(
             "relative h-9 w-full justify-start text-sm text-muted-foreground md:w-56 lg:w-80",
-            className,
+            className
           )}
         >
           <SearchIcon className="mr-2 h-4 w-4" />
           <span>Search lessons...</span>
-          <kbd className="pointer-events-none absolute right-1.5 top-1/2 hidden -translate-y-1/2 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 md:flex">
+          <kbd className="pointer-events-none absolute top-1/2 right-1.5 hidden -translate-y-1/2 items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 select-none md:flex">
             <span className="text-xs">⌘</span>K
           </kbd>
         </Button>

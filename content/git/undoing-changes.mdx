@@ -11,27 +11,29 @@ updated: "2026-07-11"
 
 # Undoing Changes
 
-One of Git's greatest gifts is that almost nothing is truly permanent. But "undo" means different things depending on *where* the change is — uncommitted, committed locally, or already pushed. Using the right tool for each keeps you safe.
+One of Git's greatest gifts is that almost nothing is truly permanent. But "undo" means different things depending on _where_ the change is — uncommitted, committed locally, or already pushed. Using the right tool for each keeps you safe.
 
-<LearningObjectives objectives={[
-  "Discard uncommitted changes in the working directory and staging area",
-  "Amend the most recent commit",
-  "Choose between reset and revert for undoing commits",
-  "Recover 'lost' commits with the reflog",
-]} />
+<LearningObjectives
+  objectives={[
+    "Discard uncommitted changes in the working directory and staging area",
+    "Amend the most recent commit",
+    "Choose between reset and revert for undoing commits",
+    "Recover 'lost' commits with the reflog",
+  ]}
+/>
 
 ## A Map of Undo
 
 Match the tool to where the change lives:
 
-| Situation | Command |
-|-----------|---------|
-| Discard unstaged file edits | `git restore <file>` |
-| Unstage a staged file | `git restore --staged <file>` |
-| Fix the last commit's message or contents | `git commit --amend` |
-| Undo local commits (not pushed) | `git reset` |
-| Undo a pushed commit safely | `git revert` |
-| Recover a commit you thought was gone | `git reflog` |
+| Situation                                 | Command                       |
+| ----------------------------------------- | ----------------------------- |
+| Discard unstaged file edits               | `git restore <file>`          |
+| Unstage a staged file                     | `git restore --staged <file>` |
+| Fix the last commit's message or contents | `git commit --amend`          |
+| Undo local commits (not pushed)           | `git reset`                   |
+| Undo a pushed commit safely               | `git revert`                  |
+| Recover a commit you thought was gone     | `git reflog`                  |
 
 ## Amending the Last Commit
 
@@ -43,8 +45,12 @@ git commit --amend -m "feat: add search with debounce"
 ```
 
 <Alert>
-<AlertTitle>Amend rewrites history</AlertTitle>
-<AlertDescription>`--amend` replaces the last commit with a new one (new SHA). That's fine for a commit you haven't pushed. Avoid amending commits others may already have — you'd force them to reconcile diverged history.</AlertDescription>
+  <AlertTitle>Amend rewrites history</AlertTitle>
+  <AlertDescription>
+    `--amend` replaces the last commit with a new one (new SHA). That's fine for
+    a commit you haven't pushed. Avoid amending commits others may already have
+    — you'd force them to reconcile diverged history.
+  </AlertDescription>
 </Alert>
 
 ## reset: Rewrite Local History
@@ -100,16 +106,22 @@ git reset --hard f9e8d7c   # or: git switch -c recovered f9e8d7c
 ```
 
 <Alert>
-<AlertTitle>Git rarely deletes anything immediately</AlertTitle>
-<AlertDescription>Commits you "lose" usually linger in the reflog for weeks before garbage collection. Before panicking over a bad reset or rebase, check `git reflog` — the commit is often still there.</AlertDescription>
+  <AlertTitle>Git rarely deletes anything immediately</AlertTitle>
+  <AlertDescription>
+    Commits you "lose" usually linger in the reflog for weeks before garbage
+    collection. Before panicking over a bad reset or rebase, check `git reflog`
+    — the commit is often still there.
+  </AlertDescription>
 </Alert>
 
 ## Check Your Understanding
 
-<LessonSummary points={[
-  "Match the tool to the location: restore (working dir), amend (last commit), reset (local), revert (pushed)",
-  "git commit --amend rewrites the last commit — safe only before pushing",
-  "reset --soft keeps work staged, --mixed unstages it, --hard discards it",
-  "Use revert (not reset) for anything already pushed — it undoes via a new commit",
-  "git reflog is your safety net for recovering 'lost' commits after a bad reset or rebase",
-]} />
+<LessonSummary
+  points={[
+    "Match the tool to the location: restore (working dir), amend (last commit), reset (local), revert (pushed)",
+    "git commit --amend rewrites the last commit — safe only before pushing",
+    "reset --soft keeps work staged, --mixed unstages it, --hard discards it",
+    "Use revert (not reset) for anything already pushed — it undoes via a new commit",
+    "git reflog is your safety net for recovering 'lost' commits after a bad reset or rebase",
+  ]}
+/>

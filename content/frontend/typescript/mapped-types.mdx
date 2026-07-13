@@ -9,14 +9,16 @@ order: 6
 
 TypeScript types can compute other types. This is type-level programming.
 
-<LearningObjectives objectives={[
-  "Create mapped types with in keyof",
-  "Build conditional types with extends ? :",
-  "Extract types with the infer keyword",
-  "Combine template literals with mapped types",
-  "Implement recursive types (DeepPartial, DeepReadonly)",
-  "Transform API responses at the type level"
-]} />
+<LearningObjectives
+  objectives={[
+    "Create mapped types with in keyof",
+    "Build conditional types with extends ? :",
+    "Extract types with the infer keyword",
+    "Combine template literals with mapped types",
+    "Implement recursive types (DeepPartial, DeepReadonly)",
+    "Transform API responses at the type level",
+  ]}
+/>
 
 ## Mapped Types
 
@@ -31,7 +33,11 @@ type Stringify<T> = {
   [K in keyof T]: string
 }
 
-interface User { id: number; name: string; email: string }
+interface User {
+  id: number
+  name: string
+  email: string
+}
 type ReadonlyUser = Readonlyify<User>
 // { readonly id: number; readonly name: string; readonly email: string }
 
@@ -74,7 +80,7 @@ Types that depend on a condition.
 ```ts
 type IsString<T> = T extends string ? "yes" : "no"
 type A = IsString<"hello"> // "yes"
-type B = IsString<number>  // "no"
+type B = IsString<number> // "no"
 
 // Filter types from a union
 type ExtractString<T> = T extends string ? T : never
@@ -103,16 +109,21 @@ type E = Element<string[]> // string
 // Extract Promise value
 type Unwrap<T> = T extends Promise<infer U> ? U : T
 type F = Unwrap<Promise<number>> // number
-type G = Unwrap<string>          // string
+type G = Unwrap<string> // string
 
 // Extract first argument of a function
-type FirstArg<T> = T extends (first: infer F, ...rest: unknown[]) => unknown ? F : never
+type FirstArg<T> = T extends (first: infer F, ...rest: unknown[]) => unknown
+  ? F
+  : never
 type H = FirstArg<(id: number, name: string) => void> // number
 ```
 
 <Alert>
   <AlertTitle>Gotcha</AlertTitle>
-  <AlertDescription>Conditional types distribute over unions. Wrap with `[T] extends [U]` to prevent distribution when you need to check the whole union.</AlertDescription>
+  <AlertDescription>
+    Conditional types distribute over unions. Wrap with `[T] extends [U]` to
+    prevent distribution when you need to check the whole union.
+  </AlertDescription>
 </Alert>
 
 ## Template Literal + Mapped Types
@@ -126,7 +137,9 @@ interface CSSProperties {
 
 // Create event handlers from property names
 type CSSEvents = {
-  [K in keyof CSSProperties as `on${Capitalize<K>}Change`]: (value: CSSProperties[K]) => void
+  [K in keyof CSSProperties as `on${Capitalize<K>}Change`]: (
+    value: CSSProperties[K]
+  ) => void
 }
 // { onMarginChange: (value: string) => void; ... }
 ```
@@ -153,7 +166,9 @@ type PartialConfig = DeepPartial<Config>
 
 // Deep non-nullable
 type DeepNonNullable<T> = {
-  [K in keyof T]: T[K] extends object ? DeepNonNullable<NonNullable<T[K]>> : NonNullable<T[K]>
+  [K in keyof T]: T[K] extends object
+    ? DeepNonNullable<NonNullable<T[K]>>
+    : NonNullable<T[K]>
 }
 ```
 
@@ -171,15 +186,18 @@ interface APIPost {
 }
 
 // Rename snake_case to camelCase, unwrap timestamps to Date
-type SnakeToCamel<S extends string> =
-  S extends `${infer T}_${infer U}` ? `${T}${Capitalize<SnakeToCamel<U>>}` : S
+type SnakeToCamel<S extends string> = S extends `${infer T}_${infer U}`
+  ? `${T}${Capitalize<SnakeToCamel<U>>}`
+  : S
 
 type Transformed<T> = {
-  [K in keyof T as SnakeToCamel<K & string>]:
-    T[K] extends string ? T[K] :
-    T[K] extends number ? T[K] :
-    T[K] extends null | undefined ? never :
-    T[K]
+  [K in keyof T as SnakeToCamel<K & string>]: T[K] extends string
+    ? T[K]
+    : T[K] extends number
+      ? T[K]
+      : T[K] extends null | undefined
+        ? never
+        : T[K]
 }
 
 type FrontendPost = Transformed<APIPost>
@@ -211,15 +229,17 @@ type PostsResponse = APIResponse<FrontendPost>
     "Use [K in keyof T]? with the ? modifier to make keys optional.",
     "Check Array.isArray equivalent at type level: T extends (infer U)[],",
     "For non-array objects, recurse with DeepPartial<T[K]>.",
-    "Primitives and functions should remain unmodified."
+    "Primitives and functions should remain unmodified.",
   ]}
 />
 
-<LessonSummary points={[
-  "Mapped types transform each property using [K in keyof T] syntax.",
-  "Modifiers ? and readonly can be added or removed (with -).",
-  "Conditional types branch on T extends U ? A : B.",
-  "infer captures types from within conditional branches.",
-  "Recursive types like DeepPartial apply mapped types at every nesting level.",
-  "Key remapping with as enables renaming and filtering properties at the type level."
-]} />
+<LessonSummary
+  points={[
+    "Mapped types transform each property using [K in keyof T] syntax.",
+    "Modifiers ? and readonly can be added or removed (with -).",
+    "Conditional types branch on T extends U ? A : B.",
+    "infer captures types from within conditional branches.",
+    "Recursive types like DeepPartial apply mapped types at every nesting level.",
+    "Key remapping with as enables renaming and filtering properties at the type level.",
+  ]}
+/>

@@ -37,7 +37,7 @@ function Greeting({ name }) {
 }
 
 // Usage
-<Greeting name="React" />
+;<Greeting name="React" />
 ```
 
 ### JSX
@@ -48,7 +48,7 @@ JSX lets you write HTML-like syntax in JavaScript. It gets compiled to regular J
 const element = <h1>Hello, world!</h1>
 
 // Equivalent in vanilla JS
-const element = React.createElement('h1', null, 'Hello, world!')
+const element = React.createElement("h1", null, "Hello, world!")
 ```
 
 ### Props
@@ -66,19 +66,19 @@ function Card({ title, children }) {
 }
 
 // Usage
-<Card title="Welcome">
+;<Card title="Welcome">
   <p>Content goes here</p>
 </Card>
 ```
 
 ## React vs Other Libraries
 
-| Feature | React | Vue | Angular |
-|---------|-------|-----|---------|
-| Learning Curve | Medium | Easy | Steep |
-| Virtual DOM | Yes | Yes | Yes |
-| Two-Way Binding | No | Yes | Yes |
-| Single File Components | No | Yes | No |
+| Feature                | React  | Vue  | Angular |
+| ---------------------- | ------ | ---- | ------- |
+| Learning Curve         | Medium | Easy | Steep   |
+| Virtual DOM            | Yes    | Yes  | Yes     |
+| Two-Way Binding        | No     | Yes  | Yes     |
+| Single File Components | No     | Yes  | No      |
 
 ## Getting Started
 

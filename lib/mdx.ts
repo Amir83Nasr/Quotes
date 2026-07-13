@@ -3,6 +3,8 @@ import remarkGfm from "remark-gfm"
 import rehypeHighlight from "rehype-highlight"
 import type { MDXComponents } from "mdx/types"
 import type { Frontmatter } from "@/types/content"
+import type { Root as MdastRoot } from "mdast"
+import type { Root as HastRoot, Element, Text } from "hast"
 import { slugify } from "@/lib/utils"
 /**
  * Tiny remark plugin: drop the lesson's leading H1.
@@ -17,8 +19,8 @@ import { slugify } from "@/lib/utils"
  * top-level block nodes (headings, paragraphs, code, etc).
  */
 function remarkStripLeadingH1() {
-  return (tree: any) => {
-    const nodes: any[] = tree.children ?? []
+  return (tree: MdastRoot) => {
+    const nodes = tree.children
     // Only strip an H1 that is the very first block node — the redundant
     // `# Title` that mirrors frontmatter.title. A mid-article h1 (rare, but
     // possible) is left untouched, and at most one node is ever removed.
@@ -34,28 +36,28 @@ function remarkStripLeadingH1() {
  * Avoids a dependency on rehype-slug.
  */
 function rehypeSlugify() {
-  return (tree: any) => {
-    function getText(node: any): string {
+  return (tree: HastRoot) => {
+    function getText(node: Element | Text): string {
       if (node.type === "text") return node.value
       if (node.type === "element" && node.children) {
-        return node.children.map(getText).join("")
+        return (node.children as (Element | Text)[]).map(getText).join("")
       }
       return ""
     }
-    function walk(nodes: any[]) {
+    function walk(nodes: (Element | Text)[]) {
       for (const node of nodes) {
         if (node.type !== "element") continue
         if (/^h[1-6]$/.test(node.tagName)) {
-          const text = (node.children || []).map(getText).join("")
+          const text = node.children.map(getText).join("")
           node.properties = {
             ...node.properties,
             id: slugify(text),
           }
         }
-        if (node.children) walk(node.children)
+        if (node.children) walk(node.children as (Element | Text)[])
       }
     }
-    walk(tree.children || [])
+    walk(tree.children as (Element | Text)[])
   }
 }
 
@@ -63,9 +65,11 @@ function rehypeSlugify() {
  * Compile an MDX string into React components.
  * Returns the compiled component along with parsed frontmatter.
  */
-export async function compileMdx<TFrontmatter extends Frontmatter = Frontmatter>(
+export async function compileMdx<
+  TFrontmatter extends Frontmatter = Frontmatter,
+>(
   source: string,
-  components?: MDXComponents,
+  components?: MDXComponents
 ): Promise<{
   content: React.ReactElement
   frontmatter: TFrontmatter

@@ -13,7 +13,11 @@ Performance is a feature. Optimize judiciously.
 ```tsx
 import { memo } from "react"
 
-const ExpensiveList = memo(function ExpensiveList({ items }: { items: string[] }) {
+const ExpensiveList = memo(function ExpensiveList({
+  items,
+}: {
+  items: string[]
+}) {
   return (
     <ul>
       {items.map((item) => (

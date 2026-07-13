@@ -13,12 +13,14 @@ updated: "2026-07-11"
 
 The fastest request is the one you never make. Caching stores copies of responses so they can be reused instead of re-fetched, and CDNs push those copies physically closer to users. Together they're the backbone of a fast web.
 
-<LearningObjectives objectives={[
-  "Explain why caching improves speed and reduces load",
-  "Control caching with Cache-Control headers",
-  "Distinguish freshness from validation (ETags)",
-  "Describe what a CDN does and why edge locations matter",
-]} />
+<LearningObjectives
+  objectives={[
+    "Explain why caching improves speed and reduces load",
+    "Control caching with Cache-Control headers",
+    "Distinguish freshness from validation (ETags)",
+    "Describe what a CDN does and why edge locations matter",
+  ]}
+/>
 
 ## Why Cache?
 
@@ -44,12 +46,17 @@ Cache-Control: public, max-age=31536000, immutable   cache for a year, never rev
 
 - `max-age` — seconds the response stays "fresh" and reusable without asking.
 - `no-store` — don't cache at all (use for private/sensitive responses).
-- `no-cache` — you *may* store it, but must revalidate with the server before reuse.
+- `no-cache` — you _may_ store it, but must revalidate with the server before reuse.
 - `immutable` — promise it will never change, so don't even revalidate.
 
 <Alert>
-<AlertTitle>The cache-busting pattern</AlertTitle>
-<AlertDescription>Build tools name files with a content hash — <code>app.9f2a1b.js</code> — and serve them with a one-year <code>immutable</code> cache. When the file changes, the hash changes, so the URL changes, so browsers fetch the new one. You get aggressive caching AND instant updates.</AlertDescription>
+  <AlertTitle>The cache-busting pattern</AlertTitle>
+  <AlertDescription>
+    Build tools name files with a content hash — <code>app.9f2a1b.js</code> —
+    and serve them with a one-year <code>immutable</code> cache. When the file
+    changes, the hash changes, so the URL changes, so browsers fetch the new
+    one. You get aggressive caching AND instant updates.
+  </AlertDescription>
 </Alert>
 
 ## Freshness vs Validation
@@ -57,7 +64,7 @@ Cache-Control: public, max-age=31536000, immutable   cache for a year, never rev
 Two questions a cache asks:
 
 1. **Is it still fresh?** If within `max-age`, use the cached copy immediately — no network at all.
-2. **If stale, has it actually changed?** Instead of re-downloading, the browser *validates* with an **ETag** — a fingerprint of the content:
+2. **If stale, has it actually changed?** Instead of re-downloading, the browser _validates_ with an **ETag** — a fingerprint of the content:
 
 ```text
 Response:  ETag: "abc123"
@@ -80,16 +87,22 @@ with CDN:     Tokyo user ── 10ms ──▶ Tokyo edge (cached copy)
 CDNs cut latency (shorter physical distance), offload traffic from your origin, and absorb spikes. Static assets — images, CSS, JS, fonts — are the classic thing to serve from a CDN.
 
 <Alert>
-<AlertTitle>Latency is distance</AlertTitle>
-<AlertDescription>Data can't travel faster than light, so distance is a hard floor on speed. A CDN's whole job is shrinking that distance by keeping a copy near the user — which no amount of server optimization can replace.</AlertDescription>
+  <AlertTitle>Latency is distance</AlertTitle>
+  <AlertDescription>
+    Data can't travel faster than light, so distance is a hard floor on speed. A
+    CDN's whole job is shrinking that distance by keeping a copy near the user —
+    which no amount of server optimization can replace.
+  </AlertDescription>
 </Alert>
 
 ## Check Your Understanding
 
-<LessonSummary points={[
-  "Caching reuses stored responses instead of re-fetching — the fastest request is none",
-  "Cache-Control sets policy: max-age (freshness), no-store, no-cache, immutable",
-  "Content-hashed filenames + immutable caching give aggressive caching with instant updates",
-  "ETags let a stale cache validate cheaply — a 304 reuses the copy without re-downloading",
-  "CDNs cache at edge locations near users, cutting latency that distance would otherwise impose",
-]} />
+<LessonSummary
+  points={[
+    "Caching reuses stored responses instead of re-fetching — the fastest request is none",
+    "Cache-Control sets policy: max-age (freshness), no-store, no-cache, immutable",
+    "Content-hashed filenames + immutable caching give aggressive caching with instant updates",
+    "ETags let a stale cache validate cheaply — a 304 reuses the copy without re-downloading",
+    "CDNs cache at edge locations near users, cutting latency that distance would otherwise impose",
+  ]}
+/>

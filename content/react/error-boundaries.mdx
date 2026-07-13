@@ -13,18 +13,20 @@ order: 6
     "Implement componentDidCatch and getDerivedStateFromError",
     "Build a reusable ErrorBoundary component with granular fallback",
     "Place error boundaries strategically in your component tree",
-    "Understand React 19 error handling improvements"
+    "Understand React 19 error handling improvements",
   ]}
 />
 
 ## What Error Boundaries Catch
 
 Error boundaries catch errors during:
+
 - Rendering (build/commit phase)
 - Lifecycle methods
 - Constructors
 
 They DO NOT catch errors in:
+
 - Event handlers (use try/catch)
 - Async code (use try/catch or catch on the promise)
 - Server-side rendering
@@ -34,7 +36,9 @@ They DO NOT catch errors in:
   <AlertTriangle />
   <AlertTitle>Class components only</AlertTitle>
   <AlertDescription>
-    Error boundaries must be class components — React lifecycle methods `componentDidCatch` and `getDerivedStateFromError` don't exist on function components. React 19 may change this; for now this is the rule.
+    Error boundaries must be class components — React lifecycle methods
+    `componentDidCatch` and `getDerivedStateFromError` don't exist on function
+    components. React 19 may change this; for now this is the rule.
   </AlertDescription>
 </Alert>
 
@@ -78,8 +82,8 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         this.props.fallback ?? (
           <div className="rounded border border-red-300 bg-red-50 p-4">
-            <h2 className="text-red-800 font-semibold">Something went wrong</h2>
-            <p className="text-red-600 text-sm">{this.state.error?.message}</p>
+            <h2 className="font-semibold text-red-800">Something went wrong</h2>
+            <p className="text-sm text-red-600">{this.state.error?.message}</p>
           </div>
         )
       )
@@ -155,6 +159,7 @@ const SafeWidget = withErrorBoundary(Widget, <p>Widget unavailable</p>)
 ## React 19 Improvements
 
 In React 19, error handling becomes more ergonomic:
+
 - `onCaughtError` and `onUncaughtError` root options for global error reporting
 - Better integration with Suspense — errors during streaming server rendering are handled gracefully
 
@@ -182,33 +187,33 @@ export default function Exercise() {
 import { Component, type ReactNode, type ErrorInfo } from "react"
 
 interface ErrorBoundaryProps {
-  children: ReactNode
-  fallback: ReactNode
+children: ReactNode
+fallback: ReactNode
 }
 interface ErrorBoundaryState {
-  hasError: boolean
+hasError: boolean
 }
 
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props)
-    this.state = { hasError: false }
-  }
-  static getDerivedStateFromError(): ErrorBoundaryState {
-    return { hasError: true }
-  }
-  componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error("Caught:", error, info)
-  }
-  render() {
-    if (this.state.hasError) return this.props.fallback
-    return this.props.children
-  }
+constructor(props: ErrorBoundaryProps) {
+super(props)
+this.state = { hasError: false }
+}
+static getDerivedStateFromError(): ErrorBoundaryState {
+return { hasError: true }
+}
+componentDidCatch(error: Error, info: ErrorInfo) {
+console.error("Caught:", error, info)
+}
+render() {
+if (this.state.hasError) return this.props.fallback
+return this.props.children
+}
 }
 
 function Bomb({ shouldThrow }: { shouldThrow: boolean }) {
-  if (shouldThrow) throw new Error("💥 Component exploded!")
-  return <p>All good here</p>
+if (shouldThrow) throw new Error("💥 Component exploded!")
+return <p>All good here</p>
 }
 
 export default function Exercise() {
@@ -233,6 +238,6 @@ export default function Exercise() {
     "Must use class components with getDerivedStateFromError and componentDidCatch",
     "Place boundaries granularly to isolate failures to specific features",
     "Combine with Suspense for robust UX during loading failures",
-    "HOC pattern (withErrorBoundary) makes wrapping any component easy"
+    "HOC pattern (withErrorBoundary) makes wrapping any component easy",
   ]}
 />

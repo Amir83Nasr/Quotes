@@ -87,12 +87,18 @@ export const lessonMdxComponents: MDXComponents = {
     </div>
   ),
   th: ({ children, ...props }: ThHTMLAttributes<HTMLTableCellElement>) => (
-    <th className="border px-4 py-2 text-left font-medium [[align=center]]:text-center [[align=right]]:text-right" {...props}>
+    <th
+      className="border px-4 py-2 text-left font-medium [[align=center]]:text-center [[align=right]]:text-right"
+      {...props}
+    >
       {children}
     </th>
   ),
   td: ({ children, ...props }: TdHTMLAttributes<HTMLTableCellElement>) => (
-    <td className="border px-4 py-2 text-left [[align=center]]:text-center [[align=right]]:text-right" {...props}>
+    <td
+      className="border px-4 py-2 text-left [[align=center]]:text-center [[align=right]]:text-right"
+      {...props}
+    >
       {children}
     </td>
   ),
@@ -101,7 +107,10 @@ export const lessonMdxComponents: MDXComponents = {
     const isInline = !className
     if (isInline) {
       return (
-        <code className="rounded bg-muted px-1.5 py-0.5 text-sm font-mono" {...props}>
+        <code
+          className="rounded bg-muted px-1.5 py-0.5 font-mono text-sm"
+          {...props}
+        >
           {children}
         </code>
       )
@@ -113,7 +122,10 @@ export const lessonMdxComponents: MDXComponents = {
     )
   },
   blockquote: ({ children, ...props }: HTMLAttributes<HTMLQuoteElement>) => (
-    <blockquote className="my-4 border-l-4 border-muted-foreground/30 pl-4 italic text-muted-foreground" {...props}>
+    <blockquote
+      className="my-4 border-l-4 border-muted-foreground/30 pl-4 text-muted-foreground italic"
+      {...props}
+    >
       {children}
     </blockquote>
   ),
@@ -134,7 +146,7 @@ export const lessonMdxComponents: MDXComponents = {
  * Return components for MDX rendering, optionally injecting page-specific ones.
  */
 export function getLessonMdxComponents(
-  extra?: Record<string, React.ComponentType>,
+  extra?: Record<string, React.ComponentType>
 ): MDXComponents {
   return {
     ...lessonMdxComponents,
