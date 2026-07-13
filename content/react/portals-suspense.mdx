@@ -211,57 +211,6 @@ export default function Exercise() {
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz
-  questions={[
-    {
-      question: "What does createPortal do?",
-      options: [
-        "Creates a new React root",
-        "Renders children into a different DOM node while preserving React tree context",
-        "Opens a new browser tab",
-        "Creates a modal automatically"
-      ],
-      correctIndex: 1,
-      explanation: "createPortal renders into a different DOM node, but the React tree (context, events) stays intact."
-    },
-    {
-      question: "Does click event propagation in a portal follow the DOM tree or React tree?",
-      options: [
-        "DOM tree",
-        "React tree",
-        "Both equally",
-        "Neither"
-      ],
-      correctIndex: 1,
-      explanation: "Events bubble through the React component tree, not the DOM tree. Portal children still belong to their React parent."
-    },
-    {
-      question: "What is the purpose of the fallback prop in Suspense?",
-      options: [
-        "Error UI when loading fails",
-        "Loading indicator shown while children are being fetched or loaded",
-        "Aria label for accessibility",
-        "Default content when children are null"
-      ],
-      correctIndex: 1,
-      explanation: "Suspense fallback is shown while the children are loading — for lazy components or data fetching."
-    },
-    {
-      question: "What does isPending flag from useTransition indicate?",
-      options: [
-        "A error occurred during transition",
-        "The transition is still being processed",
-        "The component is about to unmount",
-        "The input value has changed"
-      ],
-      correctIndex: 1,
-      explanation: "isPending is true while the transition is being processed. The UI remains responsive and shows previous results."
-    }
-  ]}
-/>
-
 <LessonSummary
   points={[
     "createPortal lets you render outside the parent DOM node while keeping React context",

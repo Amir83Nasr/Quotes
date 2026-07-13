@@ -598,41 +598,6 @@ export async function POST(request: Request) {
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz
-  questions={[
-    {
-      question: "How do you read a JSON request body in a route handler?",
-      options: [
-        "request.body",
-        "await request.json()",
-        "JSON.parse(request)",
-        "request.getBody()",
-      ],
-      correctIndex: 1,
-      explanation: "Route handlers use the Web API Request object; await request.json() parses the body into an object.",
-    },
-    {
-      question: "When sending FormData from the browser, what should you do with Content-Type?",
-      options: [
-        "Set it to application/json",
-        "Set it to multipart/form-data manually",
-        "Leave it unset — the browser adds it with the boundary",
-        "Set it to text/plain",
-      ],
-      correctIndex: 2,
-      explanation: "The browser generates the multipart boundary automatically; setting Content-Type yourself breaks the request.",
-    },
-    {
-      question: "What status code should a create endpoint return on success?",
-      options: ["200 OK", "201 Created", "204 No Content", "302 Found"],
-      correctIndex: 1,
-      explanation: "201 Created signals a new resource was created, and typically returns the created resource in the body.",
-    },
-  ]}
-/>
-
 ## Lesson Summary
 
 <LessonSummary

@@ -183,35 +183,6 @@ function handleUIEvent(event: UIEvent): string {
   ]}
 />
 
-<Quiz
-  questions={[
-    {
-      question: "What does the `in` operator check?",
-      options: ["Whether a value is an object", "Whether a property exists on an object", "Whether a value is null", "Whether a value has a prototype"],
-      correctIndex: 1,
-      explanation: "The in operator returns true if the specified property exists on the object."
-    },
-    {
-      question: "What is the return type annotation for a type predicate function?",
-      options: ["value is Type", "boolean", "asserts value is Type", "Type | undefined"],
-      correctIndex: 0,
-      explanation: "Type predicates use `parameterName is Type` as the return type to tell TypeScript the narrowed type."
-    },
-    {
-      question: "What happens if you pass a value to assertNever that isn't never?",
-      options: ["Runtime error", "Compile-time error", "TypeScript infers never", "No error"],
-      correctIndex: 1,
-      explanation: "assertNever expects never. Passing a non-never value causes a compile-time error, which is how exhaustiveness checking works."
-    },
-    {
-      question: "What does `asserts value is string` mean?",
-      options: ["Returns true if value is string", "Throws if value is not a string; narrows to string after", "Returns a string", "Converts value to string"],
-      correctIndex: 1,
-      explanation: "Assertion functions throw on invalid input and narrow the type in the remaining scope if they return normally."
-    },
-  ]}
-/>
-
 <LessonSummary points={[
   "typeof narrows primitives, instanceof narrows classes, in narrows object shapes.",
   "Type predicates (x is T) let you write reusable custom narrowing functions.",

@@ -212,35 +212,6 @@ declare module "simple-logger" {
   ]}
 />
 
-<Quiz
-  questions={[
-    {
-      question: "What does a .d.ts file contain?",
-      options: ["TypeScript source code with implementations", "Only type declarations, no implementations", "Compiled JavaScript output", "Test files for types"],
-      correctIndex: 1,
-      explanation: "Declaration files (.d.ts) contain only type and interface declarations — no runtime code."
-    },
-    {
-      question: "What is module augmentation used for?",
-      options: ["Creating new modules", "Adding types to existing modules without modifying their source", "Removing types from modules", "Replacing module implementations"],
-      correctIndex: 1,
-      explanation: "Module augmentation lets you add or modify types of existing modules (including third-party) without changing their source files."
-    },
-    {
-      question: "When would you use declare global?",
-      options: ["To create a global variable", "To augment types available on the global scope (e.g., Window)", "To declare a module", "To export types"],
-      correctIndex: 1,
-      explanation: "declare global is used inside a module file to add or modify types in the global scope, like adding properties to Window."
-    },
-    {
-      question: "How do you specify that a package ships its types in a dist folder?",
-      options: ["triple-slash directives", "tsconfig.json typeRoots", "The types field in package.json", "A .ts file in the root"],
-      correctIndex: 2,
-      explanation: "The types field in package.json points to the entry declaration file, telling TypeScript where to find the package's types."
-    },
-  ]}
-/>
-
 <LessonSummary points={[
   ".d.ts files contain type declarations without implementations.",
   "declare module adds types for untyped libraries without modifying them.",

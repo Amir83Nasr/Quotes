@@ -179,12 +179,6 @@ This enables native form controls, scrollbars, and default colors to match the s
   previewType="html"
 />
 
-<Quiz questions={[
-  { question: "Why is oklch better than hsl for design systems?", options: ["It supports more colors", "It's perceptually uniform — same lightness looks equally bright", "It's faster to render", "It only works in modern browsers"], correctIndex: 1, explanation: "OKLCH is perceptually uniform: changing lightness or chroma by the same amount produces an equal perceptual difference. HSL doesn't guarantee this." },
-  { question: "What does `color-mix(in oklch, blue, white)` do?", options: ["Adds blue and white as layers", "Creates a lighter blue by mixing blue with white in oklch space", "Blends the two colors overlay-style", "Creates a gradient"], correctIndex: 1, explanation: "color-mix blends two colors proportionally in a specified color space. Here it tints blue toward white." },
-  { question: "What WCAG ratio is required for normal text at AA level?", options: ["3:1", "4.5:1", "7:1", "2:1"], correctIndex: 1, explanation: "Normal text under WCAG AA requires a 4.5:1 contrast ratio. Large text needs 3:1." },
-]} />
-
 <LessonSummary points={[
 "oklch() and oklab() are perceptually uniform — use for design systems",
 "color-mix() blends colors in any color space with proportional mixing",

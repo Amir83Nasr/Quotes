@@ -200,35 +200,6 @@ export default function DashboardLayout({
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz
-  questions={[
-    {
-      question: "What is the difference between layout.tsx and template.tsx?",
-      options: [
-        "layout.tsx is for root only, template.tsx for nested",
-        "layout.tsx preserves state across navigations; template.tsx remounts on each navigation",
-        "template.tsx only works with parallel routes",
-        "There is no difference — they are interchangeable",
-      ],
-      correctIndex: 1,
-      explanation: "Layouts persist across navigations without remounting. Templates remount on every navigation, losing state but running effects on each route change.",
-    },
-    {
-      question: "How do you define a parallel route slot?",
-      options: [
-        "Using [param] syntax",
-        "Using (group) syntax",
-        "Using @slot directory convention",
-        "Using \\(...\\) syntax",
-      ],
-      correctIndex: 2,
-      explanation: "Parallel routes use the @slot convention, where each @folder name maps to a named slot that receives its own page content independently.",
-    },
-  ]}
-/>
-
 ## Lesson Summary
 
 <LessonSummary

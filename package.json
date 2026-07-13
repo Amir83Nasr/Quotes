@@ -1,6 +1,8 @@
 {
-  "name": "NEXT",
+  "name": "quotes",
+  "description": "Interactive platform for learning web development — frontend, fullstack, git, and modern frameworks.",
   "version": "0.0.1",
+  "license": "MIT",
   "type": "module",
   "private": true,
   "scripts": {

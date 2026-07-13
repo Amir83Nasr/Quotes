@@ -227,12 +227,6 @@ Semantic HTML signals content hierarchy to search engines:
   previewType="html"
 />
 
-<Quiz questions={[
-  { question: "Which element has an implicit `navigation` landmark role?", options: ["header", "nav", "main", "aside"], correctIndex: 1, explanation: "<nav> has the implicit 'navigation' landmark role, helping screen reader users jump to navigation." },
-  { question: "How many <h1> elements should a page have?", options: ["As many as needed", "At most one", "Exactly one per section", "None — use CSS instead"], correctIndex: 1, explanation: "A page should have one <h1> for the primary title. Multiple <h1> elements confuse the document outline." },
-  { question: "What does the <time> element require for machine readability?", options: ["A class", "The datetime attribute", "An aria-label", "A nested span"], correctIndex: 1, explanation: "The datetime attribute provides a machine-readable date format while the element content displays a human-readable version." },
-]} />
-
 <LessonSummary points={[
 "Semantic elements describe meaning, not just appearance",
 "Each landmark role has a specific purpose — use elements correctly",

@@ -118,29 +118,6 @@ async function fetchWithRetry(url, { retries = 3, delay = 1000 } = {}) {
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz questions={[
-  {
-    question: "What does async function always return?",
-    options: ["Value directly", "A promise", "A generator"],
-    correctIndex: 1,
-    explanation: "Async functions always return a promise."
-  },
-  {
-    question: "When NOT to retry HTTP request?",
-    options: ["500", "503", "404"],
-    correctIndex: 2,
-    explanation: "4xx are client errors — retrying won't help."
-  },
-  {
-    question: "Top-level await does what?",
-    options: ["Syntax error", "Blocks module until promise settles", "Node only"],
-    correctIndex: 1,
-    explanation: "Top-level await suspends module execution (ESM only)."
-  }
-]} />
-
 ## Lesson Summary
 
 <LessonSummary points={[

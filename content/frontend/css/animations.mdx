@@ -138,6 +138,30 @@ animation: typewriter 2s steps(10) forwards;
 @keyframes spin { to { transform: rotate(360deg); } }`}
 />
 
+## Try It Yourself
+
+Try creating a custom animation with CSS keyframes:
+
+<LessonCodeExample
+  code={`@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+.pulse-box {
+  background: #6366f1;
+  color: white;
+  padding: 1.5rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  animation: bounce 0.6s ease infinite;
+}`}
+  language="css"
+  title="Bounce Animation"
+  preview
+  showLineNumbers
+  explanation="A `@keyframes bounce` rule defines a vertical bounce effect. Setting `animation: bounce 0.6s ease infinite` makes the element loop continuously. The animation applies to the `.pulse-box` selector, animating `translateY` between 0 and -20px."
+/>
+
 <InteractiveExercise
   title="Loading Spinner & Card Reveal"
   description="Build a loading spinner with CSS and a card that reveals with a slide-in animation."
@@ -171,12 +195,6 @@ animation: typewriter 2s steps(10) forwards;
   hints={["Use @keyframes for both spin and slideUp", "Use animation property on both elements", "Add prefers-reduced-motion fallback"]}
   previewType="html"
 />
-
-<Quiz questions={[
-  { question: "Which property tells the browser to GPU-accelerate an element?", options: ["transform", "will-change", "animation-fill-mode", "transition-timing-function"], correctIndex: 1, explanation: "will-change hints the browser to promote the element to its own compositor layer for GPU acceleration." },
-  { question: "What cubic-bezier value creates a bounce effect (overshoot then settle)?", options: ["0, 0, 1, 1", "0.34, 1.56, 0.64, 1", "0.42, 0, 1, 1", "0, 0, 0.58, 1"], correctIndex: 1, explanation: "A y value > 1 (like 1.56) overshoots the target, creating a bounce. Linear is 0,0,1,1. Ease-out is 0,0,0.58,1." },
-  { question: "How do you respect user motion preferences?", options: ["Use animation-direction: reverse", "Wrap animations in @media (prefers-reduced-motion: reduce)", "Use animation-iteration-count: 1", "Set will-change: auto"], correctIndex: 1, explanation: "The prefers-reduced-motion media query tests if the user wants less motion. Inside, override animation and transition durations to near-zero." },
-]} />
 
 <LessonSummary points={[
 "Transitions interpolate between states on property change",

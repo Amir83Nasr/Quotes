@@ -104,14 +104,15 @@ Build on the concept. Use an <Alert> for a key insight when it helps:
 
 ## Check Your Understanding
 
-<Quiz questions={[
-  {
-    question: "Ask something that tests the core concept",
-    options: ["Wrong", "Correct answer", "Wrong", "Wrong"],
-    correctIndex: 1,
-    explanation: "Explain why the correct answer is right.",
-  },
-]} />
+<LessonCodeExample
+  code={`// Replace with a runnable example
+console.log("Test your understanding")`}
+  language="javascript"
+  title="Try it yourself"
+  executable
+  showLineNumbers
+  explanation="Describe what this code does and why it matters."
+/>
 
 <LessonSummary points={[
   "Key takeaway one",

@@ -79,42 +79,6 @@ Use `defer` for scripts that need the full DOM (most app code); `async` for inde
 
 ## Check Your Understanding
 
-<Quiz questions={[
-  {
-    question: "What are the DOM and CSSOM combined into before layout?",
-    options: [
-      "The bytecode",
-      "The render tree — only the visible nodes with their computed styles",
-      "The virtual DOM",
-      "The paint layer"
-    ],
-    correctIndex: 1,
-    explanation: "The DOM and CSSOM merge into the render tree, which contains only visible elements with their styles. Layout then computes their geometry.",
-  },
-  {
-    question: "Why is animating 'transform' smoother than animating 'left'?",
-    options: [
-      "transform is a newer property",
-      "transform can be handled by the compositor/GPU without triggering layout each frame",
-      "left is not supported in modern browsers",
-      "They perform identically"
-    ],
-    correctIndex: 1,
-    explanation: "Animating 'left' forces layout (reflow) every frame. 'transform' and 'opacity' stay on the compositor, which the GPU handles cheaply for smooth 60fps.",
-  },
-  {
-    question: "What does the 'defer' attribute on a script do?",
-    options: [
-      "Prevents the script from ever running",
-      "Downloads it in parallel and runs it after HTML parsing completes",
-      "Runs it before the HTML is parsed",
-      "Loads it only on user interaction"
-    ],
-    correctIndex: 1,
-    explanation: "defer downloads the script in parallel without blocking parsing, then executes it once the DOM is fully parsed — ideal for app code that needs the whole page.",
-  },
-]} />
-
 <LessonSummary points={[
   "The critical rendering path: HTML→DOM, CSS→CSSOM, render tree, layout, paint, composite",
   "The DOM and CSSOM are live trees the browser builds — not the raw source files",

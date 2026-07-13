@@ -189,35 +189,6 @@ export const config = {
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz
-  questions={[
-    {
-      question: "Where should middleware.ts be placed?",
-      options: [
-        "Inside app/ directory",
-        "At the project root (same level as app/)",
-        "Inside pages/ directory",
-        "In src/middleware/",
-      ],
-      correctIndex: 1,
-      explanation: "middleware.ts lives at the project root (or src/ if using src/ structure), not inside app/ or pages/.",
-    },
-    {
-      question: "What does NextResponse.rewrite() do compared to NextResponse.redirect()?",
-      options: [
-        "They are identical",
-        "rewrite() changes the URL in the browser; redirect() does not",
-        "rewrite() serves content from another URL without changing the browser URL; redirect() changes the browser URL",
-        "rewrite() only works for API routes",
-      ],
-      correctIndex: 2,
-      explanation: "rewrite() proxies content from a different URL while the browser keeps the original URL. redirect() sends the browser to a new URL entirely.",
-    },
-  ]}
-/>
-
 ## Lesson Summary
 
 <LessonSummary

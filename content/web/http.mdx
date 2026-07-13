@@ -97,37 +97,6 @@ The `4xx` vs `5xx` distinction is crucial: **4xx is the client's fault** (bad re
 
 ## Check Your Understanding
 
-<Quiz questions={[
-  {
-    question: "Which HTTP method is both safe and idempotent?",
-    options: ["POST", "GET", "PATCH", "DELETE"],
-    correctIndex: 1,
-    explanation: "GET is safe (no state change) and idempotent (repeating it yields the same result). POST is neither; PUT/DELETE are idempotent but not safe.",
-  },
-  {
-    question: "A response returns 503. Whose problem is it, generally?",
-    options: [
-      "The client sent a bad request",
-      "The server — 5xx codes indicate server-side errors",
-      "The DNS resolver",
-      "The user's browser cache"
-    ],
-    correctIndex: 1,
-    explanation: "5xx codes are server errors. 503 Service Unavailable means the server is overloaded or down — the issue is on the server side, not the client.",
-  },
-  {
-    question: "What's the difference between 401 and 403?",
-    options: [
-      "They're identical",
-      "401 means not authenticated (log in); 403 means authenticated but not permitted",
-      "401 is a server error; 403 is a client error",
-      "403 means the page moved"
-    ],
-    correctIndex: 1,
-    explanation: "401 Unauthorized = we don't know who you are, authenticate. 403 Forbidden = we know who you are, but you lack permission.",
-  },
-]} />
-
 <LessonSummary points={[
   "HTTP methods express intent: GET reads, POST creates, PUT/PATCH update, DELETE removes",
   "Safe methods don't change state; idempotent methods are safe to repeat",

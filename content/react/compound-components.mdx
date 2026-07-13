@@ -256,47 +256,6 @@ function AccordionPanel({ id, children }: { id: string; children: ReactNode }) {
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz
-  questions={[
-    {
-      question: "What problem do compound components solve?",
-      options: [
-        "Prop drilling",
-        "Performance optimization",
-        "CSS styling",
-        "TypeScript types"
-      ],
-      correctIndex: 0,
-      explanation: "Compound components share implicit state via Context, eliminating prop drilling."
-    },
-    {
-      question: "What mechanism do compound components typically use for shared state?",
-      options: ["Redux", "React Context", "Local storage", "URL params"],
-      correctIndex: 1,
-      explanation: "React Context provides the implicit shared state that compound components rely on."
-    },
-    {
-      question: "What happens if a child component is used outside its compound parent?",
-      options: [
-        "It renders nothing",
-        "Context throws or returns undefined — you should throw a descriptive error",
-        "React warns in console",
-        "It works fine without the parent"
-      ],
-      correctIndex: 1,
-      explanation: "useContext returns undefined if no provider is found. Always check and throw a helpful error."
-    },
-    {
-      question: "Which pattern gives consumers the most control over markup?",
-      options: ["Compound components", "Render props", "Hooks", "HOCs"],
-      correctIndex: 2,
-      explanation: "Custom hooks give consumers full control over markup while providing state and logic."
-    }
-  ]}
-/>
-
 <LessonSummary
   points={[
     "Compound components share implicit state via React Context",

@@ -321,46 +321,6 @@ model Comment {
   language="prisma"
 />
 
-## Quiz
-
-<Quiz
-  questions={[
-    {
-      question: "What does the `include` option do in a Prisma query?",
-      options: [
-        "Filters results by a condition",
-        "Fetches related models in the same query",
-        "Creates a new database index",
-        "Orders results by a field",
-      ],
-      correctIndex: 1,
-      explanation: "include fetches related records (like author on a Post) in a single query, avoiding N+1 problems.",
-    },
-    {
-      question: "Why use an HTTP-based adapter (Neon/PlanetScale) with Prisma on serverless?",
-      options: [
-        "It improves query performance by 10x",
-        "Edge Runtime does not support raw TCP connections",
-        "It automatically generates TypeScript types",
-        "HTTP adapters support MongoDB natively",
-      ],
-      correctIndex: 1,
-      explanation: "Edge functions and serverless runtimes lack TCP socket support — HTTP adapters bridge this gap.",
-    },
-    {
-      question: "What does `npx prisma migrate deploy` do compared to `npx prisma migrate dev`?",
-      options: [
-        "Runs pending migrations in production without confirmation",
-        "Creates a new migration based on schema changes",
-        "Drops and recreates the database",
-        "Seeds the database with sample data",
-      ],
-      correctIndex: 0,
-      explanation: "migrate dev creates migrations locally with prompts; migrate deploy runs pending ones in CI/production.",
-    },
-  ]}
-/>
-
 <LessonSummary
   points={[
     "SQL (PostgreSQL) is the default choice for Next.js apps needing relational integrity",

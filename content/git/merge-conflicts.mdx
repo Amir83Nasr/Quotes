@@ -103,42 +103,6 @@ Nothing is lost — it's as if the merge never happened.
 
 ## Check Your Understanding
 
-<Quiz questions={[
-  {
-    question: "When does Git raise a merge conflict?",
-    options: [
-      "Any time two branches changed the same file",
-      "When the same lines were changed differently on both branches",
-      "Whenever you merge into main",
-      "Only when the file has syntax errors"
-    ],
-    correctIndex: 1,
-    explanation: "Git merges non-overlapping changes automatically. A conflict happens only when both branches changed the same lines in incompatible ways.",
-  },
-  {
-    question: "In conflict markers, what does the section between <<<<<<< HEAD and ======= represent?",
-    options: [
-      "The incoming branch's version",
-      "Your current branch's version",
-      "The original version before both changes",
-      "A backup Git created"
-    ],
-    correctIndex: 1,
-    explanation: "The part under <<<<<<< HEAD is your current branch (HEAD). The part below ======= up to >>>>>>> is the incoming branch.",
-  },
-  {
-    question: "You want to completely cancel an in-progress merge and return to the previous state. What do you run?",
-    options: [
-      "git reset --hard",
-      "git merge --abort",
-      "git revert",
-      "git checkout main"
-    ],
-    correctIndex: 1,
-    explanation: "'git merge --abort' cleanly cancels the merge and restores the state from just before you started it.",
-  },
-]} />
-
 <LessonSummary points={[
   "Conflicts arise only when the same lines change differently on both branches",
   "Conflict markers show HEAD (your branch) above ======= and the incoming branch below",

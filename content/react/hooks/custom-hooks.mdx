@@ -299,44 +299,6 @@ export default function ResponsiveDisplay() {
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz questions={[
-  {
-    question: "What makes a function a custom hook?",
-    options: [
-      "Calling it inside a component",
-      "Starting the name with 'use' and calling other hooks inside it",
-      "Using TypeScript generics",
-      "Exporting it as default"
-    ],
-    correctIndex: 1,
-    explanation: "A custom hook is a function that starts with 'use' and calls other hooks. The naming convention enables React's lint rules to validate hook usage."
-  },
-  {
-    question: "Which built-in hooks can a custom hook call?",
-    options: [
-      "Only useState and useEffect",
-      "Any React hooks (useState, useEffect, useRef, useMemo, etc.)",
-      "Only hooks without dependencies",
-      "Only one hook per custom hook"
-    ],
-    correctIndex: 1,
-    explanation: "Custom hooks can compose any built-in hooks. That's their power — they abstract arbitrary combinations of hook logic."
-  },
-  {
-    question: "What is the benefit of composing hooks (e.g., useDebounce + useMediaQuery inside a single custom hook)?",
-    options: [
-      "Reduced bundle size",
-      "Cleaner abstraction that hides coordination logic between hooks",
-      "Automatic memoization",
-      "Faster runtime performance"
-    ],
-    correctIndex: 1,
-    explanation: "Composing hooks lets you encapsulate cross-cutting concerns (like 'debounce longer on mobile') in one place, keeping components simple."
-  }
-]} />
-
 <LessonSummary points={[
   "Custom hooks extract reusable stateful logic — follow the use* naming convention",
   "Compose any built-in hooks inside a custom hook (useState, useEffect, useRef, etc.)",

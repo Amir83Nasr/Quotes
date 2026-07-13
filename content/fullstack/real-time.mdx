@@ -415,46 +415,6 @@ export default function NotificationBell() {
   language="tsx"
 />
 
-## Quiz
-
-<Quiz
-  questions={[
-    {
-      question: "What format must each SSE message follow?",
-      options: [
-        "JSON in the response body",
-        "data: <payload>\\n\\n with a double newline terminator",
-        "An XML envelope wrapped in <event> tags",
-        "A plain text line terminated by a semicolon",
-      ],
-      correctIndex: 1,
-      explanation: "SSE spec requires each message to start with data: and end with two newlines (\\n\\n). This is how the EventSource API delimits messages.",
-    },
-    {
-      question: "Why is SSE generally preferred over WebSocket for a notification bell?",
-      options: [
-        "SSE has lower latency than WebSocket",
-        "Notifications are one-directional (server to client) — SSE is simpler and uses plain HTTP",
-        "WebSocket requires the server to initiate connections",
-        "SSE supports binary data transfer natively",
-      ],
-      correctIndex: 1,
-      explanation: "Notifications only flow from server to client. SSE is perfect for this: it's simpler, uses standard HTTP (works in serverless), and has automatic reconnection built into EventSource.",
-    },
-    {
-      question: "What is the purpose of an optimistic update?",
-      options: [
-        "To batch multiple mutations into a single server request",
-        "To show the result immediately before the server confirms, then roll back on failure",
-        "To prefetch data before the user navigates to a page",
-        "To reduce the payload size of API responses",
-      ],
-      correctIndex: 1,
-      explanation: "Optimistic updates apply the expected state change to the UI immediately. If the server request fails, you roll back to the previous state. This eliminates perceived latency.",
-    },
-  ]}
-/>
-
 <LessonSummary
   points={[
     "Polling is simplest — use it unless intervals are short (<10s) and users are many (>1k)",

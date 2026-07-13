@@ -215,35 +215,6 @@ type PostsResponse = APIResponse<FrontendPost>
   ]}
 />
 
-<Quiz
-  questions={[
-    {
-      question: "What does `[K in keyof T]` do in a mapped type?",
-      options: ["Iterates over values of T", "Iterates over keys of T", "Creates an array of keys", "Filters keys by type"],
-      correctIndex: 1,
-      explanation: "It iterates over every key K in the union of T's keys, creating a property for each."
-    },
-    {
-      question: "What does the infer keyword do?",
-      options: ["Declares a new generic parameter", "Extracts a type from another type in a conditional", "Creates a type alias", "Infers a literal type from a value"],
-      correctIndex: 1,
-      explanation: "infer declares a type variable in the true branch of a conditional type, capturing a sub-type from the checked type."
-    },
-    {
-      question: "Why wrap with [T] extends [U] instead of T extends U?",
-      options: ["It's faster", "It prevents distribution over unions", "It enables recursion", "It adds caching"],
-      correctIndex: 1,
-      explanation: "Wrapping both sides in a tuple prevents conditional types from distributing over union members."
-    },
-    {
-      question: "What is the `as` clause in a mapped type used for?",
-      options: ["Aliasing the type", "Filtering or remapping keys", "Adding type parameters", "Creating conditional branches"],
-      correctIndex: 1,
-      explanation: "The `as` clause in `[K in keyof T as NewKey]` lets you remap or filter property keys."
-    },
-  ]}
-/>
-
 <LessonSummary points={[
   "Mapped types transform each property using [K in keyof T] syntax.",
   "Modifiers ? and readonly can be added or removed (with -).",

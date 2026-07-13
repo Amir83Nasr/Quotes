@@ -35,7 +35,7 @@ export function Header({ navItems }: HeaderProps) {
 
         <Link href="/" className="flex items-center gap-2 font-semibold shrink-0">
           <BookOpen className="h-5 w-5" />
-          <span className="hidden sm:inline-block">Frontend Learning</span>
+          <span className="hidden sm:inline-block">Quotes</span>
         </Link>
 
         {/* Search — centered on desktop */}

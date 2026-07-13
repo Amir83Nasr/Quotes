@@ -92,6 +92,29 @@ for (let i = 0; i < items.length; i++) {
 }
 ```
 
+## Try It Yourself
+
+Run this to see microtask vs macrotask execution order in real-time:
+
+<LessonCodeExample
+  code={`console.log(1)
+setTimeout(() => console.log(2), 0)
+Promise.resolve().then(() => console.log(3))
+Promise.resolve().then(() => {
+  console.log(4)
+  setTimeout(() => console.log(5), 0)
+})
+setTimeout(() => console.log(6), 0)
+console.log(7)
+
+// Expected output order: 1, 7, 3, 4, 2, 6, 5`}
+  language="javascript"
+  title="Execution Order"
+  executable
+  showLineNumbers
+  explanation="Synchronous code (1, 7) runs first. Then microtasks (Promise callbacks — 3, 4) drain before the next macrotask. Macrotasks (setTimeout — 2, 6, 5) each go to the back of the macrotask queue. Nested microtask (4 → queueMicrotask'd 8) would also drain before any remaining macrotask."
+/>
+
 ## Interactive Exercise
 
 <InteractiveExercise
@@ -108,29 +131,6 @@ console.log(9)
   hints={["Sync first; all microtasks drain before next macrotask", "Nested microtasks also run before next macrotask"]}
   previewType="mixed"
 />
-
-## Quiz
-
-<Quiz questions={[
-  {
-    question: "What runs first after sync code finishes?",
-    options: ["setTimeout callbacks", "Promise.then (microtasks)", "requestAnimationFrame"],
-    correctIndex: 1,
-    explanation: "Microtasks drain completely before next macrotask."
-  },
-  {
-    question: "Nested microtask queued inside microtask — when does it run?",
-    options: ["Next event loop iteration", "Before next macrotask", "After next macrotask"],
-    correctIndex: 1,
-    explanation: "Microtasks drain until empty — nested ones run in same phase."
-  },
-  {
-    question: "How to yield to event loop?",
-    options: ["queueMicrotask", "await new Promise(r => setTimeout(r, 0))", "Promise.resolve().then()"],
-    correctIndex: 1,
-    explanation: "await + setTimeout schedules a new macrotask. queueMicrotask doesn't yield."
-  }
-]} />
 
 ## Lesson Summary
 

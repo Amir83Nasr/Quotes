@@ -206,13 +206,6 @@ Sitemap: https://example.com/sitemap.xml
   previewType="html"
 />
 
-<Quiz questions={[
-  { question: "What's the recommended length for a <title> tag?", options: ["Under 100 chars", "50-60 chars", "Exactly 70 chars", "No limit"], correctIndex: 1, explanation: "Google typically displays the first 50-60 characters of a title tag. Longer titles get truncated." },
-  { question: "Which meta property controls link previews on Facebook and LinkedIn?", options: ["twitter:card", "og:image", "og:title", "All Open Graph properties"], correctIndex: 3, explanation: "Open Graph (og:) properties control link previews on Facebook, LinkedIn, and many other platforms. Twitter uses its own namespace but falls back to OG." },
-  { question: "What is JSON-LD used for?", options: ["Validating JSON data", "Providing structured data to search engines for rich results", "Linking JSON files", "Styling JSON output"], correctIndex: 1, explanation: "JSON-LD (JavaScript Object Notation for Linked Data) provides structured data for search engines to display rich results like stars, FAQs, and breadcrumbs." },
-  { question: "How do you prevent a page from being indexed?", options: ["Remove the page entirely", "Add <meta name=\"robots\" content=\"noindex\">", "Use a 301 redirect", "Add rel=\"nofollow\""], correctIndex: 1, explanation: "The noindex robots directive tells search engines not to index the page. Nofollow controls link following, not indexing." },
-]} />
-
 <LessonSummary points={[
 "viewport meta is essential for mobile rendering — always include it",
 "Open Graph and Twitter Card meta control social previews",

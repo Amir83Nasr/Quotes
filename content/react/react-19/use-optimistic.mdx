@@ -77,9 +77,7 @@ function Chat({ messages, sendMessage }: Props) {
 
 Send a message and watch it appear **instantly** as “sending…”, then flip to “sent ✓” after the simulated server delay:
 
-<Playground title="useOptimistic — live chat">
 <UseOptimisticDemo />
-</Playground>
 
 <Alert>
 <AlertTitle>Optimistic updates must run inside a transition</AlertTitle>
@@ -87,42 +85,6 @@ Send a message and watch it appear **instantly** as “sending…”, then flip 
 </Alert>
 
 ## Check Your Understanding
-
-<Quiz questions={[
-  {
-    question: "What is an optimistic update?",
-    options: [
-      "A UI update that only happens if the server responds quickly",
-      "Showing the expected result immediately, before the server confirms it",
-      "A way to cache server responses",
-      "Retrying a failed request automatically"
-    ],
-    correctIndex: 1,
-    explanation: "An optimistic update assumes the action will succeed and shows the expected result right away, reconciling with the real result when it arrives.",
-  },
-  {
-    question: "What happens to the optimistic state when the async action completes and real state updates?",
-    options: [
-      "You must manually remove it",
-      "React automatically discards the optimistic layer and shows the real state",
-      "It stays forever",
-      "The component unmounts"
-    ],
-    correctIndex: 1,
-    explanation: "Once the pending action settles and real state updates, React drops the optimistic layer automatically — no manual cleanup or rollback code needed.",
-  },
-  {
-    question: "useOptimistic's optimistic value is only active during what?",
-    options: [
-      "The entire component lifetime",
-      "A pending transition/action",
-      "Only on the server",
-      "Whenever state changes for any reason"
-    ],
-    correctIndex: 1,
-    explanation: "The optimistic value holds only while an action or transition is pending. Form actions and startTransition provide that window; React reconciles when it ends.",
-  },
-]} />
 
 <LessonSummary points={[
   "Optimistic updates show the expected result instantly for a responsive feel",

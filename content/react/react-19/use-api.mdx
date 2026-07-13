@@ -88,42 +88,6 @@ With `useContext`, you'd have to call it unconditionally at the top even if you 
 
 ## Check Your Understanding
 
-<Quiz questions={[
-  {
-    question: "What happens when you call use() on a promise that is still pending?",
-    options: [
-      "It returns undefined",
-      "The component suspends and the nearest Suspense fallback shows",
-      "It throws an error",
-      "It blocks the main thread until resolved"
-    ],
-    correctIndex: 1,
-    explanation: "use() suspends the component while the promise is pending, letting the nearest <Suspense> boundary render its fallback until the value is ready.",
-  },
-  {
-    question: "Why can use() be called conditionally when hooks like useState cannot?",
-    options: [
-      "use() is slower so React allows it",
-      "use() is not a hook, so the Rules of Hooks don't apply to it",
-      "It only works in Server Components",
-      "React makes an exception for promises only"
-    ],
-    correctIndex: 1,
-    explanation: "use() is a special API, not a hook. The Rules of Hooks (no conditional calls, no loops) don't govern it, so it can appear after early returns or inside conditionals.",
-  },
-  {
-    question: "Where should the promise passed to use() typically be created?",
-    options: [
-      "In the component body on every render",
-      "Outside the rendering component — e.g. a Server Component, cache, or passed as a prop",
-      "Inside a useMemo with no dependencies",
-      "It doesn't matter"
-    ],
-    correctIndex: 1,
-    explanation: "Creating the promise in the component body makes a new one each render, causing an infinite loop. Create it upstream (Server Component, cache, event handler) and pass it in.",
-  },
-]} />
-
 <LessonSummary points={[
   "use() reads a resource — a promise or context — and integrates with Suspense",
   "When a promise is pending, use() suspends and the nearest Suspense fallback renders",

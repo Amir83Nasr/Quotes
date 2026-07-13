@@ -108,42 +108,6 @@ If the same lines were changed on both branches, Git can't decide which version 
 
 ## Check Your Understanding
 
-<Quiz questions={[
-  {
-    question: "What is a Git branch, technically?",
-    options: [
-      "A full copy of the project folder",
-      "A movable pointer to a commit",
-      "A backup stored on the server",
-      "A compressed archive of changes"
-    ],
-    correctIndex: 1,
-    explanation: "A branch is just a lightweight, movable pointer to a commit. Creating one doesn't copy files, which is why branching in Git is instant.",
-  },
-  {
-    question: "You branch off main, and main receives no new commits while you work. What kind of merge happens?",
-    options: [
-      "A merge commit is always created",
-      "A fast-forward — the main pointer just moves forward",
-      "The merge is rejected",
-      "A rebase"
-    ],
-    correctIndex: 1,
-    explanation: "When the target branch hasn't diverged, Git performs a fast-forward: it simply advances the pointer, with no extra merge commit.",
-  },
-  {
-    question: "Which modern command creates a new branch and switches to it?",
-    options: [
-      "git branch -c name",
-      "git switch -c name",
-      "git merge -c name",
-      "git new name"
-    ],
-    correctIndex: 1,
-    explanation: "'git switch -c name' creates the branch and moves onto it. The older equivalent is 'git checkout -b name'.",
-  },
-]} />
-
 <LessonSummary points={[
   "A branch is a cheap, movable pointer to a commit — not a copy of your files",
   "git switch -c creates and moves to a branch; commits land only on the current branch",

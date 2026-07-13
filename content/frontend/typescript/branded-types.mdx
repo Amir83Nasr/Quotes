@@ -230,35 +230,6 @@ function safeUser(input: unknown): SafeResult {
   ]}
 />
 
-<Quiz
-  questions={[
-    {
-      question: "Why are branded types needed in TypeScript?",
-      options: ["TypeScript has nominal typing by default", "TypeScript has structural typing, which can't distinguish same-shape types", "Brands improve runtime performance", "Brands enable inheritance"],
-      correctIndex: 1,
-      explanation: "TypeScript uses structural typing. Two types with the same shape are interchangeable, even when they represent different domains."
-    },
-    {
-      question: "What does the Brand type do at runtime?",
-      options: ["Adds a property to the object", "Throws if branding is violated", "Does nothing — it's erased at compile time", "Creates a class instance"],
-      correctIndex: 2,
-      explanation: "The __brand property exists only at the type level. TypeScript erases all types during compilation, so branding has zero runtime cost."
-    },
-    {
-      question: "What is the difference between Brand and Flavor?",
-      options: ["Brand and Flavor are the same", "Flavor uses optional property, making it easier to subtype", "Flavor is strict, Brand is loose", "Brand works on objects, Flavor on primitives"],
-      correctIndex: 1,
-      explanation: "Flavor uses `__flavor?: F` (optional), so a flavored type is structurally compatible with its base type for convenience."
-    },
-    {
-      question: "What should paired with branded types for real safety?",
-      options: ["A linter rule", "Runtime validation in constructor functions", "A comment explaining the type", "Unit tests only"],
-      correctIndex: 1,
-      explanation: "Branded types only provide compile-time safety. Runtime validation functions that return branded types ensure invalid values never enter the system."
-    },
-  ]}
-/>
-
 <LessonSummary points={[
   "Structural typing treats same-shape types as identical — branding adds nominal distinctions.",
   "The Brand pattern (T & { __brand: B }) adds a phantom type property.",

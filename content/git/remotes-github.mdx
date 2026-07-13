@@ -97,37 +97,6 @@ The PR is where code review happens: teammates read your diff, leave comments, r
 
 ## Check Your Understanding
 
-<Quiz questions={[
-  {
-    question: "When you clone a repository from GitHub, what is the default name of the remote?",
-    options: ["main", "github", "origin", "remote"],
-    correctIndex: 2,
-    explanation: "Git names the remote you cloned from 'origin' by convention. It's a nickname for that remote's URL.",
-  },
-  {
-    question: "What's the difference between git fetch and git pull?",
-    options: [
-      "They are identical",
-      "fetch downloads commits without touching your files; pull downloads AND merges them",
-      "pull only works on the main branch",
-      "fetch uploads, pull downloads"
-    ],
-    correctIndex: 1,
-    explanation: "git fetch updates your view of the remote without changing working files. git pull is fetch + merge — it downloads and integrates the changes.",
-  },
-  {
-    question: "Why do teams use pull requests instead of pushing directly to main?",
-    options: [
-      "Pushing to main is technically impossible",
-      "PRs enable code review, discussion, and approval before changes land",
-      "PRs make the code run faster",
-      "GitHub charges money for direct pushes"
-    ],
-    correctIndex: 1,
-    explanation: "A pull request is the place where teammates review the diff, discuss it, request changes, and approve — protecting main from unreviewed code.",
-  },
-]} />
-
 <LessonSummary points={[
   "A remote is a hosted copy of your repo; 'origin' is the default name after cloning",
   "git push -u origin <branch> sets the upstream so later push/pull need no arguments",

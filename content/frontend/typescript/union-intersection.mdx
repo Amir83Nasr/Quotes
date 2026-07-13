@@ -234,35 +234,6 @@ function getSubmitButtonText(state: FormState): string {
   ]}
 />
 
-<Quiz
-  questions={[
-    {
-      question: "What does `type T = { a: string } & { a: number }` resolve to?",
-      options: ["{ a: string | number }", "{ a: never }", "{ a: string & number }", "never"],
-      correctIndex: 1,
-      explanation: "Intersection of string and number is never — no value satisfies both."
-    },
-    {
-      question: "What is the discriminant property in a discriminated union?",
-      options: ["A function that discriminates values", "A literal type used to narrow the union", "The last property in the object", "An optional property"],
-      correctIndex: 1,
-      explanation: "A literal property (like kind or status) that TypeScript uses to narrow which variant of the union you have."
-    },
-    {
-      question: "What happens if you add a new variant to Shape but don't handle it in a switch with assertNever?",
-      options: ["Runtime error", "Compile-time error on the assertNever call", "TypeScript silently ignores it", "The new variant uses the default case"],
-      correctIndex: 1,
-      explanation: "The new variant's type is passed to assertNever, but it's not never — TypeScript catches it at compile time."
-    },
-    {
-      question: "Which pattern is best for modeling async UI state?",
-      options: ["Simple union of string literals", "Intersection type", "Discriminated union with data per state", "Template literal type"],
-      correctIndex: 2,
-      explanation: "Discriminated union lets each state carry the exact data it needs — nothing more, nothing less."
-    },
-  ]}
-/>
-
 <LessonSummary points={[
   "Union types (A | B) model values that can be one of several types.",
   "Intersection types (A & B) merge multiple types into one.",

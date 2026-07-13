@@ -480,46 +480,6 @@ export async function POST(request: Request) {
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz
-  questions={[
-    {
-      question: "Why store a JWT in an httpOnly cookie instead of localStorage?",
-      options: [
-        "It loads faster",
-        "JavaScript (and XSS) cannot read httpOnly cookies",
-        "localStorage has a size limit",
-        "Cookies are encrypted automatically",
-      ],
-      correctIndex: 1,
-      explanation: "httpOnly cookies are invisible to client-side scripts, so an XSS bug can't steal the session token.",
-    },
-    {
-      question: "How do you verify a submitted password against a stored bcrypt hash?",
-      options: [
-        "hash === storedHash",
-        "bcrypt.hash(password) === storedHash",
-        "await bcrypt.compare(password, storedHash)",
-        "password === bcrypt.decrypt(storedHash)",
-      ],
-      correctIndex: 2,
-      explanation: "bcrypt.compare hashes the input with the same salt and checks it against the stored hash; hashes are one-way, so you never decrypt.",
-    },
-    {
-      question: "In the App Router, how do you set a cookie inside a route handler?",
-      options: [
-        "response.cookies.set(...)",
-        "document.cookie = ...",
-        "const store = await cookies(); store.set(...)",
-        "res.setHeader('Set-Cookie', ...)",
-      ],
-      correctIndex: 2,
-      explanation: "cookies() from next/headers is async in the App Router; await it, then call .set() on the returned store.",
-    },
-  ]}
-/>
-
 ## Lesson Summary
 
 <LessonSummary

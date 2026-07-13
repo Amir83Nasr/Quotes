@@ -113,37 +113,6 @@ git log --oneline
 
 ## Check Your Understanding
 
-<Quiz questions={[
-  {
-    question: "What does the staging area let you do that a simple 'save all changes' cannot?",
-    options: [
-      "Compress files before committing",
-      "Choose exactly which changes go into the next commit",
-      "Upload changes to GitHub automatically",
-      "Encrypt your commit history"
-    ],
-    correctIndex: 1,
-    explanation: "The staging area (index) is a holding zone. You use 'git add' to assemble precisely the changes you want in your next commit, leaving other edits unstaged for a later one.",
-  },
-  {
-    question: "Which command turns an ordinary folder into a Git repository?",
-    options: ["git start", "git new", "git init", "git create"],
-    correctIndex: 2,
-    explanation: "'git init' creates the hidden .git directory that stores all history and turns the folder into a repository.",
-  },
-  {
-    question: "Why is Git called a 'distributed' version control system?",
-    options: [
-      "It splits files across multiple servers",
-      "Every clone contains the full project history, not just the latest files",
-      "It requires a constant network connection",
-      "It distributes commits to teammates automatically"
-    ],
-    correctIndex: 1,
-    explanation: "Each clone is a complete copy of the entire repository and its history. You can work fully offline; a remote like GitHub is just another copy you choose to sync with.",
-  },
-]} />
-
 <LessonSummary points={[
   "Version control records changes as snapshots you can compare, undo, and branch from",
   "Git is distributed — every clone holds the full history and works offline",

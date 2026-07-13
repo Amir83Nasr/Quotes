@@ -131,23 +131,6 @@ Map every surface color with its dark counterpart.
   hints={["Every color needs a dark: counterpart", "Use dark:border-gray-700 and dark:bg-gray-800 for cards", "Button itself needs dark mode styles too"]}
 />
 
-<Quiz
-  questions={[
-    {
-      question: "What does `dark:bg-gray-900` do?",
-      options: ["Always makes bg gray-900", "Applies gray-900 only when .dark class is on a parent", "Only works on mobile", "Requires prefers-color-scheme"],
-      correctIndex: 1,
-      explanation: "dark: activates when a parent has the .dark class (class strategy).",
-    },
-    {
-      question: "Why use gray-800 instead of black for dark surfaces?",
-      options: ["Smaller CSS", "Pure black creates harsh contrast against other dark elements", "Black doesn't work with borders", "Performance is better"],
-      correctIndex: 1,
-      explanation: "Pure black (#000) causes eye strain. Use dark grays for comfortable contrast.",
-    },
-  ]}
-/>
-
 <LessonSummary
   points={[
     "Use dark: variant on every color utility for theme-aware components",

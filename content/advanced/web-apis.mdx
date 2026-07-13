@@ -357,27 +357,6 @@ export default function InfiniteList() {
   ]}
 />
 
-<Quiz questions={[
-  {
-    question: "What advantage does IntersectionObserver have over scroll event listeners?",
-    options: ["It's faster for animations", "No scroll events needed — fires when intersection crosses threshold", "It works on server-side", "It replaces requestAnimationFrame"],
-    correctIndex: 1,
-    explanation: "IntersectionObserver declaratively monitors visibility. No scroll event listeners, no manual position calculation, no throttle/debounce needed.",
-  },
-  {
-    question: "What does ResizeObserver track?",
-    options: ["Window resize events", "Individual element size changes", "Image dimensions", "Font size changes"],
-    correctIndex: 1,
-    explanation: "ResizeObserver watches specific elements for size changes. window.resize only watches the viewport — ResizeObserver tracks any element.",
-  },
-  {
-    question: "Why use Web Workers for heavy computation?",
-    options: ["They run faster than main thread", "They don't block the UI thread", "They can access the DOM", "They replace the event loop"],
-    correctIndex: 1,
-    explanation: "Web Workers run in a separate thread. Heavy computation there doesn't block rendering or event handling on the main thread.",
-  },
-]} />
-
 <LessonSummary points={[
   "IntersectionObserver: lazy load images, infinite scroll — no scroll listeners",
   "ResizeObserver: respond to individual element size changes",

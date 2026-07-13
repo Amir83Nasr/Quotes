@@ -229,35 +229,6 @@ export default function UserProfile({ userId }: { userId: string }) {
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz
-  questions={[
-    {
-      question: "Why must error.tsx be a Client Component?",
-      options: [
-        "Because errors only occur on the client",
-        "Because error boundaries require React hooks like useState",
-        "Because error.tsx is not a React component",
-        "It doesn't have to be — it works as a Server Component too",
-      ],
-      correctIndex: 1,
-      explanation: "Error boundaries use client-side React APIs (hooks, event handlers) to catch rendering errors and manage retry state via reset().",
-    },
-    {
-      question: "Where should global-error.tsx be placed?",
-      options: [
-        "In any route segment where errors might occur",
-        "At the root app/ level only",
-        "Inside the error.tsx file as a named export",
-        "In the public/ directory",
-      ],
-      correctIndex: 1,
-      explanation: "global-error.tsx is placed at app/ to handle errors in the root layout itself, which error.tsx cannot do since it's rendered inside the layout.",
-    },
-  ]}
-/>
-
 ## Lesson Summary
 
 <LessonSummary

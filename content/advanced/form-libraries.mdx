@@ -296,27 +296,6 @@ export default function RegisterForm() {
   ]}
 />
 
-<Quiz questions={[
-  {
-    question: "Why doesn't RHF re-render on every keystroke?",
-    options: ["It uses controlled inputs", "It uses uncontrolled inputs with refs", "It batches all updates", "It uses Web Workers"],
-    correctIndex: 1,
-    explanation: "RHF registers inputs via refs (uncontrolled). React doesn't re-render when ref values change — only on submit.",
-  },
-  {
-    question: "What does z.coerce.number() do?",
-    options: ["Validates the value is a number", "Converts string input to number", "Coerces NaN to 0", "Throws on non-numeric input"],
-    correctIndex: 1,
-    explanation: "HTML inputs return strings. z.coerce.number() converts the string '42' to number 42 before validation.",
-  },
-  {
-    question: "How do you attach a Zod validation error to a specific field via refine?",
-    options: ["return { field: 'name' }", "Use the path option in refine config", "Call setError manually", "Throw an error with the field name"],
-    correctIndex: 1,
-    explanation: "refine's third parameter accepts { path: ['fieldName'] } to associate the error with a specific field.",
-  },
-]} />
-
 <LessonSummary points={[
   "RHF uses uncontrolled inputs via refs — zero re-renders on keystroke",
   "Zod schemas define both validation rules and TypeScript types",

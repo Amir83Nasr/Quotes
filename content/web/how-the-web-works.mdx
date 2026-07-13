@@ -83,42 +83,6 @@ HTTP is **stateless**: each request stands alone, and the server doesn't inheren
 
 ## Check Your Understanding
 
-<Quiz questions={[
-  {
-    question: "In the client–server model, who initiates communication?",
-    options: [
-      "The server pushes pages to clients",
-      "The client requests; the server responds",
-      "They negotiate simultaneously",
-      "The DNS server decides"
-    ],
-    correctIndex: 1,
-    explanation: "The client (browser) always initiates by sending a request. The server waits and responds — it doesn't send pages unprompted.",
-  },
-  {
-    question: "In the URL https://example.com/blog?id=5#intro, what is '#intro'?",
-    options: [
-      "The path",
-      "A query parameter",
-      "The fragment — a location within the page, not sent to the server",
-      "The port"
-    ],
-    correctIndex: 2,
-    explanation: "The fragment (after #) points to a spot within the page and is handled by the browser. It is never sent to the server.",
-  },
-  {
-    question: "What does it mean that HTTP is 'stateless'?",
-    options: [
-      "It cannot transfer data",
-      "Each request is independent; the server doesn't inherently remember previous ones",
-      "It only works without JavaScript",
-      "It requires a constant connection"
-    ],
-    correctIndex: 1,
-    explanation: "Statelessness means each request stands on its own. Cookies and tokens exist precisely to re-attach identity across otherwise-independent requests.",
-  },
-]} />
-
 <LessonSummary points={[
   "The web is client–server: clients request, servers respond — the client always initiates",
   "Loading a URL triggers DNS lookup, connection, TLS, an HTTP request, and rendering",

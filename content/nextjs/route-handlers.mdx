@@ -197,35 +197,6 @@ export async function POST(request: Request) {
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz
-  questions={[
-    {
-      question: "What Web API types does Next.js use for route handlers?",
-      options: [
-        "Express Request/Response",
-        "Web API Request/Response",
-        "Axios request/response",
-        "Custom NextRequest/NextResponse only",
-      ],
-      correctIndex: 1,
-      explanation: "Next.js route handlers use the standard Web API Request and Response objects, making them compatible with the browser's fetch API and standard web platform APIs.",
-    },
-    {
-      question: "How do you access URL query parameters in a route handler?",
-      options: [
-        "request.query",
-        "request.nextUrl.searchParams",
-        "params.query",
-        "URLSearchParams from request.url",
-      ],
-      correctIndex: 1,
-      explanation: "request.nextUrl returns a URL object, and searchParams is a URLSearchParams instance with .get(), .has(), etc.",
-    },
-  ]}
-/>
-
 ## Lesson Summary
 
 <LessonSummary

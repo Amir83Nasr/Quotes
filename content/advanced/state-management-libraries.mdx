@@ -349,27 +349,6 @@ export function Cart() {
   ]}
 />
 
-<Quiz questions={[
-  {
-    question: "How does Zustand prevent unnecessary re-renders?",
-    options: ["By using Context internally", "Through selector functions that track specific state slices", "By batching all state updates", "By using immutable data structures"],
-    correctIndex: 1,
-    explanation: "Zustand components subscribe via selectors — they only re-render when the selected slice of state changes.",
-  },
-  {
-    question: "What makes Jotai different from Zustand?",
-    options: ["Jotai uses a single global store", "Jotai uses atom-based state, not a single store", "Jotai requires a Provider wrapper", "Jotai is only for class components"],
-    correctIndex: 1,
-    explanation: "Jotai's atoms are individual state units that compose. Zustand uses a single store with selectors. Both solve re-render issues differently.",
-  },
-  {
-    question: "When should you NOT use a state management library?",
-    options: ["When state is shared between distant components", "When state changes infrequently on a small subtree", "When you need middleware", "When debugging complex state flows"],
-    correctIndex: 1,
-    explanation: "Context is fine for infrequent updates (theme, locale) on a small subtree. Adding a library there is unnecessary overhead.",
-  },
-]} />
-
 <LessonSummary points={[
   "Zustand: minimal store with selectors for targeted re-renders",
   "Jotai: composable atoms for fine-grained state",

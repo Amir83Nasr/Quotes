@@ -82,42 +82,6 @@ This is why DNS changes aren't instant: after you update a record, caches around
 
 ## Check Your Understanding
 
-<Quiz questions={[
-  {
-    question: "What does DNS primarily translate?",
-    options: [
-      "IP addresses into encryption keys",
-      "Domain names into IP addresses",
-      "HTTP into HTTPS",
-      "URLs into HTML"
-    ],
-    correctIndex: 1,
-    explanation: "DNS resolves human-friendly domain names (example.com) into the numeric IP addresses computers use to route traffic.",
-  },
-  {
-    question: "Which server gives the authoritative final answer for a domain's IP?",
-    options: [
-      "The recursive resolver",
-      "The root server",
-      "The authoritative name server for that domain",
-      "The browser cache"
-    ],
-    correctIndex: 2,
-    explanation: "The authoritative name server holds the domain's real records. The resolver walks root → TLD → authoritative to get there.",
-  },
-  {
-    question: "Why don't DNS changes take effect instantly worldwide?",
-    options: [
-      "DNS servers are slow",
-      "Records are cached according to their TTL until it expires (propagation)",
-      "Browsers block DNS updates",
-      "You must restart the server"
-    ],
-    correctIndex: 1,
-    explanation: "Caches at every level honor each record's TTL. Until cached copies expire, they keep serving the old value — the delay known as DNS propagation.",
-  },
-]} />
-
 <LessonSummary points={[
   "DNS is the web's phone book: it maps domain names to IP addresses",
   "A lookup walks a hierarchy: recursive resolver → root → TLD → authoritative server",

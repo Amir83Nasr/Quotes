@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 
-const STORAGE_KEY = "fe-learning-progress"
+const STORAGE_KEY = "quotes-progress"
 
 type ProgressMap = Record<string, boolean>
 

@@ -250,35 +250,6 @@ type UserList = ListResponse<User>
   ]}
 />
 
-<Quiz
-  questions={[
-    {
-      question: "Which utility type would you use to get a function's parameter types?",
-      options: ["ReturnType", "Parameters", "Awaited", "InstanceType"],
-      correctIndex: 1,
-      explanation: "Parameters<typeof fn> returns a tuple of the function's parameter types."
-    },
-    {
-      question: "What does `Omit<T, K>` do internally?",
-      options: ["Pick<T, K>", "Pick<T, Exclude<keyof T, K>>", "Partial<Pick<T, K>>", "Exclude<T, K>"],
-      correctIndex: 1,
-      explanation: "Omit uses Pick<T, Exclude<keyof T, K>> — it excludes keys K and picks the rest."
-    },
-    {
-      question: "How does Awaited<T> handle nested Promises?",
-      options: ["Doesn't support them", "Unwraps one level only", "Recursively unwraps all Promise layers", "Throws an error"],
-      correctIndex: 2,
-      explanation: "Awaited<T> recursively unwraps Promise<Promise<...T>> until it reaches a non-Promise type."
-    },
-    {
-      question: "What is the result of Exclude<string | number | boolean, string | number>?",
-      options: ["string", "boolean", "string | boolean", "never"],
-      correctIndex: 1,
-      explanation: "Exclude removes string and number from the union, leaving only boolean."
-    },
-  ]}
-/>
-
 <LessonSummary points={[
   "Partial, Required, Pick, Omit, Record transform object shapes.",
   "Extract, Exclude, NonNullable filter union members.",

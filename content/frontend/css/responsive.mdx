@@ -158,12 +158,6 @@ Stacked layout on mobile, side-by-side on desktop:
   previewType="html"
 />
 
-<Quiz questions={[
-  { question: "What does `clamp(1rem, 3vw, 2rem)` do?", options: ["Sets the value to exactly 3vw", "Creates a fluid value between 1rem and 2rem, preferring 3vw", "Clamps to the nearest integer", "Sets min to 3vw and max to 2rem"], correctIndex: 1, explanation: "clamp takes a minimum, preferred, and maximum value. The browser uses the preferred value when possible, clamping to the bounds." },
-  { question: "Which viewport unit best handles mobile browser chrome?", options: ["vh", "svh", "dvh", "lvh"], correctIndex: 2, explanation: "dvh (dynamic viewport height) changes as mobile browser chrome shows and hides, giving true visible area." },
-  { question: "True or false: container queries query the viewport width.", options: ["True", "False"], correctIndex: 1, explanation: "Container queries query the parent container's inline-size, not the viewport. They're set up with container-type." },
-]} />
-
 <LessonSummary points={[
 "Use min-width media queries for mobile-first responsive design",
 "Container queries let components respond to their own container size",

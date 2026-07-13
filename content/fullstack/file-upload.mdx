@@ -376,46 +376,6 @@ export default function AvatarUpload() {
   language="tsx"
 />
 
-## Quiz
-
-<Quiz
-  questions={[
-    {
-      question: "Why use a presigned URL for S3 uploads instead of uploading through your server?",
-      options: [
-        "Presigned URLs never expire, so files are always accessible",
-        "The client uploads directly to S3, offloading bandwidth from your server",
-        "Presigned URLs are automatically compressed",
-        "S3 requires presigned URLs for all operations",
-      ],
-      correctIndex: 1,
-      explanation: "Presigned URLs let the client upload directly to S3 — your server only issues a time-limited token. This keeps your server from being a bandwidth bottleneck.",
-    },
-    {
-      question: "Which API is needed on the client to track upload progress?",
-      options: [
-        "fetch() with ReadableStream",
-        "XMLHttpRequest with the upload.progress event",
-        "WebSocket API",
-        "Server-Sent Events",
-      ],
-      correctIndex: 1,
-      explanation: "XMLHttpRequest fires a progress event on xhr.upload. fetch() with ReadableStream can work but requires manual chunk tracking and is more complex.",
-    },
-    {
-      question: "What is UploadThing's primary advantage over raw S3 uploads?",
-      options: [
-        "It stores files on a blockchain for immutability",
-        "It provides built-in auth middleware, file validation, CDN delivery, and auto-generated image variants",
-        "It is the only solution that works with Vercel",
-        "It supports unlimited file size at no cost",
-      ],
-      correctIndex: 1,
-      explanation: "UploadThing bundles auth checks, file validation, CDN, and optimized image variants — reducing the boilerplate you'd write for raw S3.",
-    },
-  ]}
-/>
-
 <LessonSummary
   points={[
     "Route Handlers can accept FormData with files — validate type and size server-side",

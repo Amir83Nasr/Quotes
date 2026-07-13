@@ -344,57 +344,6 @@ export default function Exercise() {
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz
-  questions={[
-    {
-      question: "When should you prefer hooks over render props or HOCs?",
-      options: [
-        "Always — hooks are always better",
-        "For sharing stateful logic between components",
-        "For wrapping components with layout",
-        "They are equivalent — just syntax preference"
-      ],
-      correctIndex: 1,
-      explanation: "Hooks are the modern approach for sharing stateful logic. Render props and HOCs remain useful for specific cases."
-    },
-    {
-      question: "What does React.memo do?",
-      options: [
-        "Memoizes the component's return value to avoid recalculation",
-        "Skips re-rendering when props haven't changed (shallow comparison)",
-        "Caches the component's children",
-        "Prevents the component from ever re-rendering"
-      ],
-      correctIndex: 1,
-      explanation: "React.memo does a shallow prop comparison. If props are the same, it skips rendering and reuses the last result."
-    },
-    {
-      question: "In Next.js, which is the default component type?",
-      options: [
-        "Client Component",
-        "Server Component",
-        "Both are default",
-        "Depends on the route"
-      ],
-      correctIndex: 1,
-      explanation: "Next.js App Router defaults to Server Components. Add 'use client' only when you need client-side interactivity."
-    },
-    {
-      question: "What is the main purpose of useCallback?",
-      options: [
-        "To cache computed values",
-        "To maintain stable function references between renders",
-        "To debounce function calls",
-        "To prevent a function from running"
-      ],
-      correctIndex: 1,
-      explanation: "useCallback returns the same function reference between renders unless its dependency array changes, preventing unnecessary child re-renders."
-    }
-  ]}
-/>
-
 <LessonSummary
   points={[
     "Conditional rendering: && for guard, ternary for two branches, early return for exclusive",

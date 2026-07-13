@@ -187,12 +187,6 @@ Register custom properties with a syntax type, initial value, and inheritance. E
   previewType="html"
 />
 
-<Quiz questions={[
-  { question: "How do you access a custom property named --color-primary?", options: ["color-primary()", "var(--color-primary)", "get(--color-primary)", "--color-primary"], correctIndex: 1, explanation: "Use the var() function to read a custom property value." },
-  { question: "What does @property do?", options: ["Creates a CSS class", "Defines a variable with type info for animations", "Imports a stylesheet", "Declares a media query"], correctIndex: 1, explanation: "@property registers a custom property with a syntax type, initial value, and inheritance flag — enabling CSS transitions on that property." },
-  { question: "What happens if var(--undefined-var) has no fallback?", options: ["The property becomes invalid and is ignored", "It returns black", "It throws an error", "It inherits from parent"], correctIndex: 0, explanation: "When a var() reference can't be resolved and there's no fallback, the declaration is invalid and ignored by the browser." },
-]} />
-
 <LessonSummary points={[
 "Custom properties use -- prefix and are read with var()",
 "Properties inherit and cascade through the DOM tree",

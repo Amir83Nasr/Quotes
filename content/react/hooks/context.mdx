@@ -329,44 +329,6 @@ export default function App() {
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz questions={[
-  {
-    question: "What problem does Context primarily solve?",
-    options: [
-      "Component styling",
-      "Prop drilling",
-      "Bundle size",
-      "Server-side rendering"
-    ],
-    correctIndex: 1,
-    explanation: "Context eliminates prop drilling — passing props through many intermediary components that don't need them."
-  },
-  {
-    question: "When should you split contexts instead of using one big context?",
-    options: [
-      "Never — one context is always better",
-      "When values update at different frequencies",
-      "When using TypeScript",
-      "Only in production builds"
-    ],
-    correctIndex: 1,
-    explanation: "A context update re-renders all consumers. Split by update frequency so frequently changing values don't cause unnecessary re-renders of components that read stable values."
-  },
-  {
-    question: "What does the custom useTheme hook's null check prevent?",
-    options: [
-      "TypeScript compilation errors",
-      "Runtime error when component is used outside provider",
-      "Memory leaks",
-      "Re-render loops"
-    ],
-    correctIndex: 1,
-    explanation: "The null check throws a clear error if someone uses useTheme without wrapping their component in ThemeProvider, catching bugs early."
-  }
-]} />
-
 <LessonSummary points={[
   "Context provides data through the tree without prop drilling — use it wisely, not everywhere",
   "createContext + Provider + useContext (via custom hook) is the standard pattern",

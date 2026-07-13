@@ -62,9 +62,7 @@ const results = useMemo(() => filter(deferredQuery), [deferredQuery])
 
 Type quickly into this filter over 8,000 items. The input stays responsive while the list lags behind and dims — that gap is the transition at work:
 
-<Playground title="useTransition + useDeferredValue — live">
 <UseTransitionDemo />
-</Playground>
 
 <Alert>
 <AlertTitle>Transitions don't make work faster</AlertTitle>
@@ -72,42 +70,6 @@ Type quickly into this filter over 8,000 items. The input stays responsive while
 </Alert>
 
 ## Check Your Understanding
-
-<Quiz questions={[
-  {
-    question: "What does wrapping a state update in startTransition do?",
-    options: [
-      "Makes the update run faster",
-      "Marks it as non-urgent so React can interrupt it to keep urgent updates responsive",
-      "Runs it on a web worker",
-      "Delays it by a fixed number of milliseconds"
-    ],
-    correctIndex: 1,
-    explanation: "startTransition marks the update as a low-priority transition. React can interrupt it to process urgent updates (like typing) first, so the UI stays responsive.",
-  },
-  {
-    question: "When should you reach for useDeferredValue instead of useTransition?",
-    options: [
-      "When you want the update to be faster",
-      "When the value comes from props or you can't wrap the state setter yourself",
-      "Only in Server Components",
-      "When there is no expensive computation"
-    ],
-    correctIndex: 1,
-    explanation: "useDeferredValue defers a value you receive (e.g. from props) rather than a setter you call. Use useTransition when you own the state update.",
-  },
-  {
-    question: "Do transitions make the expensive work itself faster?",
-    options: [
-      "Yes, they optimize the computation",
-      "No — they make it non-blocking so urgent updates aren't frozen",
-      "Yes, by caching results",
-      "Only on the server"
-    ],
-    correctIndex: 1,
-    explanation: "Transitions don't speed up the work; they prioritize urgent updates over it so the app never feels frozen. Combine with virtualization for very large lists.",
-  },
-]} />
 
 <LessonSummary points={[
   "React prioritizes urgent updates (typing) over transitions (heavy re-renders)",

@@ -112,37 +112,6 @@ Shared & pushed  → use merge/revert, leave history intact
 
 ## Check Your Understanding
 
-<Quiz questions={[
-  {
-    question: "How does rebase differ from merge when combining a feature branch with main?",
-    options: [
-      "Rebase deletes the feature branch automatically",
-      "Rebase replays your commits on top of main as new commits, giving a linear history",
-      "Rebase is just a slower merge",
-      "Rebase uploads your commits to the remote"
-    ],
-    correctIndex: 1,
-    explanation: "Rebase recreates your commits on top of the target branch (new SHAs), producing a straight-line history with no merge commit. Merge instead ties the two histories together with a merge commit.",
-  },
-  {
-    question: "What is the golden rule of rebasing?",
-    options: [
-      "Always rebase before every commit",
-      "Never rebase commits others have already pulled",
-      "Only rebase on Fridays",
-      "Rebase main into every feature branch daily"
-    ],
-    correctIndex: 1,
-    explanation: "Rebasing rewrites commits into new ones. Doing that to history others already have forces a painful divergence — so only rebase private, unpushed commits.",
-  },
-  {
-    question: "During an interactive rebase, which action collapses a commit into the previous one?",
-    options: ["pick", "reword", "squash", "drop"],
-    correctIndex: 2,
-    explanation: "'squash' merges a commit into the one before it — the standard way to combine several WIP commits into a single clean commit.",
-  },
-]} />
-
 <LessonSummary points={[
   "Merge preserves history with a merge commit; rebase replays commits for a linear history",
   "Rebased commits get new SHAs — they are recreated, not moved",

@@ -132,23 +132,6 @@ Tailwind v4 `@container` support — style based on container width, not viewpor
   ]}
 />
 
-<Quiz
-  questions={[
-    {
-      question: "What does `md:w-1/2` do?",
-      options: ["Applies width 50% only at exactly 768px", "Applies width 50% at 768px and above", "Applies width 50% below 768px", "Applies width 50% on mobile only"],
-      correctIndex: 1,
-      explanation: "Responsive prefixes apply from that breakpoint upward (mobile-first).",
-    },
-    {
-      question: "How do you hide an element on mobile but show on desktop?",
-      options: ["hidden lg:hidden", "hidden lg:block", "block lg:hidden", "invisible lg:visible"],
-      correctIndex: 1,
-      explanation: "hidden hides at all sizes, lg:block overrides to show at lg and above.",
-    },
-  ]}
-/>
-
 <LessonSummary
   points={[
     "Use unprefixed utilities for mobile baseline, add breakpoint prefixes to override upward",

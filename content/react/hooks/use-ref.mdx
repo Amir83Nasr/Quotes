@@ -268,44 +268,6 @@ export default function Stopwatch() {
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz questions={[
-  {
-    question: "What happens to the component when ref.current is updated?",
-    options: [
-      "The component re-renders",
-      "The component does not re-render",
-      "Only the children re-render",
-      "An error is thrown"
-    ],
-    correctIndex: 1,
-    explanation: "Updating a ref does not trigger a re-render. Refs persist values across renders without causing updates."
-  },
-  {
-    question: "When is ref.current available for a DOM element?",
-    options: [
-      "During the first render",
-      "Before the component mounts",
-      "After the DOM node is mounted (in useEffect or event handlers)",
-      "Only inside state updaters"
-    ],
-    correctIndex: 2,
-    explanation: "ref.current is null during the first render. It's populated after the component mounts. Access refs in useEffect or event handlers."
-  },
-  {
-    question: "Which pattern should you use to pass a ref to a child component?",
-    options: [
-      "prop drilling",
-      "forwardRef",
-      "useRef in the child",
-      "Context API"
-    ],
-    correctIndex: 1,
-    explanation: "forwardRef lets a parent component pass a ref down to a child's DOM node."
-  }
-]} />
-
 <LessonSummary points={[
   "useRef returns a mutable object with a `.current` property that persists across renders",
   "Use refs for DOM access (focus, measurements) and mutable values (interval IDs, previous values)",

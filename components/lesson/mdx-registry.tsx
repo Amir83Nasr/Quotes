@@ -9,18 +9,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Info, AlertTriangle, Lightbulb } from "lucide-react"
-// Playground demos
-import { Playground } from "@/components/playground/Playground"
-import { CounterExample } from "@/components/playground/CounterExample"
+// Gallery + React 19 live demos
 import { GalleryDemo } from "@/components/playground/GalleryDemo"
-// React 19 live demos
 import { UseOptimisticDemo } from "@/components/playground/react19/UseOptimisticDemo"
 import { UseActionStateDemo } from "@/components/playground/react19/UseActionStateDemo"
 import { UseTransitionDemo } from "@/components/playground/react19/UseTransitionDemo"
 // Shared lesson primitives
 import { CodeBlock } from "./shared/CodeBlock"
+import { LessonCodeExample } from "./shared/LessonCodeExample"
 import { PreWithCopy } from "./shared/PreWithCopy"
-import { Quiz } from "./shared/Quiz"
 import { LearningObjectives } from "./shared/LearningObjectives"
 import { LessonSummary } from "./shared/LessonSummary"
 // Static (non-interactive) lesson widgets
@@ -37,13 +34,13 @@ import { SandboxPreview } from "./interactive/SandboxPreview"
  *
  * Combines three things:
  *  1. UI primitives + lesson widgets addressable by name inside MDX
- *     (e.g. `<Quiz>`, `<InteractiveExercise>`, `<Tabs>`).
+ *     (e.g. `<LessonCodeExample>`, `<InteractiveExercise>`, `<Tabs>`).
  *  2. Raw HTML element overrides (`table`, `pre`, `code`, `a`, …) so plain
  *     Markdown renders with the site's styling.
  *
- * Keys used by content must stay stable — `InteractiveExercise`, `Quiz`,
- * `LearningObjectives`, `LessonSummary`, `SandboxPreview`, `GalleryDemo`,
- * `Playground`, `CounterExample` all appear in `.mdx` files.
+ * Keys used by content must stay stable — `InteractiveExercise`, `LessonCodeExample`,
+ * `LearningObjectives`, `LessonSummary`, `SandboxPreview`, `GalleryDemo` all appear
+ * in `.mdx` files.
  */
 export const lessonMdxComponents: MDXComponents = {
   // UI primitives
@@ -59,9 +56,7 @@ export const lessonMdxComponents: MDXComponents = {
   AlertTriangle: AlertTriangle as React.ComponentType,
   Lightbulb: Lightbulb as React.ComponentType,
 
-  // Playground demos
-  Playground: Playground as React.ComponentType,
-  CounterExample: CounterExample as React.ComponentType,
+  // Gallery + React 19 live demos
   GalleryDemo: GalleryDemo as React.ComponentType,
   UseOptimisticDemo: UseOptimisticDemo as React.ComponentType,
   UseActionStateDemo: UseActionStateDemo as React.ComponentType,
@@ -69,7 +64,7 @@ export const lessonMdxComponents: MDXComponents = {
 
   // Shared lesson widgets
   CodeBlock: CodeBlock as React.ComponentType,
-  Quiz: Quiz as React.ComponentType,
+  LessonCodeExample: LessonCodeExample as React.ComponentType,
   LearningObjectives: LearningObjectives as React.ComponentType,
   LessonSummary: LessonSummary as React.ComponentType,
 

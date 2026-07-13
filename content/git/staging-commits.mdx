@@ -127,42 +127,6 @@ Two focused commits instead of one muddled one. When someone later runs `git log
 
 ## Check Your Understanding
 
-<Quiz questions={[
-  {
-    question: "You staged a file by accident but want to keep your edits. Which command unstages it without losing work?",
-    options: [
-      "git restore file.txt",
-      "git restore --staged file.txt",
-      "git reset --hard file.txt",
-      "git rm file.txt"
-    ],
-    correctIndex: 1,
-    explanation: "'git restore --staged file.txt' removes the file from the staging area but leaves your edits in the working directory. Plain 'git restore file.txt' would discard the edits.",
-  },
-  {
-    question: "Which commit message best follows Conventional Commits?",
-    options: [
-      "Fixed the login bug.",
-      "updates",
-      "fix(auth): reject expired session tokens",
-      "FIX: Login Bug!!!"
-    ],
-    correctIndex: 2,
-    explanation: "It uses a type (fix), a scope (auth), and an imperative, lowercase description with no trailing period — exactly the standard's format.",
-  },
-  {
-    question: "What does 'git add -p' let you do?",
-    options: [
-      "Add a password to your commit",
-      "Push changes to a remote",
-      "Review and stage individual chunks of changes one at a time",
-      "Preview the commit before writing it"
-    ],
-    correctIndex: 2,
-    explanation: "The -p (patch) flag walks through each hunk of changes and asks whether to stage it, letting you split unrelated edits into clean, separate commits.",
-  },
-]} />
-
 <LessonSummary points={[
   "git add stages at any granularity: a file, a directory, or individual hunks with -p",
   "git diff shows unstaged changes; git diff --staged shows what's about to be committed",

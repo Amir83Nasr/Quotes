@@ -339,44 +339,6 @@ const ResultList = React.memo(function ResultList({
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz questions={[
-  {
-    question: "What does useMemo return?",
-    options: [
-      "A memoized function",
-      "A cached value",
-      "A new component",
-      "A ref object"
-    ],
-    correctIndex: 1,
-    explanation: "useMemo caches and returns the result of a computation between renders. It recalculates only when dependencies change."
-  },
-  {
-    question: "When is useCallback without React.memo useless?",
-    options: [
-      "Always — they're independent",
-      "When the child already re-renders for other reasons",
-      "When the parent re-renders but the child has no props",
-      "When the child is a native HTML element"
-    ],
-    correctIndex: 1,
-    explanation: "useCallback + React.memo only skips re-renders if ALL props stay referentially equal. If other non-memoized props or context values change, the child re-renders anyway."
-  },
-  {
-    question: "Which is a valid reason to skip memoization?",
-    options: [
-      "The computation is trivial (e.g., a + b)",
-      "The component re-renders frequently",
-      "Dependencies are stable",
-      "The app uses TypeScript"
-    ],
-    correctIndex: 0,
-    explanation: "For trivial computations, the overhead of useMemo's dep array comparison often exceeds the cost of recomputation. Profile before optimizing."
-  }
-]} />
-
 <LessonSummary points={[
   "useMemo caches computed values; useCallback caches function references",
   "Pair useCallback with React.memo to prevent unnecessary child re-renders",

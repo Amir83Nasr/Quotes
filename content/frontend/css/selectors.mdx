@@ -194,12 +194,6 @@ li:nth-child(n+4):nth-child(-n+6) { }            /* items 4-6 */
   previewType="html"
 />
 
-<Quiz questions={[
-  { question: "What does `a[href^=\"https\"]` select?", options: ["Links pointing to HTTPS", "Links ending in HTTPS", "Links containing HTTPS", "Links with HTTPS in the class"], correctIndex: 0, explanation: "^= means 'starts with'. It selects anchor elements whose href attribute starts with 'https'." },
-  { question: "What's the specificity difference between :is() and :where()?", options: [":is() has higher specificity than :where()", ":is() takes specificity of most specific argument, :where() is always zero", ":where() takes specificity of most specific argument, :is() is always zero", "They're identical"], correctIndex: 1, explanation: ":is() takes the specificity of its most specific argument. :where() always zeroes out specificity for easy override." },
-  { question: "Which selector targets elements 1, 4, 7, 10...?", options: [":nth-child(3n-2)", ":nth-child(3n+1)", ":nth-child(4n)", ":nth-child(-n+3)"], correctIndex: 1, explanation: "3n+1 selects every 3rd element starting from the 1st: positions 1, 4, 7, 10..." },
-]} />
-
 <LessonSummary points={[
 "Attribute selectors style elements by [attr], [attr=value], [attr^=], [attr$=], [attr*=]",
 "Pseudo-classes describe element state or position in document tree",

@@ -218,35 +218,6 @@ export default function Gallery() {
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz
-  questions={[
-    {
-      question: "What does the priority prop on next/image do?",
-      options: [
-        "Makes the image load before all other images",
-        "Disables lazy loading and adds a preload link — use for above-the-fold images",
-        "Increases the image quality to 100%",
-        "Prioritizes the image in the CDN cache",
-      ],
-      correctIndex: 1,
-      explanation: "priority disables lazy loading and generates a <link rel=\"preload\"> tag so the image starts loading immediately. Use it for hero images and above-the-fold content.",
-    },
-    {
-      question: "How does next/font improve performance compared to loading fonts via CSS @import?",
-      options: [
-        "It downloads all font weights at once",
-        "It self-hosts fonts with no external requests, uses CSS size-adjust to prevent layout shift",
-        "It only works with system fonts",
-        "It caches fonts in localStorage",
-      ],
-      correctIndex: 1,
-      explanation: "next/font downloads and self-hosts font files at build time, eliminating external network requests and using CSS font-display and size-adjust to prevent layout shift (CLS).",
-    },
-  ]}
-/>
-
 ## Lesson Summary
 
 <LessonSummary

@@ -227,52 +227,6 @@ export default function Exercise() {
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz
-  questions={[
-    {
-      question: "What types of components can be error boundaries?",
-      options: ["Function components", "Class components", "Both", "Neither"],
-      correctIndex: 1,
-      explanation: "Error boundaries require getDerivedStateFromError and componentDidCatch, which are class-component lifecycle methods."
-    },
-    {
-      question: "Which errors does an error boundary NOT catch?",
-      options: [
-        "Errors in the render method",
-        "Errors in lifecycle methods",
-        "Errors in event handlers",
-        "Errors in constructors"
-      ],
-      correctIndex: 2,
-      explanation: "Event handler errors don't happen during React's render phase. Use try/catch inside the handler."
-    },
-    {
-      question: "What is the recommended placement strategy for error boundaries?",
-      options: [
-        "One boundary wrapping the entire app",
-        "Granular boundaries per feature or independent section",
-        "One boundary per file",
-        "Error boundaries are only for development"
-      ],
-      correctIndex: 1,
-      explanation: "Granular boundaries prevent a single crash from taking down unrelated parts of the page."
-    },
-    {
-      question: "What does getDerivedStateFromError return?",
-      options: [
-        "The error object to display",
-        "An updated state object to trigger fallback render",
-        "A boolean indicating if error should be suppressed",
-        "The component's new props"
-      ],
-      correctIndex: 1,
-      explanation: "It returns new state (like { hasError: true }) so the next render shows the fallback UI."
-    }
-  ]}
-/>
-
 <LessonSummary
   points={[
     "Error boundaries catch rendering/lifecycle errors — not event handlers or async code",

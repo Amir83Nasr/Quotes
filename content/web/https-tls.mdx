@@ -78,42 +78,6 @@ If the certificate is expired, self-signed, or doesn't match the domain, the bro
 
 ## Check Your Understanding
 
-<Quiz questions={[
-  {
-    question: "What are the three guarantees TLS provides?",
-    options: [
-      "Speed, caching, and compression",
-      "Encryption, integrity, and authentication",
-      "Availability, redundancy, and backups",
-      "Anonymity, encryption, and speed"
-    ],
-    correctIndex: 1,
-    explanation: "TLS provides encryption (privacy), integrity (tamper detection), and authentication (you're talking to the real server, via its certificate).",
-  },
-  {
-    question: "Why does TLS use asymmetric cryptography during the handshake but symmetric for the rest?",
-    options: [
-      "Asymmetric is more secure for bulk data",
-      "Asymmetric safely establishes a shared key, then fast symmetric crypto handles the data",
-      "Symmetric can't encrypt anything",
-      "It's a legacy requirement with no real reason"
-    ],
-    correctIndex: 1,
-    explanation: "Asymmetric crypto is slow but great for safely exchanging a secret. TLS uses it to establish a session key, then switches to fast symmetric encryption for the actual traffic.",
-  },
-  {
-    question: "What does the padlock / valid certificate actually guarantee?",
-    options: [
-      "The website is trustworthy and safe",
-      "The connection is encrypted and the domain is authenticated",
-      "The site has no bugs",
-      "Your data is stored securely on the server"
-    ],
-    correctIndex: 1,
-    explanation: "It guarantees the connection is encrypted and you're really talking to that domain. It says nothing about whether the site itself is honest — phishing sites can have valid certificates.",
-  },
-]} />
-
 <LessonSummary points={[
   "HTTP is cleartext; HTTPS wraps it in TLS encryption",
   "TLS guarantees encryption, integrity, and authentication",

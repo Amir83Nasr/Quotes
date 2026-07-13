@@ -122,29 +122,6 @@ Animate children when parent is hovered with `group` + `group-hover:`.
   hints={["Use group on outer card, group-hover:opacity-100 on gradient overlay", "mask-composite: exclude makes gradient appear as border only"]}
 />
 
-<Quiz
-  questions={[
-    {
-      question: "Which properties are safest for 60fps animations?",
-      options: ["width and height", "transform and opacity", "margin and padding", "top and left"],
-      correctIndex: 1,
-      explanation: "Transform and opacity are GPU-composited. Layout properties trigger reflows.",
-    },
-    {
-      question: "How to animate a child when parent is hovered?",
-      options: ["child:hover", "group-hover: with group on parent", ":parent-hover > child", "hover:child"],
-      correctIndex: 1,
-      explanation: "Add group to parent, use group-hover: on children.",
-    },
-    {
-      question: "Which utility creates a skeleton loading effect?",
-      options: ["animate-spin", "animate-pulse", "animate-bounce", "animate-ping"],
-      correctIndex: 1,
-      explanation: "animate-pulse creates a gentle opacity fade for skeleton loaders.",
-    },
-  ]}
-/>
-
 <LessonSummary
   points={[
     "Use transition-{property} duration-{time} ease-{type} for CSS transitions",

@@ -16,10 +16,10 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-3">
           {/* Brand */}
           <div>
-            <h3 className="mb-2 font-semibold">Frontend Learning</h3>
+            <h3 className="mb-2 font-semibold">Quotes</h3>
             <p className="text-sm text-muted-foreground">
-              Master frontend development through interactive lessons and
-              hands-on projects.
+              Discover, save, and share the most inspiring quotes from great
+              minds throughout history.
             </p>
           </div>
 
@@ -44,15 +44,14 @@ export function Footer() {
           <div>
             <h4 className="mb-3 text-sm font-medium">About</h4>
             <p className="text-sm text-muted-foreground">
-              A personal learning platform for frontend and full-stack
-              development. Built with Next.js, TypeScript, Tailwind CSS,
-              and shadcn/ui.
+              Discover, save, and share the most inspiring quotes from great
+              minds throughout history.
             </p>
           </div>
         </div>
 
         <div className="mt-8 border-t pt-6 text-center text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} Frontend Learning Platform
+          &copy; {new Date().getFullYear()} Quotes
         </div>
       </div>
     </footer>

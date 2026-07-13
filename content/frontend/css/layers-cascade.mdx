@@ -177,12 +177,6 @@ Wrap third-party CSS in an `@layer` to keep your styles on top.
   previewType="html"
 />
 
-<Quiz questions={[
-  { question: "What is the specificity of `.nav li.active a`?", options: ["0-0-1-1", "0-0-2-2", "0-1-2-1", "0-0-3-0"], correctIndex: 1, explanation: "Two classes (nav, active) = 0-0-2, two elements (li, a) = 0-0-2 = 0-0-2-2" },
-  { question: "What does @layer do?", options: ["Groups selectors by specificity", "Defines explicit cascade layers where later layers override earlier ones", "Creates a CSS grid", "Imports external stylesheets"], correctIndex: 1, explanation: "@layer lets you define named layers. Styles in later layers override earlier layers regardless of specificity." },
-  { question: "When is !important acceptable?", options: ["Never", "For all utility overrides", "For utility overrides and third-party overrides", "Whenever a specificity conflict arises"], correctIndex: 2, explanation: "!important is acceptable for utility classes (.hidden), overriding inline styles, or third-party widget isolation — not for routine specificity battles." },
-]} />
-
 <LessonSummary points={[
 "Cascade combines origin, @layer, specificity, and source order",
 "Specificity is (inline, ID, class, element) — keep selectors flat",

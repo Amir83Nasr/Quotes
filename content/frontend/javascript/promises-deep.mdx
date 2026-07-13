@@ -95,6 +95,24 @@ fs.readFile("data.txt", "utf-8", (err, data) => err ? reject(err) : resolve(data
 await promise
 ```
 
+## Try It Yourself
+
+See promise chaining in action — each `.then` receives the previous return value:
+
+<LessonCodeExample
+  code={`Promise.resolve(1)
+  .then(x => x * 2)
+  .then(x => x + 3)
+  .then(x => \`Result: \${x}\`)
+  .then(console.log)
+  .catch(console.error)`}
+  language="javascript"
+  title="Promise Chaining"
+  executable
+  showLineNumbers
+  explanation="Each `.then()` transforms the value and passes it to the next. Return a value (not a promise) and the next `.then()` receives it immediately. This is how you build sequential async pipelines."
+/>
+
 ## Interactive Exercise
 
 <InteractiveExercise
@@ -109,29 +127,6 @@ await promise
   hints={["Use Promise.resolve() to wrap non-thenables", "Track results by index, use counter for completion"]}
   previewType="mixed"
 />
-
-## Quiz
-
-<Quiz questions={[
-  {
-    question: "Which resolves with first fulfillment, rejects only if all reject?",
-    options: ["race", "any", "allSettled", "all"],
-    correctIndex: 1,
-    explanation: "Promise.any resolves with first fulfillment. Rejects with AggregateError if all reject."
-  },
-  {
-    question: "What is NOT a promise state?",
-    options: ["pending", "fulfilled", "rejected", "resolved"],
-    correctIndex: 3,
-    explanation: "States: pending, fulfilled, rejected. 'Resolved' means no longer pending."
-  },
-  {
-    question: "Resolve a promise twice — what happens?",
-    options: ["Both returned", "Second ignored", "Error thrown"],
-    correctIndex: 1,
-    explanation: "Promise settles once. Subsequent calls ignored."
-  }
-]} />
 
 ## Lesson Summary
 

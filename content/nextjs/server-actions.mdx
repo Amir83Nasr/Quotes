@@ -202,35 +202,6 @@ export async function addComment(formData: FormData) {
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz
-  questions={[
-    {
-      question: "When would you use a route handler instead of a server action?",
-      options: [
-        "Server actions are always better — never use route handlers",
-        "When you need to expose an API for external consumers or webhooks",
-        "When performance is critical",
-        "When the mutation involves file uploads",
-      ],
-      correctIndex: 1,
-      explanation: "Route handlers are HTTP endpoints — use them when external clients (SPA, mobile app, webhooks) need API access. Server actions are RPC-style and best for form mutations within your Next.js app.",
-    },
-    {
-      question: "What does revalidateTag() do?",
-      options: [
-        "Clears the entire Next.js cache",
-        "Invalidates all cached fetch requests with a specific tag",
-        "Re-runs all server components",
-        "Deletes the database records",
-      ],
-      correctIndex: 1,
-      explanation: "revalidateTag invalidates all cached fetch requests that have a specific tag (set via next: { tags: [...] }). This is more granular than revalidatePath which targets by URL pattern.",
-    },
-  ]}
-/>
-
 ## Lesson Summary
 
 <LessonSummary

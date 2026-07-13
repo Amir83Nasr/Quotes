@@ -254,29 +254,7 @@ export default function TeamList() {
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz
-  questions={[
-    {
-      question: "What does JSX compile to?",
-      options: ["Regular HTML", "React.createElement calls", "JavaScript strings", "Web Components"],
-      correctIndex: 1,
-      explanation: "Babel compiles JSX down to React.createElement calls that the runtime understands."
-    },
-    {
-      question: "Why should you avoid array index as a key?",
-      options: [
-        "Index is not unique",
-        "Index changes when items are reordered, causing stale state",
-        "Index causes type errors",
-        "Index is slower"
-      ],
-      correctIndex: 1,
-      explanation: "When items reorder, index shifts. React reuses component instances based on key, leading to wrong state."
-    },
-    {
-      question: "What does `{0 && <Component />}` render?",
+}` render?",
       options: ["Nothing", "The Component", "0", "An error"],
       correctIndex: 2,
       explanation: "0 is falsy in condition but truthy in JSX rendering — it prints '0'. Guard with explicit comparison."

@@ -126,29 +126,6 @@ renderUser(1)`}
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz questions={[
-  {
-    question: "Why tree-shaking with ESM but not CJS?",
-    options: ["ESM uses static import/export analyzed at build time", "CJS modules larger", "ESM newer"],
-    correctIndex: 0,
-    explanation: "ESM imports/exports are statically declared — bundlers trace usage at build time."
-  },
-  {
-    question: "How many default exports per module?",
-    options: ["Unlimited", "One", "Zero or one"],
-    correctIndex: 2,
-    explanation: "At most one default export. Can mix with named exports."
-  },
-  {
-    question: "Dynamic import() primary use?",
-    options: ["Type safety", "Code splitting / lazy loading", "Faster parsing"],
-    correctIndex: 1,
-    explanation: "Dynamic import enables code splitting — loading chunks on demand."
-  }
-]} />
-
 ## Lesson Summary
 
 <LessonSummary points={[

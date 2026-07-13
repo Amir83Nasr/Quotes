@@ -87,37 +87,6 @@ set breakpoint → reload/trigger → paused → inspect scope, step through
 
 ## Check Your Understanding
 
-<Quiz questions={[
-  {
-    question: "The Elements panel shows the DOM. How does it relate to your source HTML file?",
-    options: [
-      "It's an exact copy of the HTML file",
-      "It's the live DOM — the current state after JavaScript has modified it",
-      "It only shows CSS, not HTML",
-      "It shows the server's response before parsing"
-    ],
-    correctIndex: 1,
-    explanation: "Elements reflects the live DOM as it currently exists, including changes made by JavaScript — which can differ significantly from the original HTML source.",
-  },
-  {
-    question: "Which panel would you open to confirm an API request returned a 500 and inspect its response body?",
-    options: ["Elements", "Console", "Network", "Sources"],
-    correctIndex: 2,
-    explanation: "The Network panel lists every request with its status code, and lets you inspect headers, payload, and response body — ideal for diagnosing API failures.",
-  },
-  {
-    question: "What is the advantage of a breakpoint in Sources over console.log?",
-    options: [
-      "It runs the code faster",
-      "It pauses execution so you can inspect every variable and step through line by line",
-      "It automatically fixes bugs",
-      "It works without opening DevTools"
-    ],
-    correctIndex: 1,
-    explanation: "A breakpoint pauses execution at that line, letting you inspect all in-scope variables and step through the code — far more powerful than scattering log statements.",
-  },
-]} />
-
 <LessonSummary points={[
   "Open DevTools with F12 or Cmd/Ctrl+Shift+I; live in Elements, Console, Network, Sources",
   "Elements shows the live DOM and lets you edit DOM/CSS temporarily to experiment",

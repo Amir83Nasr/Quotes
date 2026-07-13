@@ -205,13 +205,6 @@ Allow keyboard users to skip repetitive navigation.
   previewType="html"
 />
 
-<Quiz questions={[
-  { question: "What does aria-live=\"polite\" do?", options: ["Prevents screen reader announcements", "Announces dynamic changes when user is idle", "Makes the element always visible", "Adds live region markup for styling"], correctIndex: 1, explanation: "aria-live=\"polite\" tells the screen reader to announce content changes when the user is not actively doing something, without interrupting." },
-  { question: "Which attribute describes an input's purpose in more detail?", options: ["aria-label", "aria-describedby", "aria-labelledby", "aria-controls"], correctIndex: 1, explanation: "aria-describedby provides an extended description for an element. aria-labelledby gives it a concise name. aria-label replaces visible label text." },
-  { question: "What is a skip link?", options: ["A link that skips animation", "A link that's hidden until focused, letting keyboard users jump to main content", "A link to skip to the next page", "An alt text feature"], correctIndex: 1, explanation: "A skip link is positioned off-screen and becomes visible on focus. It lets keyboard and screen reader users skip repetitive navigation to reach the main content directly." },
-  { question: "What is the correct tabindex for a custom interactive element?", options: ["tabindex=\"1\"", "tabindex=\"0\"", "tabindex=\"-1\"", "tabindex=\"auto\""], correctIndex: 1, explanation: "tabindex=\"0\" adds the element to the natural tab order based on DOM position. Positive values create a confusing custom tab order." },
-]} />
-
 <LessonSummary points={[
 "WCAG POUR: Perceivable, Operable, Understandable, Robust",
 "Use semantic HTML first — ARIA only when HTML is insufficient",

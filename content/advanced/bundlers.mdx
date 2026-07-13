@@ -284,27 +284,6 @@ module.exports = {
   ]}
 />
 
-<Quiz questions={[
-  {
-    question: "Why does Vite dev server start faster than Webpack?",
-    options: ["Vite uses fewer plugins", "Vite serves native ESM without bundling in dev", "Vite is written in Rust", "Vite only compiles changed files"],
-    correctIndex: 1,
-    explanation: "Vite serves files as native ES modules — no bundling needed until production build. Webpack bundles everything upfront even in dev.",
-  },
-  {
-    question: "What's required for tree shaking to work?",
-    options: ["Webpack 5 or higher", "ES module syntax (import/export)", "CommonJS require()", "A bundler plugin"],
-    correctIndex: 1,
-    explanation: "Tree shaking requires static ES module imports/exports. CommonJS require() is dynamic and can't be statically analyzed.",
-  },
-  {
-    question: "What does [contenthash] in Webpack output filenames do?",
-    options: ["Makes filenames shorter", "Hashes file contents for cache busting", "Encrypts the bundle", "Disables caching"],
-    correctIndex: 1,
-    explanation: "contenthash changes when file content changes. Browser caches the file until the hash changes — only re-downloads when code changes.",
-  },
-]} />
-
 <LessonSummary points={[
   "Webpack: entry, loaders, plugins, output — full control, more config",
   "Vite: native ESM in dev (fast), Rollup for production (efficient)",

@@ -209,12 +209,6 @@ Native `loading="lazy"` defers off-screen images. Browser fetches them when the 
   previewType="html"
 />
 
-<Quiz questions={[
-  { question: "What does loading=\"lazy\" do on an <img>?", options: ["Makes the image blurry", "Defers loading until the image is near the viewport", "Loads the image on click", "Reduces image quality"], correctIndex: 1, explanation: "loading=\"lazy\" defers image loading until the browser predicts the image will enter the viewport, saving bandwidth." },
-  { question: "Which element lets you serve different image formats and art direction?", options: ["<img> with srcset", "<picture>", "<source> alone", "<figure>"], correctIndex: 1, explanation: "<picture> contains multiple <source> elements for different formats, resolutions, or art direction, plus a fallback <img>." },
-  { question: "What does <track> inside <video> provide?", options: ["Video chapters", "Captions or subtitles", "Video speed control", "Volume presets"], correctIndex: 1, explanation: "The <track> element provides timed text tracks for captions, subtitles, descriptions, chapters, or metadata." },
-]} />
-
 <LessonSummary points={[
 "Use srcset and sizes for resolution switching on <img>",
 "Use <picture> for art direction and format fallbacks",

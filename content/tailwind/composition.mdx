@@ -133,12 +133,6 @@ function Button({ variant, size, className, children, ...props }) {
   hints={["Define base styles first, then variants", "Accept className and merge with cn()", "Spread remaining props"]}
 />
 
-<Quiz questions={[
-  { question: "What does cn() do that template literals don't?", options: ["Optimizes CSS bundle", "Resolves conflicting Tailwind classes (last wins) + conditionals", "Generates config", "Compiles to vanilla CSS"], correctIndex: 1, explanation: "tailwind-merge resolves conflicts like px-3 + px-6; clsx handles conditionals." },
-  { question: "When should you use @apply?", options: ["Every component", "CSS boundaries (prose, third-party)", "Never", "Inline styles only"], correctIndex: 1, explanation: "Reserve @apply for CSS boundaries. Use inline + cn()/cva for components." },
-  { question: "What do compoundVariants do?", options: ["Responsive variants", "Apply styles when two+ variants active together", "Chain components", "Override theme"], correctIndex: 1, explanation: "compoundVariants adds styles for specific variant combinations (e.g., primary + lg)." },
-]} />
-
 <LessonSummary
   points={[
     "Use cn() (clsx + tailwind-merge) for safe, conflict-free class merging",

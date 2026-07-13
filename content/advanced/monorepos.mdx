@@ -347,27 +347,6 @@ export function getUsers(): ApiResponse<User[]> {
   ]}
 />
 
-<Quiz questions={[
-  {
-    question: "What does pnpm --filter do?",
-    options: ["Filters search results", "Scopes command to a specific workspace package", "Removes duplicate packages", "Updates package-lock.json"],
-    correctIndex: 1,
-    explanation: "--filter restricts a pnpm command to a specific workspace package (e.g., --filter @my-project/web).",
-  },
-  {
-    question: "What does dependsOn: ['^build'] in turbo.json mean?",
-    options: ["Build this package after all others", "Build this package's dependencies first", "Skip build if nothing changed", "Build in alphabetical order"],
-    correctIndex: 1,
-    explanation: "^build means 'build the upstream dependencies of this package first'. The ^ prefix means topological — parents of the dependency graph.",
-  },
-  {
-    question: "When is a monorepo a bad choice?",
-    options: ["Small team sharing UI components", "Multiple apps with shared types", "Independent teams with different stacks and release cycles", "Coordinated releases across packages"],
-    correctIndex: 2,
-    explanation: "Different tech stacks and independent release cycles make monorepo tooling harder than it helps. Separate repos with published packages work better.",
-  },
-]} />
-
 <LessonSummary points={[
   "pnpm workspaces link local packages without npm publish",
   "Turborepo caches build outputs — only rebuilds changed packages",

@@ -265,35 +265,6 @@ export default function Dashboard() {
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz
-  questions={[
-    {
-      question: "What happens when a Suspense-bounded component is slow to render?",
-      options: [
-        "The entire page blocks until it completes",
-        "The fallback UI displays while that section streams in — the rest of the page is interactive",
-        "The request times out after 10 seconds",
-        "The slow component is skipped entirely",
-      ],
-      correctIndex: 1,
-      explanation: "Suspense boundaries allow each section to stream independently. The fallback shows immediately for slow sections, while already-loaded content is interactive.",
-    },
-    {
-      question: "Is streaming content visible to search engine crawlers?",
-      options: [
-        "No — search engines cannot process streamed content",
-        "Only if using PPR mode",
-        "Yes — crawlers wait for the full stream to complete before indexing",
-        "Only for text content, not images",
-      ],
-      correctIndex: 2,
-      explanation: "Search engine crawlers wait for the full HTML response. Even with streaming, the complete content is eventually delivered in the HTML, making it fully indexable.",
-    },
-  ]}
-/>
-
 ## Lesson Summary
 
 <LessonSummary

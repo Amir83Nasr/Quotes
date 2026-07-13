@@ -86,42 +86,6 @@ CDNs cut latency (shorter physical distance), offload traffic from your origin, 
 
 ## Check Your Understanding
 
-<Quiz questions={[
-  {
-    question: "What does 'Cache-Control: max-age=3600' tell a cache?",
-    options: [
-      "Never cache this response",
-      "The response stays fresh and reusable for 3600 seconds",
-      "Revalidate on every request",
-      "Cache it for exactly 3600 requests"
-    ],
-    correctIndex: 1,
-    explanation: "max-age=3600 means the cached copy is considered fresh for 3600 seconds (1 hour) and can be reused without contacting the server during that window.",
-  },
-  {
-    question: "What is the purpose of an ETag?",
-    options: [
-      "To encrypt the response",
-      "To act as a content fingerprint so a cache can validate whether the resource changed",
-      "To set the cache duration",
-      "To identify the user"
-    ],
-    correctIndex: 1,
-    explanation: "An ETag fingerprints the content. The browser sends it back via If-None-Match; the server replies 304 Not Modified (reuse cache) or 200 with new content.",
-  },
-  {
-    question: "Why does a CDN make a site faster for distant users?",
-    options: [
-      "It compresses files more than the origin",
-      "It caches copies at edge locations physically closer to users, cutting latency",
-      "It uses a faster programming language",
-      "It removes the need for DNS"
-    ],
-    correctIndex: 1,
-    explanation: "A CDN serves cached content from edge servers near the user. Shorter physical distance means lower latency — something origin optimization alone can't achieve.",
-  },
-]} />
-
 <LessonSummary points={[
   "Caching reuses stored responses instead of re-fetching — the fastest request is none",
   "Cache-Control sets policy: max-age (freshness), no-store, no-cache, immutable",

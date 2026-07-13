@@ -85,29 +85,6 @@ for (let i = 0; i < 3; i++)
   previewType="mixed"
 />
 
-## Quiz
-
-<Quiz questions={[
-  {
-    question: "Loop with `var i`: setTimeout(() => console.log(i),0) logs?",
-    options: ["0,1,2", "3,3,3", "undefined"],
-    correctIndex: 1,
-    explanation: "var shares one i binding. After loop, i=3."
-  },
-  {
-    question: "Which has a temporal dead zone?",
-    options: ["var", "let", "function"],
-    correctIndex: 1,
-    explanation: "let/const hoisted but uninitialized until declaration."
-  },
-  {
-    question: "What is a closure?",
-    options: ["Function running immediately", "Function remembering its lexical scope when called elsewhere", "Block of code in braces"],
-    correctIndex: 1,
-    explanation: "Closures retain access to variables in scope where defined."
-  }
-]} />
-
 ## Lesson Summary
 
 <LessonSummary points={[

@@ -98,42 +98,6 @@ function AutoFocusInput({ ref, ...props }: Props) {
 
 ## Check Your Understanding
 
-<Quiz questions={[
-  {
-    question: "In React 19, how does a function component receive a ref passed by its parent?",
-    options: [
-      "Only through forwardRef",
-      "As a normal prop it can destructure, e.g. function C({ ref }) { ... }",
-      "Through useContext",
-      "It cannot receive refs"
-    ],
-    correctIndex: 1,
-    explanation: "React 19 makes ref an ordinary prop. You destructure it like any other prop — forwardRef is no longer required.",
-  },
-  {
-    question: "What can a ref callback now return in React 19?",
-    options: [
-      "A new ref object",
-      "A cleanup function that runs when the element detaches",
-      "The DOM node",
-      "A promise"
-    ],
-    correctIndex: 1,
-    explanation: "Ref callbacks can return a cleanup function, called when the element unmounts — similar to how a useEffect cleanup works. This removes the old null-check pattern.",
-  },
-  {
-    question: "What is the status of forwardRef in React 19?",
-    options: [
-      "It was removed and breaks existing code",
-      "It still works but is deprecated in favor of ref-as-prop",
-      "It is now required for all components",
-      "It only works in Server Components"
-    ],
-    correctIndex: 1,
-    explanation: "forwardRef continues to work, so existing code is safe, but it's deprecated. New components should accept ref as a prop; a future major version will remove forwardRef.",
-  },
-]} />
-
 <LessonSummary points={[
   "React 19 lets function components accept ref as a normal prop — no forwardRef",
   "forwardRef still works but is deprecated; migrate at your own pace",

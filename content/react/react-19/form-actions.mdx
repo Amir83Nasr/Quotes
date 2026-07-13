@@ -85,9 +85,7 @@ The action receives the **previous state** as its first argument — handy for a
 
 This is the exact pattern running as a real component. Submit an email without an “@” to see the error path, and watch the button track `isPending`:
 
-<Playground title="useActionState — live">
 <UseActionStateDemo />
-</Playground>
 
 <Alert>
 <AlertTitle>Pairs perfectly with Server Actions</AlertTitle>
@@ -108,42 +106,6 @@ function SubmitButton() {
 ```
 
 ## Check Your Understanding
-
-<Quiz questions={[
-  {
-    question: "What does a form's action function receive when the form is submitted in React 19?",
-    options: [
-      "The submit event",
-      "The form's FormData",
-      "An array of input refs",
-      "Nothing — you read inputs manually"
-    ],
-    correctIndex: 1,
-    explanation: "In React 19, <form action={fn}> calls fn with the form's FormData automatically — no event handling or preventDefault needed.",
-  },
-  {
-    question: "What are the three values returned by useActionState?",
-    options: [
-      "value, setValue, reset",
-      "state, formAction, isPending",
-      "data, error, loading",
-      "action, result, status"
-    ],
-    correctIndex: 1,
-    explanation: "useActionState returns [state (the action's return value), formAction (the wrapped action for the form), isPending (true while running)].",
-  },
-  {
-    question: "What is the first argument passed to the action function inside useActionState?",
-    options: [
-      "The FormData",
-      "The previous state",
-      "The event object",
-      "The component props"
-    ],
-    correctIndex: 1,
-    explanation: "The action receives (previousState, formData). Access to the prior state makes it easy to accumulate results or compare across submissions.",
-  },
-]} />
 
 <LessonSummary points={[
   "<form action={fn}> calls fn with FormData — no onSubmit or preventDefault",

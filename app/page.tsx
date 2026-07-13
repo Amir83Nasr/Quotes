@@ -5,6 +5,7 @@ import { CATEGORIES, SIDEBAR_SECTIONS } from "@/constants"
 import { CategoryCard } from "@/components/docs/CategoryCard"
 import { Footer } from "@/components/layout/Footer"
 import { Button } from "@/components/ui/button"
+import { SITE_CONFIG } from "@/constants/site"
 import { BookOpen, ArrowRight, ChevronRight, Sparkles, Sun, Moon, Target, Trophy } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useTheme } from "next-themes"
@@ -35,7 +36,7 @@ export default function HomePage() {
         <div className="mx-auto flex h-14 max-w-6xl items-center px-4 md:px-6">
           <div className="flex items-center gap-2 font-semibold">
             <BookOpen className="h-5 w-5" />
-            <span>Frontend Learning</span>
+            <span>Quotes</span>
           </div>
           <div className="flex-1" />
           <Button variant="ghost" size="sm" asChild>
@@ -68,7 +69,7 @@ export default function HomePage() {
                 Structured learning path — from zero to production
               </div>
               <h1 className="mb-4 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
-                Master Frontend Development
+                Master Web Development
               </h1>
               <p className="mb-8 text-lg text-muted-foreground md:text-xl">
                 A guided, example-driven curriculum. Learn HTML &rarr; CSS &rarr;
