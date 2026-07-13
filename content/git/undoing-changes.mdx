@@ -1,0 +1,151 @@
+---
+title: Undoing Changes
+description: Safely undo mistakes at every level — from working-directory edits to published commits
+order: 6
+difficulty: intermediate
+estimatedMinutes: 13
+tags: ["git", "undo", "reset", "revert", "reflog"]
+prerequisites: ["git/merge-conflicts"]
+updated: "2026-07-11"
+---
+
+# Undoing Changes
+
+One of Git's greatest gifts is that almost nothing is truly permanent. But "undo" means different things depending on *where* the change is — uncommitted, committed locally, or already pushed. Using the right tool for each keeps you safe.
+
+<LearningObjectives objectives={[
+  "Discard uncommitted changes in the working directory and staging area",
+  "Amend the most recent commit",
+  "Choose between reset and revert for undoing commits",
+  "Recover 'lost' commits with the reflog",
+]} />
+
+## A Map of Undo
+
+Match the tool to where the change lives:
+
+| Situation | Command |
+|-----------|---------|
+| Discard unstaged file edits | `git restore <file>` |
+| Unstage a staged file | `git restore --staged <file>` |
+| Fix the last commit's message or contents | `git commit --amend` |
+| Undo local commits (not pushed) | `git reset` |
+| Undo a pushed commit safely | `git revert` |
+| Recover a commit you thought was gone | `git reflog` |
+
+## Amending the Last Commit
+
+Forgot a file, or made a typo in the message? `--amend` rewrites the most recent commit:
+
+```bash
+git add forgotten-file.js
+git commit --amend -m "feat: add search with debounce"
+```
+
+<Alert>
+<AlertTitle>Amend rewrites history</AlertTitle>
+<AlertDescription>`--amend` replaces the last commit with a new one (new SHA). That's fine for a commit you haven't pushed. Avoid amending commits others may already have — you'd force them to reconcile diverged history.</AlertDescription>
+</Alert>
+
+## reset: Rewrite Local History
+
+`git reset` moves the current branch pointer to an earlier commit. Its three modes differ in what they do to your files:
+
+```bash
+git reset --soft HEAD~1    # undo commit, KEEP changes staged
+git reset --mixed HEAD~1   # undo commit, keep changes unstaged (default)
+git reset --hard HEAD~1    # undo commit AND discard the changes (destructive!)
+```
+
+```text
+--soft   → commit undone, work back in staging
+--mixed  → commit undone, work back in working dir
+--hard   → commit undone, work gone
+```
+
+`--soft` is great for "I committed too early" — it puts your work back in staging so you can recommit. `--hard` throws the work away, so use it only when you're sure.
+
+## revert: Undo Safely in Shared History
+
+`reset` rewrites history, which is dangerous for commits others already have. For anything pushed, use `git revert` instead. It doesn't erase the commit — it creates a **new** commit that undoes the changes:
+
+```bash
+git revert a1b2c3d
+```
+
+```text
+before:  A ─ B ─ C(bug)
+after:   A ─ B ─ C(bug) ─ D(undoes C)
+```
+
+History stays intact and honest; everyone can pull the revert cleanly. **Rule of thumb: `reset` for local, `revert` for pushed.**
+
+## reflog: Your Safety Net
+
+Think you lost commits after a bad reset? The **reflog** records where `HEAD` has been, even for commits no longer on any branch:
+
+```bash
+git reflog
+```
+
+```text
+a1b2c3d HEAD@{0}: reset: moving to HEAD~1
+f9e8d7c HEAD@{1}: commit: the work I thought I lost
+```
+
+Recover by pointing a branch back at that SHA:
+
+```bash
+git reset --hard f9e8d7c   # or: git switch -c recovered f9e8d7c
+```
+
+<Alert>
+<AlertTitle>Git rarely deletes anything immediately</AlertTitle>
+<AlertDescription>Commits you "lose" usually linger in the reflog for weeks before garbage collection. Before panicking over a bad reset or rebase, check `git reflog` — the commit is often still there.</AlertDescription>
+</Alert>
+
+## Check Your Understanding
+
+<Quiz questions={[
+  {
+    question: "You committed to a shared branch and pushed, then realized the commit was wrong. What's the safe way to undo it?",
+    options: [
+      "git reset --hard",
+      "git revert <commit>",
+      "git commit --amend",
+      "Delete the repo and re-clone"
+    ],
+    correctIndex: 1,
+    explanation: "For pushed commits, git revert creates a new commit that undoes the change without rewriting shared history — safe for everyone who already pulled.",
+  },
+  {
+    question: "What does 'git reset --soft HEAD~1' do?",
+    options: [
+      "Undoes the last commit and permanently deletes the changes",
+      "Undoes the last commit but keeps the changes staged",
+      "Undoes the last commit and unstages the changes",
+      "Creates a new commit that reverses the last one"
+    ],
+    correctIndex: 1,
+    explanation: "--soft moves the branch pointer back one commit but leaves the changes in the staging area, ready to be recommitted.",
+  },
+  {
+    question: "After a bad 'git reset --hard', how can you often recover the lost commit?",
+    options: [
+      "It's gone forever",
+      "git reflog to find the SHA, then reset or branch to it",
+      "git pull from origin",
+      "git status"
+    ],
+    correctIndex: 1,
+    explanation: "git reflog records every position HEAD has held, including commits no longer on a branch. Find the SHA there and point a branch back to it.",
+  },
+]} />
+
+<LessonSummary points={[
+  "Match the tool to the location: restore (working dir), amend (last commit), reset (local), revert (pushed)",
+  "git commit --amend rewrites the last commit — safe only before pushing",
+  "reset --soft keeps work staged, --mixed unstages it, --hard discards it",
+  "Use revert (not reset) for anything already pushed — it undoes via a new commit",
+  "git reflog is your safety net for recovering 'lost' commits after a bad reset or rebase",
+]} />

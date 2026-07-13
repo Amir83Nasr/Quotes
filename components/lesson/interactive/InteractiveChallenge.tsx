@@ -21,7 +21,7 @@ import {
 import { cn } from "@/lib/utils"
 import { LiveEditor } from "./LiveEditor"
 import { SandboxPreview } from "./SandboxPreview"
-import { Checklist, difficultyColors } from "../shared/Checklist"
+import { Checklist, difficultyColors, type Difficulty } from "../shared/Checklist"
 
 interface InteractiveChallengeProps {
   title: string
@@ -30,7 +30,7 @@ interface InteractiveChallengeProps {
   starterCode: string
   language?: "javascript" | "typescript" | "html" | "css" | "tsx" | "jsx"
   solutionCode?: string
-  difficulty?: "easy" | "medium" | "hard"
+  difficulty?: Difficulty
   previewType?: "html" | "css" | "javascript" | "mixed"
   previewHtml?: string
   previewCss?: string
@@ -38,9 +38,9 @@ interface InteractiveChallengeProps {
 }
 
 const difficultyEmoji = {
-  easy: "★",
-  medium: "★★",
-  hard: "★★★",
+  beginner: "★",
+  intermediate: "★★",
+  advanced: "★★★",
 }
 
 export function InteractiveChallenge({
@@ -50,7 +50,7 @@ export function InteractiveChallenge({
   starterCode,
   language = "tsx",
   solutionCode,
-  difficulty = "medium",
+  difficulty = "intermediate",
   previewType = "mixed",
   previewHtml,
   previewCss,

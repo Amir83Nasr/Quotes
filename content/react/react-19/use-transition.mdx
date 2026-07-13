@@ -1,0 +1,118 @@
+---
+title: useTransition & useDeferredValue
+description: Keep the UI responsive during heavy updates by marking work as non-urgent
+order: 4
+difficulty: advanced
+estimatedMinutes: 13
+tags: ["react", "react-19", "useTransition", "useDeferredValue", "performance"]
+prerequisites: ["react/react-19/use-optimistic"]
+updated: "2026-07-11"
+---
+
+# useTransition & useDeferredValue
+
+Some state updates are urgent (typing in an input) and some are expensive (filtering 10,000 rows). If you treat them the same, typing stutters. React's concurrent features let you mark the expensive work as **non-urgent** so the urgent work stays smooth.
+
+<LearningObjectives objectives={[
+  "Distinguish urgent from non-urgent (transition) updates",
+  "Use useTransition with its isPending flag",
+  "Use useDeferredValue to lag an expensive value behind an urgent one",
+  "Feel the difference in a live 8,000-item filter",
+]} />
+
+## Two Speeds of Update
+
+React 19 treats updates as either **urgent** (must feel instant — keystrokes, clicks) or **transitions** (can lag slightly — rendering big results). Marking heavy updates as transitions lets React interrupt them to keep urgent updates responsive.
+
+## useTransition
+
+`useTransition` gives you a `startTransition` function and an `isPending` flag:
+
+```tsx
+const [isPending, startTransition] = useTransition()
+
+function handleChange(value: string) {
+  setQuery(value)                          // urgent — input stays snappy
+  startTransition(() => {
+    setFilter(value)                       // non-urgent — the heavy re-render
+  })
+}
+```
+
+The `setQuery` update applies immediately so the input never lags. The `setFilter` update — which triggers the expensive list render — runs as a transition React can interrupt. `isPending` is `true` while it's catching up, perfect for a subtle spinner.
+
+## useDeferredValue
+
+`useDeferredValue` is the value-based sibling. Instead of wrapping a setter, you defer a *value* — React gives you a copy that lags behind during heavy work:
+
+```tsx
+const deferredQuery = useDeferredValue(query)
+// Pass deferredQuery (not query) to the expensive computation.
+const results = useMemo(() => filter(deferredQuery), [deferredQuery])
+```
+
+`query` updates instantly (input stays fast); `deferredQuery` catches up when React has spare time. Compare `query !== deferredQuery` to know the results are stale and dim them.
+
+<Alert>
+<AlertTitle>Which one do I use?</AlertTitle>
+<AlertDescription>Use <code>useTransition</code> when you control the state update (you call the setter). Use <code>useDeferredValue</code> when the value comes from props or you can't wrap the update — e.g. deferring a search term passed down from a parent.</AlertDescription>
+</Alert>
+
+## Try It Live
+
+Type quickly into this filter over 8,000 items. The input stays responsive while the list lags behind and dims — that gap is the transition at work:
+
+<Playground title="useTransition + useDeferredValue — live">
+<UseTransitionDemo />
+</Playground>
+
+<Alert>
+<AlertTitle>Transitions don't make work faster</AlertTitle>
+<AlertDescription>They make it <em>non-blocking</em>. The expensive render still happens — but React prioritizes urgent updates first, so the app never feels frozen. For genuinely huge lists, also virtualize.</AlertDescription>
+</Alert>
+
+## Check Your Understanding
+
+<Quiz questions={[
+  {
+    question: "What does wrapping a state update in startTransition do?",
+    options: [
+      "Makes the update run faster",
+      "Marks it as non-urgent so React can interrupt it to keep urgent updates responsive",
+      "Runs it on a web worker",
+      "Delays it by a fixed number of milliseconds"
+    ],
+    correctIndex: 1,
+    explanation: "startTransition marks the update as a low-priority transition. React can interrupt it to process urgent updates (like typing) first, so the UI stays responsive.",
+  },
+  {
+    question: "When should you reach for useDeferredValue instead of useTransition?",
+    options: [
+      "When you want the update to be faster",
+      "When the value comes from props or you can't wrap the state setter yourself",
+      "Only in Server Components",
+      "When there is no expensive computation"
+    ],
+    correctIndex: 1,
+    explanation: "useDeferredValue defers a value you receive (e.g. from props) rather than a setter you call. Use useTransition when you own the state update.",
+  },
+  {
+    question: "Do transitions make the expensive work itself faster?",
+    options: [
+      "Yes, they optimize the computation",
+      "No — they make it non-blocking so urgent updates aren't frozen",
+      "Yes, by caching results",
+      "Only on the server"
+    ],
+    correctIndex: 1,
+    explanation: "Transitions don't speed up the work; they prioritize urgent updates over it so the app never feels frozen. Combine with virtualization for very large lists.",
+  },
+]} />
+
+<LessonSummary points={[
+  "React prioritizes urgent updates (typing) over transitions (heavy re-renders)",
+  "useTransition gives startTransition + isPending; wrap the expensive state update",
+  "useDeferredValue defers a value you can't wrap — great for props or search terms",
+  "Compare value !== deferredValue to detect and dim stale results",
+  "Transitions make work non-blocking, not faster — virtualize truly large lists too",
+]} />

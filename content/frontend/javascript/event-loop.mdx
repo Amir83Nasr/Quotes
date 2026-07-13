@@ -73,7 +73,7 @@ console.log(6)
 
 ## Event Loop Diagram
 
-```
+```text
 BROWSER: sync → drain microtasks → rAF → paint → macrotask
 NODE: timers → I/O → poll → check(setImmediate) → close
       (microtasks drain between every phase)

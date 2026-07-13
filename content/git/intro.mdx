@@ -1,0 +1,153 @@
+---
+title: Introduction to Git
+description: Understand what version control is, why Git matters, and the mental model behind every command
+order: 1
+difficulty: beginner
+estimatedMinutes: 10
+tags: ["git", "version-control", "fundamentals"]
+updated: "2026-07-11"
+---
+
+# Introduction to Git
+
+Git is the tool that lets you save snapshots of your project, experiment without fear, and collaborate with other developers without overwriting each other's work. Nearly every software team on earth uses it — learning Git is not optional.
+
+<LearningObjectives objectives={[
+  "Explain what version control solves and why Git is distributed",
+  "Describe Git's three states: working directory, staging area, and repository",
+  "Initialize a repository and record your first commit",
+  "Read the output of git status and git log with confidence",
+]} />
+
+## Why Version Control?
+
+Without version control, saving progress means copying folders: `project-final`, `project-final-v2`, `project-really-final`. This breaks down fast — you can't tell what changed, you can't safely undo, and two people can't work on the same code at once.
+
+Version control solves this by recording **every change as a snapshot** you can return to, compare against, or branch away from.
+
+| Problem | Folder copies | Git |
+|---------|--------------|-----|
+| "What changed since yesterday?" | Diff folders by hand | `git diff` |
+| "Undo the last 3 changes" | Hope you kept a copy | `git revert` / `git reset` |
+| "Two people, one file" | Manual merge, overwrites | Automatic merge |
+| "Why was this line written?" | No idea | `git blame` |
+
+<Alert>
+<AlertTitle>Distributed, not centralized</AlertTitle>
+<AlertDescription>Git is *distributed*: every clone is a full copy of the entire history, not just the latest version. You can commit, branch, and view history with no network connection — the server (like GitHub) is just one more copy.</AlertDescription>
+</Alert>
+
+## Git's Mental Model: Three States
+
+This is the single most important concept in Git. Every file lives in one of three areas:
+
+```text
+Working Directory  →  Staging Area (Index)  →  Repository (.git)
+   (your edits)         (git add)                (git commit)
+```
+
+- **Working directory** — the actual files you edit. Changes here are "untracked" or "modified".
+- **Staging area** — a holding zone where you assemble exactly what your next commit will contain. You move changes here with `git add`.
+- **Repository** — the permanent, immutable history. `git commit` takes what's staged and records it as a snapshot.
+
+The staging area is what makes Git feel different from other tools. It lets you commit *some* of your changes and leave others for later — you craft each commit deliberately instead of dumping everything at once.
+
+## Your First Repository
+
+Turn any folder into a Git repository with `git init`:
+
+```bash
+mkdir my-project
+cd my-project
+git init
+# Initialized empty Git repository in my-project/.git/
+```
+
+Create a file, then check its status:
+
+```bash
+echo "# My Project" > README.md
+git status
+```
+
+```text
+On branch main
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        README.md
+```
+
+Git sees `README.md` but isn't tracking it yet. Stage it, then commit:
+
+```bash
+git add README.md
+git commit -m "add project readme"
+```
+
+```text
+[main (root-commit) a1b2c3d] add project readme
+ 1 file changed, 1 insertion(+)
+ create mode 100644 README.md
+```
+
+That `a1b2c3d` is the commit's SHA — a unique fingerprint of this exact snapshot.
+
+## Reading History
+
+`git log` shows commits newest-first:
+
+```bash
+git log --oneline
+# a1b2c3d add project readme
+```
+
+`git status` is the command you'll run most — it always tells you what state your working directory and staging area are in, and usually hints at the next command to run. When in doubt, run `git status`.
+
+<Alert>
+<AlertTitle>Configure your identity once</AlertTitle>
+<AlertDescription>Before your first commit on a new machine, tell Git who you are — it stamps every commit with this: `git config --global user.name "Your Name"` and `git config --global user.email "you@example.com"`.</AlertDescription>
+</Alert>
+
+## Check Your Understanding
+
+<Quiz questions={[
+  {
+    question: "What does the staging area let you do that a simple 'save all changes' cannot?",
+    options: [
+      "Compress files before committing",
+      "Choose exactly which changes go into the next commit",
+      "Upload changes to GitHub automatically",
+      "Encrypt your commit history"
+    ],
+    correctIndex: 1,
+    explanation: "The staging area (index) is a holding zone. You use 'git add' to assemble precisely the changes you want in your next commit, leaving other edits unstaged for a later one.",
+  },
+  {
+    question: "Which command turns an ordinary folder into a Git repository?",
+    options: ["git start", "git new", "git init", "git create"],
+    correctIndex: 2,
+    explanation: "'git init' creates the hidden .git directory that stores all history and turns the folder into a repository.",
+  },
+  {
+    question: "Why is Git called a 'distributed' version control system?",
+    options: [
+      "It splits files across multiple servers",
+      "Every clone contains the full project history, not just the latest files",
+      "It requires a constant network connection",
+      "It distributes commits to teammates automatically"
+    ],
+    correctIndex: 1,
+    explanation: "Each clone is a complete copy of the entire repository and its history. You can work fully offline; a remote like GitHub is just another copy you choose to sync with.",
+  },
+]} />
+
+<LessonSummary points={[
+  "Version control records changes as snapshots you can compare, undo, and branch from",
+  "Git is distributed — every clone holds the full history and works offline",
+  "Files flow through three states: working directory → staging area → repository",
+  "git init starts a repo; git add stages changes; git commit records a snapshot",
+  "git status is your compass — run it whenever you're unsure what to do next",
+]} />

@@ -1,0 +1,127 @@
+---
+title: Browser DevTools
+description: Inspect, debug, and profile any website with the tools built into your browser
+order: 6
+difficulty: beginner
+estimatedMinutes: 11
+tags: ["web", "devtools", "debugging", "tooling"]
+prerequisites: ["web/browser-rendering"]
+updated: "2026-07-11"
+---
+
+# Browser DevTools
+
+Every modern browser ships a full debugging suite — the DevTools. They're how you inspect the DOM, debug JavaScript, watch network requests, and find performance problems. Fluency here separates slow debugging from fast.
+
+<LearningObjectives objectives={[
+  "Open DevTools and navigate the core panels",
+  "Inspect and live-edit the DOM and CSS with Elements",
+  "Debug JavaScript with breakpoints in Sources",
+  "Diagnose requests with the Network panel and the Console",
+]} />
+
+## Opening DevTools
+
+`F12`, or right-click → **Inspect**, or `Cmd/Ctrl + Shift + I`. It docks to the side or bottom of the window. The panels across the top are your toolkit — the four you'll live in are Elements, Console, Network, and Sources.
+
+## Elements — Inspect and Edit the DOM
+
+The Elements panel shows the live DOM tree (not your source HTML — the current state after JavaScript has run). You can:
+
+- Hover a node to highlight it on the page.
+- Double-click to edit text, attributes, or tags in place.
+- In the **Styles** pane, toggle, edit, or add CSS rules and watch the page update instantly.
+
+```text
+Elements → pick a node → Styles pane → tweak CSS live (not saved to your files)
+```
+
+<Alert>
+<AlertTitle>Live edits are temporary</AlertTitle>
+<AlertDescription>Changes you make in Elements/Styles are experiments — they vanish on reload and never touch your source files. It's a sandbox for trying things, perfect for nailing a color or spacing before writing the real CSS.</AlertDescription>
+</Alert>
+
+## Console — Logs and a Live REPL
+
+The Console shows `console.log` output, errors, and warnings — and it's a full JavaScript REPL against the current page:
+
+```js
+console.log("value:", myVariable)
+console.table(arrayOfObjects)   // render arrays/objects as a table
+console.error("something broke") // red, with a stack trace
+$0                               // the element currently selected in Elements
+document.querySelectorAll("a").length  // run any JS against the page
+```
+
+Errors here almost always include a clickable file:line link straight to the source.
+
+## Network — See Every Request
+
+The Network panel lists every request the page makes, with status, method, size, and timing. Use it to:
+
+- Confirm an API call fired and inspect its **response** and **headers**.
+- Spot `404`s and `500`s (the status-code lesson pays off here).
+- See what's slow via the waterfall timing chart.
+- Throttle to "Slow 3G" to test on a simulated slow connection.
+
+```text
+Network → click a request → Headers / Payload / Response / Timing tabs
+```
+
+## Sources — Debug with Breakpoints
+
+`console.log` debugging works, but breakpoints are faster. In the Sources panel, click a line number to set a breakpoint; execution pauses there so you can inspect every variable:
+
+```text
+set breakpoint → reload/trigger → paused → inspect scope, step through
+```
+
+- **Step over / into / out** to walk through execution line by line.
+- Hover any variable to see its current value.
+- The **Scope** pane shows all in-scope variables at the pause point.
+
+<Alert>
+<AlertTitle>Device toolbar for responsive testing</AlertTitle>
+<AlertDescription>The device icon (<code>Cmd/Ctrl + Shift + M</code>) emulates phones and tablets — viewport sizes, touch, and device pixel ratios — so you can test responsive layouts without real devices.</AlertDescription>
+</Alert>
+
+## Check Your Understanding
+
+<Quiz questions={[
+  {
+    question: "The Elements panel shows the DOM. How does it relate to your source HTML file?",
+    options: [
+      "It's an exact copy of the HTML file",
+      "It's the live DOM — the current state after JavaScript has modified it",
+      "It only shows CSS, not HTML",
+      "It shows the server's response before parsing"
+    ],
+    correctIndex: 1,
+    explanation: "Elements reflects the live DOM as it currently exists, including changes made by JavaScript — which can differ significantly from the original HTML source.",
+  },
+  {
+    question: "Which panel would you open to confirm an API request returned a 500 and inspect its response body?",
+    options: ["Elements", "Console", "Network", "Sources"],
+    correctIndex: 2,
+    explanation: "The Network panel lists every request with its status code, and lets you inspect headers, payload, and response body — ideal for diagnosing API failures.",
+  },
+  {
+    question: "What is the advantage of a breakpoint in Sources over console.log?",
+    options: [
+      "It runs the code faster",
+      "It pauses execution so you can inspect every variable and step through line by line",
+      "It automatically fixes bugs",
+      "It works without opening DevTools"
+    ],
+    correctIndex: 1,
+    explanation: "A breakpoint pauses execution at that line, letting you inspect all in-scope variables and step through the code — far more powerful than scattering log statements.",
+  },
+]} />
+
+<LessonSummary points={[
+  "Open DevTools with F12 or Cmd/Ctrl+Shift+I; live in Elements, Console, Network, Sources",
+  "Elements shows the live DOM and lets you edit DOM/CSS temporarily to experiment",
+  "Console prints logs/errors and is a full REPL against the current page ($0 = selected element)",
+  "Network reveals every request's status, headers, response, and timing",
+  "Sources breakpoints pause execution to inspect variables and step through code",
+]} />

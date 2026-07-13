@@ -4,11 +4,15 @@
  */
 export const SIDEBAR_LABELS: Record<string, string> = {
   frontend: "Frontend Fundamentals",
+  git: "Git & Version Control",
+  web: "How the Web Works",
   advanced: "Advanced Concepts",
   fullstack: "Full Stack",
+  security: "Web Security",
   practice: "Practice Projects",
   gallery: "Component Gallery",
   hooks: "Hooks",
+  "react-19": "React 19",
   // Proper casing for tech names
   html: "HTML",
   css: "CSS",
@@ -30,9 +34,9 @@ export const SIDEBAR_SECTIONS: { label: string; order: number; categories: strin
   // `frontend` keeps the sidebar Foundations group (top-level content node),
   // while html/css/javascript/typescript are the CATEGORIES ids that render
   // as cards in the homepage "Your Learning Path" section 1.
-  { label: "Foundations", order: 1, categories: ["frontend", "html", "css", "javascript", "typescript"] },
+  { label: "Foundations", order: 1, categories: ["git", "web", "frontend", "html", "css", "javascript", "typescript"] },
   { label: "Styling & UI", order: 2, categories: ["tailwind", "shadcn", "gallery"] },
   { label: "Core Framework", order: 3, categories: ["react", "nextjs"] },
-  { label: "Advanced", order: 4, categories: ["advanced", "fullstack"] },
+  { label: "Advanced", order: 4, categories: ["advanced", "fullstack", "security"] },
   { label: "Projects", order: 5, categories: ["practice"] },
 ]

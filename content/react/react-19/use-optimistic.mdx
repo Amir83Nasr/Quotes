@@ -1,0 +1,133 @@
+---
+title: useOptimistic
+description: Show instant UI updates before the server confirms — then reconcile automatically
+order: 3
+difficulty: intermediate
+estimatedMinutes: 11
+tags: ["react", "react-19", "useOptimistic", "ux"]
+prerequisites: ["react/react-19/form-actions"]
+updated: "2026-07-11"
+---
+
+# useOptimistic
+
+Waiting for a server before updating the UI feels sluggish. `useOptimistic` lets you show the *expected* result immediately, then automatically fall back to the real state when the async work finishes. This is how fast apps feel fast.
+
+<LearningObjectives objectives={[
+  "Explain what an optimistic update is and why it improves UX",
+  "Use useOptimistic to add a temporary state on top of real state",
+  "Understand how React reconciles the optimistic and real state",
+  "Interact with a live optimistic UI",
+]} />
+
+## The Problem: Perceived Latency
+
+Send a chat message and wait 800ms for the server before it appears? That feels broken. Users expect the message to show *instantly* and quietly confirm in the background. That's an **optimistic update**: assume success, show it now, reconcile later.
+
+## The Hook
+
+`useOptimistic` layers a temporary optimistic value on top of your real state:
+
+```tsx
+const [optimisticState, addOptimistic] = useOptimistic(
+  realState,
+  (currentState, optimisticValue) => {
+    // return the new state to show *while* the async action runs
+    return [...currentState, optimisticValue]
+  },
+)
+```
+
+- `realState` — your actual, confirmed state
+- the reducer — computes what to display optimistically
+- `addOptimistic(value)` — call it to apply an optimistic update
+
+The key behavior: while an action (a transition) is in flight, `optimisticState` reflects your optimistic guess. When the action completes and `realState` updates, React **automatically discards** the optimistic layer and shows the real value. If the action fails and you don't update real state, it reverts — no manual rollback.
+
+## A Chat Example
+
+```tsx
+function Chat({ messages, sendMessage }: Props) {
+  const [optimistic, addOptimistic] = useOptimistic(
+    messages,
+    (msgs, text: string) => [...msgs, { text, sending: true }],
+  )
+
+  async function action(formData: FormData) {
+    const text = String(formData.get("text"))
+    addOptimistic(text)        // show it immediately
+    await sendMessage(text)    // real network call
+    // real state now includes the message; optimistic layer drops away
+  }
+
+  return (
+    <>
+      {optimistic.map((m, i) => (
+        <p key={i} style={{ opacity: m.sending ? 0.5 : 1 }}>{m.text}</p>
+      ))}
+      <form action={action}>
+        <input name="text" />
+      </form>
+    </>
+  )
+}
+```
+
+## Try It Live
+
+Send a message and watch it appear **instantly** as “sending…”, then flip to “sent ✓” after the simulated server delay:
+
+<Playground title="useOptimistic — live chat">
+<UseOptimisticDemo />
+</Playground>
+
+<Alert>
+<AlertTitle>Optimistic updates must run inside a transition</AlertTitle>
+<AlertDescription>The optimistic value only holds while an async action/transition is pending — which is exactly what a form `action` (or `startTransition`) provides. React reconciles back to real state as soon as that work settles.</AlertDescription>
+</Alert>
+
+## Check Your Understanding
+
+<Quiz questions={[
+  {
+    question: "What is an optimistic update?",
+    options: [
+      "A UI update that only happens if the server responds quickly",
+      "Showing the expected result immediately, before the server confirms it",
+      "A way to cache server responses",
+      "Retrying a failed request automatically"
+    ],
+    correctIndex: 1,
+    explanation: "An optimistic update assumes the action will succeed and shows the expected result right away, reconciling with the real result when it arrives.",
+  },
+  {
+    question: "What happens to the optimistic state when the async action completes and real state updates?",
+    options: [
+      "You must manually remove it",
+      "React automatically discards the optimistic layer and shows the real state",
+      "It stays forever",
+      "The component unmounts"
+    ],
+    correctIndex: 1,
+    explanation: "Once the pending action settles and real state updates, React drops the optimistic layer automatically — no manual cleanup or rollback code needed.",
+  },
+  {
+    question: "useOptimistic's optimistic value is only active during what?",
+    options: [
+      "The entire component lifetime",
+      "A pending transition/action",
+      "Only on the server",
+      "Whenever state changes for any reason"
+    ],
+    correctIndex: 1,
+    explanation: "The optimistic value holds only while an action or transition is pending. Form actions and startTransition provide that window; React reconciles when it ends.",
+  },
+]} />
+
+<LessonSummary points={[
+  "Optimistic updates show the expected result instantly for a responsive feel",
+  "useOptimistic(realState, reducer) returns [optimisticState, addOptimistic]",
+  "The optimistic value holds only during a pending action/transition",
+  "React automatically discards the optimistic layer once real state updates — no manual rollback",
+  "Pairs naturally with form actions, which provide the required transition",
+]} />

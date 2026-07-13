@@ -1,6 +1,7 @@
 ---
 title: Authentication
-description: Authentication patterns for web applications
+description: JWT and session auth for the App Router — paired route handlers, cookies, and curl commands that carry a session locally
+difficulty: intermediate
 order: 3
 ---
 
@@ -8,28 +9,380 @@ order: 3
 
 Common authentication strategies for web apps.
 
-## JWT Authentication Flow
+<LearningObjectives objectives={[
+  "Hash passwords on signup and verify them on login",
+  "Issue a JWT and store it in an httpOnly cookie",
+  "Protect route handlers by reading the cookie or Bearer header",
+  "Clear the session on logout",
+  "Test the full login → profile → logout flow locally with a curl cookie jar",
+]} />
+
+<Alert>
+  <Lightbulb />
+  <AlertTitle>Auth is stateful — test with a cookie jar</AlertTitle>
+  <AlertDescription>
+    Unlike plain data endpoints, auth carries a session across requests. In the
+    `curl` examples below, `-c cookies.txt` **saves** the cookie the server sets,
+    and `-b cookies.txt` **sends** it back — so you can log in once and reuse the
+    session for the next request, exactly like a browser.
+  </AlertDescription>
+</Alert>
+
+## Setup
+
+These examples use [`jose`](https://github.com/panva/jose) for JWTs (Web Crypto,
+so the same code runs in route handlers **and** Edge middleware) and `bcryptjs`
+for password hashing:
+
+```bash
+pnpm add jose bcryptjs
+```
+
+```bash
+# .env.local — a 32+ char secret used to sign tokens
+JWT_SECRET=replace-with-a-long-random-string-min-32-chars
+```
+
+## Token Helpers
+
+One module signs and verifies tokens so every route stays consistent.
 
 ```typescript
-// Login — send credentials, receive token
-async function login(email: string, password: string) {
-  const res = await fetch("/api/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  })
-  const { token } = await res.json()
-  localStorage.setItem("token", token)
-  return token
+// lib/auth.ts
+import { SignJWT, jwtVerify } from "jose"
+
+const secret = new TextEncoder().encode(process.env.JWT_SECRET)
+
+export type SessionPayload = { userId: number; email: string }
+
+export async function signToken(payload: SessionPayload): Promise<string> {
+  return new SignJWT(payload)
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime("7d")
+    .sign(secret)
 }
 
-// Authenticated request
-async function fetchProfile() {
-  const token = localStorage.getItem("token")
-  const res = await fetch("/api/auth/profile", {
-    headers: { Authorization: `Bearer ${token}` },
-  })
-  return res.json()
+export async function verifyToken(token: string): Promise<SessionPayload | null> {
+  try {
+    const { payload } = await jwtVerify(token, secret)
+    return payload as SessionPayload
+  } catch {
+    return null // expired, tampered, or malformed
+  }
+}
+```
+
+## Signup — Hash the Password
+
+Never store raw passwords. Hash on the way in; the plaintext never touches your
+data store.
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="backend">Backend</TabsTrigger>
+    <TabsTrigger value="frontend">Frontend</TabsTrigger>
+    <TabsTrigger value="curl">curl</TabsTrigger>
+  </TabsList>
+  <TabsContent value="backend">
+    ```typescript
+    // app/api/auth/signup/route.ts
+    import bcrypt from "bcryptjs"
+
+    type User = { id: number; email: string; passwordHash: string }
+    const users: User[] = []
+    let nextId = 1
+
+    export async function POST(request: Request) {
+      const { email, password } = (await request.json()) as {
+        email?: string
+        password?: string
+      }
+
+      if (!email || !password || password.length < 8) {
+        return Response.json(
+          { message: "email and a password of 8+ chars are required" },
+          { status: 400 },
+        )
+      }
+      if (users.some((u) => u.email === email)) {
+        return Response.json({ message: "Email already registered" }, { status: 409 })
+      }
+
+      const passwordHash = await bcrypt.hash(password, 10)
+      const user: User = { id: nextId++, email, passwordHash }
+      users.push(user)
+
+      // Never return the hash to the client
+      return Response.json({ id: user.id, email: user.email }, { status: 201 })
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="frontend">
+    ```typescript
+    // Request body: { "email": "dev@example.com", "password": "supersecret" }
+    async function signup(email: string, password: string) {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      })
+      if (!res.ok) throw new Error((await res.json()).message)
+      return res.json() // { id, email }
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="curl">
+    ```bash
+    curl -i -X POST http://localhost:4000/api/auth/signup \
+      -H "Content-Type: application/json" \
+      -d '{"email":"dev@example.com","password":"supersecret"}'
+    ```
+  </TabsContent>
+</Tabs>
+
+## Login — Verify & Set an httpOnly Cookie
+
+Compare the password against the stored hash, then set the token in an
+`httpOnly` cookie so client-side JavaScript (and XSS) can't read it.
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="backend">Backend</TabsTrigger>
+    <TabsTrigger value="frontend">Frontend</TabsTrigger>
+    <TabsTrigger value="curl">curl</TabsTrigger>
+  </TabsList>
+  <TabsContent value="backend">
+    ```typescript
+    // app/api/auth/login/route.ts
+    import bcrypt from "bcryptjs"
+    import { cookies } from "next/headers"
+    import { signToken } from "@/lib/auth"
+
+    export async function POST(request: Request) {
+      const { email, password } = (await request.json()) as {
+        email?: string
+        password?: string
+      }
+
+      const user = users.find((u) => u.email === email)
+      // Verify even when the user is missing to avoid leaking which emails exist
+      const ok = user && (await bcrypt.compare(password ?? "", user.passwordHash))
+
+      if (!ok) {
+        return Response.json({ message: "Invalid credentials" }, { status: 401 })
+      }
+
+      const token = await signToken({ userId: user.id, email: user.email })
+      const cookieStore = await cookies()
+      cookieStore.set("session", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+      })
+
+      return Response.json({ id: user.id, email: user.email })
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="frontend">
+    ```typescript
+    // credentials: "include" tells the browser to store the Set-Cookie response
+    async function login(email: string, password: string) {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
+      })
+      if (!res.ok) throw new Error("Invalid credentials")
+      return res.json() // cookie is set automatically; no token handling needed
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="curl">
+    ```bash
+    # -c saves the Set-Cookie into cookies.txt for the next request
+    curl -i -X POST http://localhost:4000/api/auth/login \
+      -H "Content-Type: application/json" \
+      -c cookies.txt \
+      -d '{"email":"dev@example.com","password":"supersecret"}'
+    ```
+  </TabsContent>
+</Tabs>
+
+## Protected Route — Read the Session
+
+Read the token from the cookie (or a `Bearer` header for API clients), verify
+it, and return `401` when it's missing or invalid.
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="backend">Backend</TabsTrigger>
+    <TabsTrigger value="frontend">Frontend</TabsTrigger>
+    <TabsTrigger value="curl">curl</TabsTrigger>
+  </TabsList>
+  <TabsContent value="backend">
+    ```typescript
+    // app/api/auth/profile/route.ts
+    import { cookies } from "next/headers"
+    import { verifyToken } from "@/lib/auth"
+
+    export async function GET(request: Request) {
+      // Prefer the cookie; fall back to Authorization: Bearer for API clients
+      const cookieToken = (await cookies()).get("session")?.value
+      const header = request.headers.get("authorization")
+      const bearer = header?.startsWith("Bearer ") ? header.slice(7) : null
+      const token = cookieToken ?? bearer
+
+      const session = token ? await verifyToken(token) : null
+      if (!session) {
+        return Response.json({ message: "Unauthorized" }, { status: 401 })
+      }
+
+      return Response.json({ id: session.userId, email: session.email })
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="frontend">
+    ```typescript
+    // Cookie flows automatically with credentials: "include"
+    async function fetchProfile() {
+      const res = await fetch("/api/auth/profile", { credentials: "include" })
+      if (res.status === 401) throw new Error("Not logged in")
+      return res.json()
+    }
+
+    // API client without cookies? Send the token explicitly:
+    // fetch("/api/auth/profile", { headers: { Authorization: `Bearer ${token}` } })
+    ```
+  </TabsContent>
+  <TabsContent value="curl">
+    ```bash
+    # -b sends the saved cookie back → 200 with the profile
+    curl http://localhost:4000/api/auth/profile -b cookies.txt
+
+    # Without the cookie → 401
+    curl -i http://localhost:4000/api/auth/profile
+    ```
+  </TabsContent>
+</Tabs>
+
+## Logout — Clear the Cookie
+
+Overwrite the cookie with an immediate expiry.
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="backend">Backend</TabsTrigger>
+    <TabsTrigger value="curl">curl</TabsTrigger>
+  </TabsList>
+  <TabsContent value="backend">
+    ```typescript
+    // app/api/auth/logout/route.ts
+    import { cookies } from "next/headers"
+
+    export async function POST() {
+      const cookieStore = await cookies()
+      cookieStore.set("session", "", { path: "/", maxAge: 0 })
+      return Response.json({ ok: true })
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="curl">
+    ```bash
+    curl -i -X POST http://localhost:4000/api/auth/logout -b cookies.txt
+
+    # Profile is now 401 again
+    curl -i http://localhost:4000/api/auth/profile -b cookies.txt
+    ```
+  </TabsContent>
+</Tabs>
+
+## Guarding Pages with Middleware
+
+Middleware runs before the request reaches a route — redirect unauthenticated
+users away from protected pages. Because `jose` uses Web Crypto, `verifyToken`
+works here in the Edge runtime.
+
+```typescript
+// middleware.ts
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+import { verifyToken } from "@/lib/auth"
+
+export async function middleware(request: NextRequest) {
+  const token = request.cookies.get("session")?.value
+  const session = token ? await verifyToken(token) : null
+
+  if (!session) {
+    const url = new URL("/login", request.url)
+    url.searchParams.set("from", request.nextUrl.pathname)
+    return NextResponse.redirect(url)
+  }
+  return NextResponse.next()
+}
+
+export const config = {
+  matcher: ["/dashboard/:path*", "/settings/:path*"],
+}
+```
+
+## Client Component: Login Form
+
+```tsx
+"use client"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+
+export function LoginForm() {
+  const router = useRouter()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState<string | null>(null)
+  const [pending, setPending] = useState(false)
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setPending(true)
+    setError(null)
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ email, password }),
+    })
+    setPending(false)
+    if (res.ok) {
+      router.push("/dashboard")
+    } else {
+      setError("Invalid email or password")
+    }
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="space-y-3">
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
+        required
+      />
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Password"
+        required
+      />
+      <button disabled={pending}>{pending ? "Signing in…" : "Sign in"}</button>
+      {error && <p role="alert">{error}</p>}
+    </form>
+  )
 }
 ```
 
@@ -37,12 +390,151 @@ async function fetchProfile() {
 
 | Strategy | Storage | Best For |
 |----------|---------|----------|
-| JWT | localStorage / cookie | SPAs, APIs |
+| JWT | httpOnly cookie | SPAs, APIs |
 | Session | httpOnly cookie | Server-rendered apps |
 | OAuth | Provider-managed | Social login |
 | API Keys | Header | Service-to-service |
 
+<Alert>
+  <AlertTriangle />
+  <AlertTitle>Cookie vs localStorage</AlertTitle>
+  <AlertDescription>
+    Storing a token in `localStorage` is convenient but readable by any script —
+    one XSS bug leaks the session. An `httpOnly` cookie can't be read by
+    JavaScript, so prefer it for browser auth. Reserve `Bearer` tokens for
+    non-browser API clients.
+  </AlertDescription>
+</Alert>
+
+## Full Flow Cheat Sheet
+
+Run these in order with a single cookie jar to exercise the whole lifecycle:
+
+```bash
+# 1. Sign up
+curl -X POST http://localhost:4000/api/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{"email":"dev@example.com","password":"supersecret"}'
+
+# 2. Log in — save the session cookie
+curl -X POST http://localhost:4000/api/auth/login \
+  -H "Content-Type: application/json" -c cookies.txt \
+  -d '{"email":"dev@example.com","password":"supersecret"}'
+
+# 3. Access a protected route with the cookie
+curl http://localhost:4000/api/auth/profile -b cookies.txt
+
+# 4. Log out — clears the cookie
+curl -X POST http://localhost:4000/api/auth/logout -b cookies.txt
+```
+
+## Interactive Exercise
+
+<InteractiveExercise
+  title="Complete the login handler"
+  description="Verify the password against the stored hash, then set an httpOnly session cookie. Return 401 on failure."
+  starterCode={`// app/api/auth/login/route.ts
+import bcrypt from "bcryptjs"
+import { cookies } from "next/headers"
+import { signToken } from "@/lib/auth"
+
+export async function POST(request: Request) {
+  const { email, password } = await request.json()
+  const user = users.find((u) => u.email === email)
+
+  // TODO: verify the password with bcrypt.compare — return 401 if invalid
+  // TODO: sign a token and set it in an httpOnly "session" cookie
+  // TODO: return the user's id and email
+}`}
+  solutionCode={`// app/api/auth/login/route.ts
+import bcrypt from "bcryptjs"
+import { cookies } from "next/headers"
+import { signToken } from "@/lib/auth"
+
+export async function POST(request: Request) {
+  const { email, password } = await request.json()
+  const user = users.find((u) => u.email === email)
+  const ok = user && (await bcrypt.compare(password ?? "", user.passwordHash))
+
+  if (!ok) {
+    return Response.json({ message: "Invalid credentials" }, { status: 401 })
+  }
+
+  const token = await signToken({ userId: user.id, email: user.email })
+  const cookieStore = await cookies()
+  cookieStore.set("session", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7,
+  })
+
+  return Response.json({ id: user.id, email: user.email })
+}`}
+  hints={[
+    "bcrypt.compare(plaintext, hash) returns a Promise<boolean> — await it",
+    "Guard against a missing user before comparing so it doesn't throw",
+    "cookies() is async in the App Router — await it before calling .set()",
+  ]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz
+  questions={[
+    {
+      question: "Why store a JWT in an httpOnly cookie instead of localStorage?",
+      options: [
+        "It loads faster",
+        "JavaScript (and XSS) cannot read httpOnly cookies",
+        "localStorage has a size limit",
+        "Cookies are encrypted automatically",
+      ],
+      correctIndex: 1,
+      explanation: "httpOnly cookies are invisible to client-side scripts, so an XSS bug can't steal the session token.",
+    },
+    {
+      question: "How do you verify a submitted password against a stored bcrypt hash?",
+      options: [
+        "hash === storedHash",
+        "bcrypt.hash(password) === storedHash",
+        "await bcrypt.compare(password, storedHash)",
+        "password === bcrypt.decrypt(storedHash)",
+      ],
+      correctIndex: 2,
+      explanation: "bcrypt.compare hashes the input with the same salt and checks it against the stored hash; hashes are one-way, so you never decrypt.",
+    },
+    {
+      question: "In the App Router, how do you set a cookie inside a route handler?",
+      options: [
+        "response.cookies.set(...)",
+        "document.cookie = ...",
+        "const store = await cookies(); store.set(...)",
+        "res.setHeader('Set-Cookie', ...)",
+      ],
+      correctIndex: 2,
+      explanation: "cookies() from next/headers is async in the App Router; await it, then call .set() on the returned store.",
+    },
+  ]}
+/>
+
+## Lesson Summary
+
+<LessonSummary
+  points={[
+    "Hash passwords with bcrypt on signup; verify with bcrypt.compare on login",
+    "Issue JWTs with jose so the same code runs in route handlers and Edge middleware",
+    "Store the token in an httpOnly cookie to keep it out of reach of XSS",
+    "Protected routes read the cookie (or Bearer header) and verify before responding",
+    "Logout overwrites the cookie with maxAge: 0",
+    "Test the whole flow locally with a curl cookie jar: -c to save, -b to send",
+  ]}
+/>
+
 ## Next Steps
 
 - [Backend Integration](/fullstack/backend)
+- [Databases](/fullstack/databases)
 - [Deployment](/fullstack/deployment)

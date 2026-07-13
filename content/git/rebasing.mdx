@@ -1,0 +1,152 @@
+---
+title: Rebasing
+description: Rewrite commit history for a clean, linear project log — and know when not to
+order: 7
+difficulty: advanced
+estimatedMinutes: 14
+tags: ["git", "rebase", "history", "workflow"]
+prerequisites: ["git/undoing-changes"]
+updated: "2026-07-11"
+---
+
+# Rebasing
+
+Rebasing is Git's tool for *rewriting* history to keep it clean and linear. It's powerful and, for many teams, a daily habit — but it comes with one firm rule you must respect. Let's build the intuition first.
+
+<LearningObjectives objectives={[
+  "Explain how rebase differs from merge",
+  "Rebase a feature branch onto an updated main",
+  "Use interactive rebase to squash and reword commits",
+  "State and apply the golden rule of rebasing",
+]} />
+
+## Rebase vs Merge
+
+Both combine work from two branches, but they tell different stories.
+
+**Merge** preserves history exactly as it happened, creating a merge commit where branches meet:
+
+```text
+main    ─ A ─ B ─────── M
+              ↖        ↗
+feature        C ── D
+```
+
+**Rebase** *replays* your commits on top of the latest target, as if you'd started your branch from there. The result is a straight line:
+
+```text
+main    ─ A ─ B
+feature after rebase:  A ─ B ─ C' ─ D'
+```
+
+Notice `C` and `D` became `C'` and `D'` — **new commits with new SHAs**. Rebase doesn't move commits; it recreates them. That detail drives the golden rule below.
+
+## Rebasing onto an Updated main
+
+The classic use: `main` moved forward while you worked, and you want your feature branch to sit on top of the latest `main` with no merge commit.
+
+```bash
+git switch feature/search
+git fetch origin
+git rebase origin/main
+```
+
+Git replays each of your commits on top of the new `main`. If a replayed commit conflicts, Git pauses just like a merge — resolve it, then continue:
+
+```bash
+# fix the conflicted files, then:
+git add <files>
+git rebase --continue
+# or bail out entirely:
+git rebase --abort
+```
+
+<Alert>
+<AlertTitle>Why bother?</AlertTitle>
+<AlertDescription>A rebased branch produces a clean, linear history with no "Merge branch 'main'" noise. When your PR merges, the project log reads like a tidy sequence of intentional changes rather than a tangle.</AlertDescription>
+</Alert>
+
+## Interactive Rebase: Polish Your Commits
+
+`git rebase -i` lets you rewrite a series of your own commits before sharing them — squash several WIP commits into one, reword messages, reorder, or drop commits entirely.
+
+```bash
+git rebase -i HEAD~3   # edit the last 3 commits
+```
+
+Git opens an editor listing them with an action per line:
+
+```text
+pick   a1b2c3d feat: add search input
+squash e4f5g6h fix typo
+squash i7j8k9l wip
+```
+
+Changing the last two to `squash` collapses all three into a single, clean commit. Common actions:
+
+- `pick` — keep the commit as-is
+- `reword` — keep the commit, edit its message
+- `squash` — merge this commit into the previous one
+- `drop` — delete the commit entirely
+
+The payoff: your PR shows one coherent commit instead of ten messy "wip" and "fix" steps.
+
+## The Golden Rule of Rebasing
+
+> **Never rebase commits that others have already pulled.**
+
+Because rebase creates *new* commits (`C'`, `D'`), the originals (`C`, `D`) still exist on your teammates' machines. Rebasing shared history forces everyone into a painful divergence. So:
+
+- ✅ Rebase your **own local, unpushed** branch freely — clean it up before opening a PR.
+- ❌ Never rebase `main` or any branch others are building on.
+
+```text
+Local & private  → rebase away, tidy your history
+Shared & pushed  → use merge/revert, leave history intact
+```
+
+<Alert>
+<AlertTitle>If in doubt, merge</AlertTitle>
+<AlertDescription>Merge is always safe; rebase is safe only on private history. When you're unsure whether someone else has your commits, choose merge. You can always rebase local work before it's ever shared.</AlertDescription>
+</Alert>
+
+## Check Your Understanding
+
+<Quiz questions={[
+  {
+    question: "How does rebase differ from merge when combining a feature branch with main?",
+    options: [
+      "Rebase deletes the feature branch automatically",
+      "Rebase replays your commits on top of main as new commits, giving a linear history",
+      "Rebase is just a slower merge",
+      "Rebase uploads your commits to the remote"
+    ],
+    correctIndex: 1,
+    explanation: "Rebase recreates your commits on top of the target branch (new SHAs), producing a straight-line history with no merge commit. Merge instead ties the two histories together with a merge commit.",
+  },
+  {
+    question: "What is the golden rule of rebasing?",
+    options: [
+      "Always rebase before every commit",
+      "Never rebase commits others have already pulled",
+      "Only rebase on Fridays",
+      "Rebase main into every feature branch daily"
+    ],
+    correctIndex: 1,
+    explanation: "Rebasing rewrites commits into new ones. Doing that to history others already have forces a painful divergence — so only rebase private, unpushed commits.",
+  },
+  {
+    question: "During an interactive rebase, which action collapses a commit into the previous one?",
+    options: ["pick", "reword", "squash", "drop"],
+    correctIndex: 2,
+    explanation: "'squash' merges a commit into the one before it — the standard way to combine several WIP commits into a single clean commit.",
+  },
+]} />
+
+<LessonSummary points={[
+  "Merge preserves history with a merge commit; rebase replays commits for a linear history",
+  "Rebased commits get new SHAs — they are recreated, not moved",
+  "git rebase origin/main puts your feature branch on top of the latest main",
+  "Interactive rebase (-i) squashes, rewords, reorders, or drops your own commits before sharing",
+  "Golden rule: never rebase commits others have pulled — rebase private history only",
+]} />

@@ -1,0 +1,143 @@
+---
+title: ref as a Prop & Cleanup
+description: Pass refs like any other prop and run cleanup when a ref detaches — no more forwardRef
+order: 5
+difficulty: intermediate
+estimatedMinutes: 10
+tags: ["react", "react-19", "ref", "forwardRef"]
+prerequisites: ["react/react-19/use-transition"]
+updated: "2026-07-11"
+---
+
+# ref as a Prop & Cleanup
+
+React 19 makes two long-awaited ref improvements: function components can accept `ref` as a normal prop (goodbye `forwardRef`), and ref callbacks can return a cleanup function. Both remove boilerplate you've probably written many times.
+
+<LearningObjectives objectives={[
+  "Accept ref as a regular prop without forwardRef",
+  "Migrate an existing forwardRef component to the new style",
+  "Return a cleanup function from a ref callback",
+  "Know what happens to forwardRef going forward",
+]} />
+
+## ref Is Just a Prop Now
+
+Before React 19, forwarding a ref to a DOM node inside your component required wrapping it in `forwardRef`:
+
+```tsx
+// React 18 and earlier
+const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
+  return <input ref={ref} {...props} />
+})
+```
+
+In React 19, `ref` is an ordinary prop. Just destructure it:
+
+```tsx
+// React 19
+function Input({ ref, ...props }: Props & { ref?: Ref<HTMLInputElement> }) {
+  return <input ref={ref} {...props} />
+}
+```
+
+Less ceremony, cleaner types, and it composes like every other prop.
+
+<Alert>
+<AlertTitle>forwardRef still works</AlertTitle>
+<AlertDescription>Existing `forwardRef` components keep functioning — nothing breaks. It's now deprecated in favor of ref-as-prop, and a future major version will remove it. Migrate at your leisure; new code should use the prop form.</AlertDescription>
+</Alert>
+
+## Ref Cleanup Functions
+
+A ref callback runs when React attaches the element (with the node) and again when it detaches (with `null`). Historically you handled teardown by checking for `null`. React 19 lets the callback **return a cleanup function** instead — mirroring how `useEffect` works:
+
+```tsx
+<input
+  ref={(node) => {
+    // setup: node is the DOM element
+    const observer = new ResizeObserver(() => {/* ... */})
+    observer.observe(node)
+
+    // cleanup: runs when the element detaches
+    return () => observer.disconnect()
+  }}
+/>
+```
+
+No more `if (node === null)` branches. Setup and teardown live together, and React calls the returned function at exactly the right time.
+
+```text
+element mounts   → ref callback runs (setup)
+element unmounts → cleanup function runs (teardown)
+```
+
+<Alert>
+<AlertTitle>Return a function, not undefined</AlertTitle>
+<AlertDescription>If your ref callback returns a cleanup function, React will no longer call it a second time with <code>null</code>. Mixing the two styles in one callback can double-run teardown — pick the cleanup-return form and keep all teardown inside it.</AlertDescription>
+</Alert>
+
+## Putting It Together
+
+```tsx
+function AutoFocusInput({ ref, ...props }: Props) {
+  return (
+    <input
+      {...props}
+      ref={(node) => {
+        node?.focus()
+        return () => {
+          // any teardown when this input leaves the DOM
+        }
+      }}
+    />
+  )
+}
+```
+
+`ref` flows in as a prop, and the inline ref callback handles focus plus cleanup — all without `forwardRef` or lifecycle gymnastics.
+
+## Check Your Understanding
+
+<Quiz questions={[
+  {
+    question: "In React 19, how does a function component receive a ref passed by its parent?",
+    options: [
+      "Only through forwardRef",
+      "As a normal prop it can destructure, e.g. function C({ ref }) { ... }",
+      "Through useContext",
+      "It cannot receive refs"
+    ],
+    correctIndex: 1,
+    explanation: "React 19 makes ref an ordinary prop. You destructure it like any other prop — forwardRef is no longer required.",
+  },
+  {
+    question: "What can a ref callback now return in React 19?",
+    options: [
+      "A new ref object",
+      "A cleanup function that runs when the element detaches",
+      "The DOM node",
+      "A promise"
+    ],
+    correctIndex: 1,
+    explanation: "Ref callbacks can return a cleanup function, called when the element unmounts — similar to how a useEffect cleanup works. This removes the old null-check pattern.",
+  },
+  {
+    question: "What is the status of forwardRef in React 19?",
+    options: [
+      "It was removed and breaks existing code",
+      "It still works but is deprecated in favor of ref-as-prop",
+      "It is now required for all components",
+      "It only works in Server Components"
+    ],
+    correctIndex: 1,
+    explanation: "forwardRef continues to work, so existing code is safe, but it's deprecated. New components should accept ref as a prop; a future major version will remove forwardRef.",
+  },
+]} />
+
+<LessonSummary points={[
+  "React 19 lets function components accept ref as a normal prop — no forwardRef",
+  "forwardRef still works but is deprecated; migrate at your own pace",
+  "Ref callbacks can return a cleanup function that runs on detach, like useEffect",
+  "The cleanup-return form replaces the old 'if (node === null)' teardown pattern",
+  "Don't mix styles: if you return cleanup, React won't also call the ref with null",
+]} />

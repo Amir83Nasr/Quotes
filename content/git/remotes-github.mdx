@@ -1,0 +1,137 @@
+---
+title: Remotes & GitHub
+description: Push your work to GitHub, pull others' changes, and collaborate through pull requests
+order: 4
+difficulty: beginner
+estimatedMinutes: 12
+tags: ["git", "github", "remotes", "collaboration", "pull-request"]
+prerequisites: ["git/branching-merging"]
+updated: "2026-07-11"
+---
+
+# Remotes & GitHub
+
+So far everything has lived on your machine. A **remote** is a copy of your repository hosted elsewhere — usually GitHub — that you and your team sync with. This is how code gets shared, reviewed, and shipped.
+
+<LearningObjectives objectives={[
+  "Clone a remote repository and understand the 'origin' remote",
+  "Push local commits and pull remote changes",
+  "Set an upstream branch so push/pull just work",
+  "Describe the pull request (PR) collaboration workflow",
+]} />
+
+## What Is a Remote?
+
+A remote is a named URL pointing to another copy of the repo. When you clone from GitHub, Git automatically names that remote **`origin`**.
+
+```bash
+git clone https://github.com/user/project.git
+cd project
+git remote -v
+```
+
+```text
+origin  https://github.com/user/project.git (fetch)
+origin  https://github.com/user/project.git (push)
+```
+
+`origin` is just a convention — a nickname for "the place I cloned from." You can have multiple remotes, but most projects have exactly one.
+
+## Pushing Your Work
+
+`git push` uploads your local commits to the remote. The first time you push a new branch, tell Git where it should go with `-u` (set upstream):
+
+```bash
+git switch -c feature/search
+git commit -m "feat: add search bar"
+git push -u origin feature/search
+```
+
+After that upstream link is set, plain `git push` and `git pull` know which remote branch to use:
+
+```bash
+git push    # uploads new commits on the current branch
+git pull    # downloads and merges remote commits into your branch
+```
+
+<Alert>
+<AlertTitle>fetch vs pull</AlertTitle>
+<AlertDescription>`git fetch` downloads remote commits but does *not* change your working files — it just updates your knowledge of the remote. `git pull` is `fetch` + `merge` in one step. When you want to look before you leap, fetch first.</AlertDescription>
+</Alert>
+
+## Staying in Sync
+
+On a team, `main` moves constantly. Before starting new work, get the latest:
+
+```bash
+git switch main
+git pull
+```
+
+```text
+remote main:  A ─ B ─ C ─ D   (teammates pushed C, D)
+local main:   A ─ B           →  git pull  →  A ─ B ─ C ─ D
+```
+
+## The Pull Request Workflow
+
+You almost never push directly to `main` on a team. Instead, you propose changes through a **pull request** (PR) — GitHub's mechanism for review and discussion. The full loop:
+
+```text
+1. git switch -c feature/x     create a branch
+2. ...commit your work...
+3. git push -u origin feature/x   push the branch to GitHub
+4. Open a PR on GitHub          "please merge feature/x into main"
+5. Teammates review & comment
+6. Address feedback (more commits, push again)
+7. Merge the PR                 feature/x → main
+8. git switch main && git pull  sync your local main
+```
+
+The PR is where code review happens: teammates read your diff, leave comments, request changes, and approve. It's the single most important collaboration ritual in professional development.
+
+<Alert>
+<AlertTitle>Keep PRs small</AlertTitle>
+<AlertDescription>A 50-line PR gets reviewed in minutes; a 2,000-line PR sits for days and hides bugs. Small, focused branches (one feature or fix each) are reviewed faster and merged sooner.</AlertDescription>
+</Alert>
+
+## Check Your Understanding
+
+<Quiz questions={[
+  {
+    question: "When you clone a repository from GitHub, what is the default name of the remote?",
+    options: ["main", "github", "origin", "remote"],
+    correctIndex: 2,
+    explanation: "Git names the remote you cloned from 'origin' by convention. It's a nickname for that remote's URL.",
+  },
+  {
+    question: "What's the difference between git fetch and git pull?",
+    options: [
+      "They are identical",
+      "fetch downloads commits without touching your files; pull downloads AND merges them",
+      "pull only works on the main branch",
+      "fetch uploads, pull downloads"
+    ],
+    correctIndex: 1,
+    explanation: "git fetch updates your view of the remote without changing working files. git pull is fetch + merge — it downloads and integrates the changes.",
+  },
+  {
+    question: "Why do teams use pull requests instead of pushing directly to main?",
+    options: [
+      "Pushing to main is technically impossible",
+      "PRs enable code review, discussion, and approval before changes land",
+      "PRs make the code run faster",
+      "GitHub charges money for direct pushes"
+    ],
+    correctIndex: 1,
+    explanation: "A pull request is the place where teammates review the diff, discuss it, request changes, and approve — protecting main from unreviewed code.",
+  },
+]} />
+
+<LessonSummary points={[
+  "A remote is a hosted copy of your repo; 'origin' is the default name after cloning",
+  "git push -u origin <branch> sets the upstream so later push/pull need no arguments",
+  "git fetch downloads without merging; git pull fetches and merges in one step",
+  "Pull the latest main before starting new work to stay in sync with the team",
+  "Pull requests are how changes get reviewed and merged — keep them small and focused",
+]} />

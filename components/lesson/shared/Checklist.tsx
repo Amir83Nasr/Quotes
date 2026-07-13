@@ -5,10 +5,13 @@ import { cn } from "@/lib/utils"
 
 /** Shared difficulty → badge-color map used by challenge cards. */
 export const difficultyColors = {
-  easy: "bg-green-500/10 text-green-600 dark:text-green-400",
-  medium: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
-  hard: "bg-red-500/10 text-red-600 dark:text-red-400",
+  beginner: "bg-green-500/10 text-green-600 dark:text-green-400",
+  intermediate: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  advanced: "bg-red-500/10 text-red-600 dark:text-red-400",
 } as const
+
+/** Canonical difficulty scale used across content frontmatter and widgets. */
+export type Difficulty = keyof typeof difficultyColors
 
 interface ChecklistProps {
   items: string[]

@@ -1,0 +1,154 @@
+---
+title: Form Actions & useActionState
+description: Wire forms to functions and track pending, error, and success state with zero boilerplate
+order: 2
+difficulty: intermediate
+estimatedMinutes: 13
+tags: ["react", "react-19", "forms", "useActionState", "actions"]
+prerequisites: ["react/react-19/use-api"]
+updated: "2026-07-11"
+---
+
+# Form Actions & useActionState
+
+React 19 lets a `<form>` call a function directly through its `action` prop, and pairs it with `useActionState` to manage the result, error, and pending state automatically. The manual `useState` + `isLoading` + `try/catch` dance is largely gone.
+
+<LearningObjectives objectives={[
+  "Pass a function to a form's action prop",
+  "Manage form result and pending state with useActionState",
+  "Read the built-in pending flag without a manual loading state",
+  "Try a live form and watch the pending state in action",
+]} />
+
+## Forms That Call Functions
+
+In React 19, `<form action={fn}>` invokes `fn` with the form's `FormData` when submitted. React resets the form and handles the wiring:
+
+```tsx
+function Newsletter() {
+  async function subscribe(formData: FormData) {
+    const email = formData.get("email")
+    await saveEmail(email)
+  }
+
+  return (
+    <form action={subscribe}>
+      <input name="email" />
+      <button type="submit">Subscribe</button>
+    </form>
+  )
+}
+```
+
+No `onSubmit`, no `event.preventDefault()`, no reading refs — the `action` receives `FormData` directly.
+
+## useActionState: Result + Pending in One Hook
+
+Most forms need to show a result ("Subscribed!") and a loading state. `useActionState` wraps your action and gives you all three:
+
+```tsx
+const [state, formAction, isPending] = useActionState(actionFn, initialState)
+```
+
+- `state` — whatever your action returns (message, errors, data)
+- `formAction` — the wrapped action to pass to `<form action={...}>`
+- `isPending` — `true` while the action is running
+
+```tsx
+function Newsletter() {
+  const [state, formAction, isPending] = useActionState(
+    async (prevState, formData) => {
+      const email = String(formData.get("email"))
+      if (!email.includes("@")) return { error: "Invalid email" }
+      await saveEmail(email)
+      return { success: `Subscribed ${email}` }
+    },
+    {},
+  )
+
+  return (
+    <form action={formAction}>
+      <input name="email" disabled={isPending} />
+      <button disabled={isPending}>
+        {isPending ? "Subscribing…" : "Subscribe"}
+      </button>
+      {state.error && <p className="error">{state.error}</p>}
+      {state.success && <p className="ok">{state.success}</p>}
+    </form>
+  )
+}
+```
+
+The action receives the **previous state** as its first argument — handy for accumulating or comparing across submissions.
+
+## Try It Live
+
+This is the exact pattern running as a real component. Submit an email without an “@” to see the error path, and watch the button track `isPending`:
+
+<Playground title="useActionState — live">
+<UseActionStateDemo />
+</Playground>
+
+<Alert>
+<AlertTitle>Pairs perfectly with Server Actions</AlertTitle>
+<AlertDescription>In Next.js, the action function can be a Server Action (`"use server"`). The same `useActionState` code then runs the mutation on the server, with progressive enhancement — the form even works before JavaScript loads.</AlertDescription>
+</Alert>
+
+## Bonus: useFormStatus for Nested Buttons
+
+A submit button often lives in a separate component from the form. `useFormStatus` reads the parent form's pending state without prop drilling:
+
+```tsx
+import { useFormStatus } from "react-dom"
+
+function SubmitButton() {
+  const { pending } = useFormStatus()
+  return <button disabled={pending}>{pending ? "Saving…" : "Save"}</button>
+}
+```
+
+## Check Your Understanding
+
+<Quiz questions={[
+  {
+    question: "What does a form's action function receive when the form is submitted in React 19?",
+    options: [
+      "The submit event",
+      "The form's FormData",
+      "An array of input refs",
+      "Nothing — you read inputs manually"
+    ],
+    correctIndex: 1,
+    explanation: "In React 19, <form action={fn}> calls fn with the form's FormData automatically — no event handling or preventDefault needed.",
+  },
+  {
+    question: "What are the three values returned by useActionState?",
+    options: [
+      "value, setValue, reset",
+      "state, formAction, isPending",
+      "data, error, loading",
+      "action, result, status"
+    ],
+    correctIndex: 1,
+    explanation: "useActionState returns [state (the action's return value), formAction (the wrapped action for the form), isPending (true while running)].",
+  },
+  {
+    question: "What is the first argument passed to the action function inside useActionState?",
+    options: [
+      "The FormData",
+      "The previous state",
+      "The event object",
+      "The component props"
+    ],
+    correctIndex: 1,
+    explanation: "The action receives (previousState, formData). Access to the prior state makes it easy to accumulate results or compare across submissions.",
+  },
+]} />
+
+<LessonSummary points={[
+  "<form action={fn}> calls fn with FormData — no onSubmit or preventDefault",
+  "useActionState returns [state, formAction, isPending] to manage result and loading",
+  "The action gets (previousState, formData), enabling stateful form logic",
+  "isPending replaces manual loading flags; useFormStatus reads it from nested buttons",
+  "The same pattern upgrades to Server Actions with progressive enhancement in Next.js",
+]} />

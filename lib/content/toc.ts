@@ -1,4 +1,5 @@
 import type { TocHeading } from "@/types/navigation"
+import { slugify } from "@/lib/utils"
 
 /** Extract TOC headings from MDX source (quick regex, no full parse) */
 export function extractToc(source: string): TocHeading[] {
@@ -9,10 +10,7 @@ export function extractToc(source: string): TocHeading[] {
   while ((match = headingRegex.exec(source)) !== null) {
     const level = match[1].length
     const text = match[2].replaceAll(/[`*_]/g, "").trim()
-    const id = text
-      .toLowerCase()
-      .replace(/[^\w一-鿿\s-]/g, "")
-      .replace(/\s+/g, "-")
+    const id = slugify(match[2])
     toc.push({ id, text, level })
   }
 

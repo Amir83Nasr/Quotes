@@ -1,6 +1,7 @@
 ---
 title: Backend Integration
-description: Connecting your frontend to backend APIs
+description: Connecting your frontend to backend APIs with copy-paste route handlers, request bodies, and curl commands you can run locally
+difficulty: intermediate
 order: 2
 ---
 
@@ -8,18 +9,42 @@ order: 2
 
 Connect your frontend to backend services.
 
+<LearningObjectives objectives={[
+  "Pair every frontend fetch with the route handler that answers it",
+  "Read and validate JSON request bodies on the server",
+  "Handle dynamic params, query strings, and FormData uploads",
+  "Send auth headers and cookies from the client",
+  "Test every endpoint locally with curl before wiring up the UI",
+]} />
+
+<Alert>
+  <Lightbulb />
+  <AlertTitle>How to use this lesson</AlertTitle>
+  <AlertDescription>
+    Every example below comes in a matched pair: the **backend** route handler
+    (`app/api/.../route.ts`) and the **frontend** call that hits it, plus the
+    request **body** shape and a `curl` command. Copy the route handler into a
+    Next.js app, run `pnpm dev`, then paste the `curl` into a second terminal to
+    test it — no UI required.
+  </AlertDescription>
+</Alert>
+
 ## Fetch Pattern
 
-```typescript
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+A single typed helper keeps every request consistent — base URL, JSON headers,
+and error handling in one place.
 
-async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+```typescript
+// lib/api.ts
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"
+
+export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
     headers: { "Content-Type": "application/json", ...options?.headers },
     ...options,
   })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
-  return res.json()
+  return res.json() as Promise<T>
 }
 
 // Usage
@@ -28,23 +53,602 @@ const users = await apiFetch<User[]>("/api/users")
 
 ## Error Handling
 
+Wrap responses so callers get typed, actionable errors instead of a bare
+`fetch` rejection.
+
 ```typescript
+// lib/api-error.ts
 export class ApiError extends Error {
   constructor(public status: number, message: string) {
     super(message)
   }
 }
 
-async function handleResponse<T>(res: Response): Promise<T> {
+export async function handleResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
     const body = await res.json().catch(() => ({}))
-    throw new ApiError(res.status, body.message || `Request failed`)
+    throw new ApiError(res.status, body.message || "Request failed")
   }
-  return res.json()
+  return res.json() as Promise<T>
 }
 ```
+
+## GET a List + POST to Create
+
+The most common pair: fetch a collection, then add to it. The frontend `POST`
+sends a JSON **body**; the backend reads it with `await request.json()`.
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="backend">Backend</TabsTrigger>
+    <TabsTrigger value="frontend">Frontend</TabsTrigger>
+    <TabsTrigger value="curl">curl</TabsTrigger>
+  </TabsList>
+  <TabsContent value="backend">
+    ```typescript
+    // app/api/users/route.ts
+    type User = { id: number; name: string; email: string }
+
+    const users: User[] = [
+      { id: 1, name: "Ada Lovelace", email: "ada@example.com" },
+    ]
+    let nextId = 2
+
+    export async function GET() {
+      return Response.json(users)
+    }
+
+    export async function POST(request: Request) {
+      const body = (await request.json()) as Partial<User>
+
+      if (!body.name || !body.email) {
+        return Response.json(
+          { message: "name and email are required" },
+          { status: 400 },
+        )
+      }
+
+      const user: User = { id: nextId++, name: body.name, email: body.email }
+      users.push(user)
+      return Response.json(user, { status: 201 })
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="frontend">
+    ```typescript
+    // Request body sent to the backend:
+    // { "name": "Grace Hopper", "email": "grace@example.com" }
+
+    async function createUser(name: string, email: string) {
+      return apiFetch<User>("/api/users", {
+        method: "POST",
+        body: JSON.stringify({ name, email }),
+      })
+    }
+
+    const created = await createUser("Grace Hopper", "grace@example.com")
+    console.log(created) // { id: 2, name: "Grace Hopper", ... }
+    ```
+  </TabsContent>
+  <TabsContent value="curl">
+    ```bash
+    # List users
+    curl http://localhost:4000/api/users
+
+    # Create a user — note the JSON body with -d
+    curl -X POST http://localhost:4000/api/users \
+      -H "Content-Type: application/json" \
+      -d '{"name":"Grace Hopper","email":"grace@example.com"}'
+    ```
+  </TabsContent>
+</Tabs>
+
+## Validating the Request Body
+
+Never trust the body. Validate shape and types before touching your data, and
+return `400` with a helpful message when it's wrong.
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="backend">Backend</TabsTrigger>
+    <TabsTrigger value="curl">curl</TabsTrigger>
+  </TabsList>
+  <TabsContent value="backend">
+    ```typescript
+    // app/api/signup/route.ts
+    type SignupBody = { email: string; password: string; age?: number }
+
+    function validate(body: unknown): { ok: true; data: SignupBody } | { ok: false; error: string } {
+      if (typeof body !== "object" || body === null) {
+        return { ok: false, error: "Body must be a JSON object" }
+      }
+      const b = body as Record<string, unknown>
+
+      if (typeof b.email !== "string" || !b.email.includes("@")) {
+        return { ok: false, error: "A valid email is required" }
+      }
+      if (typeof b.password !== "string" || b.password.length < 8) {
+        return { ok: false, error: "password must be at least 8 characters" }
+      }
+      if (b.age !== undefined && typeof b.age !== "number") {
+        return { ok: false, error: "age must be a number" }
+      }
+
+      return { ok: true, data: b as SignupBody }
+    }
+
+    export async function POST(request: Request) {
+      const parsed = validate(await request.json().catch(() => null))
+      if (!parsed.ok) {
+        return Response.json({ message: parsed.error }, { status: 400 })
+      }
+
+      // parsed.data is now fully typed and safe to use
+      return Response.json({ email: parsed.data.email }, { status: 201 })
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="curl">
+    ```bash
+    # Valid request → 201
+    curl -i -X POST http://localhost:4000/api/signup \
+      -H "Content-Type: application/json" \
+      -d '{"email":"dev@example.com","password":"supersecret"}'
+
+    # Missing password → 400 with { "message": "password must be at least 8 characters" }
+    curl -i -X POST http://localhost:4000/api/signup \
+      -H "Content-Type: application/json" \
+      -d '{"email":"dev@example.com","password":"short"}'
+    ```
+  </TabsContent>
+</Tabs>
+
+<Alert>
+  <Info />
+  <AlertTitle>Add <code>-i</code> to see status codes</AlertTitle>
+  <AlertDescription>
+    `curl -i` prints response headers including the status line, so you can
+    confirm you got `201 Created` or `400 Bad Request` — not just the body.
+  </AlertDescription>
+</Alert>
+
+## Dynamic Routes: PATCH & DELETE by ID
+
+Update or delete a single record using the `id` from the URL path. In the App
+Router, `params` is a **Promise** — remember to `await` it.
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="backend">Backend</TabsTrigger>
+    <TabsTrigger value="frontend">Frontend</TabsTrigger>
+    <TabsTrigger value="curl">curl</TabsTrigger>
+  </TabsList>
+  <TabsContent value="backend">
+    ```typescript
+    // app/api/users/[id]/route.ts
+    export async function PATCH(
+      request: Request,
+      { params }: { params: Promise<{ id: string }> },
+    ) {
+      const { id } = await params
+      const patch = (await request.json()) as { name?: string; email?: string }
+
+      const user = users.find((u) => u.id === Number(id))
+      if (!user) {
+        return Response.json({ message: "User not found" }, { status: 404 })
+      }
+
+      Object.assign(user, patch)
+      return Response.json(user)
+    }
+
+    export async function DELETE(
+      _request: Request,
+      { params }: { params: Promise<{ id: string }> },
+    ) {
+      const { id } = await params
+      const index = users.findIndex((u) => u.id === Number(id))
+      if (index === -1) {
+        return Response.json({ message: "User not found" }, { status: 404 })
+      }
+
+      const [deleted] = users.splice(index, 1)
+      return Response.json(deleted)
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="frontend">
+    ```typescript
+    // PATCH sends a partial body — only the fields that changed
+    async function renameUser(id: number, name: string) {
+      return apiFetch<User>(`/api/users/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ name }),
+      })
+    }
+
+    async function deleteUser(id: number) {
+      return apiFetch<User>(`/api/users/${id}`, { method: "DELETE" })
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="curl">
+    ```bash
+    # Update just the name of user 1
+    curl -X PATCH http://localhost:4000/api/users/1 \
+      -H "Content-Type: application/json" \
+      -d '{"name":"Ada King"}'
+
+    # Delete user 1
+    curl -X DELETE http://localhost:4000/api/users/1
+    ```
+  </TabsContent>
+</Tabs>
+
+## Query Params & Pagination
+
+Filtering and paging live in the query string, read via `request.nextUrl.searchParams`.
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="backend">Backend</TabsTrigger>
+    <TabsTrigger value="frontend">Frontend</TabsTrigger>
+    <TabsTrigger value="curl">curl</TabsTrigger>
+  </TabsList>
+  <TabsContent value="backend">
+    ```typescript
+    // app/api/products/route.ts
+    import type { NextRequest } from "next/server"
+
+    export async function GET(request: NextRequest) {
+      const { searchParams } = request.nextUrl
+      const q = searchParams.get("q")?.toLowerCase() ?? ""
+      const page = Math.max(1, Number(searchParams.get("page") ?? 1))
+      const limit = Math.min(50, Number(searchParams.get("limit") ?? 10))
+
+      const filtered = products.filter((p) => p.name.toLowerCase().includes(q))
+      const start = (page - 1) * limit
+      const items = filtered.slice(start, start + limit)
+
+      return Response.json({
+        items,
+        page,
+        limit,
+        total: filtered.length,
+        hasMore: start + limit < filtered.length,
+      })
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="frontend">
+    ```typescript
+    async function searchProducts(q: string, page = 1) {
+      const params = new URLSearchParams({ q, page: String(page), limit: "10" })
+      return apiFetch<{ items: Product[]; hasMore: boolean }>(
+        `/api/products?${params}`,
+      )
+    }
+
+    const { items, hasMore } = await searchProducts("laptop", 1)
+    ```
+  </TabsContent>
+  <TabsContent value="curl">
+    ```bash
+    # Search "laptop", page 2, 5 per page
+    curl "http://localhost:4000/api/products?q=laptop&page=2&limit=5"
+    ```
+  </TabsContent>
+</Tabs>
+
+## File Upload with FormData
+
+For files, send `FormData` instead of JSON — do **not** set `Content-Type`
+yourself; the browser adds the multipart boundary automatically.
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="backend">Backend</TabsTrigger>
+    <TabsTrigger value="frontend">Frontend</TabsTrigger>
+    <TabsTrigger value="curl">curl</TabsTrigger>
+  </TabsList>
+  <TabsContent value="backend">
+    ```typescript
+    // app/api/upload/route.ts
+    export async function POST(request: Request) {
+      const form = await request.formData()
+      const file = form.get("file")
+      const title = form.get("title")
+
+      if (!(file instanceof File)) {
+        return Response.json({ message: "file is required" }, { status: 400 })
+      }
+
+      const bytes = await file.arrayBuffer()
+      // In real code: write to disk / S3 / blob storage here.
+
+      return Response.json(
+        { name: file.name, size: bytes.byteLength, type: file.type, title },
+        { status: 201 },
+      )
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="frontend">
+    ```typescript
+    async function uploadFile(file: File, title: string) {
+      const form = new FormData()
+      form.append("file", file)
+      form.append("title", title)
+
+      // No Content-Type header — the browser sets it with the boundary.
+      const res = await fetch("/api/upload", { method: "POST", body: form })
+      if (!res.ok) throw new Error("Upload failed")
+      return res.json()
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="curl">
+    ```bash
+    # -F sends multipart/form-data; @ reads a local file
+    curl -X POST http://localhost:4000/api/upload \
+      -F "file=@./photo.png" \
+      -F "title=My Photo"
+    ```
+  </TabsContent>
+</Tabs>
+
+## Sending Auth Headers & Cookies
+
+Protected endpoints read a `Bearer` token from the `Authorization` header (or a
+cookie). The client attaches it on every request.
+
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="backend">Backend</TabsTrigger>
+    <TabsTrigger value="frontend">Frontend</TabsTrigger>
+    <TabsTrigger value="curl">curl</TabsTrigger>
+  </TabsList>
+  <TabsContent value="backend">
+    ```typescript
+    // app/api/me/route.ts
+    export async function GET(request: Request) {
+      const auth = request.headers.get("authorization")
+      const token = auth?.startsWith("Bearer ") ? auth.slice(7) : null
+
+      if (!token || token !== process.env.API_TOKEN) {
+        return Response.json({ message: "Unauthorized" }, { status: 401 })
+      }
+
+      return Response.json({ id: 1, name: "Ada Lovelace" })
+    }
+    ```
+  </TabsContent>
+  <TabsContent value="frontend">
+    ```typescript
+    function authFetch<T>(path: string, token: string): Promise<T> {
+      return apiFetch<T>(path, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+    }
+
+    // Cookie-based auth instead? Add credentials: "include":
+    // fetch("/api/me", { credentials: "include" })
+
+    const me = await authFetch<User>("/api/me", "dev-token-123")
+    ```
+  </TabsContent>
+  <TabsContent value="curl">
+    ```bash
+    # Missing/invalid token → 401
+    curl -i http://localhost:4000/api/me
+
+    # With a bearer token → 200
+    curl http://localhost:4000/api/me \
+      -H "Authorization: Bearer dev-token-123"
+    ```
+  </TabsContent>
+</Tabs>
+
+## Client Component: Form → POST → State
+
+A complete React client component that submits a JSON body, shows loading and
+error states, and renders the response. Copy it straight into a `.tsx` file.
+
+```tsx
+"use client"
+
+import { useState } from "react"
+
+export function CreateUserForm() {
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [status, setStatus] = useState<"idle" | "saving" | "error">("idle")
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setStatus("saving")
+    try {
+      const res = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email }),
+      })
+      if (!res.ok) throw new Error(await res.text())
+      setName("")
+      setEmail("")
+      setStatus("idle")
+    } catch {
+      setStatus("error")
+    }
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="space-y-3">
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Name"
+        required
+      />
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
+        required
+      />
+      <button disabled={status === "saving"}>
+        {status === "saving" ? "Saving…" : "Create user"}
+      </button>
+      {status === "error" && <p role="alert">Something went wrong.</p>}
+    </form>
+  )
+}
+```
+
+## Local Testing Cheat Sheet
+
+Keep this handy while building. Start the dev server with `pnpm dev`, then in a
+second terminal:
+
+```bash
+# GET — pretty-print JSON with jq (optional)
+curl -s http://localhost:4000/api/users | jq
+
+# POST JSON body
+curl -X POST http://localhost:4000/api/users \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Alan Turing","email":"alan@example.com"}'
+
+# PATCH / DELETE by id
+curl -X PATCH http://localhost:4000/api/users/1 -H "Content-Type: application/json" -d '{"name":"New Name"}'
+curl -X DELETE http://localhost:4000/api/users/1
+
+# Send an auth header
+curl http://localhost:4000/api/me -H "Authorization: Bearer dev-token-123"
+
+# Upload a file
+curl -X POST http://localhost:4000/api/upload -F "file=@./photo.png" -F "title=Demo"
+
+# Read a body from a file instead of inline
+curl -X POST http://localhost:4000/api/users \
+  -H "Content-Type: application/json" \
+  --data @./body.json
+
+# Show status code and headers
+curl -i http://localhost:4000/api/users
+```
+
+Prefer an editor over the terminal? Save this as `requests.http` and use the
+VS Code **REST Client** extension or JetBrains' built-in HTTP client — click
+"Send Request" above each block:
+
+```http
+### List users
+GET http://localhost:4000/api/users
+
+### Create a user
+POST http://localhost:4000/api/users
+Content-Type: application/json
+
+{
+  "name": "Alan Turing",
+  "email": "alan@example.com"
+}
+
+### Authenticated request
+GET http://localhost:4000/api/me
+Authorization: Bearer dev-token-123
+```
+
+## Interactive Exercise
+
+<InteractiveExercise
+  title="Build a validated POST handler"
+  description="Complete the route handler so it reads the JSON body, rejects invalid input with 400, and returns the created note with status 201."
+  starterCode={`// app/api/notes/route.ts
+const notes: Array<{ id: number; text: string }> = []
+let nextId = 1
+
+export async function POST(request: Request) {
+  // TODO: read the JSON body
+  // TODO: if text is missing or not a string, return 400
+  // TODO: create a note, push it, return it with status 201
+}`}
+  solutionCode={`// app/api/notes/route.ts
+const notes: Array<{ id: number; text: string }> = []
+let nextId = 1
+
+export async function POST(request: Request) {
+  const body = (await request.json().catch(() => null)) as { text?: unknown } | null
+
+  if (!body || typeof body.text !== "string" || body.text.trim() === "") {
+    return Response.json({ message: "text is required" }, { status: 400 })
+  }
+
+  const note = { id: nextId++, text: body.text }
+  notes.push(note)
+  return Response.json(note, { status: 201 })
+}`}
+  hints={[
+    "Use await request.json() — wrap it in .catch(() => null) so malformed JSON doesn't throw",
+    "Guard the type: typeof body.text !== 'string' catches missing and wrong-type input",
+    "Return Response.json(data, { status: 201 }) for a successful create",
+  ]}
+  previewType="mixed"
+/>
+
+## Quiz
+
+<Quiz
+  questions={[
+    {
+      question: "How do you read a JSON request body in a route handler?",
+      options: [
+        "request.body",
+        "await request.json()",
+        "JSON.parse(request)",
+        "request.getBody()",
+      ],
+      correctIndex: 1,
+      explanation: "Route handlers use the Web API Request object; await request.json() parses the body into an object.",
+    },
+    {
+      question: "When sending FormData from the browser, what should you do with Content-Type?",
+      options: [
+        "Set it to application/json",
+        "Set it to multipart/form-data manually",
+        "Leave it unset — the browser adds it with the boundary",
+        "Set it to text/plain",
+      ],
+      correctIndex: 2,
+      explanation: "The browser generates the multipart boundary automatically; setting Content-Type yourself breaks the request.",
+    },
+    {
+      question: "What status code should a create endpoint return on success?",
+      options: ["200 OK", "201 Created", "204 No Content", "302 Found"],
+      correctIndex: 1,
+      explanation: "201 Created signals a new resource was created, and typically returns the created resource in the body.",
+    },
+  ]}
+/>
+
+## Lesson Summary
+
+<LessonSummary
+  points={[
+    "Pair each frontend fetch with its route handler so the body contract is explicit",
+    "Read JSON bodies with await request.json(); read files with request.formData()",
+    "Always validate input and return 400 with a helpful message on bad data",
+    "await params in dynamic routes; read filters from request.nextUrl.searchParams",
+    "Send auth via the Authorization: Bearer header or credentials: 'include' for cookies",
+    "Test every endpoint locally with curl or a .http file before building the UI",
+  ]}
+/>
 
 ## Next Steps
 
 - [Authentication](/fullstack/authentication)
+- [Databases](/fullstack/databases)
+- [File Upload](/fullstack/file-upload)
 - [Deployment](/fullstack/deployment)

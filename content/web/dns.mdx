@@ -1,0 +1,127 @@
+---
+title: DNS
+description: How human-friendly domain names get translated into the IP addresses computers use
+order: 4
+difficulty: beginner
+estimatedMinutes: 10
+tags: ["web", "dns", "networking"]
+prerequisites: ["web/https-tls"]
+updated: "2026-07-11"
+---
+
+# DNS
+
+Computers route traffic using numeric IP addresses, but humans remember names. **DNS** (the Domain Name System) is the web's phone book — it translates `example.com` into `93.184.216.34`. Every page load starts with a DNS lookup.
+
+<LearningObjectives objectives={[
+  "Explain what DNS resolves and why it exists",
+  "Trace a DNS lookup through its hierarchy",
+  "Identify common record types (A, AAAA, CNAME, MX)",
+  "Understand DNS caching and TTL",
+]} />
+
+## The Phone Book of the Internet
+
+When you visit `example.com`, your browser first needs its IP address. DNS provides that lookup:
+
+```text
+example.com  ──DNS──▶  93.184.216.34
+(what humans type)     (what routers need)
+```
+
+Without DNS, you'd have to memorize IP addresses for every site. DNS also adds flexibility: a site can change servers (new IP) without changing its domain name.
+
+## How a Lookup Works
+
+DNS is a hierarchy of servers, each responsible for part of the name. A full resolution walks down that tree:
+
+```text
+1. Recursive resolver   your ISP/router's DNS — does the legwork
+2. Root servers         "for .com, ask the .com TLD servers"
+3. TLD servers (.com)   "for example.com, ask its authoritative server"
+4. Authoritative server "example.com is 93.184.216.34"  ← the real answer
+```
+
+The **recursive resolver** does this walking on your behalf and hands back the final IP. You ask once; it may make several queries behind the scenes.
+
+<Alert>
+<AlertTitle>Reading a domain right-to-left</AlertTitle>
+<AlertDescription>Domains get more specific right to left. In <code>api.example.com</code>: <code>com</code> is the top-level domain, <code>example</code> is the registered domain, and <code>api</code> is a subdomain. DNS resolves them in that outermost-first order.</AlertDescription>
+</Alert>
+
+## Common Record Types
+
+A domain's DNS settings are a set of **records**, each mapping a name to something:
+
+| Record | Maps to | Example use |
+|--------|---------|-------------|
+| `A` | An IPv4 address | `example.com → 93.184.216.34` |
+| `AAAA` | An IPv6 address | `example.com → 2606:2800:220:1:…` |
+| `CNAME` | Another domain name | `www.example.com → example.com` |
+| `MX` | A mail server | Where to deliver `@example.com` email |
+| `TXT` | Arbitrary text | Domain verification, SPF records |
+
+```text
+CNAME is an alias:  www.example.com ──▶ example.com ──▶ (A record) ──▶ IP
+```
+
+## Caching and TTL
+
+DNS lookups are cached at every level — your browser, OS, resolver — so the full walk doesn't happen every time. Each record carries a **TTL** (time to live) saying how long it may be cached:
+
+```text
+TTL 3600  →  cache this answer for 1 hour before asking again
+```
+
+This is why DNS changes aren't instant: after you update a record, caches around the world keep serving the old value until their TTL expires — "DNS propagation."
+
+<Alert>
+<AlertTitle>Lower the TTL before a migration</AlertTitle>
+<AlertDescription>Planning to move servers? Drop the record's TTL (e.g. to 300s) a day ahead. Then when you switch the IP, the world picks it up in minutes instead of hours.</AlertDescription>
+</Alert>
+
+## Check Your Understanding
+
+<Quiz questions={[
+  {
+    question: "What does DNS primarily translate?",
+    options: [
+      "IP addresses into encryption keys",
+      "Domain names into IP addresses",
+      "HTTP into HTTPS",
+      "URLs into HTML"
+    ],
+    correctIndex: 1,
+    explanation: "DNS resolves human-friendly domain names (example.com) into the numeric IP addresses computers use to route traffic.",
+  },
+  {
+    question: "Which server gives the authoritative final answer for a domain's IP?",
+    options: [
+      "The recursive resolver",
+      "The root server",
+      "The authoritative name server for that domain",
+      "The browser cache"
+    ],
+    correctIndex: 2,
+    explanation: "The authoritative name server holds the domain's real records. The resolver walks root → TLD → authoritative to get there.",
+  },
+  {
+    question: "Why don't DNS changes take effect instantly worldwide?",
+    options: [
+      "DNS servers are slow",
+      "Records are cached according to their TTL until it expires (propagation)",
+      "Browsers block DNS updates",
+      "You must restart the server"
+    ],
+    correctIndex: 1,
+    explanation: "Caches at every level honor each record's TTL. Until cached copies expire, they keep serving the old value — the delay known as DNS propagation.",
+  },
+]} />
+
+<LessonSummary points={[
+  "DNS is the web's phone book: it maps domain names to IP addresses",
+  "A lookup walks a hierarchy: recursive resolver → root → TLD → authoritative server",
+  "Record types include A (IPv4), AAAA (IPv6), CNAME (alias), MX (mail), TXT (text)",
+  "Every level caches results according to each record's TTL",
+  "TTL-based caching causes 'propagation' delay; lower TTL before migrations",
+]} />

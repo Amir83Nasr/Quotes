@@ -1,0 +1,153 @@
+---
+title: Branching & Merging
+description: Work on features in isolation with branches, then combine them back with merges
+order: 3
+difficulty: beginner
+estimatedMinutes: 12
+tags: ["git", "branching", "merging", "workflow"]
+prerequisites: ["git/staging-commits"]
+updated: "2026-07-11"
+---
+
+# Branching & Merging
+
+Branches are Git's superpower. They let you build a feature, try a risky idea, or fix a bug in complete isolation — without touching the working code everyone else depends on. When it's ready, you merge it back.
+
+<LearningObjectives objectives={[
+  "Explain what a branch really is (it's cheaper than you think)",
+  "Create, switch, and delete branches",
+  "Merge a branch and understand fast-forward vs merge commits",
+  "Recognize when a merge conflict will happen",
+]} />
+
+## What Is a Branch, Really?
+
+A branch is just a **movable pointer to a commit**. That's it. Creating one doesn't copy files — it writes a tiny reference. This is why Git branching is instant and cheap, unlike older tools where a "branch" meant duplicating the whole project.
+
+```text
+main    ─── A ─── B ─── C   ← main points here
+                         ↖
+feature ────────────────  D   ← feature points here
+```
+
+`HEAD` is a special pointer that tells Git which branch you're currently "on". Commits you make move the current branch pointer forward.
+
+## Creating and Switching
+
+The modern command is `git switch`:
+
+```bash
+git switch -c feature/login   # create a new branch AND switch to it
+git switch main               # switch back to an existing branch
+git branch                    # list branches (* marks the current one)
+```
+
+```text
+  main
+* feature/login
+```
+
+<Alert>
+<AlertTitle>switch vs checkout</AlertTitle>
+<AlertDescription>You'll see `git checkout -b` in older tutorials — it still works. Modern Git split its jobs into two clearer commands: `git switch` (change branches) and `git restore` (undo file changes). Prefer them.</AlertDescription>
+</Alert>
+
+## Making Commits on a Branch
+
+Once on `feature/login`, commits land on that branch only. `main` stays frozen where it was:
+
+```bash
+git switch -c feature/login
+# ...edit files...
+git add .
+git commit -m "feat(auth): add login form"
+```
+
+`main` is untouched — your teammates keep working on it, unaware of your in-progress feature.
+
+## Merging Back
+
+When the feature is done, switch to the branch you want to merge *into* (usually `main`), then merge:
+
+```bash
+git switch main
+git merge feature/login
+```
+
+There are two ways this plays out:
+
+**Fast-forward** — if `main` hasn't changed since you branched, Git just slides the `main` pointer forward. No new commit needed.
+
+```text
+before:  main → A   feature → A─B─C
+after:   main ─────────────→ C   (fast-forward)
+```
+
+**Merge commit** — if `main` *has* moved on (someone else committed), Git creates a new commit that ties the two histories together.
+
+```text
+main    ─── A ─── B ─────── M   ← merge commit M
+                 ↖         ↗
+feature ────────── C ── D
+```
+
+After merging, delete the branch — its work now lives in `main`:
+
+```bash
+git branch -d feature/login
+```
+
+## When Conflicts Happen
+
+If the same lines were changed on both branches, Git can't decide which version wins and pauses with a **merge conflict**. This is normal and expected on real teams — we cover exactly how to resolve them in the next lesson.
+
+<Alert>
+<AlertTitle>Branch naming conventions</AlertTitle>
+<AlertDescription>Teams commonly prefix branches by purpose: `feature/`, `fix/`, `chore/`. A name like `fix/cart-total-rounding` tells everyone what the branch is for at a glance.</AlertDescription>
+</Alert>
+
+## Check Your Understanding
+
+<Quiz questions={[
+  {
+    question: "What is a Git branch, technically?",
+    options: [
+      "A full copy of the project folder",
+      "A movable pointer to a commit",
+      "A backup stored on the server",
+      "A compressed archive of changes"
+    ],
+    correctIndex: 1,
+    explanation: "A branch is just a lightweight, movable pointer to a commit. Creating one doesn't copy files, which is why branching in Git is instant.",
+  },
+  {
+    question: "You branch off main, and main receives no new commits while you work. What kind of merge happens?",
+    options: [
+      "A merge commit is always created",
+      "A fast-forward — the main pointer just moves forward",
+      "The merge is rejected",
+      "A rebase"
+    ],
+    correctIndex: 1,
+    explanation: "When the target branch hasn't diverged, Git performs a fast-forward: it simply advances the pointer, with no extra merge commit.",
+  },
+  {
+    question: "Which modern command creates a new branch and switches to it?",
+    options: [
+      "git branch -c name",
+      "git switch -c name",
+      "git merge -c name",
+      "git new name"
+    ],
+    correctIndex: 1,
+    explanation: "'git switch -c name' creates the branch and moves onto it. The older equivalent is 'git checkout -b name'.",
+  },
+]} />
+
+<LessonSummary points={[
+  "A branch is a cheap, movable pointer to a commit — not a copy of your files",
+  "git switch -c creates and moves to a branch; commits land only on the current branch",
+  "Fast-forward merges just advance the pointer; diverged histories get a merge commit",
+  "Delete merged branches with git branch -d to keep the branch list clean",
+  "Editing the same lines on two branches causes a merge conflict (next lesson)",
+]} />

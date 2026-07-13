@@ -13,6 +13,10 @@ import { Info, AlertTriangle, Lightbulb } from "lucide-react"
 import { Playground } from "@/components/playground/Playground"
 import { CounterExample } from "@/components/playground/CounterExample"
 import { GalleryDemo } from "@/components/playground/GalleryDemo"
+// React 19 live demos
+import { UseOptimisticDemo } from "@/components/playground/react19/UseOptimisticDemo"
+import { UseActionStateDemo } from "@/components/playground/react19/UseActionStateDemo"
+import { UseTransitionDemo } from "@/components/playground/react19/UseTransitionDemo"
 // Shared lesson primitives
 import { CodeBlock } from "./shared/CodeBlock"
 import { PreWithCopy } from "./shared/PreWithCopy"
@@ -59,6 +63,9 @@ export const lessonMdxComponents: MDXComponents = {
   Playground: Playground as React.ComponentType,
   CounterExample: CounterExample as React.ComponentType,
   GalleryDemo: GalleryDemo as React.ComponentType,
+  UseOptimisticDemo: UseOptimisticDemo as React.ComponentType,
+  UseActionStateDemo: UseActionStateDemo as React.ComponentType,
+  UseTransitionDemo: UseTransitionDemo as React.ComponentType,
 
   // Shared lesson widgets
   CodeBlock: CodeBlock as React.ComponentType,

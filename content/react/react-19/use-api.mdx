@@ -1,0 +1,133 @@
+---
+title: The use() API
+description: Read promises and context conditionally with React 19's new use() function
+order: 1
+difficulty: intermediate
+estimatedMinutes: 11
+tags: ["react", "react-19", "use", "suspense", "promises"]
+prerequisites: ["react/portals-suspense"]
+updated: "2026-07-11"
+---
+
+# The use() API
+
+React 19 introduced `use()` — a function that reads the value of a resource like a Promise or context. Unlike hooks, `use()` can be called **conditionally** and inside loops, which unlocks patterns the old rules forbade.
+
+<LearningObjectives objectives={[
+  "Read a promise's value with use() and integrate it with Suspense",
+  "Explain how use() differs from useContext and other hooks",
+  "Call use() conditionally — something hooks can't do",
+  "Know where the promise should come from (and where it shouldn't)",
+]} />
+
+## Reading a Promise
+
+`use()` unwraps a promise. When the promise is pending, the component suspends and the nearest `<Suspense>` boundary shows its fallback. When it resolves, the component renders with the value.
+
+```tsx
+import { use, Suspense } from "react"
+
+function UserProfile({ userPromise }: { userPromise: Promise<User> }) {
+  const user = use(userPromise) // suspends until resolved
+  return <h1>{user.name}</h1>
+}
+
+function Page() {
+  const userPromise = fetchUser() // created outside, passed in
+  return (
+    <Suspense fallback={<p>Loading…</p>}>
+      <UserProfile userPromise={userPromise} />
+    </Suspense>
+  )
+}
+```
+
+No `useEffect`, no `useState`, no manual loading flag — `use()` plus Suspense handles the pending state declaratively.
+
+<Alert>
+<AlertTitle>Don't create the promise inside the component</AlertTitle>
+<AlertDescription>Creating `fetchUser()` in the component body means a new promise on every render — an infinite loop. Create it in a Server Component, a cache, or an event handler, and pass it down. (Or use a framework's data layer.)</AlertDescription>
+</Alert>
+
+## use() Breaks the Hook Rules — On Purpose
+
+The Rules of Hooks say: no calling hooks conditionally or in loops. `use()` is *not* a hook, so those restrictions don't apply. This is the whole point.
+
+```tsx
+function Note({ show, notePromise }: Props) {
+  if (!show) return null
+
+  // ✅ Legal — use() can live after an early return or inside an if.
+  const note = use(notePromise)
+  return <p>{note.body}</p>
+}
+```
+
+Try that with `useState` and React throws. `use()` was designed to be callable exactly where hooks can't be.
+
+## Reading Context with use()
+
+`use()` also reads context — and because it's conditional-friendly, you can read context only when you actually need it:
+
+```tsx
+function Item({ premium }: { premium: boolean }) {
+  if (premium) {
+    const theme = use(ThemeContext) // only read when premium
+    return <span style={{ color: theme.accent }}>★</span>
+  }
+  return <span>·</span>
+}
+```
+
+With `useContext`, you'd have to call it unconditionally at the top even if you rarely use the value.
+
+<Alert>
+<AlertTitle>use() complements Suspense and Server Components</AlertTitle>
+<AlertDescription>The most common pattern: a Server Component starts a fetch (without awaiting it) and passes the promise to a Client Component that reads it with `use()`. Data starts loading early; the client unwraps it with a clean Suspense fallback.</AlertDescription>
+</Alert>
+
+## Check Your Understanding
+
+<Quiz questions={[
+  {
+    question: "What happens when you call use() on a promise that is still pending?",
+    options: [
+      "It returns undefined",
+      "The component suspends and the nearest Suspense fallback shows",
+      "It throws an error",
+      "It blocks the main thread until resolved"
+    ],
+    correctIndex: 1,
+    explanation: "use() suspends the component while the promise is pending, letting the nearest <Suspense> boundary render its fallback until the value is ready.",
+  },
+  {
+    question: "Why can use() be called conditionally when hooks like useState cannot?",
+    options: [
+      "use() is slower so React allows it",
+      "use() is not a hook, so the Rules of Hooks don't apply to it",
+      "It only works in Server Components",
+      "React makes an exception for promises only"
+    ],
+    correctIndex: 1,
+    explanation: "use() is a special API, not a hook. The Rules of Hooks (no conditional calls, no loops) don't govern it, so it can appear after early returns or inside conditionals.",
+  },
+  {
+    question: "Where should the promise passed to use() typically be created?",
+    options: [
+      "In the component body on every render",
+      "Outside the rendering component — e.g. a Server Component, cache, or passed as a prop",
+      "Inside a useMemo with no dependencies",
+      "It doesn't matter"
+    ],
+    correctIndex: 1,
+    explanation: "Creating the promise in the component body makes a new one each render, causing an infinite loop. Create it upstream (Server Component, cache, event handler) and pass it in.",
+  },
+]} />
+
+<LessonSummary points={[
+  "use() reads a resource — a promise or context — and integrates with Suspense",
+  "When a promise is pending, use() suspends and the nearest Suspense fallback renders",
+  "use() is not a hook, so it can be called conditionally or inside loops",
+  "Reading context with use() lets you access it only when needed",
+  "Create the promise upstream (Server Component/cache/prop), never in the render body",
+]} />

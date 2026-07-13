@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { Check, Copy } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
@@ -52,23 +52,32 @@ export function CodeBlock({
   className,
 }: CodeBlockProps) {
   const { copied, copy } = useCopyToClipboard()
-  const codeRef = useRef<HTMLElement>(null)
+  const [highlighted, setHighlighted] = useState<string | null>(null)
   const lang = language ? LANG_MAP[language] || language : undefined
 
   const handleCopy = () => copy(code)
 
   useEffect(() => {
     let dead = false
-    if (!lang || !codeRef.current) return
+    if (!lang) {
+      setHighlighted(null)
+      return
+    }
 
     import("highlight.js/lib/core").then(async (hljs) => {
       if (dead) return
       await loadLang(hljs, lang)
       if (lang === "typescript") await loadLang(hljs, "javascript")
+      if (dead) return
 
-      if (!dead && codeRef.current) {
-        codeRef.current.removeAttribute("data-highlighted")
-        hljs.default.highlightElement(codeRef.current)
+      try {
+        const { value } = hljs.default.highlight(code, {
+          language: lang,
+          ignoreIllegals: true,
+        })
+        if (!dead) setHighlighted(value)
+      } catch {
+        if (!dead) setHighlighted(null)
       }
     })
 
@@ -104,21 +113,44 @@ export function CodeBlock({
       )}
 
       <div className="relative">
-        <pre className="code-surface overflow-x-auto p-4 text-sm">
-          <code ref={codeRef} className={lang ? `language-${lang}` : undefined}>
-            {lines.map((line, i) => (
-              <span key={i} className="flex">
-                {showLineNumbers && (
+        <pre className="code-surface hljs overflow-x-auto p-4 text-sm">
+          {showLineNumbers ? (
+            <code className={lang ? `language-${lang}` : undefined}>
+              {lines.map((line, i) => (
+                <span key={i} className="flex">
                   <span className="mr-4 inline-block w-8 shrink-0 text-right text-muted-foreground/50 select-none">
                     {i + 1}
                   </span>
-                )}
-                <span>{line || " "}</span>
-              </span>
-            ))}
-          </code>
+                  <span
+                    className="flex-1"
+                    dangerouslySetInnerHTML={
+                      highlighted
+                        ? { __html: highlightLine(highlighted, i) }
+                        : undefined
+                    }
+                  >
+                    {highlighted ? undefined : line || " "}
+                  </span>
+                </span>
+              ))}
+            </code>
+          ) : highlighted ? (
+            <code
+              className={lang ? `language-${lang}` : undefined}
+              dangerouslySetInnerHTML={{ __html: highlighted }}
+            />
+          ) : (
+            <code className={lang ? `language-${lang}` : undefined}>{code}</code>
+          )}
         </pre>
       </div>
     </div>
   )
+}
+
+/* Split already-highlighted HTML into lines. hljs emits no line-crossing
+   spans, so splitting on "\n" keeps each line's token markup intact. */
+function highlightLine(html: string, index: number): string {
+  const parts = html.split("\n")
+  return parts[index] ?? ""
 }

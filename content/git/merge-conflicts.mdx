@@ -1,0 +1,148 @@
+---
+title: Resolving Merge Conflicts
+description: Understand why conflicts happen and work through them calmly, step by step
+order: 5
+difficulty: intermediate
+estimatedMinutes: 12
+tags: ["git", "merge-conflicts", "collaboration"]
+prerequisites: ["git/remotes-github"]
+updated: "2026-07-11"
+---
+
+# Resolving Merge Conflicts
+
+Merge conflicts feel scary the first time, but they're routine — a normal part of collaborating. A conflict simply means Git found two different changes to the same lines and needs *you* to decide which to keep. Nothing is broken.
+
+<LearningObjectives objectives={[
+  "Explain exactly when Git raises a merge conflict",
+  "Read conflict markers and identify each side",
+  "Resolve a conflict and complete the merge",
+  "Abort a merge to get back to a clean state",
+]} />
+
+## Why Conflicts Happen
+
+Git merges changes automatically when they touch *different* lines. A conflict occurs only when **the same lines were changed differently on both branches** — Git won't guess which version is correct.
+
+```text
+main:     const greeting = "Hello"
+feature:  const greeting = "Hi there"
+          → both edited the same line → CONFLICT
+```
+
+If one branch edited line 5 and the other edited line 50, Git merges them cleanly with no conflict. Conflicts are about *overlap*, not just "both branches changed the file."
+
+## What a Conflict Looks Like
+
+When you merge and hit a conflict, Git stops and tells you:
+
+```bash
+git merge feature/greeting
+```
+
+```text
+Auto-merging src/app.js
+CONFLICT (content): Merge conflict in src/app.js
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+Open the file — Git has inserted **conflict markers** showing both versions:
+
+```text
+<<<<<<< HEAD
+const greeting = "Hello"
+=======
+const greeting = "Hi there"
+>>>>>>> feature/greeting
+```
+
+Read the markers like this:
+
+- `<<<<<<< HEAD` → everything below is **your current branch** (where you are)
+- `=======` → the divider
+- `>>>>>>> feature/greeting` → everything above is **the incoming branch**
+
+## Resolving It
+
+To resolve, edit the file so it contains exactly what you want the final result to be — then **delete all three markers**. You might keep one side, the other, or combine them:
+
+```text
+const greeting = "Hi there"
+```
+
+Then stage the resolved file and commit to complete the merge:
+
+```bash
+git add src/app.js
+git commit        # completes the merge (Git pre-fills a message)
+```
+
+```text
+ conflict raised → edit file → remove markers → git add → git commit → done
+```
+
+<Alert>
+<AlertTitle>Check your work with git status</AlertTitle>
+<AlertDescription>During a conflict, `git status` lists every file still "unmerged". When that list is empty, all conflicts are resolved and you can commit. It's your checklist.</AlertDescription>
+</Alert>
+
+## Escaping a Merge
+
+If a merge goes sideways and you'd rather start over, abort it. This returns you to the exact state before you ran `git merge`:
+
+```bash
+git merge --abort
+```
+
+Nothing is lost — it's as if the merge never happened.
+
+<Alert>
+<AlertTitle>Prevent conflicts by staying current</AlertTitle>
+<AlertDescription>Conflicts get worse the longer a branch drifts from main. Pulling `main` into your feature branch frequently (or keeping branches short-lived) means fewer, smaller conflicts.</AlertDescription>
+</Alert>
+
+## Check Your Understanding
+
+<Quiz questions={[
+  {
+    question: "When does Git raise a merge conflict?",
+    options: [
+      "Any time two branches changed the same file",
+      "When the same lines were changed differently on both branches",
+      "Whenever you merge into main",
+      "Only when the file has syntax errors"
+    ],
+    correctIndex: 1,
+    explanation: "Git merges non-overlapping changes automatically. A conflict happens only when both branches changed the same lines in incompatible ways.",
+  },
+  {
+    question: "In conflict markers, what does the section between <<<<<<< HEAD and ======= represent?",
+    options: [
+      "The incoming branch's version",
+      "Your current branch's version",
+      "The original version before both changes",
+      "A backup Git created"
+    ],
+    correctIndex: 1,
+    explanation: "The part under <<<<<<< HEAD is your current branch (HEAD). The part below ======= up to >>>>>>> is the incoming branch.",
+  },
+  {
+    question: "You want to completely cancel an in-progress merge and return to the previous state. What do you run?",
+    options: [
+      "git reset --hard",
+      "git merge --abort",
+      "git revert",
+      "git checkout main"
+    ],
+    correctIndex: 1,
+    explanation: "'git merge --abort' cleanly cancels the merge and restores the state from just before you started it.",
+  },
+]} />
+
+<LessonSummary points={[
+  "Conflicts arise only when the same lines change differently on both branches",
+  "Conflict markers show HEAD (your branch) above ======= and the incoming branch below",
+  "Resolve by editing the file to the desired result and deleting all three markers",
+  "git add the resolved files, then git commit to finish the merge",
+  "git merge --abort safely cancels a merge; frequent pulls keep conflicts small",
+]} />

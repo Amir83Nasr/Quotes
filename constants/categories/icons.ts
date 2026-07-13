@@ -1,5 +1,7 @@
 /** Lucide icon name per category slug. */
 export const CATEGORY_ICONS: Record<string, string> = {
+  git: "GitBranch",
+  web: "Globe",
   html: "FileCode",
   css: "Palette",
   javascript: "FileJson",
@@ -27,6 +29,8 @@ export const CATEGORY_ICONS: Record<string, string> = {
 
 /** Gradient color pair per category slug. */
 export const CATEGORY_COLORS: Record<string, string> = {
+  git: "from-orange-600 to-red-500",
+  web: "from-sky-500 to-indigo-500",
   html: "from-orange-500 to-red-500",
   css: "from-blue-500 to-cyan-500",
   javascript: "from-yellow-500 to-amber-500",

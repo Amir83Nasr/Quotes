@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { CodeBlock } from "../shared/CodeBlock"
-import { Checklist, difficultyColors } from "../shared/Checklist"
+import { Checklist, difficultyColors, type Difficulty } from "../shared/Checklist"
 import { Target, CheckCircle2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -23,7 +23,7 @@ interface StaticChallengeProps {
   requirements: string[]
   starterCode: string
   solution?: string
-  difficulty?: "easy" | "medium" | "hard"
+  difficulty?: Difficulty
   className?: string
 }
 
@@ -33,7 +33,7 @@ export function StaticChallenge({
   requirements,
   starterCode,
   solution,
-  difficulty = "medium",
+  difficulty = "intermediate",
   className,
 }: StaticChallengeProps) {
   const [completed, setCompleted] = useState<string[]>([])

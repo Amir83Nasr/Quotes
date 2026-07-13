@@ -1,0 +1,172 @@
+---
+title: Staging & Commits
+description: Master the add-commit workflow — stage changes precisely and write commits your team will thank you for
+order: 2
+difficulty: beginner
+estimatedMinutes: 12
+tags: ["git", "commits", "staging", "workflow"]
+prerequisites: ["git/intro"]
+updated: "2026-07-11"
+---
+
+# Staging & Commits
+
+You now know Git records snapshots. This lesson is about doing it *well*: staging exactly the right changes and writing commit messages that make your history readable months later.
+
+<LearningObjectives objectives={[
+  "Stage specific files, whole directories, or nothing at all — on purpose",
+  "Inspect what's staged vs unstaged before committing",
+  "Unstage and discard changes safely",
+  "Write clear commit messages following the Conventional Commits standard",
+]} />
+
+## The Add–Commit Loop
+
+Day-to-day Git is a loop: edit files, stage what belongs together, commit with a message, repeat.
+
+```bash
+git add <files>     # stage changes for the next commit
+git status          # verify what's staged
+git commit -m "..." # record the snapshot
+```
+
+The skill is in the `git add` step — grouping related changes into one focused commit instead of one giant "did stuff" commit.
+
+## Staging Precisely
+
+`git add` is more flexible than "add everything". You control the granularity:
+
+```bash
+git add file.txt          # one specific file
+git add src/              # everything under a directory
+git add .                 # everything in the current directory tree
+git add -A                # every change in the repo (incl. deletions)
+```
+
+To see the difference between what's **staged** and what's still **unstaged**:
+
+```bash
+git diff            # unstaged changes (working dir vs staging)
+git diff --staged   # staged changes (staging vs last commit)
+```
+
+<Alert>
+<AlertTitle>Stage hunks, not just files</AlertTitle>
+<AlertDescription>`git add -p` walks you through each change ("hunk") and asks whether to stage it. It's the pro move for splitting unrelated edits in the same file into separate, clean commits.</AlertDescription>
+</Alert>
+
+## Undoing Staging (Safely)
+
+Staged something by mistake? Unstage it — this keeps your edits, it only removes them from the staging area:
+
+```bash
+git restore --staged file.txt   # unstage, keep the edit
+```
+
+Want to throw away the edits in your working directory entirely? This is destructive — the changes are gone:
+
+```bash
+git restore file.txt            # discard unstaged edits (careful!)
+```
+
+```text
+ working dir ──restore──▶ (edits discarded)
+ staging ──restore --staged──▶ working dir (edits kept, just unstaged)
+```
+
+<Alert>
+<AlertTitle>Warning: restore discards work</AlertTitle>
+<AlertDescription>`git restore file.txt` permanently deletes uncommitted changes to that file. Unlike almost everything else in Git, this cannot be recovered. When unsure, commit or stash first.</AlertDescription>
+</Alert>
+
+## Anatomy of a Good Commit
+
+A commit does two things: it snapshots your code, and it *explains* the change. The message is documentation your future teammates (and future you) will read constantly.
+
+This project follows **Conventional Commits** — a simple, structured format:
+
+```text
+<type>(<scope>): <description>
+
+[optional body explaining what and why]
+```
+
+Common types: `feat` (new feature), `fix` (bug fix), `docs`, `refactor`, `test`, `chore`.
+
+```bash
+git commit -m "feat(auth): add password reset flow"
+git commit -m "fix(ui): correct button alignment on mobile"
+```
+
+The rules that matter most:
+
+| Rule | Bad | Good |
+|------|-----|------|
+| Imperative mood | `added login` | `add login` |
+| Lowercase, no period | `Fix bug.` | `fix: handle empty input` |
+| Explain *why* in the body | (nothing) | "Users hit a 500 when the cart was empty" |
+
+Why bother? Structured messages give you auto-generated changelogs, readable history, and easy filtering:
+
+```bash
+git log --oneline --grep "^feat"   # show only features
+```
+
+## A Complete Example
+
+```bash
+# You edited two unrelated things: a feature and a typo fix.
+git add src/login.ts
+git commit -m "feat(auth): add remember-me checkbox"
+
+git add README.md
+git commit -m "docs: fix typo in setup steps"
+```
+
+Two focused commits instead of one muddled one. When someone later runs `git log`, the story of the project is clear.
+
+## Check Your Understanding
+
+<Quiz questions={[
+  {
+    question: "You staged a file by accident but want to keep your edits. Which command unstages it without losing work?",
+    options: [
+      "git restore file.txt",
+      "git restore --staged file.txt",
+      "git reset --hard file.txt",
+      "git rm file.txt"
+    ],
+    correctIndex: 1,
+    explanation: "'git restore --staged file.txt' removes the file from the staging area but leaves your edits in the working directory. Plain 'git restore file.txt' would discard the edits.",
+  },
+  {
+    question: "Which commit message best follows Conventional Commits?",
+    options: [
+      "Fixed the login bug.",
+      "updates",
+      "fix(auth): reject expired session tokens",
+      "FIX: Login Bug!!!"
+    ],
+    correctIndex: 2,
+    explanation: "It uses a type (fix), a scope (auth), and an imperative, lowercase description with no trailing period — exactly the standard's format.",
+  },
+  {
+    question: "What does 'git add -p' let you do?",
+    options: [
+      "Add a password to your commit",
+      "Push changes to a remote",
+      "Review and stage individual chunks of changes one at a time",
+      "Preview the commit before writing it"
+    ],
+    correctIndex: 2,
+    explanation: "The -p (patch) flag walks through each hunk of changes and asks whether to stage it, letting you split unrelated edits into clean, separate commits.",
+  },
+]} />
+
+<LessonSummary points={[
+  "git add stages at any granularity: a file, a directory, or individual hunks with -p",
+  "git diff shows unstaged changes; git diff --staged shows what's about to be committed",
+  "git restore --staged unstages but keeps edits; git restore discards edits permanently",
+  "Group related changes into focused commits, not one catch-all commit",
+  "Conventional Commits (type(scope): description) give readable history and auto-changelogs",
+]} />

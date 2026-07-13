@@ -127,7 +127,7 @@ export function Sidebar({ groups }: SidebarProps) {
       <aside
         className={cn(
           "relative hidden shrink-0 grow-0 border-r bg-background md:block",
-          "sticky top-0 h-screen overflow-y-auto",
+          "sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto overscroll-contain",
           !state.isOpen && "md:hidden",
         )}
         style={{ width }}
@@ -160,19 +160,19 @@ export function Sidebar({ groups }: SidebarProps) {
         />
       </aside>
 
-      {/* Mobile sheet backdrop */}
+      {/* Mobile sheet backdrop — above header (z-50) to block taps */}
       {state.isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          className="fixed inset-0 z-60 bg-black/50 md:hidden"
           onClick={close}
           aria-hidden
         />
       )}
 
-      {/* Mobile sidebar */}
+      {/* Mobile sidebar — highest z-index so it sits above everything */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 border-r bg-background transition-transform md:hidden",
+          "fixed inset-y-0 left-0 z-60 w-64 border-r bg-background transition-transform md:hidden",
           state.isOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >

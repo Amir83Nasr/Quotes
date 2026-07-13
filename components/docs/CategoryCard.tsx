@@ -41,6 +41,7 @@ function DynamicIcon({ name }: { name: string }) {
     Code: Icons.Code,
     BookOpen: Icons.BookOpen,
     GitBranch: Icons.GitBranch,
+    Globe: Icons.Globe,
     FileInput: Icons.FileInput,
     Accessibility: Icons.Accessibility,
     Layers: Icons.Layers,

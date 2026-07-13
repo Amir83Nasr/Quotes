@@ -1,0 +1,124 @@
+---
+title: Browser Rendering
+description: How the browser turns HTML, CSS, and JavaScript into the pixels you see
+order: 5
+difficulty: intermediate
+estimatedMinutes: 12
+tags: ["web", "browser", "rendering", "performance", "dom"]
+prerequisites: ["web/dns"]
+updated: "2026-07-11"
+---
+
+# Browser Rendering
+
+When the HTML arrives, the browser's real work begins: parsing it, applying styles, computing layout, and painting pixels. Knowing this pipeline explains why some code causes jank and how to keep pages smooth.
+
+<LearningObjectives objectives={[
+  "Describe the steps from HTML to painted pixels",
+  "Explain the DOM and CSSOM and how they combine",
+  "Distinguish layout (reflow) from paint and composite",
+  "Explain how render-blocking resources delay first paint",
+]} />
+
+## The Critical Rendering Path
+
+The browser transforms bytes into pixels through a pipeline:
+
+```text
+HTML  →  DOM
+                 ↘
+                   Render Tree  →  Layout  →  Paint  →  Composite
+                 ↗
+CSS   →  CSSOM
+```
+
+1. **Parse HTML → DOM** — the HTML becomes the Document Object Model, a tree of nodes.
+2. **Parse CSS → CSSOM** — stylesheets become the CSS Object Model, a tree of styles.
+3. **Render tree** — DOM + CSSOM combine into only the *visible* nodes with their styles.
+4. **Layout (reflow)** — compute the exact size and position of every box.
+5. **Paint** — fill in pixels: text, colors, borders, shadows.
+6. **Composite** — assemble painted layers into the final image on screen.
+
+## DOM and CSSOM
+
+The **DOM** is the browser's live, in-memory representation of your HTML — the same tree your JavaScript manipulates with `document.querySelector`. The **CSSOM** is the parallel structure for styles. Neither is the raw text file; both are structured trees the browser builds and updates.
+
+<Alert>
+<AlertTitle>CSS is render-blocking</AlertTitle>
+<AlertDescription>The browser won't paint until it has the CSSOM — otherwise you'd see a flash of unstyled content. That's why large or slow stylesheets delay the first paint, and why critical CSS is often inlined.</AlertDescription>
+</Alert>
+
+## Layout vs Paint vs Composite
+
+These three stages have very different costs, which matters enormously for performance:
+
+```text
+Layout      recompute geometry of boxes      (expensive — can cascade)
+Paint       fill pixels for changed areas    (medium)
+Composite   move existing layers on the GPU   (cheap — very fast)
+```
+
+Changing a property like `width` or `top` forces **layout** (a reflow) — the browser recomputes positions, potentially for many elements. But animating `transform` or `opacity` only needs **compositing**, which the GPU does cheaply without touching layout or paint.
+
+<Alert>
+<AlertTitle>Animate transform and opacity, not width/left</AlertTitle>
+<AlertDescription>Animating <code>left</code> or <code>width</code> triggers layout on every frame and causes jank. Animating <code>transform: translateX()</code> or <code>opacity</code> stays on the compositor — smooth 60fps. This one rule fixes most janky animations.</AlertDescription>
+</Alert>
+
+## How JavaScript Fits In
+
+By default, a `<script>` tag **blocks HTML parsing** — the browser stops building the DOM to download and run it. That's why script placement and the `defer`/`async` attributes matter:
+
+```text
+<script src="app.js">          blocks parsing until downloaded + run
+<script src="app.js" defer>    downloads in parallel, runs after HTML is parsed
+<script src="app.js" async>    downloads in parallel, runs as soon as ready
+```
+
+Use `defer` for scripts that need the full DOM (most app code); `async` for independent scripts (analytics). Both let the HTML keep parsing instead of stalling.
+
+## Check Your Understanding
+
+<Quiz questions={[
+  {
+    question: "What are the DOM and CSSOM combined into before layout?",
+    options: [
+      "The bytecode",
+      "The render tree — only the visible nodes with their computed styles",
+      "The virtual DOM",
+      "The paint layer"
+    ],
+    correctIndex: 1,
+    explanation: "The DOM and CSSOM merge into the render tree, which contains only visible elements with their styles. Layout then computes their geometry.",
+  },
+  {
+    question: "Why is animating 'transform' smoother than animating 'left'?",
+    options: [
+      "transform is a newer property",
+      "transform can be handled by the compositor/GPU without triggering layout each frame",
+      "left is not supported in modern browsers",
+      "They perform identically"
+    ],
+    correctIndex: 1,
+    explanation: "Animating 'left' forces layout (reflow) every frame. 'transform' and 'opacity' stay on the compositor, which the GPU handles cheaply for smooth 60fps.",
+  },
+  {
+    question: "What does the 'defer' attribute on a script do?",
+    options: [
+      "Prevents the script from ever running",
+      "Downloads it in parallel and runs it after HTML parsing completes",
+      "Runs it before the HTML is parsed",
+      "Loads it only on user interaction"
+    ],
+    correctIndex: 1,
+    explanation: "defer downloads the script in parallel without blocking parsing, then executes it once the DOM is fully parsed — ideal for app code that needs the whole page.",
+  },
+]} />
+
+<LessonSummary points={[
+  "The critical rendering path: HTML→DOM, CSS→CSSOM, render tree, layout, paint, composite",
+  "The DOM and CSSOM are live trees the browser builds — not the raw source files",
+  "Layout (reflow) is expensive; compositing transform/opacity is cheap and GPU-accelerated",
+  "CSS is render-blocking — the browser won't paint without the CSSOM",
+  "Scripts block parsing by default; use defer for app code and async for independent scripts",
+]} />

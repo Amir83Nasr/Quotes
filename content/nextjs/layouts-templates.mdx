@@ -37,7 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 Any route segment can define its own `layout.tsx`. Layouts **persist** across navigation — they don't re-render:
 
-```
+```text
 app/
  ├── dashboard/
  │    ├── layout.tsx   → sidebar persists
@@ -94,7 +94,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
 Use `@slot` to render multiple pages in the same layout independently:
 
-```
+```text
 app/
  └── dashboard/
       ├── layout.tsx
@@ -129,7 +129,7 @@ export default function DashboardLayout({
 
 Use `(..)` to intercept routes from a parent segment — useful for modals:
 
-```
+```text
 app/
  └── feed/
       ├── page.tsx        → /feed
@@ -142,7 +142,7 @@ app/
 
 Organize routes without affecting URL paths:
 
-```
+```text
 app/
  ├── (marketing)/
  │    ├── layout.tsx

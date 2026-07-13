@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useSyncExternalStore, useState } from "react"
 import type { SidebarState } from "@/types/navigation"
 
 type SidebarContextType = {
@@ -14,21 +14,36 @@ type MediaQueryHandler = (e: MediaQueryListEvent | MediaQueryList) => void
 
 const SidebarContext = createContext<SidebarContextType | null>(null)
 
+/**
+ * Synchronous media query check — avoids the flash caused by
+ * useState(false) → useEffect(fire) on mobile.
+ */
+function useIsMobile() {
+  return useSyncExternalStore(
+    (callback) => {
+      const mq = window.matchMedia("(max-width: 768px)")
+      mq.addEventListener("change", callback)
+      return () => mq.removeEventListener("change", callback)
+    },
+    () => window.matchMedia("(max-width: 768px)").matches,
+    // Server fallback — assume desktop (sidebar open)
+    () => false,
+  )
+}
+
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
+  const isMobile = useIsMobile()
+
   const [state, setState] = useState<SidebarState>({
-    isOpen: true,
+    isOpen: !isMobile,
     isCollapsed: false,
   })
 
+  // Keep sidebar closed on mobile, open on desktop —
+  // handles window resize and orientation changes.
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 768px)")
-    const handleChange: MediaQueryHandler = (e) => {
-      setState((prev) => ({ ...prev, isOpen: !e.matches }))
-    }
-    handleChange(mq)
-    mq.addEventListener("change", handleChange)
-    return () => mq.removeEventListener("change", handleChange)
-  }, [])
+    setState((prev) => ({ ...prev, isOpen: !isMobile }))
+  }, [isMobile])
 
   return (
     <SidebarContext.Provider

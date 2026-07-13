@@ -1,0 +1,128 @@
+---
+title: How the Web Works
+description: Follow a request from typing a URL to seeing a page — the big picture every developer needs
+order: 1
+difficulty: beginner
+estimatedMinutes: 11
+tags: ["web", "fundamentals", "http", "client-server"]
+updated: "2026-07-11"
+---
+
+# How the Web Works
+
+Before any framework, there's the web itself: clients asking servers for resources over a network. Understanding this request–response cycle makes everything above it — HTML, APIs, caching, deploys — click into place.
+
+<LearningObjectives objectives={[
+  "Describe the client–server model of the web",
+  "Trace what happens when you enter a URL",
+  "Break a URL into its parts and explain each",
+  "Explain why the web is built on a request–response cycle",
+]} />
+
+## Clients and Servers
+
+The web runs on a simple relationship:
+
+- A **client** (your browser) *requests* resources.
+- A **server** *responds* with them — HTML, images, JSON, whatever.
+
+The client always initiates. Servers don't push pages at you unprompted; they wait for requests and answer. Everything else is detail on top of this.
+
+```text
+Client (browser)  ──── request ───▶  Server
+                  ◀─── response ────
+```
+
+## What Happens When You Enter a URL
+
+Type `https://example.com/about` and press Enter. Roughly this sequence fires:
+
+```text
+1. DNS lookup      example.com → 93.184.216.34  (find the server's address)
+2. TCP connection  browser opens a connection to that IP
+3. TLS handshake   https → negotiate encryption
+4. HTTP request    GET /about  → sent to the server
+5. Server responds 200 OK + HTML
+6. Browser renders parses HTML, requests CSS/JS/images, paints the page
+```
+
+Each step is its own topic in this track — DNS, TLS, HTTP, and rendering all get their own lesson. Right now, just hold the shape of the whole journey.
+
+<Alert>
+<AlertTitle>It's requests all the way down</AlertTitle>
+<AlertDescription>That single page load triggers *many* requests: one for the HTML, then more for each stylesheet, script, font, and image the HTML references. A typical page makes dozens of requests.</AlertDescription>
+</Alert>
+
+## Anatomy of a URL
+
+A URL (Uniform Resource Locator) is an address with structured parts:
+
+```text
+https://api.example.com:443/users?page=2#top
+└─┬─┘   └──────┬──────┘ └┬┘ └─┬──┘ └─┬──┘ └┬┘
+scheme     host       port  path  query  fragment
+```
+
+| Part | Example | Meaning |
+|------|---------|---------|
+| Scheme | `https` | Protocol to use |
+| Host | `api.example.com` | Which server (resolved via DNS) |
+| Port | `443` | Which "door" on the server (443 = HTTPS default) |
+| Path | `/users` | Which resource |
+| Query | `?page=2` | Parameters for the request |
+| Fragment | `#top` | A spot within the page (never sent to the server) |
+
+## Stateless by Design
+
+HTTP is **stateless**: each request stands alone, and the server doesn't inherently remember previous ones. That's why mechanisms like cookies and tokens exist — they re-attach identity to each otherwise-independent request. Statelessness is what lets the web scale to billions of requests across many servers.
+
+<Alert>
+<AlertTitle>Frontend and backend are two halves of one conversation</AlertTitle>
+<AlertDescription>Everything you build — a React app, an API, a database query — is ultimately serving or making requests in this cycle. Keeping the request–response model in mind is the fastest way to reason about bugs.</AlertDescription>
+</Alert>
+
+## Check Your Understanding
+
+<Quiz questions={[
+  {
+    question: "In the client–server model, who initiates communication?",
+    options: [
+      "The server pushes pages to clients",
+      "The client requests; the server responds",
+      "They negotiate simultaneously",
+      "The DNS server decides"
+    ],
+    correctIndex: 1,
+    explanation: "The client (browser) always initiates by sending a request. The server waits and responds — it doesn't send pages unprompted.",
+  },
+  {
+    question: "In the URL https://example.com/blog?id=5#intro, what is '#intro'?",
+    options: [
+      "The path",
+      "A query parameter",
+      "The fragment — a location within the page, not sent to the server",
+      "The port"
+    ],
+    correctIndex: 2,
+    explanation: "The fragment (after #) points to a spot within the page and is handled by the browser. It is never sent to the server.",
+  },
+  {
+    question: "What does it mean that HTTP is 'stateless'?",
+    options: [
+      "It cannot transfer data",
+      "Each request is independent; the server doesn't inherently remember previous ones",
+      "It only works without JavaScript",
+      "It requires a constant connection"
+    ],
+    correctIndex: 1,
+    explanation: "Statelessness means each request stands on its own. Cookies and tokens exist precisely to re-attach identity across otherwise-independent requests.",
+  },
+]} />
+
+<LessonSummary points={[
+  "The web is client–server: clients request, servers respond — the client always initiates",
+  "Loading a URL triggers DNS lookup, connection, TLS, an HTTP request, and rendering",
+  "A single page load fans out into many requests (HTML, CSS, JS, fonts, images)",
+  "A URL has structured parts: scheme, host, port, path, query, and fragment",
+  "HTTP is stateless; cookies and tokens re-attach identity to each request",
+]} />

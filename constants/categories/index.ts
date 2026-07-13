@@ -1,11 +1,47 @@
 import type { Category } from "@/types/content"
+import { CATEGORY_SLUGS } from "./registry.mjs"
 
 // Re-export focused config modules so `@/constants/categories` stays the
 // single import surface for category/sidebar/icon data.
 export { CATEGORY_ICONS, CATEGORY_COLORS } from "./icons"
 export { SIDEBAR_LABELS, SIDEBAR_SECTIONS } from "./sidebar"
+export { CATEGORY_SLUGS } from "./registry.mjs"
 
 export const CATEGORIES: Category[] = [
+  {
+    id: "git",
+    title: "Git & Version Control",
+    description: "Track changes, collaborate, and never lose work — the developer's essential tool",
+    icon: "GitBranch",
+    color: "from-orange-600 to-red-500",
+    href: "/git/intro",
+    topics: [
+      { name: "Introduction", href: "/git/intro" },
+      { name: "Staging & Commits", href: "/git/staging-commits" },
+      { name: "Branching & Merging", href: "/git/branching-merging" },
+      { name: "Remotes & GitHub", href: "/git/remotes-github" },
+      { name: "Resolving Merge Conflicts", href: "/git/merge-conflicts" },
+      { name: "Undoing Changes", href: "/git/undoing-changes" },
+      { name: "Rebasing", href: "/git/rebasing" },
+    ],
+  },
+  {
+    id: "web",
+    title: "How the Web Works",
+    description: "The foundation beneath every website — HTTP, DNS, browsers, and caching",
+    icon: "Globe",
+    color: "from-sky-500 to-indigo-500",
+    href: "/web/how-the-web-works",
+    topics: [
+      { name: "How the Web Works", href: "/web/how-the-web-works" },
+      { name: "HTTP Methods & Status", href: "/web/http" },
+      { name: "HTTPS & TLS", href: "/web/https-tls" },
+      { name: "DNS", href: "/web/dns" },
+      { name: "Browser Rendering", href: "/web/browser-rendering" },
+      { name: "DevTools", href: "/web/devtools" },
+      { name: "Caching & CDNs", href: "/web/caching-cdns" },
+    ],
+  },
   {
     id: "react",
     title: "React",
@@ -28,6 +64,11 @@ export const CATEGORIES: Category[] = [
       { name: "Portals & Suspense", href: "/react/portals-suspense" },
       { name: "Error Boundaries", href: "/react/error-boundaries" },
       { name: "Rendering Patterns", href: "/react/rendering-patterns" },
+      { name: "React 19: use() API", href: "/react/react-19/use-api" },
+      { name: "React 19: Form Actions", href: "/react/react-19/form-actions" },
+      { name: "React 19: useOptimistic", href: "/react/react-19/use-optimistic" },
+      { name: "React 19: useTransition", href: "/react/react-19/use-transition" },
+      { name: "React 19: ref as Prop", href: "/react/react-19/ref-as-prop" },
     ],
   },
   {
@@ -184,6 +225,23 @@ export const CATEGORIES: Category[] = [
     ],
   },
   {
+    id: "security",
+    title: "Web Security",
+    description: "Defend your apps against the most common attacks — XSS, CSRF, injection, and more",
+    icon: "ShieldAlert",
+    color: "from-red-600 to-rose-500",
+    href: "/security/threat-model",
+    topics: [
+      { name: "Threat Model & OWASP", href: "/security/threat-model" },
+      { name: "XSS", href: "/security/xss" },
+      { name: "CSRF", href: "/security/csrf" },
+      { name: "CORS & Same-Origin", href: "/security/cors" },
+      { name: "Content Security Policy", href: "/security/csp" },
+      { name: "Auth Security", href: "/security/auth-security" },
+      { name: "Injection & Validation", href: "/security/injection" },
+    ],
+  },
+  {
     id: "practice",
     title: "Practice Projects",
     description: "Build real projects to cement your knowledge",
@@ -206,29 +264,24 @@ export const CATEGORIES: Category[] = [
  * Lower = higher in the tree (pedagogical learning order).
  */
 export const CATEGORY_ORDER: Record<string, number> = {
-  frontend: 1,
-  tailwind: 2,
-  shadcn: 3,
-  gallery: 4,
-  react: 5,
-  nextjs: 6,
-  advanced: 7,
-  fullstack: 8,
-  practice: 9,
+  git: 0,
+  web: 1,
+  frontend: 2,
+  tailwind: 3,
+  shadcn: 4,
+  gallery: 5,
+  react: 6,
+  nextjs: 7,
+  advanced: 8,
+  fullstack: 9,
+  security: 10,
+  practice: 11,
 }
 
-/** Map of content directories to route prefixes */
-export const CATEGORY_ROUTES: Record<string, string> = {
-  react: "/react",
-  nextjs: "/nextjs",
-  tailwind: "/tailwind",
-  shadcn: "/shadcn",
-  advanced: "/advanced",
-  fullstack: "/fullstack",
-  practice: "/practice",
-  gallery: "/gallery",
-  frontend: "/frontend",
-}
+/** Map of content directories to route prefixes, derived from the registry. */
+export const CATEGORY_ROUTES: Record<string, string> = Object.fromEntries(
+  CATEGORY_SLUGS.map((slug) => [slug, `/${slug}`]),
+)
 
 /** Get route prefix for a content directory */
 export function getRouteForCategory(dir: string): string {

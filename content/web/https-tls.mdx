@@ -1,0 +1,123 @@
+---
+title: HTTPS & TLS
+description: How encryption, certificates, and the TLS handshake keep web traffic private and trusted
+order: 3
+difficulty: intermediate
+estimatedMinutes: 11
+tags: ["web", "https", "tls", "security", "encryption"]
+prerequisites: ["web/http"]
+updated: "2026-07-11"
+---
+
+# HTTPS & TLS
+
+HTTPS is HTTP wrapped in encryption. It's why you can log into your bank over public Wi-Fi without a stranger reading your password. Understanding TLS — the protocol underneath the "S" — demystifies certificates, the padlock icon, and a whole class of security warnings.
+
+<LearningObjectives objectives={[
+  "Explain what HTTPS protects and what it doesn't",
+  "Describe the three guarantees TLS provides",
+  "Walk through the TLS handshake at a high level",
+  "Explain the role of certificates and certificate authorities",
+]} />
+
+## HTTP vs HTTPS
+
+Plain HTTP sends everything in **cleartext** — anyone between you and the server (your ISP, a coffee-shop router, an attacker) can read and modify it. HTTPS adds a TLS (Transport Layer Security) layer that encrypts the traffic.
+
+```text
+HTTP:   browser ─── "password=hunter2" ───▶ server   (readable by anyone in between)
+HTTPS:  browser ─── "x9#a!ЖΩ7k…" ─────────▶ server   (gibberish to eavesdroppers)
+```
+
+## The Three Guarantees of TLS
+
+TLS provides three distinct protections — it helps to name them separately:
+
+- **Encryption** — eavesdroppers see only ciphertext, not your data.
+- **Integrity** — tampering is detected; data can't be silently altered in transit.
+- **Authentication** — you're really talking to `bank.com`, not an impostor.
+
+That third one is what certificates provide, and it's what stops a man-in-the-middle from impersonating a site even if they can encrypt.
+
+## The TLS Handshake (High Level)
+
+Before any HTTP data flows, client and server perform a handshake to agree on keys:
+
+```text
+1. ClientHello   browser: "I support these TLS versions & ciphers"
+2. ServerHello   server: "let's use this cipher" + sends its certificate
+3. Verify        browser checks the certificate is valid & trusted
+4. Key exchange  both derive a shared session key (asymmetric → symmetric)
+5. Encrypted     all further traffic uses the fast symmetric session key
+```
+
+The clever part: TLS uses slow **asymmetric** crypto (public/private keys) just to safely establish a shared secret, then switches to fast **symmetric** crypto for the actual data. Best of both worlds.
+
+<Alert>
+<AlertTitle>Asymmetric to bootstrap, symmetric to run</AlertTitle>
+<AlertDescription>Public-key cryptography is expensive, so it's used only during the handshake to exchange a session key. The bulk data transfer then uses that single shared key with fast symmetric encryption.</AlertDescription>
+</Alert>
+
+## Certificates and Trust
+
+A **certificate** is a signed document proving a server owns its domain. It's issued by a **Certificate Authority (CA)** — an organization your browser already trusts (the list ships with your OS/browser).
+
+```text
+Certificate Authority (trusted root)
+        │ signs
+        ▼
+   bank.com's certificate  ──▶ browser verifies the signature chains to a trusted root
+```
+
+If the certificate is expired, self-signed, or doesn't match the domain, the browser throws the scary "Your connection is not private" warning — TLS's authentication guarantee doing its job.
+
+<Alert>
+<AlertTitle>HTTPS doesn't mean "safe site"</AlertTitle>
+<AlertDescription>The padlock means the *connection* is encrypted and the domain is authenticated — not that the site is trustworthy. A phishing site can have a valid certificate too. HTTPS protects the channel, not your judgment about who's on the other end.</AlertDescription>
+</Alert>
+
+## Check Your Understanding
+
+<Quiz questions={[
+  {
+    question: "What are the three guarantees TLS provides?",
+    options: [
+      "Speed, caching, and compression",
+      "Encryption, integrity, and authentication",
+      "Availability, redundancy, and backups",
+      "Anonymity, encryption, and speed"
+    ],
+    correctIndex: 1,
+    explanation: "TLS provides encryption (privacy), integrity (tamper detection), and authentication (you're talking to the real server, via its certificate).",
+  },
+  {
+    question: "Why does TLS use asymmetric cryptography during the handshake but symmetric for the rest?",
+    options: [
+      "Asymmetric is more secure for bulk data",
+      "Asymmetric safely establishes a shared key, then fast symmetric crypto handles the data",
+      "Symmetric can't encrypt anything",
+      "It's a legacy requirement with no real reason"
+    ],
+    correctIndex: 1,
+    explanation: "Asymmetric crypto is slow but great for safely exchanging a secret. TLS uses it to establish a session key, then switches to fast symmetric encryption for the actual traffic.",
+  },
+  {
+    question: "What does the padlock / valid certificate actually guarantee?",
+    options: [
+      "The website is trustworthy and safe",
+      "The connection is encrypted and the domain is authenticated",
+      "The site has no bugs",
+      "Your data is stored securely on the server"
+    ],
+    correctIndex: 1,
+    explanation: "It guarantees the connection is encrypted and you're really talking to that domain. It says nothing about whether the site itself is honest — phishing sites can have valid certificates.",
+  },
+]} />
+
+<LessonSummary points={[
+  "HTTP is cleartext; HTTPS wraps it in TLS encryption",
+  "TLS guarantees encryption, integrity, and authentication",
+  "The handshake uses asymmetric crypto to establish a key, then fast symmetric crypto for data",
+  "Certificates, signed by trusted Certificate Authorities, prove a server owns its domain",
+  "The padlock secures the connection — it doesn't vouch for the site's honesty",
+]} />

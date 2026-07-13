@@ -26,7 +26,7 @@ One repo, many packages. Share code, run tools across them, coordinate releases.
 </TabsList>
 <TabsContent value="mono">
 
-```
+```text
 my-project/
   packages/
     shared/       # Shared types, utils
@@ -43,7 +43,7 @@ my-project/
 </TabsContent>
 <TabsContent value="multi">
 
-```
+```text
 my-project/
   shared/        # Published as npm package
   web-app/       # Separate repo
@@ -171,7 +171,7 @@ pnpm add @my-project/shared --filter @my-project/web
 }
 ```
 
-```
+```text
 Without Turborepo:  web(45s) + api(30s) + shared(10s) = 85s sequential
 With Turborepo:     shared(10s) → web(45s) + api(30s) in parallel = 55s
 With caching:       Only changed packages rebuild

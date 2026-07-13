@@ -1,7 +1,9 @@
 import { compileMDX } from "next-mdx-remote/rsc"
 import remarkGfm from "remark-gfm"
+import rehypeHighlight from "rehype-highlight"
 import type { MDXComponents } from "mdx/types"
 import type { Frontmatter } from "@/types/content"
+import { slugify } from "@/lib/utils"
 /**
  * Tiny remark plugin: drop the lesson's leading H1.
  *
@@ -47,12 +49,7 @@ function rehypeSlugify() {
           const text = (node.children || []).map(getText).join("")
           node.properties = {
             ...node.properties,
-            id: text
-              .toLowerCase()
-              .replace(/[`*_]/g, "")
-              .replace(/[^\w一-鿿\s-]/g, "")
-              .replace(/\s+/g, "-")
-              .replace(/^-+|-+$/g, ""),
+            id: slugify(text),
           }
         }
         if (node.children) walk(node.children)
@@ -79,7 +76,13 @@ export async function compileMdx<TFrontmatter extends Frontmatter = Frontmatter>
       parseFrontmatter: true,
       mdxOptions: {
         remarkPlugins: [remarkGfm, remarkStripLeadingH1],
-        rehypePlugins: [rehypeSlugify],
+        rehypePlugins: [
+          rehypeSlugify,
+          // Tokenize fenced code blocks into `.hljs-*` spans at compile time,
+          // matching the highlight.js theme in globals.css. `ignoreMissing`
+          // keeps unknown languages from throwing the whole render.
+          [rehypeHighlight, { ignoreMissing: true }],
+        ],
         format: "mdx" as const,
       },
     },

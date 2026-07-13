@@ -1,0 +1,131 @@
+---
+title: Caching & CDNs
+description: Serve content faster by storing copies closer to users and skipping needless downloads
+order: 7
+difficulty: intermediate
+estimatedMinutes: 12
+tags: ["web", "caching", "cdn", "performance", "http"]
+prerequisites: ["web/devtools"]
+updated: "2026-07-11"
+---
+
+# Caching & CDNs
+
+The fastest request is the one you never make. Caching stores copies of responses so they can be reused instead of re-fetched, and CDNs push those copies physically closer to users. Together they're the backbone of a fast web.
+
+<LearningObjectives objectives={[
+  "Explain why caching improves speed and reduces load",
+  "Control caching with Cache-Control headers",
+  "Distinguish freshness from validation (ETags)",
+  "Describe what a CDN does and why edge locations matter",
+]} />
+
+## Why Cache?
+
+Re-downloading an unchanged logo on every page view wastes bandwidth, time, and server capacity. A cache keeps a local copy and reuses it:
+
+```text
+first visit:  browser ──▶ server (downloads logo.png, 40KB)
+next visits:  browser ──▶ cache  (0 bytes over the network — instant)
+```
+
+Caches live at many layers: the browser, a CDN, a reverse proxy, the server. The same principles govern them all.
+
+## Cache-Control: The Master Switch
+
+The server tells caches what to do via the `Cache-Control` response header:
+
+```text
+Cache-Control: max-age=3600          cache for 1 hour
+Cache-Control: no-store              never cache (sensitive data)
+Cache-Control: no-cache              cache, but revalidate before using
+Cache-Control: public, max-age=31536000, immutable   cache for a year, never revalidate
+```
+
+- `max-age` — seconds the response stays "fresh" and reusable without asking.
+- `no-store` — don't cache at all (use for private/sensitive responses).
+- `no-cache` — you *may* store it, but must revalidate with the server before reuse.
+- `immutable` — promise it will never change, so don't even revalidate.
+
+<Alert>
+<AlertTitle>The cache-busting pattern</AlertTitle>
+<AlertDescription>Build tools name files with a content hash — <code>app.9f2a1b.js</code> — and serve them with a one-year <code>immutable</code> cache. When the file changes, the hash changes, so the URL changes, so browsers fetch the new one. You get aggressive caching AND instant updates.</AlertDescription>
+</Alert>
+
+## Freshness vs Validation
+
+Two questions a cache asks:
+
+1. **Is it still fresh?** If within `max-age`, use the cached copy immediately — no network at all.
+2. **If stale, has it actually changed?** Instead of re-downloading, the browser *validates* with an **ETag** — a fingerprint of the content:
+
+```text
+Response:  ETag: "abc123"
+Later:     browser sends  If-None-Match: "abc123"
+           server replies 304 Not Modified   → reuse cache, no body re-sent
+           or             200 OK + new body   → content changed
+```
+
+A `304 Not Modified` means "your copy is still good" — a tiny response instead of the full file. (Recall `304` from the status-codes lesson.)
+
+## Content Delivery Networks
+
+A **CDN** is a network of servers spread around the world that cache your content at **edge locations** near users. A visitor in Tokyo hits a Tokyo edge server instead of your origin in Virginia:
+
+```text
+without CDN:  Tokyo user ─────────── 150ms ───────────▶ origin (Virginia)
+with CDN:     Tokyo user ── 10ms ──▶ Tokyo edge (cached copy)
+```
+
+CDNs cut latency (shorter physical distance), offload traffic from your origin, and absorb spikes. Static assets — images, CSS, JS, fonts — are the classic thing to serve from a CDN.
+
+<Alert>
+<AlertTitle>Latency is distance</AlertTitle>
+<AlertDescription>Data can't travel faster than light, so distance is a hard floor on speed. A CDN's whole job is shrinking that distance by keeping a copy near the user — which no amount of server optimization can replace.</AlertDescription>
+</Alert>
+
+## Check Your Understanding
+
+<Quiz questions={[
+  {
+    question: "What does 'Cache-Control: max-age=3600' tell a cache?",
+    options: [
+      "Never cache this response",
+      "The response stays fresh and reusable for 3600 seconds",
+      "Revalidate on every request",
+      "Cache it for exactly 3600 requests"
+    ],
+    correctIndex: 1,
+    explanation: "max-age=3600 means the cached copy is considered fresh for 3600 seconds (1 hour) and can be reused without contacting the server during that window.",
+  },
+  {
+    question: "What is the purpose of an ETag?",
+    options: [
+      "To encrypt the response",
+      "To act as a content fingerprint so a cache can validate whether the resource changed",
+      "To set the cache duration",
+      "To identify the user"
+    ],
+    correctIndex: 1,
+    explanation: "An ETag fingerprints the content. The browser sends it back via If-None-Match; the server replies 304 Not Modified (reuse cache) or 200 with new content.",
+  },
+  {
+    question: "Why does a CDN make a site faster for distant users?",
+    options: [
+      "It compresses files more than the origin",
+      "It caches copies at edge locations physically closer to users, cutting latency",
+      "It uses a faster programming language",
+      "It removes the need for DNS"
+    ],
+    correctIndex: 1,
+    explanation: "A CDN serves cached content from edge servers near the user. Shorter physical distance means lower latency — something origin optimization alone can't achieve.",
+  },
+]} />
+
+<LessonSummary points={[
+  "Caching reuses stored responses instead of re-fetching — the fastest request is none",
+  "Cache-Control sets policy: max-age (freshness), no-store, no-cache, immutable",
+  "Content-hashed filenames + immutable caching give aggressive caching with instant updates",
+  "ETags let a stale cache validate cheaply — a 304 reuses the copy without re-downloading",
+  "CDNs cache at edge locations near users, cutting latency that distance would otherwise impose",
+]} />
