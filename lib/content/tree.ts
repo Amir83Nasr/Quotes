@@ -111,6 +111,25 @@ export const getAllLessons = cache(async (): Promise<ContentNode[]> => {
   return lessons
 })
 
+/**
+ * Get all content paths as slug arrays for static generation.
+ * Includes both category directories and individual lesson pages.
+ */
+export const getAllContentPaths = cache(async (): Promise<string[][]> => {
+  const tree = await getContentTree()
+  const paths: string[][] = []
+  function walk(nodes: ContentNode[]) {
+    for (const node of nodes) {
+      paths.push(node.contentPath.split("/"))
+      if (node.children.length > 0) {
+        walk(node.children)
+      }
+    }
+  }
+  walk(tree)
+  return paths
+})
+
 /** Get a specific content node by its contentPath */
 export const getContentNode = cache(
   async (contentPath: string): Promise<ContentNode | null> => {

@@ -4,6 +4,7 @@ import { compileMdx } from "@/lib/mdx"
 import {
   getMdxSource,
   getContentNode,
+  getAllContentPaths,
   extractToc,
   buildBreadcrumbs,
   buildLessonNavigation,
@@ -15,6 +16,11 @@ import { CategoryIndex } from "@/components/docs/CategoryIndex"
 import { LessonNav } from "./lesson-nav"
 import { Separator } from "@/components/ui/separator"
 import type { Metadata } from "next"
+
+export async function generateStaticParams() {
+  const paths = await getAllContentPaths()
+  return paths.map((slug) => ({ slug }))
+}
 
 interface PageProps {
   params: Promise<{ slug: string[] }>

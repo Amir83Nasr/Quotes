@@ -260,25 +260,6 @@ hints={[
 previewType="mixed"
 />
 
-}` render?",
-options: ["Nothing", "The Component", "0", "An error"],
-correctIndex: 2,
-explanation: "0 is falsy in condition but truthy in JSX rendering — it prints '0'. Guard with explicit comparison."
-},
-{
-question: "When would you use <> instead of a <div>?",
-options: [
-"To apply CSS classes",
-"To group children without adding a DOM node",
-"To pass a key to the group",
-"To create a flex container"
-],
-correctIndex: 1,
-explanation: "Fragments (<>...</>) group elements without adding an extra DOM wrapper."
-}
-]}
-/>
-
 <LessonSummary
   points={[
     "JSX is syntactic sugar for React.createElement",

@@ -4,7 +4,7 @@ import rehypeHighlight from "rehype-highlight"
 import type { MDXComponents } from "mdx/types"
 import type { Frontmatter } from "@/types/content"
 import type { Root as MdastRoot } from "mdast"
-import type { Root as HastRoot, Element, Text } from "hast"
+import type { Root as HastRoot, Element, ElementContent, Text } from "hast"
 import { slugify } from "@/lib/utils"
 /**
  * Tiny remark plugin: drop the lesson's leading H1.
@@ -37,14 +37,14 @@ function remarkStripLeadingH1() {
  */
 function rehypeSlugify() {
   return (tree: HastRoot) => {
-    function getText(node: Element | Text): string {
+    function getText(node: ElementContent): string {
       if (node.type === "text") return node.value
-      if (node.type === "element" && node.children) {
-        return (node.children as (Element | Text)[]).map(getText).join("")
+      if (node.type === "element" && "children" in node) {
+        return node.children.map(getText).join("")
       }
       return ""
     }
-    function walk(nodes: (Element | Text)[]) {
+    function walk(nodes: ElementContent[]) {
       for (const node of nodes) {
         if (node.type !== "element") continue
         if (/^h[1-6]$/.test(node.tagName)) {
@@ -54,10 +54,10 @@ function rehypeSlugify() {
             id: slugify(text),
           }
         }
-        if (node.children) walk(node.children as (Element | Text)[])
+        walk(node.children)
       }
     }
-    walk(tree.children as (Element | Text)[])
+    walk(tree.children as unknown as ElementContent[])
   }
 }
 

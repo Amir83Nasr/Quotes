@@ -325,7 +325,7 @@ value={item.quantity}
 onChange={(e) => updateQuantity(item.id, Number(e.target.value))}
 min={0}
 />
-= ${(item.price \* item.quantity).toFixed(2)}
+= ${(item.price * item.quantity).toFixed(2)}
 <button onClick={() => removeItem(item.id)}>Remove</button>
 </li>
 )

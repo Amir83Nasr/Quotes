@@ -7,6 +7,11 @@
  *  - toc:        heading extraction
  */
 export { CONTENT_DIR, readFrontmatter, getMdxSource } from "./source"
-export { getContentTree, getAllLessons, getContentNode } from "./tree"
+export {
+  getContentTree,
+  getAllLessons,
+  getContentNode,
+  getAllContentPaths,
+} from "./tree"
 export { buildBreadcrumbs, buildLessonNavigation } from "./navigation"
 export { extractToc } from "./toc"

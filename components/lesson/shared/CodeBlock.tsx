@@ -85,7 +85,7 @@ export function CodeBlock({
     }
   }, [code, lang])
 
-  const lines = code.split("\n")
+  const lines = (code ?? "").split("\n")
 
   return (
     <div

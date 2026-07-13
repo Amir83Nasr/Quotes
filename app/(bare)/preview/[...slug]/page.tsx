@@ -1,9 +1,14 @@
 import { notFound } from "next/navigation"
 import { compileMdx } from "@/lib/mdx"
-import { getMdxSource, getContentNode } from "@/lib/content"
+import { getMdxSource, getContentNode, getAllContentPaths } from "@/lib/content"
 import { getLessonMdxComponents } from "@/components/lesson/mdx-registry"
 import { CategoryIndex } from "@/components/docs/CategoryIndex"
 import type { Metadata } from "next"
+
+export async function generateStaticParams() {
+  const paths = await getAllContentPaths()
+  return paths.map((slug) => ({ slug }))
+}
 
 interface PageProps {
   params: Promise<{ slug: string[] }>
