@@ -15,7 +15,6 @@ order: 2
     "Understand specificity differences between :is() and :where()",
     "Write nth-child formulas like 2n+1, -n+3",
   ]}
-  preview
 />
 
 ## Attribute Selectors
@@ -178,56 +177,6 @@ li:has(> .active) {
 }
 ```
 
-<SandboxPreview
-  html={`<div class="selector-demo">
-  <ul class="list">
-    <li>First item</li>
-    <li class="highlight">Second item (highlight)</li>
-    <li>Third item</li>
-    <li>Fourth item</li>
-  </ul>
-  <form class="form-demo">
-    <div class="field-group">
-      <label>Name</label>
-      <input type="text" value="John" />
-    </div>
-    <div class="field-group has-error">
-      <label>Email</label>
-      <input type="email" value="bad" placeholder="invalid" />
-    </div>
-  </form>
-</div>`}
-  css={`
-    .list li:nth-child(2n + 1) {
-      background: #f8fafc;
-    }
-    .list li.highlight::before {
-      content: "> ";
-      color: #6366f1;
-      font-weight: bold;
-    }
-    .field-group:has(input:invalid) label {
-      color: #ef4444;
-    }
-    .field-group:has(input:invalid) input {
-      border-color: #ef4444;
-    }
-    .field-group {
-      margin: 0.5rem 0;
-    }
-    input {
-      border: 2px solid #e2e8f0;
-      padding: 0.4rem;
-      border-radius: 4px;
-    }
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-    }
-  `}
-/>
-
 ## nth-child Formulas
 
 `an + b` — every `a` elements starting from offset `b`.
@@ -260,7 +209,6 @@ li:nth-child(n + 4):nth-child(-n + 6) {
   <li>Task six - normal</li>
 </ul>`}
   language="html"
-  preview
   explanation="A task list styled with `:nth-child` selectors to target alternating items, the first 3 items, and specific ranges. The preview highlights which list items each selector matches."
 />
 

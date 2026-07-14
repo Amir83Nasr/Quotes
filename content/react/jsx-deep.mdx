@@ -16,7 +16,6 @@ order: 3
     "Use fragments to avoid wrapper divs",
     "Spread props onto components",
   ]}
-  preview
 />
 
 ## JSX is Syntax Sugar
@@ -223,6 +222,7 @@ const team: Member[] = [
 function TeamList() {
 const developers = team.filter(m => m.role === "Developer")
 return (
+
 <ul>
 {developers.map(m => (
 <li key={m.id}>{m.name} &mdash; {m.role}</li>

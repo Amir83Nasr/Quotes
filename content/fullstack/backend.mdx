@@ -17,7 +17,6 @@ Connect your frontend to backend services.
     "Send auth headers and cookies from the client",
     "Test every endpoint locally with curl before wiring up the UI",
   ]}
-  preview
 />
 
 <Alert>
@@ -610,7 +609,6 @@ notes.push(note)
 return Response.json(note, { status: 201 })
 }`}
   explanation="Parses the JSON body, validates that `text` is a non-empty string (returning 400 if not), then creates an in-memory note with an auto-incrementing id and responds with 201 Created."
-previewType="mixed"
 />
 
 ## Lesson Summary

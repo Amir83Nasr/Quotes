@@ -15,7 +15,6 @@ order: 6
     "Apply WCAG principles: Perceivable, Operable, Understandable, Robust",
     "Test accessibility with screen readers and tools",
   ]}
-  preview
 />
 
 ## WCAG Principles (POUR)
@@ -132,32 +131,6 @@ Allow keyboard users to skip repetitive navigation.
 }
 ```
 
-<SandboxPreview
-  html={`<div class="a11y-demo">
-  <div class="demo-header" style="display:flex;gap:1rem;padding:0.75rem;background:#f1f5f9;border-radius:8px">
-    <a href="#main-area" class="skip" style="position:absolute;top:-100%;background:#6366f1;color:white;padding:4px 8px">Skip to main</a>
-    <span>Home</span>
-    <span>About</span>
-    <span>Contact</span>
-  </div>
-  <div id="main-area" style="padding:1rem">
-    <h2>Main Content</h2>
-    <div role="alert" style="background:#f0fdf4;border:1px solid #22c55e;border-radius:6px;padding:0.75rem">Form submitted successfully!</div>
-    <label for="name">Name</label>
-    <input id="name" aria-describedby="name-hint" style="display:block;margin:0.25rem 0" />
-    <p id="name-hint" style="font-size:0.75rem;color:#64748b">Enter your full name (min 2 characters)</p>
-  </div>
-</div>`}
-  css={`
-    body {
-      font-family: system-ui;
-    }
-    .a11y-demo .skip:focus {
-      top: 0;
-    }
-  `}
-/>
-
 <LessonCodeExample
   title="Make a Tab Panel Accessible"
   code={`<div class="tabs">
@@ -177,7 +150,6 @@ Allow keyboard users to skip repetitive navigation.
   </div>
 </div>`}
   language="html"
-  preview
   explanation="An accessible tab panel using semantic `role` attributes, `aria-controls`, `aria-selected`, and keyboard navigation. The preview shows how assistive technologies interpret the structure."
 />
 

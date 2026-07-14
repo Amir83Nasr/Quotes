@@ -15,7 +15,6 @@ order: 10
     "Check color contrast against WCAG guidelines",
     "Set color-scheme and handle forced-colors mode",
   ]}
-  preview
 />
 
 ## Color Formats Compared
@@ -183,45 +182,12 @@ Tell the browser what color schemes your page supports.
 
 This enables native form controls, scrollbars, and default colors to match the scheme.
 
-<SandboxPreview
-  html={`<div class="palette">
-  <div class="swatch" style="background: oklch(55% 0.2 30)">oklch(55% 0.2 30)</div>
-  <div class="swatch" style="background: oklch(55% 0.2 120)">oklch(55% 0.2 120)</div>
-  <div class="swatch" style="background: oklch(55% 0.2 210)">oklch(55% 0.2 210)</div>
-  <div class="swatch" style="background: oklch(55% 0.2 300)">oklch(55% 0.2 300)</div>
-  <div class="swatch mixed">color-mix</div>
-</div>`}
-  css={`
-    .palette {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    .swatch {
-      width: 120px;
-      height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 8px;
-      color: white;
-      font-size: 0.7rem;
-      text-align: center;
-      padding: 0.25rem;
-    }
-    .mixed {
-      background: color-mix(in oklch, #6366f1, #ef4444);
-    }
-  `}
-/>
-
 <LessonCodeExample
   title="Create a Color Palette with OKLCH"
   code={`<div class="palette-demo">
   <!-- Create 3 swatches with oklch colors -->
 </div>`}
   language="html"
-  preview
   explanation="This palette demo creates three color swatches using `oklch()`. OKLCH is perceptually uniform — lightness stays consistent across hues, unlike hex or RGB."
 />
 

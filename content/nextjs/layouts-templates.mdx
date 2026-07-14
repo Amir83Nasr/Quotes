@@ -15,7 +15,6 @@ order: 3
     "Use intercepting routes with (...) syntax",
     "Organize routes with route groups for shared layouts",
   ]}
-  preview
 />
 
 ## Root Layout
@@ -192,6 +191,7 @@ export default function DashboardLayout({
   const pathname = usePathname()
 
 return (
+
 <div className="flex min-h-screen">
 <nav className="flex w-64 flex-col gap-2 border-r bg-gray-50 p-4 dark:bg-gray-900">
 <h2 className="mb-4 text-lg font-semibold">Dashboard</h2>
@@ -216,7 +216,6 @@ className={`rounded-md px-3 py-2 text-sm transition-colors ${
 )
 }`}
 explanation="This layout renders a persistent sidebar with navigation links using Next.js Link components and the usePathname hook for active-link highlighting. The sidebar stays mounted — and its state (active link, scroll position) survives — as the user navigates between /dashboard, /dashboard/settings, and /dashboard/analytics. Only the <main> content re-renders, demonstrating layout persistence."
-preview
 />
 
 ## Lesson Summary

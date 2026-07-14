@@ -14,7 +14,6 @@ order: 5
     "Understand Suspense as a boundary for async operations",
     "Apply useTransition for deferring non-urgent updates",
   ]}
-  preview
 />
 
 ## Portals with createPortal
@@ -157,6 +156,7 @@ import { createPortal } from "react-dom"
 
 function Modal({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
 return createPortal(
+
 <div style={{
       position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)",
       display: "flex", alignItems: "center", justifyContent: "center",
@@ -173,6 +173,7 @@ document.body
 function App() {
 const [open, setOpen] = useState(false)
 return (
+
 <>
 <button onClick={() => setOpen(true)}>Open Modal</button>
 {open && <Modal onClose={() => setOpen(false)}><p>Rendered via portal</p></Modal>}
@@ -181,7 +182,6 @@ return (
 }`}
 language="tsx"
 explanation="The Modal uses createPortal to render into document.body - escaping parent overflow or z-index constraints. React context still flows through normally."
-preview
 />
 
 <LessonSummary

@@ -14,7 +14,6 @@ order: 2
     "Recognize SEO benefits of semantic HTML",
     "Replace div soup with meaningful elements",
   ]}
-  preview
 />
 
 ## The Semantic Layout
@@ -154,29 +153,6 @@ Semantic HTML signals content hierarchy to search engines:
 - Proper heading hierarchy improves keyword relevance signals
 - `<nav>` identifies primary navigation for crawl prioritization
 
-<SandboxPreview
-  html={`<header style="padding:1rem;background:#6366f1;color:white;border-radius:8px 8px 0 0">
-  <nav><a href="#" style="color:white;margin-right:1rem">Home</a><a href="#" style="color:white;margin-right:1rem">Blog</a><a href="#" style="color:white">About</a></nav>
-</header>
-<main style="padding:1.5rem;background:white;border:1px solid #e2e8f0">
-  <article>
-    <h2 style="color:#1e293b">Semantic HTML Guide</h2>
-    <time datetime="2026-07-11" style="color:#64748b;font-size:0.875rem">July 11, 2026</time>
-    <p style="color:#475569">Using semantic elements improves accessibility, SEO, and code clarity.</p>
-    <figure style="border:1px solid #e2e8f0;border-radius:8px;padding:1rem;margin:1rem 0">
-      <div style="background:#f1f5f9;height:80px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#94a3b8">Diagram</div>
-      <figcaption style="font-size:0.8rem;color:#64748b;margin-top:0.5rem">Fig 1: Page structure</figcaption>
-    </figure>
-  </article>
-</main>
-<footer style="padding:1rem;background:#1e293b;color:white;border-radius:0 0 8px 8px;font-size:0.875rem">&copy; 2026 Semantic Demo</footer>`}
-  css={`
-    body {
-      font-family: system-ui;
-    }
-  `}
-/>
-
 <LessonCodeExample
   title="Refactor Div-Heavy Page to Semantic HTML"
   code={`<!DOCTYPE html>
@@ -228,7 +204,6 @@ Semantic HTML signals content hierarchy to search engines:
   </div>
 </div>`}
   language="html"
- preview
 />
 
 <LessonSummary

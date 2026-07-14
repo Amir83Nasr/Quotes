@@ -122,22 +122,6 @@ Animate children when parent is hovered with `group` + `group-hover:`.
 
 ## Animated Elements Showcase
 
-<SandboxPreview
-  title="Animated Elements"
-  type="html"
-  height={300}
-  html={`
-<script src="https://cdn.tailwindcss.com"><\/script>
-<div class="flex flex-wrap items-center gap-8 p-8">
-  <div class="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-blue-500"></div>
-  <div class="h-12 w-12 animate-pulse rounded-full bg-blue-400"></div>
-  <div class="h-12 w-12 animate-bounce rounded-full bg-purple-500"></div>
-  <div class="group h-24 w-24 cursor-pointer rounded-xl bg-linear-to-br from-pink-500 to-orange-500
-              transition-all duration-300 hover:scale-110 hover:rotate-6 hover:shadow-xl
-              flex items-center justify-center text-white text-sm font-bold">Hover</div>
-</div>`}
-/>
-
 <LessonCodeExample
   title="Hover Card with Animated Border"
   code={`<div class="group relative rounded-xl border-2 p-6">

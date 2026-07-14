@@ -17,7 +17,6 @@ Memoization caches a value so it's only recomputed when dependencies change. `us
     "Recognize when memoization is overhead, not optimization",
     "Measure before optimizing — rely on profiling, not intuition",
   ]}
-  preview
 />
 
 ## useMemo: Expensive Computations
@@ -284,6 +283,7 @@ const handleQueryChange = useCallback(
 )
 
 return (
+
 <div>
 <input
         value={query}
@@ -302,6 +302,7 @@ items: typeof ITEMS
 }) {
 console.log("ResultList rendered")
 return (
+
 <ul>
 {items.slice(0, 50).map((item) => (
 <li key={item.id}>{item.title}</li>
@@ -310,7 +311,6 @@ return (
 )
 })`}
 explanation="useMemo filters 1000 items by search query on every keystroke. useCallback stabilizes the onChange handler so React.memo on ResultList can skip re-renders when query hasn't changed."
-previewType="mixed"
 />
 
 <LessonSummary

@@ -13,7 +13,6 @@ order: 10
     "Explain tree-shaking",
     "Compare CommonJS vs ESM",
   ]}
-  preview
 />
 
 ## Named Exports
@@ -159,12 +158,6 @@ export async function renderUser(id: string) {
 }`}
   language="typescript"
   explanation="Modules separate concerns: `lib/api.ts` owns data fetching, `app/user.ts` owns rendering. Named exports (`export`) and imports (`import { … }`) make dependencies explicit and enable tree-shaking."
-/>
-  document.getElementById("app").innerHTML = '<h1>'+u.name+'</h1>'
-}
-renderUser(1)`}
-  language="javascript"
- preview
 />
 
 ## Lesson Summary

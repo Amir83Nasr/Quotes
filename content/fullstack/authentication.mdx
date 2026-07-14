@@ -17,7 +17,6 @@ Common authentication strategies for web apps.
     "Clear the session on logout",
     "Test the full login → profile → logout flow locally with a curl cookie jar",
   ]}
-  preview
 />
 
 <Alert>
@@ -465,16 +464,15 @@ const token = await signToken({ userId: user.id, email: user.email })
 const cookieStore = await cookies()
 cookieStore.set("session", token, {
 httpOnly: true,
-secure: process.env.NODE_ENV === "production",
+secure: process.env.NODE*ENV === "production",
 sameSite: "lax",
 path: "/",
-maxAge: 60 _ 60 _ 24 \* 7, // 7 days
+maxAge: 60 * 60 \_ 24 \* 7, // 7 days
 })
 
 // Return user info (never expose the password hash)
 return Response.json({ id: user.id, email: user.email })
 }`}
-previewType="mixed"
 />
 
 ## Lesson Summary

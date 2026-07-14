@@ -78,6 +78,11 @@ export async function compileMdx<
     source,
     options: {
       parseFrontmatter: true,
+      // next-mdx-remote defaults blockJS=true, which strips JSX expression
+      // attributes (objectives={[...]}, points={[...]}) via the
+      // removeJavaScriptExpressions plugin. We pass our own trusted MDX, so
+      // JS expressions in attributes are safe and needed.
+      blockJS: false,
       mdxOptions: {
         remarkPlugins: [remarkGfm, remarkStripLeadingH1],
         rehypePlugins: [

@@ -17,7 +17,6 @@ order: 3
     "Forward refs through component boundaries with forwardRef",
     "Avoid common pitfalls like ref overuse on state-driven values",
   ]}
-  preview
 />
 
 ## Basic DOM Access
@@ -223,6 +222,7 @@ setLaps((prev) => [...prev, elapsed])
 }
 
 return (
+
 <div>
 <p className="text-3xl font-mono">{elapsed.toFixed(1)}s</p>
 <div className="flex gap-2 mt-2">
@@ -240,7 +240,6 @@ return (
 )
 }`}
 preview
-previewType="mixed"
 />
 
 <LessonSummary

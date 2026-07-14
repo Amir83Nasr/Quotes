@@ -71,7 +71,7 @@ export function LessonNav({ navigation }: LessonNavProps) {
           {next && (
             <Button variant="ghost" asChild className="h-auto py-2.5">
               <Link href={next.href} className="flex items-center gap-2">
-                <div className="flex min-w-0 flex-1 flex-col items-start text-left sm:items-end sm:text-right">
+                <div className="flex min-w-0 flex-1 flex-col items-end text-right">
                   <span className="text-[11px] font-medium tracking-wider text-muted-foreground/70 uppercase">
                     Next
                   </span>

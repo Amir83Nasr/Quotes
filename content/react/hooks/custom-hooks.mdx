@@ -17,7 +17,6 @@ Custom hooks let you extract component logic into reusable functions. They compo
     "Compose multiple hooks together inside a custom hook",
     "Write testable hooks and understand testing strategies",
   ]}
-  preview
 />
 
 ## The Pattern
@@ -272,6 +271,7 @@ export default function ResponsiveDisplay() {
   const breakpoint = width >= 768 ? "Desktop" : "Mobile"
 
 return (
+
 <div>
 <p>Width: {width}px</p>
 <p>Height: {height}px</p>
@@ -280,7 +280,6 @@ return (
 )
 }`}
 explanation="Define a useWindowSize hook that listens for window resize events and tracks current width and height. The ResponsiveDisplay component consumes the hook and shows live dimensions plus a Mobile/Desktop label based on a 768px breakpoint."
-previewType="mixed"
 />
 
 <LessonSummary

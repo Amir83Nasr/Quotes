@@ -18,7 +18,6 @@ import { LessonCodeExample } from "./shared/LessonCodeExample"
 import { PreWithCopy } from "./shared/PreWithCopy"
 import { LearningObjectives } from "./shared/LearningObjectives"
 import { LessonSummary } from "./shared/LessonSummary"
-import { SandboxPreview } from "./interactive/SandboxPreview"
 export const lessonMdxComponents: MDXComponents = {
   Tabs: Tabs as React.ComponentType,
   TabsContent: TabsContent as React.ComponentType,
@@ -41,8 +40,6 @@ export const lessonMdxComponents: MDXComponents = {
   LessonCodeExample: LessonCodeExample as React.ComponentType,
   LearningObjectives: LearningObjectives as React.ComponentType,
   LessonSummary: LessonSummary as React.ComponentType,
-
-  SandboxPreview: SandboxPreview as React.ComponentType,
 
   table: ({ children, ...props }: HTMLAttributes<HTMLTableElement>) => (
     <div className="my-6 w-full overflow-x-auto">

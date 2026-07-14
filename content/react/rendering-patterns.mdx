@@ -16,7 +16,6 @@ order: 7
     "Optimize renders with React.memo, useMemo, useCallback",
     "Understand Server vs Client Component mental model",
   ]}
-  preview
 />
 
 ## Conditional Rendering
@@ -313,6 +312,7 @@ function withMouseTracking<P>(Wrapped: ComponentType<P & { x: number; y: number 
 return function Enhanced(props: P) {
 const [pos, setPos] = useState({ x: 0, y: 0 })
 return (
+
 <div onMouseMove={(e) => setPos({ x: e.clientX, y: e.clientY })} style={{ border: "1px solid", padding: 16 }}>
 <p>Mouse: {pos.x}, {pos.y}</p>
 <Wrapped {...props} x={pos.x} y={pos.y} />
@@ -328,7 +328,6 @@ return <p>Display: ({x}, {y})</p>
 const MouseTracker = withMouseTracking(Display)`}
 language="tsx"
 explanation="withMouseTracking is a Higher-Order Component: it adds mouse tracking state and passes x/y as props to the wrapped component, layering behavior without modifying it."
-preview
 />
 
 <LessonSummary

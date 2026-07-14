@@ -14,7 +14,6 @@ order: 4
     "Build a Tabs component from scratch",
     "Compare compound components, render props, and hooks approaches",
   ]}
-  preview
 />
 
 ## What Are Compound Components?
@@ -208,6 +207,7 @@ toggle: (id: string) => void
 function Accordion({ children }: { children: ReactNode }) {
 const [openItem, setOpenItem] = useState<string | null>(null)
 return (
+
 <AccordionContext.Provider value={{ openItem, toggle: (id) => setOpenItem(prev => prev === id ? null : id) }}>
 {children}
 </AccordionContext.Provider>

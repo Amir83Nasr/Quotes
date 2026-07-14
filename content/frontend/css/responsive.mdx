@@ -13,7 +13,6 @@ order: 7
     "Understand dvh, svh, lvh, dvw viewport units",
     "Build mobile-first responsive layouts with common patterns",
   ]}
-  preview
 />
 
 ## Responsive Design Fundamentals
@@ -144,36 +143,6 @@ Stacked layout on mobile, side-by-side on desktop:
 }
 ```
 
-<SandboxPreview
-  html={`<div class="card-grid">
-  <div class="card">Card 1</div>
-  <div class="card">Card 2</div>
-  <div class="card">Card 3</div>
-  <div class="card">Card 4</div>
-  <div class="card">Card 5</div>
-  <div class="card">Card 6</div>
-</div>`}
-  css={`
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(
-        auto-fill,
-        minmax(clamp(150px, 30vw, 300px), 1fr)
-      );
-      gap: 1rem;
-      padding: 1rem;
-    }
-    .card {
-      background: var(--color-primary, #6366f1);
-      color: white;
-      padding: 2rem;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: 600;
-    }
-  `}
-/>
-
 <LessonCodeExample
   title="Responsive Card Grid"
   code={`<div class="card-grid">
@@ -185,7 +154,6 @@ Stacked layout on mobile, side-by-side on desktop:
   <div class="card">Item 6</div>
 </div>`}
   language="html"
-  preview
   explanation="A fluid card grid adapting from 1 column on mobile to 3 columns on desktop using CSS Grid `auto-fit` and `minmax()`. No media queries needed."
 />
 

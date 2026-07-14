@@ -14,7 +14,6 @@ order: 8
     "Register typed custom properties with @property",
     "Animate custom properties efficiently",
   ]}
-  preview
 />
 
 ## Defining Custom Properties
@@ -95,34 +94,6 @@ body {
 }
 ```
 
-<Tabs>
-<TabsList>
-<TabsTrigger value="theme">Theme Switcher</TabsTrigger>
-<TabsTrigger value="code">Code</TabsTrigger>
-</TabsList>
-<TabsContent value="theme">
-<SandboxPreview
-  html={`<div class="theme-demo" id="demo">
-  <button class="btn" data-theme-btn>Toggle Theme</button>
-  <div class="card-stack">
-    <div class="card">Primary Card</div>
-    <div class="card secondary">Secondary Card</div>
-  </div>
-</div>
-<script>
-document.getElementById('demo').querySelector('[data-theme-btn]').onclick = () => {
-  document.getElementById('demo').dataset.theme = document.getElementById('demo').dataset.theme === 'dark' ? 'light' : 'dark';
-};
-</script>`}
-  css={`.theme-demo { --color-bg: #fff; --color-text: #1e293b; --color-primary: #6366f1; --color-secondary: #a78bfa; background: var(--color-bg); color: var(--color-text); padding: 1.5rem; border-radius: 8px; transition: 0.3s; }
-.theme-demo[data-theme="dark"] { --color-bg: #0f172a; --color-text: #e2e8f0; --color-primary: #818cf8; --color-secondary: #a78bfa; }
-.card { background: var(--color-primary); color: white; padding: 1rem; margin: 0.5rem 0; border-radius: 6px; }
-.card.secondary { background: var(--color-secondary); }
-.btn { padding: 0.5rem 1rem; margin-bottom: 1rem; cursor: pointer; }`}
-/>
-</TabsContent>
-<TabsContent value="code">
-
 ```css
 :root {
   --color-bg: #fff;
@@ -133,9 +104,6 @@ document.getElementById('demo').querySelector('[data-theme-btn]').onclick = () =
   --color-primary: #818cf8;
 }
 ```
-
-</TabsContent>
-</Tabs>
 
 ## @property for Typed Properties
 
@@ -169,7 +137,6 @@ Register custom properties with a syntax type, initial value, and inheritance. E
   </div>
 </div>`}
   language="html"
-  preview
   explanation="A toggle button switches CSS custom property values at the container (`theme-section`) level, demonstrating how theming works by overriding property defaults through inheritance."
 />
 

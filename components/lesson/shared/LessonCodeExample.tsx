@@ -1,20 +1,10 @@
 "use client"
 
 import { useCallback } from "react"
-import { Code, Play, Copy, Check, Eye } from "lucide-react"
+import { Code, Play, Copy, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { CodeBlock } from "./CodeBlock"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
-import dynamic from "next/dynamic"
-
-// Lazy-load heavy dependencies
-const SandboxPreview = dynamic(
-  () =>
-    import("../interactive/SandboxPreview").then((m) => ({
-      default: m.SandboxPreview,
-    })),
-  { ssr: false }
-)
 
 // ── Props ──
 
@@ -27,10 +17,6 @@ interface LessonCodeExampleProps {
   title?: string
   /** Extra class name */
   className?: string
-  /** Show live preview via iframe */
-  preview?: boolean
-  /** Preview type forwarded to SandboxPreview */
-  previewType?: "html" | "css" | "javascript" | "mixed"
   /** Explanation of what the code does and what output to expect */
   explanation?: string
   /** Extra content below explanation */
@@ -42,8 +28,6 @@ export function LessonCodeExample({
   language = "tsx",
   title,
   className,
-  preview = false,
-  previewType,
   explanation,
   children,
 }: LessonCodeExampleProps) {
@@ -94,31 +78,6 @@ export function LessonCodeExample({
           className="my-0 rounded-none border-0 shadow-none"
         />
       </div>
-
-      {/* ── Live preview ── */}
-      {preview && (
-        <div className="border-t">
-          <div className="flex items-center justify-between border-b bg-muted/20 px-3 py-1.5">
-            <span className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
-              <Eye className="h-3 w-3" />
-              Output
-            </span>
-          </div>
-          <SandboxPreview
-            html={code}
-            type={
-              previewType ??
-              (language === "css"
-                ? "css"
-                : language === "javascript" || language === "js"
-                  ? "javascript"
-                  : "mixed")
-            }
-            height={280}
-            className="my-0 rounded-none border-0"
-          />
-        </div>
-      )}
 
       {/* ── Explanation ── */}
       {(explanation || children) && (

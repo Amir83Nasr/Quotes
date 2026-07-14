@@ -13,7 +13,6 @@ order: 3
     "Use extends, super, static, private fields",
     "Prefer composition over inheritance",
   ]}
-  preview
 />
 
 ## Prototype Chain
@@ -188,13 +187,6 @@ const btn = new Button("btn1", "Submit", console.log)
 console.log(btn.render()) // <button id="btn1">Submit</button>`}
   language="javascript"
   explanation="`Button`and`TextField`extend`UIElement`via`extends`+`super()`, inheriting the base render contract while adding their own properties and methods. This is the class-based inheritance pattern in JavaScript."
-/>
-  // constructor(id, label, required)
-  // render() returns input HTML
-  // validate() — if required, value non-empty
-}`}
-language="javascript"
-preview
 />
 
 ## Lesson Summary
