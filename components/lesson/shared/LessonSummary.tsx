@@ -13,21 +13,20 @@ interface LessonSummaryProps {
 export function LessonSummary({ points = [], className }: LessonSummaryProps) {
   return (
     <div className={cn("my-6 rounded-lg border bg-muted/30 p-4", className)}>
-      <div className="mb-2 flex items-center gap-2 text-sm font-semibold">
+      <div className="mb-3 flex items-center gap-2 text-sm font-semibold">
         <BookOpen className="h-4 w-4 text-muted-foreground" />
         Key Takeaways
       </div>
-      <ul className="space-y-2">
+      <div className="space-y-3">
         {points.map((point, i) => (
-          <li
+          <div
             key={i}
-            className="flex items-start gap-2 text-sm text-muted-foreground"
+            className="text-sm leading-relaxed text-muted-foreground"
           >
-            <span className="mt-1.5 block h-1 w-1 shrink-0 rounded-full bg-muted-foreground/40" />
             {point}
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   )
 }

@@ -21,18 +21,17 @@ export function LearningObjectives({
         className
       )}
     >
-      <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary">
+      <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-primary">
         <Target className="h-4 w-4" />
         What you&apos;ll learn
       </div>
-      <ul className="space-y-1.5">
+      <div className="space-y-3">
         {objectives.map((obj, i) => (
-          <li key={i} className="flex items-start gap-2 text-sm">
-            <span className="mt-0.5 block h-1.5 w-1.5 shrink-0 rounded-full bg-primary/60" />
+          <div key={i} className="text-sm leading-relaxed">
             {obj}
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   )
 }
