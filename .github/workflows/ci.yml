@@ -1,7 +1,9 @@
 # ── CI Pipeline ─────────────────────────────────────────────────────────────────
 # Runs on PRs, pushes to main, and manual dispatch.
-# Three jobs run in parallel (lint, typecheck) → build depends on both passing.
+# Three parallel code-quality jobs (lint, typecheck, test) run in parallel,
+# followed by build which requires all three to pass.
 # Uses project Makefile targets instead of duplicating commands.
+# Vercel handles Preview and Production deployments — not GitHub Actions.
 
 name: CI
 
@@ -21,6 +23,7 @@ jobs:
   lint:
     name: Lint & Format & Content
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
 
@@ -49,6 +52,7 @@ jobs:
   typecheck:
     name: TypeScript
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
 
@@ -67,12 +71,11 @@ jobs:
       - name: TypeScript type check
         run: make typecheck
 
-  # ── Build: Next.js production build ──────────────────────────────────────
-  # Depends on lint + typecheck passing — fail-fast, no wasted build time.
-  build:
-    name: Build
-    needs: [lint, typecheck]
+  # ── Test: Run test suite (reports no tests configured if none exist) ─────
+  test:
+    name: Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
 
@@ -88,7 +91,43 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Run tests
+        run: make test
+
+  # ── Build: Next.js production build ──────────────────────────────────────
+  # Depends on all quality checks passing — fail-fast, no wasted compute.
+  build:
+    name: Build
+    needs: [lint, typecheck, test]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml', '**/*.ts', '**/*.tsx', '**/*.css') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-
+
       - name: Build
         run: make build
         env:
           NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL || 'http://localhost:4000' }}
+
+      - name: Verify build output
+        run: test -d .next && echo "Build output verified"

@@ -33,65 +33,65 @@ CUR_VERSION := $(shell grep -m1 '"version"' package.json | sed -E 's/.*"([0-9]+\
         clean doctor help
 
 # ── Install ───────────────────────────────────────────────────────────────────
-install: ## Install all dependencies
+install: ## Install dependencies
 	@pnpm install
 	@echo "  $(GREEN)✓$(RESET) Dependencies installed"
 
 # ── Development ───────────────────────────────────────────────────────────────
-dev: ## Start Next.js dev server with HMR on port $(NEXT_PORT)
+dev: ## Dev server :$(NEXT_PORT)
 	@pnpm dev
 
-build: ## Build frontend for production
+build: ## Build for production
 	@pnpm build
 	@echo "  $(GREEN)✓$(RESET) Build complete"
 
 # ── Lint ──────────────────────────────────────────────────────────────────────
-lint: ## Lint with ESLint
+lint: ## ESLint
 	@pnpm lint
 	@echo "  $(GREEN)✓$(RESET) Lint passed"
 
-format: ## Format all code with Prettier
+format: ## Format with Prettier
 	@pnpm format
 	@echo "  $(GREEN)✓$(RESET) Formatting complete"
 
-format-check: ## Check formatting without making changes (CI)
+format-check: ## Check formatting (CI)
 	@pnpm prettier --check "**/*.{ts,tsx,js,mjs,cjs,jsx,json,css,md,mdx}"
 	@echo "  $(GREEN)✓$(RESET) Format check passed"
 
-typecheck: ## Type-check with TypeScript (tsc --noEmit)
+typecheck: ## Type-check (tsc --noEmit)
 	@pnpm typecheck
 	@echo "  $(GREEN)✓$(RESET) Type check passed"
 
-check: lint typecheck ## Run all quality checks (lint + typecheck)
+check: lint typecheck ## Run quality checks (lint + typecheck)
 
 # ── Test ──────────────────────────────────────────────────────────────────────
-test: ## Run test suite (placeholder — configure a test runner first)
+test: ## Run tests (placeholder)
 	@echo "  $(GREY)No test suite configured — skipping$(RESET)"
 
 # ── Docker ────────────────────────────────────────────────────────────────────
-up: ## Start all Docker services
+up: ## Start Docker services
 	@docker compose -f $(COMPOSE_FILE) -p $(COMPOSE_PROJECT) up -d --wait
 	@echo "  $(GREEN)✓$(RESET) Docker services started"
 
-down: ## Stop all Docker services
+down: ## Stop Docker services
 	@docker compose -f $(COMPOSE_FILE) -p $(COMPOSE_PROJECT) down
 	@echo "  $(GREEN)✓$(RESET) Docker services stopped"
 
-logs: ## Tail logs from all Docker services
+logs: ## Tail Docker logs
 	@docker compose -f $(COMPOSE_FILE) -p $(COMPOSE_PROJECT) logs -f
 
-ps: ## Show status of Docker services
+ps: ## Show Docker status
 	@docker compose -f $(COMPOSE_FILE) -p $(COMPOSE_PROJECT) ps
 
-rebuild: ## Rebuild and start all Docker services from scratch
+rebuild: ## Rebuild Docker from scratch
 	@docker compose -f $(COMPOSE_FILE) -p $(COMPOSE_PROJECT) up -d --build --wait
 	@echo "  $(GREEN)✓$(RESET) Docker services rebuilt and started"
 
 # ── Version Management ────────────────────────────────────────────────────────
-version: ## Show current project version from package.json
+version: ## Show current version
 	@echo "  $(CUR_VERSION)"
 
-version-sync: ## Sync version string (V="x.y.z")
+version-sync: ## Sync version (V="x.y.z")
 	$(eval V := $(if $(V),$(V),$(CUR_VERSION)))
 	@sed -i '' -E 's/"version": ".*"/"version": "$(V)"/' package.json
 	@echo "  $(GREEN)✓$(RESET) Version synced to $(V)"
@@ -113,7 +113,7 @@ version-bump: ## Bump version (BUMP=patch|minor|major)
 	$(MAKE) version-sync V=$$NEW_V; \
 	echo "  $(GREEN)✓$(RESET) Bumped $(CUR_VERSION) → $$NEW_V"
 
-version-tag: ## Tag current version in git and push
+version-tag: ## Tag version & push
 	@if [ -n "$$(git status --porcelain)" ]; then \
 		echo "  $(YELLOW)⚠$(RESET) Uncommitted changes — commit or stash before tagging"; \
 		exit 1; \
@@ -123,7 +123,7 @@ version-tag: ## Tag current version in git and push
 	@echo "  $(GREEN)✓$(RESET) Tagged v$(CUR_VERSION) and pushed"
 
 # ── Environment ───────────────────────────────────────────────────────────────
-env: ## Bootstrap .env.local from .env.example
+env: ## Bootstrap .env.local
 	@if [ ! -f .env.local ]; then \
 		if [ -f .env.example ]; then \
 			cp .env.example .env.local; \
@@ -136,30 +136,30 @@ env: ## Bootstrap .env.local from .env.example
 		echo "  $(GREY).env.local already exists — no changes made$(RESET)"; \
 	fi
 
-env-show: ## Show unset env placeholders in .env.local
+env-show: ## Show unset placeholders
 	@echo "  $(BOLD)Unset placeholders:$(RESET)"
 	@grep -n 'change-me\|YOUR_\|MY_\|<.*>' .env.local .env.example 2>/dev/null || \
 		echo "  $(GREY)(none found)$(RESET)"
 
 # ── Git Hooks (Lefthook) ──────────────────────────────────────────────
-hooks-install: ## Install Lefthook git hooks
+hooks-install: ## Install git hooks
 	@pnpm lefthook install
 	@echo "  $(GREEN)✓$(RESET) Lefthook hooks installed"
 
-hooks-run: ## Run all Lefthook hooks on staged files
+hooks-run: ## Run hooks on staged files
 	@pnpm lefthook run pre-commit
 
-hooks-pre-commit: hooks-run ## Alias: run pre-commit hooks
+hooks-pre-commit: hooks-run ## Alias: pre-commit hooks
 
 # ── Clean ─────────────────────────────────────────────────────────────────────
-clean: ## Remove all build artifacts
+clean: ## Remove build artifacts
 	@rm -rf .next out build coverage
 	@find . -type d -name '.next' -exec rm -rf {} + 2>/dev/null || true
 	@find . -type f \( -name '*.tsbuildinfo' -o -name '*.tsbuildinfo.*' \) -delete 2>/dev/null || true
 	@echo "  $(GREEN)✓$(RESET) Build artifacts cleaned"
 
 # ── Maintenance ───────────────────────────────────────────────────────────────
-doctor: ## Check system requirements
+doctor: ## Check system
 	@echo ""
 	@printf "$(BOLD)System Check — $(PROJECT_NAME)$(RESET)\n"
 	@printf -- "$(GREY)─────────────────────────$(RESET)\n"
@@ -200,7 +200,7 @@ doctor: ## Check system requirements
 	@echo ""
 
 # ── Help ──────────────────────────────────────────────────────────────────────
-help: ## Show this help message
+help: ## Show help
 	@printf "\n"
 	@printf "\033[1;36m"
 	@printf "   %s\n" " ██████╗ ██╗   ██╗ ██████╗ ████████╗███████╗███████╗"
@@ -220,12 +220,12 @@ help: ## Show this help message
 		if (section != last) { \
 			if (last != "") printf "\033[2;37m└" line "┘\033[0m\n\n"; \
 			printf "\033[2;37m┌─────────────────────────────────────────────────────────────────────────────┐\033[0m\n"; \
-			printf "\033[2;37m│ \033[1;37m%-63s\033[0m \033[2;37m        │\033[0m\n", section; \
+			printf "\033[2;37m│ \033[1;37m%-63s\033[0m \033[2;37m            │\033[0m\n", section; \
 			printf "\033[2;37m├─────────────────────────────────────────────────────────────────────────────┤\033[0m\n"; \
 			last = section; \
 		} \
-		printf "\033[2;37m│ \033[1;36m%-28s\033[0m \033[2;37m%-42s\033[0m \033[2;37m│\033[0m\n", t, d; \
+		printf "\033[2;37m│ \033[1;36m%-28s\033[0m \033[2;37m%-42s\033[0m \033[2;37m    │\033[0m\n", t, d; \
 	} END {printf "\033[2;37m└" line "┘\033[0m\n\n";}' Makefile
-	@printf "\033[2;37m───────────────────────────────────────────────────────────────────────────────────────\033[0m\n"
+	@printf "\033[2;37m───────────────────────────────────────────────────────────────────────────────\033[0m\n"
 	@printf "\033[2;37m→\033[0m \033[1;37mmake\033[0m \033[1;36m<command>\033[0m\n"
 	@printf "\n"
