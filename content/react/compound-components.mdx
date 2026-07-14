@@ -195,10 +195,11 @@ Most flexible. Consumer controls everything. Loses the "it just works" ergonomic
 
 ## Interactive Exercise: Accordion
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Build an Accordion with Compound Components"
   description="Create an Accordion compound component with Accordion, AccordionItem, AccordionTrigger, and AccordionPanel. Only one panel open at a time."
-  starterCode={`// Write your Accordion, AccordionItem,
+  code={`// Write your Accordion, AccordionItem,
 // AccordionTrigger, and AccordionPanel components
 // Usage: <Accordion>
 //   <AccordionItem>
@@ -208,7 +209,7 @@ Most flexible. Consumer controls everything. Loses the "it just works" ergonomic
 // </Accordion>
 export {}`}
   language="tsx"
-  solutionCode={`import { createContext, useContext, useState, type ReactNode } from "react"
+  solution={`import { createContext, useContext, useState, type ReactNode } from "react"
 
 interface AccordionContext {
 openItem: string | null

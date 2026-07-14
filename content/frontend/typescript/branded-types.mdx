@@ -187,11 +187,12 @@ authenticate(key) // Type error
 fetchResource(token, "users") // Type error
 ```
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Branded User Entities"
   description="Create a branded UserId and Email type. Build a safeUser function that accepts an unknown object, validates it has valid id and email fields, and returns a branded result if valid."
   language="typescript"
-  starterCode={`type Brand<T, B> = T & { __brand: B }
+  code={`type Brand<T, B> = T & { __brand: B }
 type UserId = Brand<string, "UserId">
 type Email = Brand<string, "Email">
 
@@ -208,7 +209,7 @@ type SafeResult =
 function safeUser(input: unknown): SafeResult {
 
 }`}
-  solutionCode={`type Brand<T, B> = T & { \_\_brand: B }
+  solution={`type Brand<T, B> = T & { \_\_brand: B }
 type UserId = Brand<string, "UserId">
 type Email = Brand<string, "Email">
 

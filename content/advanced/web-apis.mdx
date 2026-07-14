@@ -262,15 +262,16 @@ self.addEventListener("fetch", (event) => {
 })
 ```
 
-## InteractiveExercise
+## Challenge
 
 Build an infinite scroll list using IntersectionObserver.
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Infinite Scroll with IntersectionObserver"
   description="Build a paginated list that loads more items as user scrolls"
   language="tsx"
-  starterCode={`import { useState, useEffect, useRef, useCallback } from "react"
+  code={`import { useState, useEffect, useRef, useCallback } from "react"
 
 type Item = { id: number; title: string }
 
@@ -300,7 +301,7 @@ export default function InfiniteList() {
     </div>
   )
 }`}
-  solutionCode={`import { useState, useEffect, useRef, useCallback } from "react"
+  solution={`import { useState, useEffect, useRef, useCallback } from "react"
 
 type Item = { id: number; title: string }
 

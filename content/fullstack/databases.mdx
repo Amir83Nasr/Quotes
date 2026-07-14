@@ -244,10 +244,11 @@ export const prisma = new PrismaClient({ adapter })
 
 ## Interactive Exercise
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Design a Blog Schema"
   description="Create a Prisma schema for a blog with categories, tags, and comments — then write a query to fetch a single post with all related data."
-  starterCode={`// schema.prisma — fill in the models
+  code={`// schema.prisma — fill in the models
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -263,7 +264,7 @@ provider = "prisma-client-js"
 // TODO: Add Tag model (id, name, posts)
 // TODO: Add Comment model (id, content, author, post)
 `}
-  solutionCode={`model User {
+  solution={`model User {
 id String @id @default(cuid())
 name String
 email String @unique

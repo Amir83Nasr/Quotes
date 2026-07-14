@@ -172,11 +172,12 @@ function assertNever(value: never): never {
 // Adding { type: "blur" } to Event causes compile error here
 ```
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Type-Safe Event Handler"
   description="Build a handleUIEvent function that narrows a discriminated union of UI events using a switch. Each case returns a display string."
   language="typescript"
-  starterCode={`type UIEvent =
+  code={`type UIEvent =
   | { kind: "click"; button: "left" | "right" }
   | { kind: "hover"; x: number; y: number }
   | { kind: "scroll"; deltaX: number; deltaY: number }
@@ -184,7 +185,7 @@ function assertNever(value: never): never {
 function handleUIEvent(event: UIEvent): string {
 // Use switch on event.kind and return a description for each variant
 }`}
-  solutionCode={`type UIEvent =
+  solution={`type UIEvent =
 | { kind: "click"; button: "left" | "right" }
 | { kind: "hover"; x: number; y: number }
 | { kind: "scroll"; deltaX: number; deltaY: number }

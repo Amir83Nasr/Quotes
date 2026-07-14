@@ -158,10 +158,11 @@ Register custom properties with a syntax type, initial value, and inheritance. E
 }
 ```
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Build a Theme System"
   description="Create a component that uses custom properties for theming — define light/dark variables and apply them."
-  starterCode={`<div class="theme-section">
+  code={`<div class="theme-section">
   <button class="toggle">Switch Theme</button>
   <div class="demo-card">
     <h3>Themed Card</h3>
@@ -169,7 +170,7 @@ Register custom properties with a syntax type, initial value, and inheritance. E
   </div>
 </div>`}
   language="html"
-  solutionCode={`<style>
+  solution={`<style>
   .theme-section {
     --bg: #ffffff;
     --text: #1e293b;

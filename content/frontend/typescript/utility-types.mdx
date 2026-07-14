@@ -217,11 +217,12 @@ type APIAction = `${Uppercase<Action>}_${Uppercase<Entity>}`
 // "CREATE_USER" | "CREATE_POST" | "CREATE_COMMENT" | "READ_USER" | ...
 ```
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Typed API Response Handler"
   description="Define a generic API response type using utility types. Given a base data shape, add meta, pagination, and error fields. Then create a type-safe fetch function."
   language="typescript"
-  starterCode={`interface APIResponse<T> {
+  code={`interface APIResponse<T> {
   data: T
   meta?: {
     page: number
@@ -239,7 +240,7 @@ type ListResponse<T> = // use Pick and Omit from APIResponse
 // Try: list of users
 interface User { id: number; name: string; email: string }
 type UserList = ListResponse<User>[]`}
-  solutionCode={`interface APIResponse<T> {
+  solution={`interface APIResponse<T> {
 data: T
 meta?: { page: number; totalPages: number }
 error?: { message: string; code: number }

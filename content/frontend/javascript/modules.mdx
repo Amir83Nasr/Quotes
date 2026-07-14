@@ -128,10 +128,11 @@ import { PI } from "./math.js"
 
 ## Interactive Exercise
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Refactor into Modules"
   description="Split a monolithic script into utils.js (formatDate, handleError), data.js (fetchUser), app.js (entry point)."
-  starterCode={`const API_URL = "https://api.example.com"
+  code={`const API_URL = "https://api.example.com"
 function formatDate(d) { return new Date(d).toLocaleDateString() }
 function handleError(e) { console.error(e.message) }
 async function fetchUser(id) {

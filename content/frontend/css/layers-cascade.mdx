@@ -204,10 +204,11 @@ Wrap third-party CSS in an `@layer` to keep your styles on top.
 </style>
 ```
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Fix Specificity Issues"
   description="The styles below have specificity problems. Fix them so the card has a indigo border and the special card has a coral border."
-  starterCode={`<style>
+  code={`<style>
   .wrapper .card { border: 2px solid #ccc; }
   .special { border-color: #ef4444; }
 
@@ -219,7 +220,7 @@ Wrap third-party CSS in an `@layer` to keep your styles on top.
   <div class="card special" id="my-card2">Special Card</div>
 </div>`}
   language="html"
-  solutionCode={`<style>
+  solution={`<style>
   /* Fix: put bare class selector after ID selector, or use @layer */
   @layer base, overrides;
   @layer base {

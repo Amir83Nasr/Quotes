@@ -147,10 +147,11 @@ duck.fly() // "Daffy flies"
 
 ## Interactive Exercise
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="UI Element Hierarchy"
   description="Base UIElement with id, render(), validate(). Extend: Button(id, label, onClick) and TextField(id, label, required)."
-  starterCode={`class UIElement {
+  code={`class UIElement {
   constructor(id) { this.id = id }
   render() { return '<div id="'+this.id+'"></div>' }
   validate() { return null }

@@ -288,10 +288,11 @@ async function uploadToS3(file: File) {
 
 ## Interactive Exercise
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Build a Drag-and-Drop Avatar Upload"
   description="Create an upload component with drag-and-drop, image preview, client-side validation (max 2MB, jpeg/png only), and progress tracking."
-  starterCode={`"use client"
+  code={`"use client"
 import { useState } from "react"
 
 export default function AvatarUpload() {
@@ -311,7 +312,7 @@ return (
 </div>
 )
 }`}
-  solutionCode={`"use client"
+  solution={`"use client"
 import { useState, useRef } from "react"
 
 export default function AvatarUpload() {

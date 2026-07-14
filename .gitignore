@@ -15,6 +15,9 @@
 /.next/
 /out/
 
+# ── Vercel ────────────────────────────────────────────────────────────
+/.vercel
+
 # ── Production ───────────────────────────────────────────────────────
 /build
 
@@ -29,7 +32,10 @@ yarn-error.log*
 pnpm-debug.log*
 
 # ── Env Files ────────────────────────────────────────────────────────
-.env*
+.env
+.env.*
+# Keep example tracked — documents required variables
+!.env.example
 
 # ── TypeScript ───────────────────────────────────────────────────────
 *.tsbuildinfo

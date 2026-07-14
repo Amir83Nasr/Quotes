@@ -205,10 +205,11 @@ export default function Page() {
 
 ## Interactive Exercise
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Dashboard with Streaming Sections"
   description="Build a dashboard page that renders a static shell and streams three data sections independently using Suspense boundaries."
-  starterCode={`import { Suspense } from "react"
+  code={`import { Suspense } from "react"
 
 // Create skeleton components and Suspense boundaries for:
 // 1. StatsCards (simulate 2s delay)
@@ -227,7 +228,7 @@ export default function Dashboard() {
     </div>
   )
 }`}
-  solutionCode={`import { Suspense } from "react"
+  solution={`import { Suspense } from "react"
 
 function Skeleton({ className = "h-32" }: { className?: string }) {
 return <div className={\`bg-gray-200 rounded animate-pulse \${className}\`} />

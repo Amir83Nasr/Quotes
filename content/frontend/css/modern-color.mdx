@@ -214,14 +214,15 @@ This enables native form controls, scrollbars, and default colors to match the s
   `}
 />
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Create a Color Palette with OKLCH"
   description="Build a 3-color palette (primary, secondary, accent) using oklch with the same lightness but different hues. Display them as swatches with labels."
-  starterCode={`<div class="palette-demo">
+  code={`<div class="palette-demo">
   <!-- Create 3 swatches with oklch colors -->
 </div>`}
   language="html"
-  solutionCode={`<style>
+  solution={`<style>
   .palette-demo { display: flex; gap: 1rem; font-family: monospace; }
   .swatch { width: 120px; height: 100px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 0.5rem; font-size: 0.75rem; text-align: center; }
   .swatch label { opacity: 0.9; margin-top: auto; }

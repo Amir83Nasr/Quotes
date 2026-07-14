@@ -170,10 +170,11 @@ export const config = {
 
 ## Interactive Exercise
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Build a CRUD API for Todos"
   description="Complete the route handler for a todo API with GET, POST, PUT, and DELETE endpoints."
-  starterCode={`// app/api/todos/route.ts
+  code={`// app/api/todos/route.ts
 // Complete the GET and POST handlers
 
 export async function GET() {
@@ -183,7 +184,7 @@ export async function GET() {
 export async function POST(request: Request) {
   // TODO: Parse body, create a todo, return it with status 201
 }`}
-  solutionCode={`// app/api/todos/route.ts
+  solution={`// app/api/todos/route.ts
 const todos: Array<{ id: number; text: string; done: boolean }> = []
 let nextId = 1
 

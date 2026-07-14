@@ -138,14 +138,15 @@ Animate children when parent is hovered with `group` + `group-hover:`.
 </div>`}
 />
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Hover Card with Animated Border"
   description="Create a card that reveals a gradient border on hover using group-hover."
-  starterCode={`<div class="group relative rounded-xl border-2 p-6">
+  code={`<div class="group relative rounded-xl border-2 p-6">
   <div class="..." style="...">  <!-- animated border overlay --></div>
   <div><h3>Title</h3><p>Content</p></div>
 </div>`}
-  solutionCode={`<div class="group relative overflow-hidden rounded-xl border-2 border-transparent bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-lg">
+  solution={`<div class="group relative overflow-hidden rounded-xl border-2 border-transparent bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-lg">
   <div class="absolute inset-0 -z-10 bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
        style="mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; padding: 2px;">
   </div>

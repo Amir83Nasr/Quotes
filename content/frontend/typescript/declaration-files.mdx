@@ -177,11 +177,12 @@ declare module "local-storage-db" {
 }
 ```
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Declaration File for a JS Logger"
   description="Write a declaration file for a simple JS logger library. The logger has: createLogger(name, options?) returning a Logger with log, warn, error, and setLevel methods."
   language="typescript"
-  starterCode={`// Imagine this is a .d.ts file
+  code={`// Imagine this is a .d.ts file
 // Create types for this JS library:
 // const logger = createLogger("myapp", { level: "info" })
 // logger.log("hello")
@@ -193,7 +194,7 @@ declare module "local-storage-db" {
 declare module "simple-logger" {
 
 }`}
-  solutionCode={`declare module "simple-logger" {
+  solution={`declare module "simple-logger" {
 type LogLevel = "debug" | "info" | "warn" | "error"
 type LogContext = Record<string, unknown>
 

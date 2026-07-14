@@ -183,11 +183,12 @@ export default function Form() {
 
 Build a stopwatch with start/stop/reset and lap recording. Store the interval ID in a ref, track elapsed time with state.
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Stopwatch with Laps"
   description="Implement a stopwatch. Use useRef for the interval ID and useState for elapsed time. Add a Lap button that records the current time."
   language="tsx"
-  starterCode={`"use client"
+  code={`"use client"
 
 import { useState, useRef } from "react"
 
@@ -216,7 +217,7 @@ return (
 </div>
 )
 }`}
-  solutionCode={`"use client"
+  solution={`"use client"
 
 import { useState, useRef, useCallback } from "react"
 

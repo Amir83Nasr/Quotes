@@ -184,10 +184,11 @@ async function BlogPosts() {
 
 ## Interactive Exercise
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Page with Loading Skeleton + Error Boundary"
   description="Create a user profile page that shows a skeleton while data loads and an error boundary with retry."
-  starterCode={`"use client"
+  code={`"use client"
 // Build a UserProfile component that:
 // 1. Shows a skeleton while loading
 // 2. Displays user data when fetched
@@ -198,7 +199,7 @@ export default function UserProfile({ userId }: { userId: string }) {
   // TODO: Implement loading, data, and error states
   return <div>{/* your code */}</div>
 }`}
-  solutionCode={`"use client"
+  solution={`"use client"
 import { useState, useEffect } from "react"
 
 type User = { id: string; name: string; email: string }

@@ -94,3 +94,104 @@ types/         — TypeScript type definitions
 ```bash
 npx shadcn@latest add button
 ```
+
+## Deployment
+
+This project is designed for deployment on **Vercel**, the native platform for Next.js.
+
+### Vercel Setup
+
+1. Push the repository to GitHub.
+2. Go to [vercel.com/new](https://vercel.com/new) and import the repository.
+3. Vercel auto-detects:
+   - **Framework:** Next.js
+   - **Build Command:** `next build` (default)
+   - **Output Directory:** Automatic (Vercel optimized)
+   - **Package Manager:** pnpm (auto-detected from lockfile)
+   - **Node Version:** 22.x (set in Project Settings → General)
+
+4. Click **Deploy** — the first deployment starts immediately.
+
+### Environment Variables
+
+Set these in Vercel Dashboard → Settings → Environment Variables:
+
+| Variable               | Local Value             | Production Value          | Required |
+| ---------------------- | ----------------------- | ------------------------- | -------- |
+| `NEXT_PUBLIC_SITE_URL` | `http://localhost:4000` | `https://your-domain.com` | Yes      |
+
+Vercel injects system variables automatically (`VERCEL`, `VERCEL_ENV`, `VERCEL_URL`, `NEXT_PUBLIC_VERCEL_URL`) — no manual setup needed.
+
+For local development, copy the example file:
+
+```bash
+cp .env.example .env.local
+```
+
+### GitHub Integration
+
+Vercel connects directly to your GitHub repository:
+
+```mermaid
+git push
+   ↓
+GitHub
+   ↓
+Vercel detects commit
+   ↓
+Automatic build & deploy
+```
+
+- Every push to **main** deploys to **Production**.
+- Every push to a **feature branch** creates a **Preview Deployment** with a unique URL.
+- Preview deployments include comments with the URL directly on GitHub PRs.
+- No GitHub Actions needed for deployment — Vercel's native integration handles it.
+
+**Note:** The existing `.github/workflows/deploy.yml` is preserved for backward compatibility but is superseded by Vercel's native deployment pipeline.
+
+### Custom Domain
+
+1. Go to Vercel Dashboard → Project → Settings → Domains.
+2. Add your domain (e.g., `quotes.example.com`).
+3. Update DNS records as instructed (CNAME for subdomain, A/ALIAS for apex).
+4. Vercel provisions an SSL certificate automatically (Let's Encrypt).
+5. Update `NEXT_PUBLIC_SITE_URL` environment variable to match the custom domain.
+
+### Production Deployment Workflow
+
+```
+                                ┌─────────────────────┐
+                                │   Developer pushes   │
+                                │   to feature branch  │
+                                └─────────┬───────────┘
+                                          │
+                                          ▼
+                                ┌─────────────────────┐
+                                │  Vercel Preview     │
+                                │  Deployment         │
+                                │  (unique URL)       │
+                                └─────────┬───────────┘
+                                          │
+                     PR review & approval │
+                                          │
+                                          ▼
+                                ┌─────────────────────┐
+                                │  Merge to main      │
+                                └─────────┬───────────┘
+                                          │
+                                          ▼
+                                ┌─────────────────────┐
+                                │  Vercel Production  │
+                                │  Deployment         │
+                                │  (production URL)   │
+                                └─────────────────────┘
+```
+
+### Production Best Practices
+
+- **Image Optimization:** Enabled by default on Vercel — no configuration needed.
+- **Compression:** Vercel applies Brotli/gzip compression automatically.
+- **Caching:** Optimal cache headers applied by Vercel Edge Network.
+- **SSL/TLS:** Auto-provisioned certificates with automatic renewal.
+- **DDoS Protection:** Included with Vercel's Edge Network.
+- **Analytics:** Enable Vercel Analytics in Dashboard for real-time insights.

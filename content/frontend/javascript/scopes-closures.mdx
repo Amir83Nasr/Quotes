@@ -88,10 +88,11 @@ for (let i = 0; i < 3; i++) setTimeout(() => console.log(i), 0) // 0, 1, 2 (per-
 
 ## Interactive Exercise
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Build a Private Counter"
   description="Create `createAdvancedCounter(initial)` returning `{increment(step=1), decrement(step=1), reset(), getCount()}`. Validate step is positive."
-  starterCode={`function createAdvancedCounter(initial = 0) {
+  code={`function createAdvancedCounter(initial = 0) {
   // Returns { increment, decrement, reset, getCount }
   // throw if step <= 0
 }`}

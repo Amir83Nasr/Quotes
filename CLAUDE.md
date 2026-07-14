@@ -114,23 +114,21 @@ published: true # optional, defaults to true
 
 Registered in `components/lesson/mdx-registry.tsx`:
 
-| Component                                                              | Source                    | Purpose                                       |
-| ---------------------------------------------------------------------- | ------------------------- | --------------------------------------------- |
-| `<LearningObjectives>`                                                 | shared/LearningObjectives | What reader will learn                        |
-| `<LessonSummary>`                                                      | shared/LessonSummary      | Key takeaways                                 |
-| `<LessonCodeExample>`                                                  | shared/LessonCodeExample  | Runnable code demo with explanation           |
-| `<CodeBlock>`                                                          | shared/CodeBlock          | Syntax-highlighted code block                 |
-| `<PreWithCopy>`                                                        | shared/PreWithCopy        | `<pre>` override with copy button             |
-| `<Checklist>`                                                          | shared/Checklist          | Interactive checklist                         |
-| `<StaticExercise>` / `<StaticChallenge>`                               | static/                   | Non-interactive exercise with solution reveal |
-| `<InteractiveExercise>` / `<InteractiveChallenge>`                     | interactive/              | Live CodeMirror exercise/challenge            |
-| `<LiveEditor>` / `<SandboxPreview>` / `<CodeMirrorEditor>`             | interactive/              | Live editing / preview / raw CodeMirror       |
-| `<GalleryDemo>`                                                        | playground/GalleryDemo    | Interactive gallery demo                      |
-| `<UseOptimisticDemo>` / `<UseActionStateDemo>` / `<UseTransitionDemo>` | playground/react19/       | React 19 live demos                           |
-| `<Tabs>` / `<TabsContent>` / `<TabsList>` / `<TabsTrigger>`            | ui/tabs                   | Tabbed UI                                     |
-| `<Alert>` / `<AlertDescription>` / `<AlertTitle>`                      | ui/alert                  | Callout boxes                                 |
-| `<Badge>`                                                              | ui/badge                  | Status badges                                 |
-| `<Info>` / `<AlertTriangle>` / `<Lightbulb>`                           | lucide-react              | Inline icons                                  |
+| Component                                                              | Source                    | Purpose                                 |
+| ---------------------------------------------------------------------- | ------------------------- | --------------------------------------- |
+| `<LearningObjectives>`                                                 | shared/LearningObjectives | What reader will learn                  |
+| `<LessonSummary>`                                                      | shared/LessonSummary      | Key takeaways                           |
+| `<LessonCodeExample>`                                                  | shared/LessonCodeExample  | Runnable code demo with explanation     |
+| `<CodeBlock>`                                                          | shared/CodeBlock          | Syntax-highlighted code block           |
+| `<PreWithCopy>`                                                        | shared/PreWithCopy        | `<pre>` override with copy button       |
+| `<Checklist>`                                                          | shared/Checklist          | Interactive checklist                   |
+| `<LiveEditor>` / `<SandboxPreview>` / `<CodeMirrorEditor>`             | interactive/              | Live editing / preview / raw CodeMirror |
+| `<GalleryDemo>`                                                        | playground/GalleryDemo    | Interactive gallery demo                |
+| `<UseOptimisticDemo>` / `<UseActionStateDemo>` / `<UseTransitionDemo>` | playground/react19/       | React 19 live demos                     |
+| `<Tabs>` / `<TabsContent>` / `<TabsList>` / `<TabsTrigger>`            | ui/tabs                   | Tabbed UI                               |
+| `<Alert>` / `<AlertDescription>` / `<AlertTitle>`                      | ui/alert                  | Callout boxes                           |
+| `<Badge>`                                                              | ui/badge                  | Status badges                           |
+| `<Info>` / `<AlertTriangle>` / `<Lightbulb>`                           | lucide-react              | Inline icons                            |
 
 ### Content Validation
 

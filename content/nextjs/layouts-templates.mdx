@@ -169,10 +169,11 @@ app/
 
 ## Interactive Exercise
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Build Nested Layouts with Sidebar"
   description="Create a dashboard layout structure with a persistent sidebar, account settings page, and an analytics page using route groups."
-  starterCode={`// app/dashboard/layout.tsx — Create a layout with a persistent sidebar
+  code={`// app/dashboard/layout.tsx — Create a layout with a persistent sidebar
 export default function DashboardLayout({
   children,
 }: {
@@ -186,7 +187,7 @@ export default function DashboardLayout({
     </div>
   )
 }`}
-  solutionCode={`// app/dashboard/layout.tsx
+  solution={`// app/dashboard/layout.tsx
 import Link from "next/link"
 
 export default function DashboardLayout({

@@ -241,15 +241,16 @@ pnpm -r run build
 - Giant repos causing slow CI (10k+ packages)
 - Strict access control boundaries needed
 
-## InteractiveExercise
+## Challenge
 
 Set up a basic workspace with a shared types package consumed by two apps.
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Basic Monorepo Setup"
   description="Create a pnpm workspace with shared types between a web app and API"
   language="ts"
-  starterCode={`// Step 1: Create pnpm-workspace.yaml
+  code={`// Step 1: Create pnpm-workspace.yaml
 // packages: ["packages/*"]
 
 // Step 2: Create packages/shared/src/types.ts
@@ -292,7 +293,7 @@ email: string
 // Root package.json scripts:
 // "dev": "turbo dev"
 // "build": "turbo build"`}
-  solutionCode={`// packages/shared/src/index.ts
+  solution={`// packages/shared/src/index.ts
 export type User = {
 id: string
 name: string

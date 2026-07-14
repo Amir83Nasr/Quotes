@@ -209,11 +209,12 @@ function renderState<T>(s: AsyncState<T>): string {
 }
 ```
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Model a Form State"
   description="Define a discriminated union for form submission. States: idle, validating, submitting, success (with message), error (with field + message). Then implement getSubmitButtonText."
   language="typescript"
-  starterCode={`type FormState =
+  code={`type FormState =
   // Define your discriminated union here
   | { status: "idle" }
   // ... add remaining states
@@ -226,7 +227,7 @@ function getSubmitButtonText(state: FormState): string {
 // success -> "Done!"
 // error -> "Retry"
 }`}
-  solutionCode={`type FormState =
+  solution={`type FormState =
 | { status: "idle" }
 | { status: "validating" }
 | { status: "submitting" }

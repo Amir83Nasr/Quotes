@@ -157,10 +157,11 @@ Allow keyboard users to skip repetitive navigation.
   `}
 />
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Make a Tab Panel Accessible"
   description="Take this tab panel and add ARIA attributes for full accessibility: roles, aria-selected, aria-controls, aria-labelledby, keyboard event handlers, and tabindex management."
-  starterCode={`<div class="tabs">
+  code={`<div class="tabs">
   <div class="tab-list">
     <button class="tab active">HTML</button>
     <button class="tab">CSS</button>
@@ -177,7 +178,7 @@ Allow keyboard users to skip repetitive navigation.
   </div>
 </div>`}
   language="html"
-  solutionCode={`<style>
+  solution={`<style>
   .tabs { font-family: system-ui; } .tab-list { display: flex; gap: 0; border-bottom: 2px solid #e2e8f0; }
   .tab { padding: 0.5rem 1rem; border: none; background: transparent; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; }
   .tab[aria-selected="true"] { border-bottom-color: #6366f1; color: #6366f1; font-weight: 600; }

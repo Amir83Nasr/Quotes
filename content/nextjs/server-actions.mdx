@@ -173,10 +173,11 @@ export default function NewsletterPage() {
 
 ## Interactive Exercise
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Form with Server Action + Revalidation"
   description="Build a comment form that uses a server action, validates input, inserts data, and revalidates the comments list."
-  starterCode={`"use server"
+  code={`"use server"
 // app/actions/comments.ts
 // Create a server action addComment that:
 // 1. Validates the form data (text required, max 1000 chars)
@@ -187,7 +188,7 @@ export default function NewsletterPage() {
 export async function addComment(formData: FormData) {
   // TODO: Implement validated server action
 }`}
-  solutionCode={`"use server"
+  solution={`"use server"
 import { revalidateTag } from "next/cache"
 
 export async function addComment(formData: FormData) {

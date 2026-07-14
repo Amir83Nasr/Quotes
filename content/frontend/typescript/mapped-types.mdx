@@ -211,15 +211,16 @@ type APIResponse<T> = {
 type PostsResponse = APIResponse<FrontendPost>
 ```
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Implement DeepPartial"
   description="Write a DeepPartial type that makes all properties optional recursively. For arrays, keep them as-is (don't recurse into array items)."
   language="typescript"
-  starterCode={`type DeepPartial<T> = {
+  code={`type DeepPartial<T> = {
   // Implement recursive mapped type
   // Hint: check if property is array or object
 }`}
-  solutionCode={`type DeepPartial<T> = {
+  solution={`type DeepPartial<T> = {
   [K in keyof T]?:
     T[K] extends (infer U)[] ? U[] :        // arrays stay arrays
     T[K] extends object ? DeepPartial<T[K]> : // objects recurse

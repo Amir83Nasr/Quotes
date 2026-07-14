@@ -313,10 +313,11 @@ export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
 
 ## Interactive Exercise
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Build a Real-Time Notification Feed"
   description="Create a notification feed component that connects to an SSE endpoint. The component should display incoming notifications, indicate connection status, and handle reconnection gracefully."
-  starterCode={`"use client"
+  code={`"use client"
 import { useEffect, useState } from "react"
 
 interface Notification {
@@ -344,7 +345,7 @@ return (
 </div>
 )
 }`}
-  solutionCode={`"use client"
+  solution={`"use client"
 import { useEffect, useState } from "react"
 
 interface Notification {

@@ -204,15 +204,16 @@ function Invoice() {
 }
 ```
 
-## InteractiveExercise
+## Challenge
 
 Build a registration form with email, password, password confirmation, and a terms checkbox. Form must validate passwords match.
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Registration Form"
   description="Create a registration form with password confirmation match validation"
   language="tsx"
-  starterCode={`import { useForm } from "react-hook-form"
+  code={`import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 
@@ -254,7 +255,7 @@ export default function RegisterForm() {
     </form>
   )
 }`}
-  solutionCode={`import { useForm } from "react-hook-form"
+  solution={`import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 

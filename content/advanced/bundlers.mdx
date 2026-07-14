@@ -219,15 +219,16 @@ Benefits vs Webpack:
 - Incremental computation — only rebuilds changed cells
 - Caching at function level, not file level
 
-## InteractiveExercise
+## Challenge
 
 Identify optimization opportunities in this bundle config.
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Bundle Optimization"
   description="Analyze and optimize a bloated Webpack config"
   language="ts"
-  starterCode={`// Current webpack.config.js — find 3+ optimization issues
+  code={`// Current webpack.config.js — find 3+ optimization issues
 const path = require("path")
 
 module.exports = {
@@ -252,7 +253,7 @@ extensions: [".ts", ".tsx", ".js"],
 // 4. No HtmlWebpackPlugin
 // Bonus: Add bundle analyzer
 }`}
-  solutionCode={`const path = require("path")
+  solution={`const path = require("path")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer")
 

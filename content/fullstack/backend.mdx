@@ -588,10 +588,11 @@ Authorization: Bearer dev-token-123
 
 ## Interactive Exercise
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Build a validated POST handler"
   description="Complete the route handler so it reads the JSON body, rejects invalid input with 400, and returns the created note with status 201."
-  starterCode={`// app/api/notes/route.ts
+  code={`// app/api/notes/route.ts
 const notes: Array<{ id: number; text: string }> = []
 let nextId = 1
 
@@ -600,7 +601,7 @@ export async function POST(request: Request) {
   // TODO: if text is missing or not a string, return 400
   // TODO: create a note, push it, return it with status 201
 }`}
-  solutionCode={`// app/api/notes/route.ts
+  solution={`// app/api/notes/route.ts
 const notes: Array<{ id: number; text: string }> = []
 let nextId = 1
 

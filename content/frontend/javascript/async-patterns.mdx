@@ -123,10 +123,11 @@ async function fetchWithRetry(url, { retries = 3, delay = 1000 } = {}) {
 
 ## Interactive Exercise
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Build fetchWithRetry"
   description="Fetch with retry, exponential backoff, timeout. Retry 5xx, throw 4xx immediately."
-  starterCode={`async function fetchWithRetry(url, options = {}) {
+  code={`async function fetchWithRetry(url, options = {}) {
   const { retries = 3, delay = 1000, timeout = 5000 } = options
   // Use AbortController for timeout
   // Only retry 5xx, throw 4xx immediately

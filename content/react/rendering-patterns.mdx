@@ -304,10 +304,11 @@ Today, prefer **hooks** for sharing stateful logic. Render props and HOCs are st
 
 ## Interactive Exercise
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="HOC with Mouse Tracking"
   description="Build a withMouseTracking HOC that provides x/y coordinates to any wrapped component."
-  starterCode={`"use client"
+  code={`"use client"
 
 // Build a withMouseTracking HOC that:
 // 1. Tracks mouse position in a div
@@ -318,7 +319,7 @@ export default function Exercise() {
   return null
 }`}
   language="tsx"
-  solutionCode={`"use client"
+  solution={`"use client"
 
 import { useState, type ComponentType } from "react"
 

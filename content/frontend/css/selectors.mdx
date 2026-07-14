@@ -248,10 +248,11 @@ li:nth-child(n + 4):nth-child(-n + 6) {
 } /* items 4-6 */
 ```
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Style a Complex List"
   description="Use advanced selectors to: alternate row backgrounds, style the first 2 items bold, add a custom bullet via ::before on important items, and highlight the item that contains the word 'Important'."
-  starterCode={`<ul class="task-list">
+  code={`<ul class="task-list">
   <li>Task one - normal</li>
   <li>Important - do this first</li>
   <li>Task three - normal</li>
@@ -260,7 +261,7 @@ li:nth-child(n + 4):nth-child(-n + 6) {
   <li>Task six - normal</li>
 </ul>`}
   language="html"
-  solutionCode={`<style>
+  solution={`<style>
   .task-list li:nth-child(odd) { background: #f8fafc; }
   .task-list li:nth-child(-n+2) { font-weight: bold; }
   .task-list li:has(> span, :contains("Important"))::before { content: "\\2605 "; color: #f59e0b; }

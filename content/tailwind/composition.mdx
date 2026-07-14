@@ -132,13 +132,14 @@ function Button({ variant, size, className, children }: ButtonProps) {
   </TabsContent>
 </Tabs>
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Button Component System with Variants"
   description="Build a reusable Button with variant (primary/secondary/outline), size (sm/md/lg)."
-  starterCode={`function Button({ variant = "primary", size = "md", className, children }) {
+  code={`function Button({ variant = "primary", size = "md", className, children }) {
   return <button className={...}>{children}</button>
 }`}
-  solutionCode={`const buttonVariants = cva("inline-flex items-center justify-center rounded-lg font-medium transition-colors", {
+  solution={`const buttonVariants = cva("inline-flex items-center justify-center rounded-lg font-medium transition-colors", {
   variants: {
     variant: {
       primary: "bg-blue-500 text-white hover:bg-blue-600",

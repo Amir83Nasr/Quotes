@@ -239,15 +239,16 @@ const useStore = create<Store>()(
 // Visible in Redux DevTools browser extension
 ```
 
-## InteractiveExercise
+## Challenge
 
 Build a shopping cart store with Zustand. Must support addItem, removeItem, updateQuantity, and compute total.
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Shopping Cart with Zustand"
   description="Create a Zustand store for a shopping cart with computed totals"
   language="tsx"
-  starterCode={`import { create } from "zustand"
+  code={`import { create } from "zustand"
 
 // Step 1: Define CartItem type (id, name, price, quantity)
 // Step 2: Define CartStore type (items, addItem, removeItem, updateQuantity, total)
@@ -265,7 +266,7 @@ export function Cart() {
     </div>
   )
 }`}
-  solutionCode={`import { create } from "zustand"
+  solution={`import { create } from "zustand"
 import { devtools } from "zustand/middleware"
 
 type CartItem = {

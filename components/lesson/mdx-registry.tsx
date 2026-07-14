@@ -9,41 +9,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Info, AlertTriangle, Lightbulb } from "lucide-react"
-// Gallery + React 19 live demos
 import { GalleryDemo } from "@/components/playground/GalleryDemo"
 import { UseOptimisticDemo } from "@/components/playground/react19/UseOptimisticDemo"
 import { UseActionStateDemo } from "@/components/playground/react19/UseActionStateDemo"
 import { UseTransitionDemo } from "@/components/playground/react19/UseTransitionDemo"
-// Shared lesson primitives
 import { CodeBlock } from "./shared/CodeBlock"
 import { LessonCodeExample } from "./shared/LessonCodeExample"
 import { PreWithCopy } from "./shared/PreWithCopy"
 import { LearningObjectives } from "./shared/LearningObjectives"
 import { LessonSummary } from "./shared/LessonSummary"
-// Static (non-interactive) lesson widgets
-import { StaticExercise } from "./static/StaticExercise"
-import { StaticChallenge } from "./static/StaticChallenge"
-// Interactive lesson widgets
-import { InteractiveExercise } from "./interactive/InteractiveExercise"
-import { InteractiveChallenge } from "./interactive/InteractiveChallenge"
 import { LiveEditor } from "./interactive/LiveEditor"
 import { SandboxPreview } from "./interactive/SandboxPreview"
 
-/**
- * Single source of truth for the MDX component map.
- *
- * Combines three things:
- *  1. UI primitives + lesson widgets addressable by name inside MDX
- *     (e.g. `<LessonCodeExample>`, `<InteractiveExercise>`, `<Tabs>`).
- *  2. Raw HTML element overrides (`table`, `pre`, `code`, `a`, …) so plain
- *     Markdown renders with the site's styling.
- *
- * Keys used by content must stay stable — `InteractiveExercise`, `LessonCodeExample`,
- * `LearningObjectives`, `LessonSummary`, `SandboxPreview`, `GalleryDemo` all appear
- * in `.mdx` files.
- */
 export const lessonMdxComponents: MDXComponents = {
-  // UI primitives
   Tabs: Tabs as React.ComponentType,
   TabsContent: TabsContent as React.ComponentType,
   TabsList: TabsList as React.ComponentType,
@@ -56,29 +34,19 @@ export const lessonMdxComponents: MDXComponents = {
   AlertTriangle: AlertTriangle as React.ComponentType,
   Lightbulb: Lightbulb as React.ComponentType,
 
-  // Gallery + React 19 live demos
   GalleryDemo: GalleryDemo as React.ComponentType,
   UseOptimisticDemo: UseOptimisticDemo as React.ComponentType,
   UseActionStateDemo: UseActionStateDemo as React.ComponentType,
   UseTransitionDemo: UseTransitionDemo as React.ComponentType,
 
-  // Shared lesson widgets
   CodeBlock: CodeBlock as React.ComponentType,
   LessonCodeExample: LessonCodeExample as React.ComponentType,
   LearningObjectives: LearningObjectives as React.ComponentType,
   LessonSummary: LessonSummary as React.ComponentType,
 
-  // Static (non-interactive) widgets
-  StaticExercise: StaticExercise as React.ComponentType,
-  StaticChallenge: StaticChallenge as React.ComponentType,
-
-  // Interactive widgets
-  InteractiveExercise: InteractiveExercise as React.ComponentType,
-  InteractiveChallenge: InteractiveChallenge as React.ComponentType,
   LiveEditor: LiveEditor as React.ComponentType,
   SandboxPreview: SandboxPreview as React.ComponentType,
 
-  // Raw HTML element overrides
   table: ({ children, ...props }: HTMLAttributes<HTMLTableElement>) => (
     <div className="my-6 w-full overflow-y-auto">
       <table className="w-full text-sm" {...props}>
@@ -87,18 +55,12 @@ export const lessonMdxComponents: MDXComponents = {
     </div>
   ),
   th: ({ children, ...props }: ThHTMLAttributes<HTMLTableCellElement>) => (
-    <th
-      className="border px-4 py-2 text-left font-medium [[align=center]]:text-center [[align=right]]:text-right"
-      {...props}
-    >
+    <th className="border px-4 py-2 text-left font-medium" {...props}>
       {children}
     </th>
   ),
   td: ({ children, ...props }: TdHTMLAttributes<HTMLTableCellElement>) => (
-    <td
-      className="border px-4 py-2 text-left [[align=center]]:text-center [[align=right]]:text-right"
-      {...props}
-    >
+    <td className="border px-4 py-2 text-left" {...props}>
       {children}
     </td>
   ),
@@ -142,14 +104,8 @@ export const lessonMdxComponents: MDXComponents = {
   ),
 }
 
-/**
- * Return components for MDX rendering, optionally injecting page-specific ones.
- */
 export function getLessonMdxComponents(
   extra?: Record<string, React.ComponentType>
 ): MDXComponents {
-  return {
-    ...lessonMdxComponents,
-    ...extra,
-  }
+  return { ...lessonMdxComponents, ...extra }
 }

@@ -256,11 +256,12 @@ export function useAuth() {
 
 Build a theme toggle. Create a `ThemeContext` with "light" | "dark" state, a provider, and a `useTheme` hook. Components should read and toggle the theme.
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Theme Switcher with Context"
   description="Create a ThemeProvider and two consumer components: one that displays the current theme and one that toggles it."
   language="tsx"
-  starterCode={`"use client"
+  code={`"use client"
 
 import { createContext, useContext, useState, type ReactNode } from "react"
 
@@ -285,7 +286,7 @@ export default function App() {
     </div>
   )
 }`}
-  solutionCode={`"use client"
+  solution={`"use client"
 
 import { createContext, useContext, useState, type ReactNode } from "react"
 

@@ -441,10 +441,11 @@ curl -X POST http://localhost:4000/api/auth/logout -b cookies.txt
 
 ## Interactive Exercise
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Complete the login handler"
   description="Verify the password against the stored hash, then set an httpOnly session cookie. Return 401 on failure."
-  starterCode={`// app/api/auth/login/route.ts
+  code={`// app/api/auth/login/route.ts
 import bcrypt from "bcryptjs"
 import { cookies } from "next/headers"
 import { signToken } from "@/lib/auth"
@@ -457,7 +458,7 @@ export async function POST(request: Request) {
 // TODO: sign a token and set it in an httpOnly "session" cookie
 // TODO: return the user's id and email
 }`}
-  solutionCode={`// app/api/auth/login/route.ts
+  solution={`// app/api/auth/login/route.ts
 import bcrypt from "bcryptjs"
 import { cookies } from "next/headers"
 import { signToken } from "@/lib/auth"

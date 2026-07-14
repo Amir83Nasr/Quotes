@@ -205,10 +205,11 @@ const user: User = { name: "Alice", email: "a@b.com", role: "admin" }
 
 ## Interactive Exercise
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Render a Team List with Keys"
   description="Render a list of team members. Each item needs a stable key. Show a filtered subset."
-  starterCode={`interface Member {
+  code={`interface Member {
   id: string
   name: string
   role: string
@@ -226,7 +227,7 @@ export default function TeamList() {
   return null
 }`}
   language="tsx"
-  solutionCode={`interface Member {
+  solution={`interface Member {
   id: string
   name: string
   role: string

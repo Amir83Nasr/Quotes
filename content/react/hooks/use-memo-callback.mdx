@@ -251,11 +251,12 @@ const ProductGrid = React.memo(function ProductGrid({
 
 Optimize a list component that renders search results. The list receives a filter function and displays 1000 items. Use `useMemo` for the filtered list and `useCallback` for the filter handler.
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Optimize Search Results"
   description="Create a search component with 1000 items. Use useMemo to filter results and useCallback to stabilize the search handler so a memoized result list doesn't re-render on every keystroke."
   language="tsx"
-  starterCode={`"use client"
+  code={`"use client"
 
 import { useState } from "react"
 
@@ -295,7 +296,7 @@ return (
 </ul>
 )
 }`}
-  solutionCode={`"use client"
+  solution={`"use client"
 
 import { useState, useMemo, useCallback } from "react"
 

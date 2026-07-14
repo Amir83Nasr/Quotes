@@ -156,10 +156,11 @@ export function middleware(request: NextRequest) {
 
 ## Interactive Exercise
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Auth Middleware with Redirect"
   description="Write middleware that checks for a session cookie and redirects unauthenticated users to /login with the original path as a redirect param."
-  starterCode={`// middleware.ts
+  code={`// middleware.ts
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
@@ -172,7 +173,7 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [] // TODO: Add matcher
 }`}
-  solutionCode={`import { NextResponse } from "next/server"
+  solution={`import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
 export function middleware(request: NextRequest) {

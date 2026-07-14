@@ -117,17 +117,18 @@ Tailwind v4 `@container` support — style based on container width, not viewpor
 </div>
 ```
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Build a Responsive Navbar"
   description="Create a navbar with logo, nav links (hidden on mobile), and a mobile hamburger button."
-  starterCode={`<nav class="flex flex-col ...">
+  code={`<nav class="flex flex-col ...">
   <div><a href="#" class="text-xl font-bold">MyApp</a></div>
   <div class="hidden md:flex md:gap-6">
     <a href="#">Home</a> <a href="#">About</a> <a href="#">Contact</a>
   </div>
   <button class="... md:hidden">☰</button>
 </nav>`}
-  solutionCode={`<nav class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between bg-white px-6 py-4 shadow-sm">
+  solution={`<nav class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between bg-white px-6 py-4 shadow-sm">
   <div class="flex items-center justify-between">
     <a href="#" class="text-xl font-bold">MyApp</a>
     <button class="md:hidden rounded-lg p-2 text-gray-600 hover:bg-gray-100">☰</button>

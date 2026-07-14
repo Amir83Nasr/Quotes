@@ -167,10 +167,11 @@ For now, class component boundaries + `<Suspense>` is the battle-tested pattern.
 
 ## Interactive Exercise
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Wrap a Broken Component with ErrorBoundary"
   description="Create a component that throws on render and wrap it with ErrorBoundary to handle the crash gracefully."
-  starterCode={`"use client"
+  code={`"use client"
 
 import { Component, type ReactNode, type ErrorInfo } from "react"
 
@@ -182,7 +183,7 @@ export default function Exercise() {
   return null // Your error-boundary-wrapped component here
 }`}
   language="tsx"
-  solutionCode={`"use client"
+  solution={`"use client"
 
 import { Component, type ReactNode, type ErrorInfo } from "react"
 

@@ -173,10 +173,11 @@ Stacked layout on mobile, side-by-side on desktop:
   `}
 />
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Responsive Card Grid"
   description="Make a card grid that shows 1 column on mobile, 2 on tablet, 3 on desktop."
-  starterCode={`<div class="card-grid">
+  code={`<div class="card-grid">
   <div class="card">Item 1</div>
   <div class="card">Item 2</div>
   <div class="card">Item 3</div>
@@ -185,7 +186,7 @@ Stacked layout on mobile, side-by-side on desktop:
   <div class="card">Item 6</div>
 </div>`}
   language="html"
-  solutionCode={`<style>
+  solution={`<style>
   .card-grid {
     display: grid;
     gap: 1rem;

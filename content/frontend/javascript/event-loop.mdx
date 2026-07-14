@@ -131,10 +131,11 @@ explanation="Synchronous code (1, 7) runs first. Then microtasks (Promise callba
 
 ## Interactive Exercise
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Predict Log Order"
   description="Write expected output order for mixed async code."
-  starterCode={`console.log(1)
+  code={`console.log(1)
 setTimeout(() => { console.log(2); Promise.resolve().then(() => console.log(3)) }, 0)
 Promise.resolve().then(() => { console.log(4); setTimeout(() => console.log(5), 0) })
 setTimeout(() => console.log(6), 0)

@@ -149,10 +149,11 @@ function SearchPage() {
 
 ## Interactive Exercise: Portal Modal with Lazy Load
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Modal with Portal + Lazy Component"
   description="Build a modal using createPortal. Inside the modal, lazy-load a heavy content component with Suspense."
-  starterCode={`"use client"
+  code={`"use client"
 
 // Build:
 // 1. Modal component using createPortal(document.body)
@@ -165,7 +166,7 @@ export default function Exercise() {
   return null
 }`}
   language="tsx"
-  solutionCode={`"use client"
+  solution={`"use client"
 
 import { useState, lazy, Suspense } from "react"
 import { createPortal } from "react-dom"

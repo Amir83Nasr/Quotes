@@ -174,17 +174,18 @@ Native `loading="lazy"` defers off-screen images. Browser fetches them when the 
   `}
 />
 
-<InteractiveExercise
+<LessonCodeExample
+  mode="challenge"
   title="Build Responsive Image Gallery"
   description="Create a responsive image gallery grid using <picture> elements and srcset for different screen sizes. Use placeholders for images."
-  starterCode={`<div class="gallery-grid">
+  code={`<div class="gallery-grid">
   <div class="gallery-card">
     <h3>Gallery Item 1</h3>
     <p>Use a <picture> element here</p>
   </div>
 </div>`}
   language="html"
-  solutionCode={`<style>
+  solution={`<style>
   .gallery-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
