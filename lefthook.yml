@@ -93,6 +93,17 @@ pre-commit:
       run: pnpm eslint --fix {staged_files}
       stage_fixed: true
 
+    # ── TypeScript: type-check whole project ───────────────────────
+    typecheck:
+      tags: [frontend, check]
+      run: pnpm typecheck
+
+    # ── Content: validate MDX frontmatter, links, orphans, etc. ───
+    validate-content:
+      tags: [frontend, content]
+      glob: "*.mdx"
+      run: pnpm validate:content
+
     # ── Placeholder: Python / Ruff / Pytest ──────────────────────
     # Uncomment and adjust when Python files are added:
     #
@@ -106,3 +117,11 @@ pre-commit:
     #   tags: [python, test]
     #   glob: "*.py"
     #   run: pnpm pytest {staged_files}
+
+# ── Pre-Push: full quality gate before remote push ──────────────
+pre-push:
+  parallel: false
+  commands:
+    check:
+      tags: [frontend, check]
+      run: make check
