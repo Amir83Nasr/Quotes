@@ -17,6 +17,7 @@ Context lets a parent provide data to any descendant in the tree without passing
     "Understand performance implications and context splitting",
     "Build a practical theme provider and auth context",
   ]}
+  preview
 />
 
 ## The Problem: Prop Drilling
@@ -252,58 +253,32 @@ export function useAuth() {
 }
 ```
 
-## Interactive Exercise
+## See It In Action
 
 Build a theme toggle. Create a `ThemeContext` with "light" | "dark" state, a provider, and a `useTheme` hook. Components should read and toggle the theme.
 
 <LessonCodeExample
-  mode="challenge"
   title="Theme Switcher with Context"
-  description="Create a ThemeProvider and two consumer components: one that displays the current theme and one that toggles it."
   language="tsx"
+  explanation="This example defines a ThemeContext with a ThemeProvider that manages light/dark state. The useTheme hook lets any child component read the current theme and toggle it. CurrentTheme displays the theme, ThemeToggle switches it, and App wraps everything in the provider."
   code={`"use client"
 
 import { createContext, useContext, useState, type ReactNode } from "react"
 
-// TODO: Define ThemeContext, ThemeProvider, useTheme
-
-function CurrentTheme() {
-// TODO: read theme from context
-return <p>Theme: ???</p>
-}
-
-function ThemeToggle() {
-// TODO: toggle theme from context
-return <button>Toggle Theme</button>
-}
-
-export default function App() {
-  return (
-    // TODO: wrap with ThemeProvider
-    <div>
-      <CurrentTheme />
-      <ThemeToggle />
-    </div>
-  )
-}`}
-  solution={`"use client"
-
-import { createContext, useContext, useState, type ReactNode } from "react"
-
 type Theme = "light" | "dark"
-type ThemeContextValue = { theme: Theme; toggleTheme: () => void }
+type ThemeContextType = {
+theme: Theme
+toggleTheme: () => void
+}
 
-const ThemeContext = createContext<ThemeContextValue | null>(null)
+const ThemeContext = createContext<ThemeContextType | null>(null)
 
 function ThemeProvider({ children }: { children: ReactNode }) {
 const [theme, setTheme] = useState<Theme>("light")
-
 const toggleTheme = () => {
 setTheme((prev) => (prev === "light" ? "dark" : "light"))
 }
-
 return (
-
 <ThemeContext.Provider value={{ theme, toggleTheme }}>
 {children}
 </ThemeContext.Provider>
@@ -322,36 +297,21 @@ return <p>Theme: {theme}</p>
 }
 
 function ThemeToggle() {
-const { theme, toggleTheme } = useTheme()
-return (
-
-<button
-onClick={toggleTheme}
-className={\`px-4 py-2 rounded \${
-theme === "dark" ? "bg-gray-800 text-white" : "bg-gray-200 text-black"
-}\`} >
-Switch to {theme === "light" ? "dark" : "light"}
-</button>
-)
+const { toggleTheme } = useTheme()
+return <button onClick={toggleTheme}>Toggle Theme</button>
 }
 
 export default function App() {
   return (
     <ThemeProvider>
-      <div className="flex flex-col gap-4">
+      <div>
         <CurrentTheme />
         <ThemeToggle />
       </div>
     </ThemeProvider>
   )
 }`}
-  hints={[
-    "Define a Theme type with 'light' | 'dark'",
-    "Context value needs both theme and toggleTheme",
-    "Create a custom useTheme hook with null check",
-    "Wrap consumer components with ThemeProvider"
-  ]}
-  previewType="mixed"
+ preview
 />
 
 <LessonSummary

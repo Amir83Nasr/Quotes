@@ -14,6 +14,7 @@ order: 4
     "Build a Tabs component from scratch",
     "Compare compound components, render props, and hooks approaches",
   ]}
+  preview
 />
 
 ## What Are Compound Components?
@@ -193,73 +194,46 @@ Most flexible. Consumer controls everything. Loses the "it just works" ergonomic
   </TabsContent>
 </Tabs>
 
-## Interactive Exercise: Accordion
+## See It In Action: Accordion
 
 <LessonCodeExample
-  mode="challenge"
   title="Build an Accordion with Compound Components"
-  description="Create an Accordion compound component with Accordion, AccordionItem, AccordionTrigger, and AccordionPanel. Only one panel open at a time."
-  code={`// Write your Accordion, AccordionItem,
-// AccordionTrigger, and AccordionPanel components
-// Usage: <Accordion>
-//   <AccordionItem>
-//     <AccordionTrigger>Section 1</AccordionTrigger>
-//     <AccordionPanel>Content 1</AccordionPanel>
-//   </AccordionItem>
-// </Accordion>
-export {}`}
-  language="tsx"
-  solution={`import { createContext, useContext, useState, type ReactNode } from "react"
+  code={`import { createContext, useContext, useState, type ReactNode } from "react"
 
-interface AccordionContext {
+const AccordionContext = createContext<{
 openItem: string | null
-setOpenItem: (id: string | null) => void
-}
-const AccordionCtx = createContext<AccordionContext | null>(null)
-function useAccordion() {
-const ctx = useContext(AccordionCtx)
-if (!ctx) throw new Error("Must be inside Accordion")
-return ctx
-}
+toggle: (id: string) => void
+} | null>(null)
 
 function Accordion({ children }: { children: ReactNode }) {
 const [openItem, setOpenItem] = useState<string | null>(null)
 return (
-
-<AccordionCtx.Provider value={{ openItem, setOpenItem }}>
-<div className="border rounded">{children}</div>
-</AccordionCtx.Provider>
+<AccordionContext.Provider value={{ openItem, toggle: (id) => setOpenItem(prev => prev === id ? null : id) }}>
+{children}
+</AccordionContext.Provider>
 )
 }
-
 function AccordionItem({ id, children }: { id: string; children: ReactNode }) {
-return <div className="border-b last:border-b-0">{children}</div>
+return <div>{children}</div>
 }
-
 function AccordionTrigger({ id, children }: { id: string; children: ReactNode }) {
-const { openItem, setOpenItem } = useAccordion()
-return (
-
-<button
-className="w-full text-left p-3 font-medium"
-onClick={() => setOpenItem(openItem === id ? null : id)} >
-{children} {openItem === id ? "▲" : "▼"}
-</button>
-)
+const ctx = useContext(AccordionContext)!
+return <button onClick={() => ctx.toggle(id)}>{children}</button>
+}
+function AccordionPanel({ id, children }: { id: string; children: ReactNode }) {
+const ctx = useContext(AccordionContext)!
+return ctx.openItem === id ? <div>{children}</div> : null
 }
 
-function AccordionPanel({ id, children }: { id: string; children: ReactNode }) {
-const { openItem } = useAccordion()
-if (openItem !== id) return null
-return <div className="p-3">{children}</div>
-}`}
-hints={[
-"Create context with openItem and setOpenItem",
-"Accordion is the provider with useState<string | null>",
-"Trigger calls setOpenItem, toggling on same id",
-"Panel checks openItem and returns null when closed"
-]}
-previewType="mixed"
+// Usage:
+// <Accordion>
+// <AccordionItem id="1">
+// <AccordionTrigger id="1">Section 1</AccordionTrigger>
+// <AccordionPanel id="1">Content 1</AccordionPanel>
+// </AccordionItem>
+// </Accordion>`}
+  language="tsx"
+  explanation="Compound components share implicit state via Context. The `<Accordion>`provider manages which item is open; children call`toggle()`via`useContext`. This pattern creates a declarative, flexible API."
 />
 
 <LessonSummary

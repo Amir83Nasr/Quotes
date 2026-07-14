@@ -6,6 +6,17 @@ order: 5
 
 # Generics
 
+<LearningObjectives
+  objectives={[
+    "Understand generics as type parameters that capture argument types",
+    "Write generic functions and interfaces with type variables",
+    "Constrain generics with extends to limit acceptable types",
+    "Build reusable utility types using generic constraints",
+    "Use conditional types with infer for type transformations",
+    "Apply mapped types to transform existing types",
+  ]}
+/>
+
 Generics let you write code that works with any type while preserving type safety.
 
 ## Generic Functions
@@ -51,3 +62,13 @@ function List<T>({ items, renderItem }: ListProps<T>) {
 
 - [Advanced Types](/frontend/typescript/advanced)
 - [React Components](/react/components)
+
+<LessonSummary
+  points={[
+    "Generics capture the type of an argument and carry it through function returns, exactly like a type variable",
+    "Generic constraints (extends) limit what types are accepted while preserving the actual type",
+    "Generic interfaces and types create reusable abstractions that work with many concrete types",
+    "Conditional types (T extends U ? X : Y) select types based on conditions at the type level",
+    "The infer keyword in conditional types extracts and captures a type from a larger type pattern",
+  ]}
+/>

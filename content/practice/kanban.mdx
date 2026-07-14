@@ -7,6 +7,17 @@ order: 6
 
 # Kanban Board
 
+<LearningObjectives
+  objectives={[
+    "Implement drag-and-drop for card reordering",
+    "Build a three-column board (To Do, In Progress, Done)",
+    "Persist board state across page reloads",
+    "Add card creation, editing, and deletion",
+    "Implement column-to-column movement with state updates",
+    "Handle loading states and optimistic updates",
+  ]}
+/>
+
 A drag-and-drop project management board with columns and cards.
 
 ## Requirements
@@ -75,3 +86,13 @@ export default function KanbanBoard() {
 
 - [Blog](/practice/blog)
 - [Authentication System](/practice/auth)
+
+<LessonSummary
+  points={[
+    "Drag and drop with HTML5 DnD API or libraries like dnd-kit enables intuitive card reordering",
+    "A three-column board state can be one array with status field per card or three separate arrays per column",
+    "localStorage persistence requires serializing the entire board state and restoring it on mount",
+    "Column-to-column movement is a state transfer: remove from source status, add to target status",
+    "Optimistic updates update the UI immediately and revert on API failure for a responsive feel",
+  ]}
+/>

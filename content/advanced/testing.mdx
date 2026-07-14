@@ -6,6 +6,17 @@ order: 4
 
 # Testing
 
+<LearningObjectives
+  objectives={[
+    "Understand the testing pyramid: unit, integration, and e2e tests",
+    "Write unit tests with Vitest and React Testing Library",
+    "Test user interactions and behavior instead of implementation details",
+    "Mock external dependencies at the network boundary using MSW",
+    "Integrate tests into CI pipelines for consistent quality gates",
+    "Measure code coverage and identify untested critical paths",
+  ]}
+/>
+
 Testing ensures your code works correctly and stays working.
 
 ## Testing Pyramid
@@ -56,3 +67,13 @@ describe("Counter", () => {
 
 - [Performance](/advanced/performance)
 - [Practice Projects](/practice/todo-app)
+
+<LessonSummary
+  points={[
+    "The testing pyramid recommends many fast unit tests, fewer integration tests, and even fewer slow e2e tests",
+    "React Testing Library encourages testing behavior (what the user sees and does) not implementation details",
+    "Mock at the network boundary using MSW rather than mocking individual modules or functions",
+    "Vitest offers near-perfect Jest compatibility but runs significantly faster thanks to Vite's bundler",
+    "CI integration ensures tests run on every push and PR, preventing regressions from reaching production",
+  ]}
+/>

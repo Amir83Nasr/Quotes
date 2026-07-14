@@ -6,6 +6,17 @@ order: 4
 
 # Server Components
 
+<LearningObjectives
+  objectives={[
+    "Understand the fundamental difference between Server and Client Components",
+    "Know which React features are available in each component type",
+    "Co-locate Client Components inside Server Components strategically",
+    "Use the 'use client' directive and understand its bundler implications",
+    "Pass Server Component results as props to Client Components",
+    "Avoid common mistakes: serialization issues, missing directives, context in server",
+  ]}
+/>
+
 React Server Components (RSC) let you render components on the server, sending only the HTML to the client. This reduces bundle size and improves performance.
 
 ## Server vs Client Components
@@ -84,3 +95,13 @@ function ClientList({ items }: { items: Item[] }) {
 
 - [Data Fetching](/nextjs/data-fetching) — Fetching data in RSC
 - [Routing](/nextjs/routing) — App Router patterns
+
+<LessonSummary
+  points={[
+    "Server Components run exclusively on the server — they cannot use useState, useEffect, event handlers, or browser APIs",
+    "Client Components are bundled and sent to the browser — they can use anything a React component normally can",
+    "The 'use client' directive is a bundler instruction that marks the component file's boundary, not a runtime directive",
+    "Server Components can import and render Client Components, but not vice versa without composition patterns",
+    "Passing Server Component results as props to Client Components enables a 'fetch on server, interact on client' pattern",
+  ]}
+/>

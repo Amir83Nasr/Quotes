@@ -15,6 +15,7 @@ order: 10
     "Revalidate data after mutations with revalidatePath and revalidateTag",
     "Handle errors gracefully in server actions",
   ]}
+  preview
 />
 
 ## "use server" Directive
@@ -171,31 +172,18 @@ export default function NewsletterPage() {
 }
 ```
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="Form with Server Action + Revalidation"
-  description="Build a comment form that uses a server action, validates input, inserts data, and revalidates the comments list."
+  explanation="A validated server action that extracts form data, validates text is present and under 1000 characters, logs the insert, simulates cache revalidation, and returns a success or error response."
   code={`"use server"
 // app/actions/comments.ts
-// Create a server action addComment that:
-// 1. Validates the form data (text required, max 1000 chars)
-// 2. Inserts into database (simulate with console.log + revalidate)
-// 3. Returns success or error
-// 4. Revalidates the comments
 
 export async function addComment(formData: FormData) {
-  // TODO: Implement validated server action
-}`}
-  solution={`"use server"
-import { revalidateTag } from "next/cache"
-
-export async function addComment(formData: FormData) {
-  const postId = formData.get("postId")
   const text = formData.get("text")
 
-if (!text || typeof text !== "string" || text.trim() === "") {
+if (!text || typeof text !== "string" || text.trim().length === 0) {
 return { error: "Comment text is required" }
 }
 
@@ -203,16 +191,14 @@ if (text.length > 1000) {
 return { error: "Comment must be under 1000 characters" }
 }
 
-try {
-// Simulated DB insert
-console.log(\`Inserting comment for post \${postId}: \${text}\`)
-revalidateTag(\`comments-\${postId}\`)
+console.log(\`Inserting comment: \${text}\`)
+
+// Revalidate cache so the UI picks up the new entry
+// In production: import { revalidateTag } from "next/cache"
+console.log("Revalidating: comments")
+
 return { success: true }
-} catch {
-return { error: "Failed to save comment" }
-}
 }`}
-hints={["Always validate inputs in server actions — they can be called outside the form", "Return error objects instead of throwing for form UX", "Use revalidateTag to target specific cached data"]}
 previewType="mixed"
 />
 

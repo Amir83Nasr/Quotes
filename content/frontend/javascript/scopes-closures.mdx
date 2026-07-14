@@ -13,6 +13,7 @@ order: 2
     "Use closures for private state",
     "Fix the loop + closure gotcha",
   ]}
+  preview
 />
 
 ## Scope Types
@@ -86,22 +87,35 @@ for (var i = 0; i < 3; i++) setTimeout(() => console.log(i), 0) // 3, 3, 3 (shar
 for (let i = 0; i < 3; i++) setTimeout(() => console.log(i), 0) // 0, 1, 2 (per-iteration binding)
 ```
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="Build a Private Counter"
-  description="Create `createAdvancedCounter(initial)` returning `{increment(step=1), decrement(step=1), reset(), getCount()}`. Validate step is positive."
   code={`function createAdvancedCounter(initial = 0) {
-  // Returns { increment, decrement, reset, getCount }
-  // throw if step <= 0
-}`}
+  let count = initial
+  return {
+    increment: (step = 1) => {
+      if (step <= 0) throw new Error("Step must be positive")
+      count += step
+      return count
+    },
+    decrement: (step = 1) => {
+      if (step <= 0) throw new Error("Step must be positive")
+      count -= step
+      return count
+    },
+    reset: () => { count = initial; return count },
+    getCount: () => count,
+  }
+}
+
+const counter = createAdvancedCounter(10)
+console.log(counter.increment(5)) // 15
+console.log(counter.decrement(3)) // 12
+console.log(counter.getCount()) // 12
+console.log(counter.reset()) // 10`}
   language="javascript"
-  hints={[
-    "Use closure to keep count private",
-    "Validate step before modifying count",
-  ]}
-  previewType="mixed"
+  explanation="A closure encapsulates `count`— the returned methods close over the variable, making it private. No external code can modify`count`except through`increment`, `decrement`, or `reset`."
 />
 
 ## Lesson Summary

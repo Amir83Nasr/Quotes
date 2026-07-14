@@ -15,6 +15,7 @@ order: 7
     "Protect API routes with middleware",
     "Stream responses from route handlers",
   ]}
+  preview
 />
 
 ## Basic Route Handler
@@ -168,23 +169,11 @@ export const config = {
 }
 ```
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="Build a CRUD API for Todos"
-  description="Complete the route handler for a todo API with GET, POST, PUT, and DELETE endpoints."
   code={`// app/api/todos/route.ts
-// Complete the GET and POST handlers
-
-export async function GET() {
-  // TODO: Return the todos array as JSON
-}
-
-export async function POST(request: Request) {
-  // TODO: Parse body, create a todo, return it with status 201
-}`}
-  solution={`// app/api/todos/route.ts
 const todos: Array<{ id: number; text: string; done: boolean }> = []
 let nextId = 1
 
@@ -194,15 +183,11 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const { text } = await request.json()
-  if (!text || typeof text !== "string") {
-    return Response.json({ error: "text is required" }, { status: 400 })
-  }
   const todo = { id: nextId++, text, done: false }
   todos.push(todo)
   return Response.json(todo, { status: 201 })
 }`}
-  hints={["Use Response.json() to return JSON responses", "Validate input before creating todos", "Return appropriate status codes (201 for created, 400 for bad request)"]}
-  previewType="mixed"
+  explanation="GET returns the full todos array as JSON. POST parses the request body, creates a new todo with a unique ID (auto-incrementing nextId), pushes it to the in-memory array, and responds with the created todo and a 201 status code."
 />
 
 ## Lesson Summary

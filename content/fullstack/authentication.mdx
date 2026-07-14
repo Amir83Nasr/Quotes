@@ -17,6 +17,7 @@ Common authentication strategies for web apps.
     "Clear the session on logout",
     "Test the full login → profile → logout flow locally with a curl cookie jar",
   ]}
+  preview
 />
 
 <Alert>
@@ -439,12 +440,11 @@ curl http://localhost:4000/api/auth/profile -b cookies.txt
 curl -X POST http://localhost:4000/api/auth/logout -b cookies.txt
 ```
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="Complete the login handler"
-  description="Verify the password against the stored hash, then set an httpOnly session cookie. Return 401 on failure."
+  explanation="Verifies the password with bcrypt.compare, signs a JWT, stores it in an httpOnly cookie, and returns the user's id and email."
   code={`// app/api/auth/login/route.ts
 import bcrypt from "bcryptjs"
 import { cookies } from "next/headers"
@@ -454,41 +454,26 @@ export async function POST(request: Request) {
   const { email, password } = await request.json()
   const user = users.find((u) => u.email === email)
 
-// TODO: verify the password with bcrypt.compare — return 401 if invalid
-// TODO: sign a token and set it in an httpOnly "session" cookie
-// TODO: return the user's id and email
-}`}
-  solution={`// app/api/auth/login/route.ts
-import bcrypt from "bcryptjs"
-import { cookies } from "next/headers"
-import { signToken } from "@/lib/auth"
-
-export async function POST(request: Request) {
-  const { email, password } = await request.json()
-  const user = users.find((u) => u.email === email)
-  const ok = user && (await bcrypt.compare(password ?? "", user.passwordHash))
-
-if (!ok) {
+// Verify password — return 401 if mismatch or user not found
+const valid = user && (await bcrypt.compare(password ?? "", user.passwordHash))
+if (!valid) {
 return Response.json({ message: "Invalid credentials" }, { status: 401 })
 }
 
+// Sign JWT and store in httpOnly cookie
 const token = await signToken({ userId: user.id, email: user.email })
 const cookieStore = await cookies()
 cookieStore.set("session", token, {
 httpOnly: true,
-secure: process.env.NODE*ENV === "production",
+secure: process.env.NODE_ENV === "production",
 sameSite: "lax",
 path: "/",
-maxAge: 60 * 60 \_ 24 \* 7,
+maxAge: 60 _ 60 _ 24 \* 7, // 7 days
 })
 
+// Return user info (never expose the password hash)
 return Response.json({ id: user.id, email: user.email })
 }`}
-hints={[
-"bcrypt.compare(plaintext, hash) returns a Promise<boolean> — await it",
-"Guard against a missing user before comparing so it doesn't throw",
-"cookies() is async in the App Router — await it before calling .set()",
-]}
 previewType="mixed"
 />
 

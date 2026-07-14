@@ -218,9 +218,7 @@ type APIAction = `${Uppercase<Action>}_${Uppercase<Entity>}`
 ```
 
 <LessonCodeExample
-  mode="challenge"
   title="Typed API Response Handler"
-  description="Define a generic API response type using utility types. Given a base data shape, add meta, pagination, and error fields. Then create a type-safe fetch function."
   language="typescript"
   code={`interface APIResponse<T> {
   data: T
@@ -240,28 +238,6 @@ type ListResponse<T> = // use Pick and Omit from APIResponse
 // Try: list of users
 interface User { id: number; name: string; email: string }
 type UserList = ListResponse<User>[]`}
-  solution={`interface APIResponse<T> {
-data: T
-meta?: { page: number; totalPages: number }
-error?: { message: string; code: number }
-}
-
-type UpdatePayload<T> = Partial<Pick<T, Exclude<keyof T, "id">>>
-type ListResponse<T> = Omit<APIResponse<T[]>, "error">
-
-interface User { id: number; name: string; email: string }
-
-type UserUpdate = UpdatePayload<User>
-// { name?: string; email?: string }
-
-type UserList = ListResponse<User>
-// { data: User[]; meta?: { page: number; totalPages: number } }`}
-hints={[
-"Use Partial to make all properties optional.",
-"Use Exclude<keyof T, 'id'> to exclude 'id' from the keys.",
-"Use Omit<Type, 'error'> to create a success-only version.",
-"Compose: Pick and Partial for updates, Omit for success responses."
-]}
 />
 
 <LessonSummary

@@ -6,6 +6,17 @@ order: 1
 
 # React Introduction
 
+<LearningObjectives
+  objectives={[
+    "Understand React's component-based architecture",
+    "Write function components that accept props",
+    "Use JSX syntax to describe UI declaratively",
+    "Manage local state with the useState hook",
+    "Handle events and update state in response to user interaction",
+    "Understand the component lifecycle and re-rendering",
+  ]}
+/>
+
 React is a JavaScript library for building user interfaces. It lets you compose complex UIs from small and isolated pieces of code called "components."
 
 ## What is React?
@@ -104,3 +115,13 @@ export default function App() {
 ---
 
 **Try it yourself**: Create a simple component that displays a greeting with a name prop.
+
+<LessonSummary
+  points={[
+    "React components are functions that return JSX — the building blocks of any React UI",
+    "JSX is syntactic sugar for React.createElement() calls and produces React elements",
+    "Props are read-only inputs that flow downward from parent to child components",
+    "State with useState persists data across renders and triggers re-renders on update",
+    "React reconciles the virtual DOM with the real DOM, applying only the minimum necessary updates",
+  ]}
+/>

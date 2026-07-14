@@ -6,6 +6,17 @@ order: 3
 
 # Performance Optimization
 
+<LearningObjectives
+  objectives={[
+    "Diagnose performance bottlenecks using Lighthouse and Chrome DevTools",
+    "Optimize Core Web Vitals: LCP, FID/INP, and CLS",
+    "Implement code splitting and lazy loading to reduce bundle size",
+    "Use proper image formats (AVIF, WebP) and responsive images",
+    "Apply caching strategies (Cache-Control, ETag, Service Worker) for repeat visits",
+    "Measure and monitor real-user performance with RUM data",
+  ]}
+/>
+
 Performance is a feature. Optimize judiciously.
 
 ## React.memo
@@ -66,3 +77,14 @@ const HeavyComponent = dynamic(() => import("@/components/Heavy"), {
 
 - [Accessibility](/advanced/accessibility)
 - [Testing](/advanced/testing)
+
+<LessonSummary
+  points={[
+    "Core Web Vitals (LCP, FID/INP, CLS) are the primary performance metrics Google uses in ranking",
+    "Image optimization (AVIF/WebP, responsive sizes, lazy loading) is the single highest-impact perf improvement",
+    "Code splitting via dynamic import() reduces initial bundle size by loading code on demand",
+    "Caching strategies (Cache-Control, ETags, Service Worker) eliminate redundant network requests",
+    "Real User Monitoring (RUM) captures actual user experience data that synthetic tests miss",
+    "Measure before optimizing — the 90/10 rule applies: 90% of gains come from fixing 10% of issues",
+  ]}
+/>

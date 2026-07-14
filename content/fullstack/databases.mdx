@@ -242,14 +242,11 @@ export const prisma = new PrismaClient({ adapter })
   </AlertDescription>
 </Alert>
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="Design a Blog Schema"
-  description="Create a Prisma schema for a blog with categories, tags, and comments — then write a query to fetch a single post with all related data."
-  code={`// schema.prisma — fill in the models
-datasource db {
+  code={`datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
@@ -258,19 +255,14 @@ generator client {
 provider = "prisma-client-js"
 }
 
-// TODO: Add User model (id, name, email, posts)
-// TODO: Add Post model (id, title, content, published, author, category, tags, comments)
-// TODO: Add Category model (id, name, slug, posts)
-// TODO: Add Tag model (id, name, posts)
-// TODO: Add Comment model (id, content, author, post)
-`}
-  solution={`model User {
+model User {
 id String @id @default(cuid())
 name String
 email String @unique
 posts Post[]
 comments Comment[]
 createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 }
 
 model Post {
@@ -282,14 +274,15 @@ author User @relation(fields: [authorId], references: [id])
 authorId String
 category Category? @relation(fields: [categoryId], references: [id])
 categoryId String?
-tags TagOnPost[]
+tags Tag[]
 comments Comment[]
 createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 }
 
 model Category {
 id String @id @default(cuid())
-name String @unique
+name String
 slug String @unique
 posts Post[]
 }
@@ -297,15 +290,7 @@ posts Post[]
 model Tag {
 id String @id @default(cuid())
 name String @unique
-posts TagOnPost[]
-}
-
-model TagOnPost {
-post Post @relation(fields: [postId], references: [id])
-postId String
-tag Tag @relation(fields: [tagId], references: [id])
-tagId String
-@@id([postId, tagId])
+posts Post[]
 }
 
 model Comment {
@@ -316,14 +301,10 @@ authorId String
 post Post @relation(fields: [postId], references: [id])
 postId String
 createdAt DateTime @default(now())
-}`}
-hints={[
-"Use @relation for foreign keys — specify fields and references",
-"Many-to-many between Post and Tag needs a junction table (TagOnPost) with @@id([postId, tagId])",
-"Category is optional (Category?) — a post might not have one",
-"Comment has two foreign keys: authorId → User, postId → Post",
-]}
+}
+`}
 language="prisma"
+explanation="Complete blog schema with 5 models: User (one-to-many posts/comments), Post (belongs to User and Category, many-to-many Tags via implicit join table, has many Comments), Category (one-to-many posts), Tag (many-to-many posts), Comment (belongs to User and Post). Covers @id @default @unique @relation, optional fields, and timestamps."
 />
 
 <LessonSummary

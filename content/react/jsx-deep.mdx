@@ -16,6 +16,7 @@ order: 3
     "Use fragments to avoid wrapper divs",
     "Spread props onto components",
   ]}
+  preview
 />
 
 ## JSX is Syntax Sugar
@@ -203,12 +204,10 @@ const user: User = { name: "Alice", email: "a@b.com", role: "admin" }
 ;<ProfileCard {...user} />
 ```
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="Render a Team List with Keys"
-  description="Render a list of team members. Each item needs a stable key. Show a filtered subset."
   code={`interface Member {
   id: string
   name: string
@@ -221,44 +220,20 @@ const team: Member[] = [
 { id: "m3", name: "Charlie", role: "Developer" },
 ]
 
-export default function TeamList() {
-  // Filter to show only developers
-  // Render with stable keys
-  return null
-}`}
-  language="tsx"
-  solution={`interface Member {
-  id: string
-  name: string
-  role: string
-}
-
-const team: Member[] = [
-{ id: "m1", name: "Alice", role: "Designer" },
-{ id: "m2", name: "Bob", role: "Developer" },
-{ id: "m3", name: "Charlie", role: "Developer" },
-]
-
-export default function TeamList() {
-  const developers = team.filter((m) => m.role === "Developer")
-
+function TeamList() {
+const developers = team.filter(m => m.role === "Developer")
 return (
-
 <ul>
-{developers.map((member) => (
-<li key={member.id}>
-{member.name} — {member.role}
-</li>
+{developers.map(m => (
+<li key={m.id}>{m.name} &mdash; {m.role}</li>
 ))}
 </ul>
 )
-}`}
-hints={[
-"Filter first, then map",
-"Use member.id as the key",
-"Render each item inside <li>"
-]}
-previewType="mixed"
+}
+
+// Renders: Bob — Developer, Charlie — Developer`}
+  language="tsx"
+  explanation="Filters the team array to show only developers, then maps to JSX `<li>`elements. Each item uses a stable`key`(the member's`id`) so React can efficiently track changes in the list."
 />
 
 <LessonSummary

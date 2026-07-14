@@ -7,6 +7,17 @@ order: 4
 
 # Build a Dashboard
 
+<LearningObjectives
+  objectives={[
+    "Build a multi-page dashboard with shared layout",
+    "Visualize data with charts and interactive tables",
+    "Implement filtering and date range selection",
+    "Handle loading and empty states across data sections",
+    "Structure reusable widget components",
+    "Optimize data fetching with parallel requests and caching",
+  ]}
+/>
+
 A data dashboard displaying metrics, charts, and summaries.
 
 ## Requirements
@@ -67,3 +78,13 @@ export default function Dashboard() {
 
 - [Expense Tracker](/practice/expense-tracker)
 - [Todo App](/practice/todo-app)
+
+<LessonSummary
+  points={[
+    "Shared layouts prevent duplicated navigation and header code across pages",
+    "Data visualization libraries (Recharts, Tremor) turn raw data into meaningful charts",
+    "Filter state belongs in URL search params — it survives refresh and is shareable via links",
+    "Loading states (skeleton screens) and empty states improve perceived performance and UX",
+    "Parallel data fetching with Promise.all reduces total load time compared to waterfall requests",
+  ]}
+/>

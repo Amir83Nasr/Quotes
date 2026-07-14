@@ -6,6 +6,17 @@ order: 3
 
 # HTML Forms
 
+<LearningObjectives
+  objectives={[
+    "Build forms with proper semantic HTML and input types",
+    "Use labels, fieldset, and legend for accessible form structure",
+    "Implement client-side validation with HTML5 attributes",
+    "Structure form data submission with proper encoding methods",
+    "Create custom form controls while maintaining accessibility",
+    "Handle form errors and success states with clear user feedback",
+  ]}
+/>
+
 Forms collect user input. Well-structured forms improve accessibility and UX.
 
 ## Form Structure
@@ -54,3 +65,13 @@ Forms collect user input. Well-structured forms improve accessibility and UX.
 
 - [JavaScript Introduction](/frontend/javascript/intro)
 - [Forms & Validation](/advanced/forms)
+
+<LessonSummary
+  points={[
+    "Every input needs an associated <label> for accessibility — use htmlFor or wrap the input in label",
+    "<fieldset> and <legend> group related form controls and provide context for screen readers",
+    "HTML5 validation attributes (required, minLength, pattern, type) provide built-in client-side validation",
+    "Form data can be sent as URL-encoded (default) or multipart/form-data (for file uploads)",
+    "Custom form controls must maintain keyboard accessibility and ARIA roles for screen reader support",
+  ]}
+/>

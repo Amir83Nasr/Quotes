@@ -15,6 +15,7 @@ order: 6
     "Apply WCAG principles: Perceivable, Operable, Understandable, Robust",
     "Test accessibility with screen readers and tools",
   ]}
+  preview
 />
 
 ## WCAG Principles (POUR)
@@ -158,9 +159,7 @@ Allow keyboard users to skip repetitive navigation.
 />
 
 <LessonCodeExample
-  mode="challenge"
   title="Make a Tab Panel Accessible"
-  description="Take this tab panel and add ARIA attributes for full accessibility: roles, aria-selected, aria-controls, aria-labelledby, keyboard event handlers, and tabindex management."
   code={`<div class="tabs">
   <div class="tab-list">
     <button class="tab active">HTML</button>
@@ -178,36 +177,8 @@ Allow keyboard users to skip repetitive navigation.
   </div>
 </div>`}
   language="html"
-  solution={`<style>
-  .tabs { font-family: system-ui; } .tab-list { display: flex; gap: 0; border-bottom: 2px solid #e2e8f0; }
-  .tab { padding: 0.5rem 1rem; border: none; background: transparent; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; }
-  .tab[aria-selected="true"] { border-bottom-color: #6366f1; color: #6366f1; font-weight: 600; }
-  .tab-panel { padding: 1rem; display: none; } .tab-panel:not([hidden]) { display: block; }
-</style>
-<div class="tabs">
-  <div class="tab-list" role="tablist" aria-label="Code examples">
-    <button class="tab" role="tab" aria-selected="true" aria-controls="panel-html" id="tab-html" tabindex="0">HTML</button>
-    <button class="tab" role="tab" aria-selected="false" aria-controls="panel-css" id="tab-css" tabindex="-1">CSS</button>
-    <button class="tab" role="tab" aria-selected="false" aria-controls="panel-js" id="tab-js" tabindex="-1">JS</button>
-  </div>
-  <div class="tab-panel" role="tabpanel" id="panel-html" aria-labelledby="tab-html">
-    <p>HTML content</p>
-  </div>
-  <div class="tab-panel" role="tabpanel" id="panel-css" aria-labelledby="tab-css" hidden>
-    <p>CSS content</p>
-  </div>
-  <div class="tab-panel" role="tabpanel" id="panel-js" aria-labelledby="tab-js" hidden>
-    <p>JS content</p>
-  </div>
-</div>`}
-  hints={[
-    'Add role="tablist" on the tab container',
-    'Add role="tab" to each button with aria-selected',
-    'Add role="tabpanel" to each panel',
-    "Link tabs to panels with aria-controls and aria-labelledby",
-    'Use tabindex="-1" on inactive tabs, tabindex="0" on active',
-  ]}
-  previewType="html"
+  preview
+  explanation="An accessible tab panel using semantic `role` attributes, `aria-controls`, `aria-selected`, and keyboard navigation. The preview shows how assistive technologies interpret the structure."
 />
 
 <LessonSummary

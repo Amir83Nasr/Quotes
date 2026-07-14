@@ -286,111 +286,143 @@ async function uploadToS3(file: File) {
   </AlertDescription>
 </Alert>
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="Build a Drag-and-Drop Avatar Upload"
-  description="Create an upload component with drag-and-drop, image preview, client-side validation (max 2MB, jpeg/png only), and progress tracking."
   code={`"use client"
-import { useState } from "react"
-
-export default function AvatarUpload() {
-  const [preview, setPreview] = useState<string | null>(null)
-  const [progress, setProgress] = useState(0)
-  const [error, setError] = useState<string | null>(null)
-
-// TODO: Add validateFile function — check type and size
-// TODO: Add handleDrop handler — drag events, file extraction
-// TODO: Add upload function — XHR with progress
-// TODO: Render drop zone with preview and progress bar
-
-return (
-
-<div>
-{/* Your code here */}
-</div>
-)
-}`}
-  solution={`"use client"
 import { useState, useRef } from "react"
 
 export default function AvatarUpload() {
   const [preview, setPreview] = useState<string | null>(null)
   const [progress, setProgress] = useState(0)
   const [error, setError] = useState<string | null>(null)
-  const [isDragging, setIsDragging] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const fileRef = useRef<File | null>(null)
 
-function validateFile(file: File): boolean {
-const allowed = ["image/jpeg", "image/png"]
-if (!allowed.includes(file.type)) {
-setError("Only JPEG and PNG files allowed")
-return false
+function validateFile(file: File): string | null {
+const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"]
+if (!allowedTypes.includes(file.type)) {
+return "Only JPEG, PNG, WebP, and GIF images are allowed"
 }
-if (file.size > 2 _ 1024 _ 1024) {
-setError("File must be under 2MB")
-return false
+const maxSize = 5 _ 1024 _ 1024
+if (file.size > maxSize) {
+return "File too large — max 5MB"
 }
-return true
+return null
 }
 
-function handleFile(file: File) {
+function handleDrop(e: React.DragEvent) {
+e.preventDefault()
+const file = e.dataTransfer.files[0]
+if (!file) return
+const err = validateFile(file)
+if (err) { setError(err); return }
 setError(null)
-if (!validateFile(file)) return
+fileRef.current = file
 setPreview(URL.createObjectURL(file))
-uploadFile(file)
 }
 
-function uploadFile(file: File) {
-const formData = new FormData()
-formData.append("file", file)
-const xhr = new XMLHttpRequest()
-xhr.upload.addEventListener("progress", (e) => {
-if (e.lengthComputable) setProgress(Math.round((e.loaded / e.total) \* 100))
-})
-xhr.addEventListener("load", () => setProgress(100))
-xhr.addEventListener("error", () => setError("Upload failed"))
-xhr.open("POST", "/api/upload")
-xhr.send(formData)
+function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+const file = e.target.files?.[0]
+if (!file) return
+const err = validateFile(file)
+if (err) { setError(err); return }
+setError(null)
+fileRef.current = file
+setPreview(URL.createObjectURL(file))
+}
+
+async function handleUpload() {
+const file = fileRef.current
+if (!file) return
+
+    const formData = new FormData()
+    formData.append("file", file)
+
+    const xhr = new XMLHttpRequest()
+    xhr.upload.addEventListener("progress", (e) => {
+      if (e.lengthComputable) {
+        setProgress(Math.round((e.loaded / e.total) * 100))
+      }
+    })
+    xhr.addEventListener("load", () => setProgress(100))
+    xhr.addEventListener("error", () => setError("Upload failed"))
+    xhr.open("POST", "/api/upload")
+    xhr.send(formData)
+
+}
+
+function handleDragOver(e: React.DragEvent) {
+e.preventDefault()
 }
 
 return (
-
+<div className="space-y-4">
 <div
-className={\`border-2 border-dashed rounded-xl p-8 text-center
-\${isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300"}\`}
-onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
-onDragLeave={() => setIsDragging(false)}
-onDrop={(e) => { e.preventDefault(); setIsDragging(false); handleFile(e.dataTransfer.files[0]) }}
-onClick={() => inputRef.current?.click()} >
-<input ref={inputRef} type="file" accept="image/jpeg,image/png" className="hidden"
-onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f) }} />
+        className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-8 transition-colors hover:border-blue-400"
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+      >
+{preview ? (
+<img
+            src={preview}
+            alt="Preview"
+            className="mb-4 h-32 w-32 rounded-full object-cover"
+          />
+) : (
+<>
+<svg className="mb-3 h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 48 48">
+<path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+</svg>
+<p className="text-sm text-gray-600">Drag image here or click to browse</p>
+<p className="mt-1 text-xs text-gray-400">JPEG, PNG, WebP, GIF up to 5MB</p>
+</>
+)}
+</div>
 
-      {preview ? (
-        <img src={preview} alt="Avatar preview" className="mx-auto w-32 h-32 rounded-full object-cover" />
-      ) : (
-        <p className="text-gray-500">Drop avatar here or click</p>
+      <input
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+        className="hidden"
+        id="avatar-input"
+        onChange={handleFileSelect}
+      />
+      <label
+        htmlFor="avatar-input"
+        className="inline-block cursor-pointer rounded bg-gray-100 px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+      >
+        Browse files
+      </label>
+
+      {error && <p className="text-sm text-red-600">{error}</p>}
+
+      {preview && progress === 0 && (
+        <button
+          onClick={handleUpload}
+          className="rounded bg-blue-600 px-6 py-2 text-sm text-white hover:bg-blue-700"
+        >
+          Upload Avatar
+        </button>
       )}
 
       {progress > 0 && progress < 100 && (
-        <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
-          <div className="bg-blue-600 h-2 rounded-full" style={{ width: \`\${progress}%\` }} />
+        <div className="h-2 w-full rounded-full bg-gray-200">
+          <div
+            className="h-2 rounded-full bg-blue-600 transition-all"
+            style={{ width: `${progress}%` }}
+          />
         </div>
       )}
 
-      {error && <p className="text-red-500 mt-2 text-sm">{error}</p>}
+      {progress === 100 && (
+        <p className="text-sm text-green-600">Upload complete!</p>
+      )}
     </div>
 
 )
 }`}
-hints={[
-"Call URL.createObjectURL(file) for instant preview without uploading first",
-"Validate before creating the preview — don't waste the user's time",
-"Restore progress to 0 on each new file selection",
-"Use accept attribute on the hidden input as a first line of defense",
-]}
 language="tsx"
+explanation="This component combines drag-and-drop, file validation, image preview, and XHR upload with a progress bar into a complete avatar-upload UI. Key behaviors: validates file type (JPEG/PNG/WebP/GIF) and size (max 5MB) on drop and on file-picker selection; shows an image preview via URL.createObjectURL; uploads with an XMLHttpRequest and renders a real-time progress bar; displays error messages for invalid files or failed uploads."
 />
 
 <LessonSummary

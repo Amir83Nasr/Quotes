@@ -210,9 +210,7 @@ function renderState<T>(s: AsyncState<T>): string {
 ```
 
 <LessonCodeExample
-  mode="challenge"
   title="Model a Form State"
-  description="Define a discriminated union for form submission. States: idle, validating, submitting, success (with message), error (with field + message). Then implement getSubmitButtonText."
   language="typescript"
   code={`type FormState =
   // Define your discriminated union here
@@ -227,27 +225,6 @@ function getSubmitButtonText(state: FormState): string {
 // success -> "Done!"
 // error -> "Retry"
 }`}
-  solution={`type FormState =
-| { status: "idle" }
-| { status: "validating" }
-| { status: "submitting" }
-| { status: "success"; message: string }
-| { status: "error"; field: string; message: string }
-
-function getSubmitButtonText(state: FormState): string {
-switch (state.status) {
-case "idle": return "Submit"
-case "validating": return "Validating..."
-case "submitting": return "Submitting..."
-case "success": return "Done!"
-case "error": return "Retry"
-}
-}`}
-hints={[
-"Each state is an object literal with a discriminant property named status.",
-"success needs a message string; error needs field and message strings.",
-"Use a switch on state.status — TypeScript narrows the type in each case."
-]}
 />
 
 <LessonSummary

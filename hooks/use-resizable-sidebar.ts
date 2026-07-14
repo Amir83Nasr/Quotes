@@ -33,8 +33,14 @@ interface UseResizableSidebarReturn {
  * Attaches global mousemove/mouseup on drag start.
  */
 export function useResizableSidebar(): UseResizableSidebarReturn {
-  const [width, setWidth] = useState(getStoredWidth)
+  const [width, setWidth] = useState(DEFAULT_WIDTH)
   const [isResizing, setIsResizing] = useState(false)
+
+  // Hydrate stored width on mount — avoids SSR mismatch with localStorage
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setWidth(getStoredWidth())
+  }, [])
   const startXRef = useRef(0)
   const startWidthRef = useRef(DEFAULT_WIDTH)
   const widthRef = useRef(width)

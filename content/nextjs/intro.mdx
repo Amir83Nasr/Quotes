@@ -6,6 +6,17 @@ order: 1
 
 # Next.js
 
+<LearningObjectives
+  objectives={[
+    "Understand Next.js as a React framework with App Router",
+    "Learn file-based routing with the app directory structure",
+    "Differentiate Server Components from Client Components",
+    "Implement data fetching with server-side async components",
+    "Configure Next.js for optimal rendering and performance",
+    "Navigate between pages using the Link component and useRouter",
+  ]}
+/>
+
 Next.js is a React framework for building full-stack web applications.
 
 ## Key Features
@@ -30,3 +41,13 @@ pnpm dev
 - [Routing](/nextjs/routing)
 - [Server Components](/nextjs/server-components)
 - [Data Fetching](/nextjs/data-fetching)
+
+<LessonSummary
+  points={[
+    "Next.js provides file-based routing where files in the app/ directory automatically become routes",
+    "Server Components run on the server and can directly access databases and file systems",
+    "Client Components (marked with 'use client') run in the browser and can use React hooks and browser APIs",
+    "Data fetching in Server Components uses native async/await without useState or useEffect",
+    "The Link component handles client-side navigation with automatic prefetching for instant transitions",
+  ]}
+/>

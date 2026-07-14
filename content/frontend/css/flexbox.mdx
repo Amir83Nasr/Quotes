@@ -6,6 +6,17 @@ order: 5
 
 # CSS Flexbox
 
+<LearningObjectives
+  objectives={[
+    "Understand flex container and flex item relationships",
+    "Control main-axis alignment with justify-content",
+    "Control cross-axis alignment with align-items and align-self",
+    "Use flex-grow, flex-shrink, and flex-basis for flexible sizing",
+    "Create responsive layouts without media queries using flex-wrap",
+    "Order and reorder items visually without changing HTML structure",
+  ]}
+/>
+
 Flexbox is a one-dimensional layout model for distributing space and aligning items.
 
 ## Container Properties
@@ -62,3 +73,14 @@ Flexbox is a one-dimensional layout model for distributing space and aligning it
 
 - [CSS Grid](/frontend/css/grid) — Two-dimensional layouts
 - [Tailwind Flexbox](/tailwind/flexbox) — Flexbox in Tailwind
+
+<LessonSummary
+  points={[
+    "Flexbox excels at one-dimensional layouts (rows or columns, not both simultaneously)",
+    "justify-content controls alignment along the main axis while align-items controls the cross axis",
+    "flex: 1 is shorthand for flex-grow: 1, flex-shrink: 1, flex-basis: 0% — items share available space equally",
+    "flex-wrap: combined with fixed-width items creates responsive layouts without media queries",
+    "The gap property provides consistent spacing between flex items without margin tricks",
+    "align-self overrides align-items for individual flex items",
+  ]}
+/>

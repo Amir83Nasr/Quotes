@@ -188,9 +188,7 @@ fetchResource(token, "users") // Type error
 ```
 
 <LessonCodeExample
-  mode="challenge"
   title="Branded User Entities"
-  description="Create a branded UserId and Email type. Build a safeUser function that accepts an unknown object, validates it has valid id and email fields, and returns a branded result if valid."
   language="typescript"
   code={`type Brand<T, B> = T & { __brand: B }
 type UserId = Brand<string, "UserId">
@@ -209,39 +207,6 @@ type SafeResult =
 function safeUser(input: unknown): SafeResult {
 
 }`}
-  solution={`type Brand<T, B> = T & { \_\_brand: B }
-type UserId = Brand<string, "UserId">
-type Email = Brand<string, "Email">
-
-interface SafeUser { id: UserId; email: Email }
-
-type SafeResult =
-| { ok: true; user: SafeUser }
-| { ok: false; error: string }
-
-function safeUser(input: unknown): SafeResult {
-if (typeof input !== "object" || input === null) {
-return { ok: false, error: "Input must be an object" }
-}
-const obj = input as Record<string, unknown>
-if (typeof obj.id !== "string" || !obj.id.startsWith("user*")) {
-return { ok: false, error: "Invalid user ID" }
-}
-if (typeof obj.email !== "string" || !obj.email.includes("@")) {
-return { ok: false, error: "Invalid email" }
-}
-return {
-ok: true,
-user: { id: obj.id as UserId, email: obj.email as Email }
-}
-}`}
-hints={[
-"Check typeof input === 'object' and !== null first.",
-"Cast to Record<string, unknown> for safe property access.",
-"Validate the id prefix (e.g. 'user*') before casting to UserId.",
-"Validate the email contains '@' before casting to Email.",
-"Return { ok: false, error: message } for invalid cases."
-]}
 />
 
 <LessonSummary

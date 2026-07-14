@@ -17,6 +17,7 @@ Custom hooks let you extract component logic into reusable functions. They compo
     "Compose multiple hooks together inside a custom hook",
     "Write testable hooks and understand testing strategies",
   ]}
+  preview
 />
 
 ## The Pattern
@@ -232,82 +233,53 @@ test("toggles on and off", () => {
   </AlertDescription>
 </Alert>
 
-## Interactive Exercise
+## See It In Action
 
 Build a `useWindowSize` hook that tracks window dimensions and updates on resize. Then use it in a component that displays "Mobile" or "Desktop" based on a 768px breakpoint.
 
 <LessonCodeExample
-  mode="challenge"
   title="Build useWindowSize Hook"
-  description="Create a useWindowSize hook that returns width and height. Use it in a component to show responsive breakpoint status."
   language="tsx"
   code={`"use client"
 
 import { useState, useEffect } from "react"
 
-// TODO: Write useWindowSize hook
-
-export default function ResponsiveDisplay() {
-  // TODO: use the hook and display width, height, and breakpoint
-
-return (
-
-<div>
-<p>Width: ???</p>
-<p>Height: ???</p>
-<p>Breakpoint: ???</p>
-</div>
-)
-}`}
-  solution={`"use client"
-
-import { useState, useEffect } from "react"
-
-type WindowSize = { width: number; height: number }
-
-function useWindowSize(): WindowSize {
-const [size, setSize] = useState<WindowSize>(() => ({
+function useWindowSize() {
+const [windowSize, setWindowSize] = useState({
 width: typeof window !== "undefined" ? window.innerWidth : 0,
 height: typeof window !== "undefined" ? window.innerHeight : 0,
-}))
+})
 
 useEffect(() => {
-const handler = () => {
-setSize({ width: window.innerWidth, height: window.innerHeight })
+function handleResize() {
+setWindowSize({
+width: window.innerWidth,
+height: window.innerHeight,
+})
 }
 
-    window.addEventListener("resize", handler)
-    return () => window.removeEventListener("resize", handler)
+    window.addEventListener("resize", handleResize)
+    handleResize()
+    return () => window.removeEventListener("resize", handleResize)
 
 }, [])
 
-return size
-}
-
-function breakpoint(width: number): string {
-if (width < 640) return "Mobile"
-if (width < 768) return "Tablet"
-if (width < 1024) return "Small Desktop"
-return "Large Desktop"
+return windowSize
 }
 
 export default function ResponsiveDisplay() {
   const { width, height } = useWindowSize()
+  const breakpoint = width >= 768 ? "Desktop" : "Mobile"
 
 return (
-
 <div>
 <p>Width: {width}px</p>
 <p>Height: {height}px</p>
-<p>Breakpoint: {breakpoint(width)}</p>
+<p>Breakpoint: {breakpoint}</p>
 </div>
 )
 }`}
-hints={[
-"Initialize width/height with window.innerWidth/innerHeight",
-"Add a resize listener in useEffect and remove it on cleanup",
-"Compute breakpoint string from width using a helper function"
-]}
+explanation="Define a useWindowSize hook that listens for window resize events and tracks current width and height. The ResponsiveDisplay component consumes the hook and shows live dimensions plus a Mobile/Desktop label based on a 768px breakpoint."
 previewType="mixed"
 />
 

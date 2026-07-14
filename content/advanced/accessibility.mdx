@@ -6,6 +6,17 @@ order: 5
 
 # Accessibility (A11y)
 
+<LearningObjectives
+  objectives={[
+    "Understand the four WCAG POUR principles (Perceivable, Operable, Understandable, Robust)",
+    "Write semantic HTML instead of generic divs with ARIA roles",
+    "Use ARIA attributes (aria-label, role, aria-live) to enhance screen reader support",
+    "Implement keyboard navigation with tabIndex and appropriate role attributes",
+    "Apply accessibility best practices: heading hierarchy, alt text, color contrast, screen reader testing",
+    "Distinguish when to use semantic HTML over ARIA overrides",
+  ]}
+/>
+
 Accessibility ensures your app works for everyone, regardless of ability.
 
 ## Core Principles
@@ -65,3 +76,14 @@ function Menu({ items }: { items: string[] }) {
 
 - [Testing](/advanced/testing)
 - [Design Patterns](/advanced/design-patterns)
+
+<LessonSummary
+  points={[
+    "WCAG defines four core accessibility principles: Perceivable, Operable, Understandable, Robust",
+    "Semantic HTML elements like <button> have built-in keyboard and screen reader support — prefer them over ARIA-inflated divs",
+    "ARIA attributes bridge accessibility gaps when semantic HTML alone is insufficient",
+    "Keyboard navigation requires correct tabIndex values and role attributes like menubar and menuitem",
+    "Color contrast must meet a 4.5:1 minimum ratio; all images need alt text",
+    "Proper heading hierarchy (h1 to h2 to h3) and screen reader testing (VoiceOver, NVDA) verify real-world accessibility",
+  ]}
+/>

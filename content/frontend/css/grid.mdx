@@ -6,6 +6,17 @@ order: 6
 
 # CSS Grid
 
+<LearningObjectives
+  objectives={[
+    "Define grid containers with explicit rows and columns",
+    "Place items across the grid using line numbers and named areas",
+    "Create responsive layouts with auto-fit, auto-fill, and minmax()",
+    "Control gutters with the gap shorthand property",
+    "Align and distribute content with align-items, justify-items, and place-items",
+    "Build complex magazine-style layouts with overlapping grid items",
+  ]}
+/>
+
 CSS Grid is a two-dimensional layout system.
 
 ## Basic Grid
@@ -60,3 +71,14 @@ CSS Grid is a two-dimensional layout system.
 
 - [Flexbox](/frontend/css/flexbox) — One-dimensional layout
 - [Tailwind Grid](/tailwind/grid) — Grid in Tailwind
+
+<LessonSummary
+  points={[
+    "CSS Grid is a two-dimensional layout system for controlling both rows and columns simultaneously",
+    "Grid lines are numbered from 1, and items can span multiple tracks using grid-column and grid-row",
+    "Named grid areas (grid-template-areas) make layout intent readable directly in CSS",
+    "auto-fit and minmax() create responsive grids that adapt to available space without media queries",
+    "The fr unit distributes available space proportionally, similar to flex-grow in Flexbox",
+    "Grid items can overlap other items, enabling complex magazine-style layouts with z-index control",
+  ]}
+/>

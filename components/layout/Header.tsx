@@ -35,7 +35,7 @@ export function Header({ navItems }: HeaderProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="md:hidden"
+          className="lg:hidden"
           onClick={toggle}
           aria-label="Toggle menu"
         >

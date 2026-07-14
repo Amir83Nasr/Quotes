@@ -15,6 +15,7 @@ order: 6
     "Use Suspense boundaries within pages for streaming",
     "Design streaming HTML with loading skeletons",
   ]}
+  preview
 />
 
 ## Loading.tsx
@@ -182,30 +183,26 @@ async function BlogPosts() {
 }
 ```
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="Page with Loading Skeleton + Error Boundary"
-  description="Create a user profile page that shows a skeleton while data loads and an error boundary with retry."
   code={`"use client"
-// Build a UserProfile component that:
-// 1. Shows a skeleton while loading
-// 2. Displays user data when fetched
-// 3. Shows an error state if fetch fails with retry button
 import { useState, useEffect } from "react"
 
-export default function UserProfile({ userId }: { userId: string }) {
-  // TODO: Implement loading, data, and error states
-  return <div>{/* your code */}</div>
-}`}
-  solution={`"use client"
-import { useState, useEffect } from "react"
+function Skeleton() {
+return (
+<div className="space-y-3 animate-pulse">
+<div className="h-8 w-48 bg-gray-200 rounded" />
+<div className="h-4 w-64 bg-gray-200 rounded" />
+<div className="h-4 w-32 bg-gray-200 rounded" />
+<div className="h-24 w-full bg-gray-200 rounded" />
+</div>
+)
+}
 
-type User = { id: string; name: string; email: string }
-
 export default function UserProfile({ userId }: { userId: string }) {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<{ name: string; email: string; bio: string } | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -213,12 +210,12 @@ async function fetchUser() {
 setLoading(true)
 setError(null)
 try {
-const res = await fetch(\`/api/users/\${userId}\`)
+const res = await fetch("https://jsonplaceholder.typicode.com/users/" + userId)
 if (!res.ok) throw new Error("Failed to fetch user")
 const data = await res.json()
-setUser(data)
+setUser({ name: data.name, email: data.email, bio: data.company?.catchPhrase ?? "" })
 } catch (err) {
-setError(err instanceof Error ? err.message : "Unknown error")
+setError(err instanceof Error ? err.message : "Something went wrong")
 } finally {
 setLoading(false)
 }
@@ -226,12 +223,27 @@ setLoading(false)
 
 useEffect(() => { fetchUser() }, [userId])
 
-if (loading) return <div className="space-y-2 animate-pulse"><div className="h-6 bg-gray-200 rounded w-48" /><div className="h-4 bg-gray-200 rounded w-64" /></div>
-if (error) return <div className="text-red-600 p-4 border rounded"><p>{error}</p><button onClick={fetchUser} className="mt-2 px-3 py-1 bg-blue-600 text-white rounded">Retry</button></div>
+if (loading) return <Skeleton />
+if (error)
+return (
+<div className="p-4 text-center border border-red-200 rounded-lg">
+<p className="text-red-600 font-medium">{error}</p>
+<button onClick={fetchUser} className="mt-3 px-4 py-2 bg-blue-600 text-white rounded">
+Retry
+</button>
+</div>
+)
+if (!user) return <p className="text-gray-500">No user data.</p>
 
-return <div><h2>{user!.name}</h2><p>{user!.email}</p></div>
+return (
+<div className="space-y-2 p-4 border rounded-lg">
+<h2 className="text-xl font-bold">{user.name}</h2>
+<p className="text-gray-600">{user.email}</p>
+<p className="text-gray-700">{user.bio}</p>
+</div>
+)
 }`}
-hints={["Track three states: loading, error, data", "Use try/catch in the fetch function", "animate-pulse is Tailwind's skeleton animation utility"]}
+explanation="Demonstrates three UI states in a single client component: a skeleton placeholder renders while data loads, user details display on success, and an error state with a retry button handles fetch failures. Uses useEffect with a dependency on userId to re-fetch when the prop changes."
 previewType="mixed"
 />
 

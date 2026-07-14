@@ -7,6 +7,17 @@ order: 2
 
 # useEffect
 
+<LearningObjectives
+  objectives={[
+    "Run side effects with the useEffect hook",
+    "Understand the dependency array and when effects re-run",
+    "Clean up subscriptions, timers, and event listeners",
+    "Separate concerns with multiple useEffect calls",
+    "Avoid infinite loops by correctly specifying dependencies",
+    "Use useLayoutEffect when you need synchronous DOM measurement",
+  ]}
+/>
+
 `useEffect` lets you synchronize a component with an external system — API calls, subscriptions, DOM events, timers.
 
 ## Basic Usage
@@ -68,3 +79,13 @@ useEffect(() => {
 
 - [useReducer](/react/hooks/use-reducer) — Manage complex state
 - [State Management](/advanced/state-management) — Scale state beyond hooks
+
+<LessonSummary
+  points={[
+    "useEffect runs after the browser paints — use it for synchronizing with external systems (API calls, subscriptions, DOM)",
+    "The dependency array controls when the effect re-runs: empty [] runs once, omitted runs on every render, included deps run on change",
+    "The cleanup function (returned from the effect) prevents memory leaks by canceling subscriptions, timers, and listeners",
+    "Multiple useEffect calls separate concerns — don't combine unrelated side effects in a single effect",
+    "useLayoutEffect runs synchronously after DOM mutations but before the browser paints — use it for DOM measurements",
+  ]}
+/>

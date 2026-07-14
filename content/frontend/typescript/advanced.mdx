@@ -6,6 +6,17 @@ order: 10
 
 # Advanced Types
 
+<LearningObjectives
+  objectives={[
+    "Use conditional types with the ternary syntax for type-level logic",
+    "Extract types dynamically with the infer keyword",
+    "Build template literal types for string pattern matching",
+    "Create recursive types for nested data structures",
+    "Leverage discriminated unions for type-safe state machines",
+    "Use satisfies operator to validate types without widening",
+  ]}
+/>
+
 TypeScript's type system is Turing-complete. These advanced patterns unlock powerful abstractions.
 
 ## Conditional Types
@@ -53,3 +64,13 @@ type Variant = `${Color}-${Size}`
 
 - [React Patterns](/react/components)
 - [State Management](/advanced/state-management)
+
+<LessonSummary
+  points={[
+    "Conditional types enable type-level if/else logic for dynamic type transformations",
+    "Template literal types allow string pattern matching and construction at the type level",
+    "Recursive types model deeply nested structures like JSON, trees, and linked lists",
+    "Discriminated unions combine a literal type property with switch narrowing for exhaustive state handling",
+    "The satisfies operator validates a type against a constraint without widening the type",
+  ]}
+/>

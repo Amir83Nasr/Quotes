@@ -224,9 +224,7 @@ Benefits vs Webpack:
 Identify optimization opportunities in this bundle config.
 
 <LessonCodeExample
-  mode="challenge"
   title="Bundle Optimization"
-  description="Analyze and optimize a bloated Webpack config"
   language="ts"
   code={`// Current webpack.config.js — find 3+ optimization issues
 const path = require("path")
@@ -253,46 +251,6 @@ extensions: [".ts", ".tsx", ".js"],
 // 4. No HtmlWebpackPlugin
 // Bonus: Add bundle analyzer
 }`}
-  solution={`const path = require("path")
-const HtmlWebpackPlugin = require("html-webpack-plugin")
-const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer")
-
-module.exports = {
-mode: "production",
-entry: "./src/index.tsx",
-output: {
-path: path.resolve(\_\_dirname, "dist"),
-filename: "[name].[contenthash].js", // Cache busting
-clean: true,
-},
-module: {
-rules: [
-{ test: /\\.tsx?$/, use: "ts-loader", exclude: /node_modules/ },
-      { test: /\\.css$/, use: ["style-loader", "css-loader"] },
-],
-},
-resolve: {
-extensions: [".ts", ".tsx", ".js"],
-},
-plugins: [
-new HtmlWebpackPlugin({ template: "./public/index.html" }),
-new BundleAnalyzerPlugin(), // Visualize bundle size
-],
-optimization: {
-splitChunks: {
-chunks: "all", // Separate vendor chunks
-cacheGroups: {
-vendor: { test: /[\\\\/]node_modules[\\\\/]/, name: "vendors" },
-},
-},
-},
-}`}
-hints={[
-"Without mode: 'production', Webpack doesn't minify output",
-"[contenthash] in filename enables long-term caching — browser re-downloads only when file changes",
-"splitChunks separates vendor code (react, lodash) from app code so users cache them separately",
-"BundleAnalyzerPlugin shows a treemap of your bundle contents",
-]}
 />
 
 <LessonSummary

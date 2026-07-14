@@ -74,12 +74,12 @@ export default async function LessonPage({ params }: PageProps) {
   return (
     <div className="mx-auto flex w-full max-w-7xl">
       {/* Main content */}
-      <div className="min-w-0 flex-1 px-6 py-8 md:px-10 lg:px-16">
+      <div className="min-w-0 flex-1 px-4 py-6 md:px-10 lg:px-16">
         <article>
           <Breadcrumb items={breadcrumbs} />
 
-          <header className="mb-8">
-            <h1 className="mb-2 text-3xl font-bold tracking-tight md:text-4xl">
+          <header className="mb-6 md:mb-8">
+            <h1 className="mb-2 text-2xl font-bold tracking-tight md:text-4xl">
               {frontmatter.title}
             </h1>
             {frontmatter.description && (
@@ -89,7 +89,7 @@ export default async function LessonPage({ params }: PageProps) {
             )}
           </header>
 
-          <div className="prose-custom prose max-w-none prose-neutral dark:prose-invert">
+          <div className="prose-custom prose max-w-none min-w-0 wrap-break-word prose-neutral dark:prose-invert">
             {content}
           </div>
 

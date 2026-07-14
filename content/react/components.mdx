@@ -6,6 +6,17 @@ order: 2
 
 # React Components
 
+<LearningObjectives
+  objectives={[
+    "Build reusable function components with TypeScript props",
+    "Compose components by nesting children with the children prop",
+    "Pass event handlers and render props for flexible APIs",
+    "Use React.memo to prevent unnecessary re-renders",
+    "Control component rendering with conditional patterns",
+    "Split large components into smaller, focused pieces",
+  ]}
+/>
+
 Components are the building blocks of any React application. They let you split the UI into independent, reusable pieces.
 
 ## Function Components
@@ -98,3 +109,13 @@ function Card({
 
 - [React Hooks](/react/hooks/use-state) — useState and other hooks
 - [State Management](/advanced/state-management) — Manage complex state
+
+<LessonSummary
+  points={[
+    "Function components with typed props (TypeScript interfaces) are the standard React component pattern",
+    "The children prop enables component composition for wrappers, layouts, and generic containers",
+    "React.memo prevents re-renders when props haven't changed — use it as a performance optimization, not a default",
+    "Conditional rendering with &&, ternary, or if/else controls which components appear in the tree",
+    "Component decomposition (splitting large components) improves readability, testability, and reusability",
+  ]}
+/>

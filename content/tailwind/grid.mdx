@@ -6,6 +6,17 @@ order: 3
 
 # CSS Grid
 
+<LearningObjectives
+  objectives={[
+    "Create grid layouts with Tailwind's grid-template utilities",
+    "Use grid-column and grid-row span utilities",
+    "Build responsive grids without media queries using auto-fit",
+    "Control gap, alignment, and item placement",
+    "Create asymmetric layouts with explicit grid placement",
+    "Combine Tailwind grid utilities with responsive prefixes",
+  ]}
+/>
+
 CSS Grid is a two-dimensional layout system that handles rows and columns simultaneously. Tailwind provides utilities for every Grid property.
 
 ## Basic Grid
@@ -76,3 +87,13 @@ CSS Grid is a two-dimensional layout system that handles rows and columns simult
 
 - [Flexbox](/tailwind/flexbox) — One-dimensional layouts
 - [Practice Projects](/practice/todo-app) — Apply your skills
+
+<LessonSummary
+  points={[
+    "Tailwind's grid utilities mirror CSS Grid: grid-cols-3, col-span-2, row-span-1, gap-4",
+    "Responsive grid templates (lg:grid-cols-4, md:grid-cols-2) adapt column counts at breakpoints",
+    "grid-cols-[repeat(auto-fill,minmax(250px,1fr))] creates responsive grids without media queries",
+    "col-start-1 and col-end-3 give explicit item placement for asymmetric layouts",
+    "Combining grid utilities with responsive prefixes creates complex adaptive layouts from simple classes",
+  ]}
+/>

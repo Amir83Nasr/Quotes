@@ -7,6 +7,17 @@ order: 1
 
 # Build a Todo App
 
+<LearningObjectives
+  objectives={[
+    "Plan the component tree before writing code",
+    "Manage application state with React hooks",
+    "Implement CRUD operations for todo items",
+    "Add filtering and sorting for list display",
+    "Persist state to localStorage for data retention",
+    "Style a complete UI with Tailwind CSS",
+  ]}
+/>
+
 Build a functional todo application that demonstrates core React concepts: state management, component composition, and user interactions.
 
 ## Requirements
@@ -113,3 +124,13 @@ const filtered = todos.filter((todo) => {
 
 - [Expense Tracker](/practice/expense-tracker) — Track your spending
 - [Dashboard](/practice/dashboard) — Build a data dashboard
+
+<LessonSummary
+  points={[
+    "Planning the component tree before coding prevents structural refactors mid-implementation",
+    "useState manages the todo list; useReducer scales better for complex state transitions",
+    "CRUD operations map directly to user actions: create (add), read (list), update (toggle/edit), delete (remove)",
+    "Filtering and sorting are derived state — computed from the source array, not stored separately",
+    "localStorage persists state across sessions; serialize with JSON.stringify and parse on load",
+  ]}
+/>

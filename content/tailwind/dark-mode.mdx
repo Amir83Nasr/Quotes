@@ -131,36 +131,11 @@ Map every surface color with its dark counterpart.
 </Alert>
 
 <LessonCodeExample
-  mode="challenge"
   title="Dark Mode Toggle with Theme-Aware Cards"
-  description="Build a card grid with light/dark variants and a toggle button."
   code={`<div>
   <button class="...">Toggle</button>
   <div class="..."><h3>Card Title</h3><p>Content</p></div>
 </div>`}
-  solution={`<div class="space-y-6 p-6">
-  <button class="rounded-lg border border-gray-200 dark:border-gray-700
-                 bg-white dark:bg-gray-800 px-4 py-2 text-sm
-                 text-gray-700 dark:text-gray-300
-                 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-    🌙 Toggle
-  </button>
-  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-    <div class="rounded-xl bg-white dark:bg-gray-800 p-5 shadow-sm border border-gray-200 dark:border-gray-700">
-      <h3 class="font-semibold text-gray-900 dark:text-white">Design</h3>
-      <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Theme-aware card.</p>
-    </div>
-    <div class="rounded-xl bg-white dark:bg-gray-800 p-5 shadow-sm border border-gray-200 dark:border-gray-700">
-      <h3 class="font-semibold text-gray-900 dark:text-white">Code</h3>
-      <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Same component, dark theme.</p>
-    </div>
-  </div>
-</div>`}
-  hints={[
-    "Every color needs a dark: counterpart",
-    "Use dark:border-gray-700 and dark:bg-gray-800 for cards",
-    "Button itself needs dark mode styles too",
-  ]}
 />
 
 <LessonSummary

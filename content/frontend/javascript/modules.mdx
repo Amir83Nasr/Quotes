@@ -13,6 +13,7 @@ order: 10
     "Explain tree-shaking",
     "Compare CommonJS vs ESM",
   ]}
+  preview
 />
 
 ## Named Exports
@@ -126,34 +127,44 @@ import { PI } from "./math.js"
 | Tree-shaking    | No              | Yes               |
 | Top-level await | No              | Yes               |
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="Refactor into Modules"
-  description="Split a monolithic script into utils.js (formatDate, handleError), data.js (fetchUser), app.js (entry point)."
-  code={`const API_URL = "https://api.example.com"
-function formatDate(d) { return new Date(d).toLocaleDateString() }
-function handleError(e) { console.error(e.message) }
-async function fetchUser(id) {
-  try {
-    const r = await fetch(API_URL+'/users/'+id)
-    if (!r.ok) throw Error('HTTP '+r.status)
-    return await r.json()
-  } catch (e) { handleError(e); return null }
+  code={`// ---- lib/api.ts (module) ----
+export const API_URL = "https://api.example.com"
+
+export function handleError(e: unknown) {
+  console.error(e instanceof Error ? e.message : String(e))
 }
-async function renderUser(id) {
-  const u = await fetchUser(id); if (!u) return
+
+export async function fetchUser(id: string) {
+  try {
+    const r = await fetch(API_URL + '/users/' + id)
+    if (!r.ok) throw Error('HTTP ' + r.status)
+    return await r.json()
+  } catch (e) {
+    handleError(e)
+    return null
+  }
+}
+
+// ---- app/user.ts (importing module) ----
+import { fetchUser } from "./lib/api"
+
+export async function renderUser(id: string) {
+  const u = await fetchUser(id)
+  if (!u) return '<p>User not found</p>'
+  return '<h1>' + u.name + '</h1>'
+}`}
+  language="typescript"
+  explanation="Modules separate concerns: `lib/api.ts` owns data fetching, `app/user.ts` owns rendering. Named exports (`export`) and imports (`import { … }`) make dependencies explicit and enable tree-shaking."
+/>
   document.getElementById("app").innerHTML = '<h1>'+u.name+'</h1>'
 }
 renderUser(1)`}
   language="javascript"
-  hints={[
-    "Pure functions go in utils",
-    "API fetch logic in data",
-    "app.js imports and runs",
-  ]}
-  previewType="mixed"
+ preview
 />
 
 ## Lesson Summary

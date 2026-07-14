@@ -6,6 +6,17 @@ order: 1
 
 # useState Hook
 
+<LearningObjectives
+  objectives={[
+    "Initialize and update state with the useState hook",
+    "Understand batching and when state updates are applied",
+    "Use the functional updater pattern for derived state",
+    "Lift state up to share it between sibling components",
+    "Manage complex state objects with useState vs useReducer",
+    "Avoid common pitfalls: stale closures, missing dependencies",
+  ]}
+/>
+
 The `useState` hook lets you add state to functional components.
 
 ## What is useState?
@@ -260,3 +271,13 @@ Create a counter component that:
 
 - [useEffect](/react/hooks/use-effect) - Handle side effects
 - [useEffect alternative: useReducer](/react/hooks/use-reducer)
+
+<LessonSummary
+  points={[
+    "useState returns a [value, setter] tuple — the setter triggers a re-render when called with a new value",
+    "React batches state updates in event handlers and effects, processing them in a single render",
+    "The functional updater (setCount(prev => prev + 1)) is essential when the new state depends on the previous state",
+    "Lifting state up shares data between siblings by moving state to the closest common ancestor",
+    "For complex state shapes with multiple fields, consider splitting into multiple useState calls or switching to useReducer",
+  ]}
+/>

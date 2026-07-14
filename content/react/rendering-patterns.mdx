@@ -16,6 +16,7 @@ order: 7
     "Optimize renders with React.memo, useMemo, useCallback",
     "Understand Server vs Client Component mental model",
   ]}
+  preview
 />
 
 ## Conditional Rendering
@@ -302,69 +303,32 @@ Rule: default to Server Component. Add `"use client"` only when you need interac
 
 Today, prefer **hooks** for sharing stateful logic. Render props and HOCs are still valid for specific cases (layout components, conditionally rendering different wrappers).
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="HOC with Mouse Tracking"
-  description="Build a withMouseTracking HOC that provides x/y coordinates to any wrapped component."
-  code={`"use client"
+  code={`import { useState, type ComponentType } from "react"
 
-// Build a withMouseTracking HOC that:
-// 1. Tracks mouse position in a div
-// 2. Passes { x, y } to the wrapped component
-// 3. Uses it to wrap an element that displays the coords
-
-export default function Exercise() {
-  return null
-}`}
-  language="tsx"
-  solution={`"use client"
-
-import { useState, type ComponentType } from "react"
-
-interface MouseProps {
-x: number
-y: number
-}
-
-function withMouseTracking<P extends object>(
-Component: ComponentType<P & MouseProps>
-) {
-return function WithMouse(props: P) {
+function withMouseTracking<P>(Wrapped: ComponentType<P & { x: number; y: number }>) {
+return function Enhanced(props: P) {
 const [pos, setPos] = useState({ x: 0, y: 0 })
 return (
-
-<div
-className="h-48 border rounded"
-onMouseMove={(e) => setPos({ x: e.clientX, y: e.clientY })} >
-<Component {...props} x={pos.x} y={pos.y} />
+<div onMouseMove={(e) => setPos({ x: e.clientX, y: e.clientY })} style={{ border: "1px solid", padding: 16 }}>
+<p>Mouse: {pos.x}, {pos.y}</p>
+<Wrapped {...props} x={pos.x} y={pos.y} />
 </div>
 )
 }
 }
 
-function MouseDisplay({ x, y, label }: MouseProps & { label: string }) {
-return (
-
-<p className="p-4">
-{label}: ({x}, {y})
-</p>
-)
+function Display({ x, y }: { x: number; y: number }) {
+return <p>Display: ({x}, {y})</p>
 }
 
-const TrackedDisplay = withMouseTracking(MouseDisplay)
-
-export default function Exercise() {
-  return <TrackedDisplay label="Position" />
-}`}
-  hints={[
-    "withMouseTracking returns a new component that adds onMouseMove handler on a div",
-    "Use useState<{x: number, y: number}> for tracking",
-    "Spread original props with {...props} to wrapped component",
-    "The inner component receives x, y plus its original props"
-  ]}
-  previewType="mixed"
+const MouseTracker = withMouseTracking(Display)`}
+language="tsx"
+explanation="withMouseTracking is a Higher-Order Component: it adds mouse tracking state and passes x/y as props to the wrapped component, layering behavior without modifying it."
+preview
 />
 
 <LessonSummary

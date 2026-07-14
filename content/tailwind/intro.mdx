@@ -6,6 +6,17 @@ order: 1
 
 # Tailwind CSS
 
+<LearningObjectives
+  objectives={[
+    "Understand the utility-first CSS approach vs traditional CSS",
+    "Apply responsive styles with breakpoint prefixes",
+    "Style elements using Tailwind's spacing, color, and typography system",
+    "Compose complex designs with Tailwind's built-in utilities",
+    "Customize the default theme via tailwind.config or CSS variables",
+    "Understand how Tailwind's JIT engine generates only what you use",
+  ]}
+/>
+
 Tailwind is a utility-first CSS framework that lets you build designs by composing small, single-purpose classes.
 
 ## Core Concept
@@ -33,3 +44,13 @@ Tailwind is a utility-first CSS framework that lets you build designs by composi
 - [Flexbox](/tailwind/flexbox)
 - [Grid](/tailwind/grid)
 - [Styling](/tailwind/styling)
+
+<LessonSummary
+  points={[
+    "Utility-first means composing designs from single-purpose classes rather than writing custom CSS",
+    "Responsive prefixes (sm:, md:, lg:, xl:) apply different styles at different breakpoints within the same class string",
+    "Tailwind's design system includes a consistent spacing scale, color palette, and typographic sizing",
+    "The JIT engine scans your source files and generates only the CSS classes you actually use, keeping output tiny",
+    "Since Tailwind v4, configuration is done through CSS (the @theme directive) instead of a JavaScript config file",
+  ]}
+/>

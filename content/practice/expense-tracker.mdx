@@ -7,6 +7,17 @@ order: 2
 
 # Build an Expense Tracker
 
+<LearningObjectives
+  objectives={[
+    "Design a data model for financial transactions",
+    "Build a form with validation for adding expenses",
+    "Calculate and display totals and category breakdowns",
+    "Create charts to visualize spending patterns",
+    "Implement filtering by date range and category",
+    "Export data to CSV for external use",
+  ]}
+/>
+
 Track income and expenses with categorization, totals, and filtering.
 
 ## Requirements
@@ -54,3 +65,13 @@ export default function ExpenseTracker() {
 
 - [Dashboard](/practice/dashboard)
 - [Todo App](/practice/todo-app)
+
+<LessonSummary
+  points={[
+    "Financial data models need amount (number), category (string), date, and optional notes fields",
+    "Form validation ensures data integrity before committing to state or storage",
+    "Category breakdowns are computed via reduce — grouping, summing, and sorting a transaction array",
+    "Chart libraries visualize spending by category with pie or bar charts for quick pattern recognition",
+    "CSV export joins rows with commas and columns with newlines for spreadsheet compatibility",
+  ]}
+/>

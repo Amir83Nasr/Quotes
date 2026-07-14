@@ -7,6 +7,17 @@ order: 5
 
 # Authentication System
 
+<LearningObjectives
+  objectives={[
+    "Implement sign-up and sign-in with email and password",
+    "Protect routes with authentication middleware",
+    "Manage session state with JWT tokens or cookies",
+    "Handle token refresh and automatic re-authentication",
+    "Build protected API routes that verify user identity",
+    "Implement logout and token invalidation",
+  ]}
+/>
+
 Build a full authentication system.
 
 ## Requirements
@@ -61,3 +72,13 @@ export function useAuth() {
 
 - [Blog](/practice/blog)
 - [Kanban Board](/practice/kanban)
+
+<LessonSummary
+  points={[
+    "User authentication requires both sign-up (registration) and sign-in (login) endpoints",
+    "Route protection is typically implemented as a higher-order component or middleware that checks auth state",
+    "JWT tokens contain encoded user information and are verified server-side with a secret key",
+    "Token refresh cycles prevent short-lived tokens from forcing frequent re-logins",
+    "Protected API routes verify the token before processing the request, rejecting unauthenticated calls with 401",
+  ]}
+/>

@@ -6,6 +6,17 @@ order: 2
 
 # Forms and Validation
 
+<LearningObjectives
+  objectives={[
+    "Build accessible forms with proper semantic HTML structure",
+    "Implement client-side validation with Constraint Validation API",
+    "Create custom validation UX with real-time feedback and error messages",
+    "Handle form submission with loading states and optimistic updates",
+    "Structure complex multi-step forms with progress tracking and data persistence",
+    "Apply progressive enhancement so forms work without JavaScript",
+  ]}
+/>
+
 Forms are a critical UI pattern. Learn to build them well in React.
 
 ## Controlled Components
@@ -81,3 +92,14 @@ function validate(values: { email: string; password: string }): Errors {
 
 - [State Management](/advanced/state-management)
 - [Performance Optimization](/advanced/performance)
+
+<LessonSummary
+  points={[
+    "Semantic HTML form elements provide built-in accessibility and validation",
+    "The Constraint Validation API enables native client-side validation without JavaScript",
+    "Custom validation UX should provide real-time feedback, clear error messages, and focus management",
+    "Multi-step forms benefit from progress indicators, back navigation, and intermediate data persistence",
+    "Progressive enhancement ensures forms remain functional even when JavaScript fails to load",
+    "Optimistic updates create a responsive feel but require rollback logic for failed submissions",
+  ]}
+/>

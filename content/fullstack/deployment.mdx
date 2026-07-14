@@ -6,6 +6,17 @@ order: 4
 
 # Deployment
 
+<LearningObjectives
+  objectives={[
+    "Understand the deployment pipeline from local dev to production",
+    "Configure Vercel for zero-config frontend and serverless deployments",
+    "Manage environment variables across development and production",
+    "Set up a custom domain with automatic SSL certificates",
+    "Implement preview deployments for feature branch testing",
+    "Monitor production with analytics, logging, and error reporting",
+  ]}
+/>
+
 Ship your application to production.
 
 ## Platform Options
@@ -69,3 +80,13 @@ jobs:
 
 - [Full Stack Overview](/fullstack/intro)
 - [Practice Projects](/practice/todo-app)
+
+<LessonSummary
+  points={[
+    "Vercel auto-detects Next.js and provides zero-config deployment with preview URLs on every push",
+    "Environment variables must be configured separately for each environment (development, preview, production)",
+    "Custom domains with automatic SSL certificates eliminate manual DNS+HTTPS setup",
+    "Preview deployments give every branch a unique URL, enabling pre-merge QA testing",
+    "Production monitoring requires error tracking, performance analytics, and structured logging",
+  ]}
+/>

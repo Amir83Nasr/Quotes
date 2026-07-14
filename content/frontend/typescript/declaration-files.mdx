@@ -178,9 +178,7 @@ declare module "local-storage-db" {
 ```
 
 <LessonCodeExample
-  mode="challenge"
   title="Declaration File for a JS Logger"
-  description="Write a declaration file for a simple JS logger library. The logger has: createLogger(name, options?) returning a Logger with log, warn, error, and setLevel methods."
   language="typescript"
   code={`// Imagine this is a .d.ts file
 // Create types for this JS library:
@@ -194,32 +192,6 @@ declare module "local-storage-db" {
 declare module "simple-logger" {
 
 }`}
-  solution={`declare module "simple-logger" {
-type LogLevel = "debug" | "info" | "warn" | "error"
-type LogContext = Record<string, unknown>
-
-interface LoggerOptions {
-level?: LogLevel
-format?: "text" | "json"
-}
-
-interface Logger {
-log(message: string, context?: LogContext): void
-warn(message: string, context?: LogContext): void
-error(message: string, context?: LogContext): void
-debug(message: string, context?: LogContext): void
-setLevel(level: LogLevel): void
-}
-
-export function createLogger(name: string, options?: LoggerOptions): Logger
-}`}
-hints={[
-"Use declare module to wrap all the types.",
-"Define a LogLevel union type for the level parameter.",
-"Define LoggerOptions interface for the createLogger options.",
-"Define Logger interface with all methods matching the JS API.",
-"Export createLogger function with name and optional options."
-]}
 />
 
 <LessonSummary

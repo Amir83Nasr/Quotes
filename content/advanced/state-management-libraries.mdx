@@ -244,9 +244,7 @@ const useStore = create<Store>()(
 Build a shopping cart store with Zustand. Must support addItem, removeItem, updateQuantity, and compute total.
 
 <LessonCodeExample
-  mode="challenge"
   title="Shopping Cart with Zustand"
-  description="Create a Zustand store for a shopping cart with computed totals"
   language="tsx"
   code={`import { create } from "zustand"
 
@@ -266,108 +264,6 @@ export function Cart() {
     </div>
   )
 }`}
-  solution={`import { create } from "zustand"
-import { devtools } from "zustand/middleware"
-
-type CartItem = {
-id: string
-name: string
-price: number
-quantity: number
-}
-
-type CartStore = {
-items: CartItem[]
-addItem: (item: Omit<CartItem, "quantity">) => void
-removeItem: (id: string) => void
-updateQuantity: (id: string, quantity: number) => void
-clearCart: () => void
-}
-
-const useCart = create<CartStore>()(
-devtools(
-(set) => ({
-items: [],
-addItem: (item) =>
-set((state) => {
-const existing = state.items.find((i) => i.id === item.id)
-if (existing) {
-return {
-items: state.items.map((i) =>
-i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i,
-),
-}
-}
-return { items: [...state.items, { ...item, quantity: 1 }] }
-}),
-removeItem: (id) =>
-set((state) => ({ items: state.items.filter((i) => i.id !== id) })),
-updateQuantity: (id, quantity) =>
-set((state) => ({
-items: state.items.map((i) =>
-i.id === id ? { ...i, quantity: Math.max(0, quantity) } : i,
-),
-})),
-clearCart: () => set({ items: [] }),
-}),
-{ name: "shopping-cart" },
-),
-)
-
-function CartItem({ item }: { item: CartItem }) {
-const { removeItem, updateQuantity } = useCart()
-return (
-
-<li>
-{item.name} - ${item.price} x
-<input
-type="number"
-value={item.quantity}
-onChange={(e) => updateQuantity(item.id, Number(e.target.value))}
-min={0}
-/>
-= ${(item.price * item.quantity).toFixed(2)}
-<button onClick={() => removeItem(item.id)}>Remove</button>
-</li>
-)
-}
-
-export function Cart() {
-  const items = useCart((state) => state.items)
-  const total = items.reduce((sum, i) => sum + i.price * i.quantity, 0)
-  const addItem = useCart((state) => state.addItem)
-  const clearCart = useCart((state) => state.clearCart)
-
-return (
-
-<div>
-<h2>Shopping Cart</h2>
-{items.length === 0 ? (
-<p>Cart is empty</p>
-) : (
-<>
-<ul>
-{items.map((item) => <CartItem key={item.id} item={item} />)}
-</ul>
-<p>Total: <strong>${total.toFixed(2)}</strong></p>
-<button onClick={clearCart}>Clear Cart</button>
-</>
-)}
-<button onClick={() => addItem({ id: "hat", name: "Cool Hat", price: 19.99 })}>
-Add Hat ($19.99)
-</button>
-<button onClick={() => addItem({ id: "shirt", name: "T-Shirt", price: 29.99 })}>
-Add Shirt ($29.99)
-</button>
-</div>
-)
-}`}
-hints={[
-"Use devtools middleware to inspect state changes",
-"AddItem should check for existing items and increment quantity",
-"Total is a computed value — no need to store it, derive from items",
-"Use selectors to prevent unnecessary re-renders",
-]}
 />
 
 <LessonSummary

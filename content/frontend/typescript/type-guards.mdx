@@ -173,9 +173,7 @@ function assertNever(value: never): never {
 ```
 
 <LessonCodeExample
-  mode="challenge"
   title="Type-Safe Event Handler"
-  description="Build a handleUIEvent function that narrows a discriminated union of UI events using a switch. Each case returns a display string."
   language="typescript"
   code={`type UIEvent =
   | { kind: "click"; button: "left" | "right" }
@@ -185,23 +183,6 @@ function assertNever(value: never): never {
 function handleUIEvent(event: UIEvent): string {
 // Use switch on event.kind and return a description for each variant
 }`}
-  solution={`type UIEvent =
-| { kind: "click"; button: "left" | "right" }
-| { kind: "hover"; x: number; y: number }
-| { kind: "scroll"; deltaX: number; deltaY: number }
-
-function handleUIEvent(event: UIEvent): string {
-switch (event.kind) {
-case "click": return \`\${event.button} click\`
-case "hover": return \`Hover at (\${event.x}, \${event.y})\`
-case "scroll": return \`Scroll (\${event.deltaX}, \${event.deltaY})\`
-}
-}`}
-hints={[
-"Use switch(event.kind) — each case narrows the type automatically.",
-"Access variant-specific fields inside each case block.",
-"Template literals work great for building the display strings."
-]}
 />
 
 <LessonSummary

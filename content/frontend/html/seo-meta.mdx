@@ -15,6 +15,7 @@ order: 5
     "Set up favicons and app icons for all platforms",
     "Understand sitemaps and robots.txt files",
   ]}
+  preview
 />
 
 ## The Complete Head Section
@@ -181,57 +182,27 @@ Sitemap: https://example.com/sitemap.xml
 ```
 
 <LessonCodeExample
-  mode="challenge"
   title="Write Complete Head Section for a Blog Post"
-  description="Write the full <head> section for a blog post about 'JavaScript Async Programming' on site 'AsyncJS.dev'. Include SEO meta, Open Graph, Twitter Card, favicons, and JSON-LD structured data."
   code={`<!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Your head content here -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Learning Async — Complete Guide</title>
+  <meta name="description" content="Master async patterns in JavaScript" />
+  <meta property="og:title" content="Async Programming Guide" />
+  <meta property="og:description" content="Master async patterns" />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href="https://example.com/async" />
 </head>
 <body>
   <h1>JavaScript Async Programming</h1>
 </body>
 </html>`}
   language="html"
-  solution={`<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JavaScript Async Programming Guide | AsyncJS.dev</title>
-  <meta name="description" content="Master async JavaScript: promises, async/await, event loop, and error handling with practical examples." />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://asyncjs.dev/guides/async-programming" />
-  <meta property="og:title" content="JavaScript Async Programming Guide" />
-  <meta property="og:description" content="Master async JavaScript: promises, async/await, event loop, and error handling." />
-  <meta property="og:image" content="https://asyncjs.dev/og-async.png" />
-  <meta property="og:url" content="https://asyncjs.dev/guides/async-programming" />
-  <meta property="og:type" content="article" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="JavaScript Async Programming" />
-  <meta name="twitter:description" content="Master async JavaScript with practical examples." />
-  <meta name="twitter:image" content="https://asyncjs.dev/twitter-async.png" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "headline": "JavaScript Async Programming Guide",
-    "description": "Master async JavaScript: promises, async/await, event loop, and error handling.",
-    "author": { "@type": "Person", "name": "AsyncJS Team" },
-    "datePublished": "2026-07-11",
-    "publisher": { "@type": "Organization", "name": "AsyncJS.dev" }
-  }
-  </script>
-</head>
-<body>
-  <h1>JavaScript Async Programming</h1>
-</body>
-</html>`}
-  hints={["Start with charset and viewport", "Write a descriptive <title> under 60 chars", "Add Open Graph with og:title, og:description, og:image", "Add Twitter Card with summary_large_image", "Include JSON-LD structured data for Article type", "Add favicon links"]}
-  previewType="html"
+  explanation="Demonstrates a complete HTML head section with title, meta description, Open Graph, Twitter Card, and canonical link — everything a blog post needs for SEO and social sharing."
+  preview
 />
 
 <LessonSummary

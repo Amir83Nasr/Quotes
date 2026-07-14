@@ -13,6 +13,7 @@ order: 3
     "Use extends, super, static, private fields",
     "Prefer composition over inheritance",
   ]}
+  preview
 />
 
 ## Prototype Chain
@@ -145,30 +146,55 @@ const duck = canSwim(canFly({ name: "Daffy", speak: () => "quacks" }))
 duck.fly() // "Daffy flies"
 ```
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="UI Element Hierarchy"
-  description="Base UIElement with id, render(), validate(). Extend: Button(id, label, onClick) and TextField(id, label, required)."
   code={`class UIElement {
   constructor(id) { this.id = id }
-  render() { return '<div id="'+this.id+'"></div>' }
+  render() { return '<div id="' + this.id + '"></div>' }
   validate() { return null }
 }
+
 class Button extends UIElement {
-  // constructor(id, label, onClick)
-  // render() returns button HTML
-  // validate() — label non-empty
+constructor(id, label, onClick) {
+super(id)
+this.label = label
+this.onClick = onClick
 }
+render() {
+return '<button id="' + this.id + '">' + this.label + '</button>'
+}
+validate() {
+if (!this.label) throw new Error("Label required")
+return null
+}
+click() { if (this.onClick) this.onClick(this.label) }
+}
+
 class TextField extends UIElement {
+constructor(id, placeholder) {
+super(id)
+this.placeholder = placeholder
+this.value = ""
+}
+render() {
+return '<input id="' + this.id + '" placeholder="' + this.placeholder + '" />'
+}
+getValue() { return this.value }
+}
+
+const btn = new Button("btn1", "Submit", console.log)
+console.log(btn.render()) // <button id="btn1">Submit</button>`}
+  language="javascript"
+  explanation="`Button`and`TextField`extend`UIElement`via`extends`+`super()`, inheriting the base render contract while adding their own properties and methods. This is the class-based inheritance pattern in JavaScript."
+/>
   // constructor(id, label, required)
   // render() returns input HTML
   // validate() — if required, value non-empty
 }`}
-  language="javascript"
-  hints={["Call super(id) first in child constructor"]}
-  previewType="mixed"
+language="javascript"
+preview
 />
 
 ## Lesson Summary

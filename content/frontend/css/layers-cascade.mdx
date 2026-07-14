@@ -14,6 +14,7 @@ order: 3
     "Understand CSS reset vs normalize approaches",
     "Apply @layer for framework override patterns",
   ]}
+  preview
 />
 
 ## The Cascade Algorithm
@@ -205,9 +206,7 @@ Wrap third-party CSS in an `@layer` to keep your styles on top.
 ```
 
 <LessonCodeExample
-  mode="challenge"
   title="Fix Specificity Issues"
-  description="The styles below have specificity problems. Fix them so the card has a indigo border and the special card has a coral border."
   code={`<style>
   .wrapper .card { border: 2px solid #ccc; }
   .special { border-color: #ef4444; }
@@ -220,20 +219,8 @@ Wrap third-party CSS in an `@layer` to keep your styles on top.
   <div class="card special" id="my-card2">Special Card</div>
 </div>`}
   language="html"
-  solution={`<style>
-  /* Fix: put bare class selector after ID selector, or use @layer */
-  @layer base, overrides;
-  @layer base {
-    .card { border: 2px solid #6366f1; }
-    .special { border: 2px solid #ef4444; }
-  }
-</style>
-<div class="wrapper card-wrapper">
-  <div class="card">Normal Card</div>
-  <div class="card special">Special Card</div>
-</div>`}
-  hints={["The ID selector #my-card wins over .special because ID > class", "Use @layer to reset cascade order", "Or restructure to avoid ID selectors on styled elements"]}
-  previewType="html"
+  preview
+  explanation="The example demonstrates CSS specificity battles: an ID selector beats many class selectors. Preview shows which border color wins on each card."
 />
 
 <LessonSummary

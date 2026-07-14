@@ -17,6 +17,7 @@ Memoization caches a value so it's only recomputed when dependencies change. `us
     "Recognize when memoization is overhead, not optimization",
     "Measure before optimizing — rely on profiling, not intuition",
   ]}
+  preview
 />
 
 ## useMemo: Expensive Computations
@@ -247,58 +248,16 @@ const ProductGrid = React.memo(function ProductGrid({
 })
 ```
 
-## Interactive Exercise
+## See It In Action
 
 Optimize a list component that renders search results. The list receives a filter function and displays 1000 items. Use `useMemo` for the filtered list and `useCallback` for the filter handler.
 
 <LessonCodeExample
-  mode="challenge"
   title="Optimize Search Results"
-  description="Create a search component with 1000 items. Use useMemo to filter results and useCallback to stabilize the search handler so a memoized result list doesn't re-render on every keystroke."
   language="tsx"
   code={`"use client"
 
-import { useState } from "react"
-
-const ITEMS = Array.from({ length: 1000 }, (\_, i) => ({
-id: i,
-title: \`Item \${i}: \${["Apple", "Banana", "Cherry", "Date", "Elderberry"][i % 5]}\`,
-description: \`Description for item \${i}\`
-}))
-
-// TODO: use useMemo to filter items, useCallback for onChange
-
-export default function SearchPage() {
-  const [query, setQuery] = useState("")
-
-return (
-
-<div>
-<input
-value={query}
-onChange={(e) => setQuery(e.target.value)}
-placeholder="Search items..."
-/>
-<ResultList items={ITEMS} />
-</div>
-)
-}
-
-// TODO: wrap with React.memo
-function ResultList({ items }: { items: typeof ITEMS }) {
-console.log("ResultList rendered")
-return (
-
-<ul>
-{items.slice(0, 50).map((item) => (
-<li key={item.id}>{item.title}</li>
-))}
-</ul>
-)
-}`}
-  solution={`"use client"
-
-import { useState, useMemo, useCallback } from "react"
+import { useState, useMemo, useCallback, memo } from "react"
 
 const ITEMS = Array.from({ length: 1000 }, (\_, i) => ({
 id: i,
@@ -319,17 +278,16 @@ item.description.toLowerCase().includes(lower)
 )
 }, [query])
 
-const onChange = useCallback(
+const handleQueryChange = useCallback(
 (e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value),
 []
 )
 
 return (
-
 <div>
 <input
         value={query}
-        onChange={onChange}
+        onChange={handleQueryChange}
         placeholder="Search items..."
       />
 <ResultList items={filtered} />
@@ -337,12 +295,13 @@ return (
 )
 }
 
-const ResultList = React.memo(function ResultList({
-items
-}: { items: typeof ITEMS }) {
+const ResultList = memo(function ResultList({
+items,
+}: {
+items: typeof ITEMS
+}) {
 console.log("ResultList rendered")
 return (
-
 <ul>
 {items.slice(0, 50).map((item) => (
 <li key={item.id}>{item.title}</li>
@@ -350,11 +309,7 @@ return (
 </ul>
 )
 })`}
-hints={[
-"Pass query to the filtered useMemo dependency array",
-"Wrap ResultList with React.memo to skip re-renders when items reference hasn't changed",
-"The input onChange doesn't need query in deps — use setState's function form or the computed value is managed in filtered useMemo"
-]}
+explanation="useMemo filters 1000 items by search query on every keystroke. useCallback stabilizes the onChange handler so React.memo on ResultList can skip re-renders when query hasn't changed."
 previewType="mixed"
 />
 

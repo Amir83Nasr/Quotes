@@ -26,11 +26,11 @@ const SidebarContext = createContext<SidebarContextType | null>(null)
 function useIsMobile() {
   return useSyncExternalStore(
     (callback) => {
-      const mq = window.matchMedia("(max-width: 768px)")
+      const mq = window.matchMedia("(max-width: 1023px)")
       mq.addEventListener("change", callback)
       return () => mq.removeEventListener("change", callback)
     },
-    () => window.matchMedia("(max-width: 768px)").matches,
+    () => window.matchMedia("(max-width: 1023px)").matches,
     // Server fallback — assume desktop (sidebar open)
     () => false
   )
@@ -40,9 +40,11 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const isMobile = useIsMobile()
   const [userWantsOpen, setUserWantsOpen] = useState(!isMobile)
 
-  // Mobile overrides user preference: always closed on mobile, open on desktop.
-  // Derived during render — no effect or ref needed.
-  const isOpen = !isMobile && userWantsOpen
+  // `useState(!isMobile)` handles the default per device:
+  //   desktop → open (userWantsOpen = true)
+  //   mobile  → closed (userWantsOpen = false)
+  // The toggle/close/open callbacks let the user override at any time.
+  const isOpen = userWantsOpen
 
   const toggle = useCallback(() => setUserWantsOpen((v) => !v), [])
   const open = useCallback(() => setUserWantsOpen(true), [])

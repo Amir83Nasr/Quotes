@@ -13,6 +13,7 @@ order: 8
     "Predict execution order",
     "Avoid starving the event loop",
   ]}
+  preview
 />
 
 ## The Call Stack
@@ -106,7 +107,7 @@ for (let i = 0; i < items.length; i++) {
 }
 ```
 
-## Try It Yourself
+## See It In Action
 
 Run this to see microtask vs macrotask execution order in real-time:
 
@@ -124,30 +125,22 @@ console.log(7)
 // Expected output order: 1, 7, 3, 4, 2, 6, 5`}
 language="javascript"
 title="Execution Order"
-executable
-showLineNumbers
 explanation="Synchronous code (1, 7) runs first. Then microtasks (Promise callbacks — 3, 4) drain before the next macrotask. Macrotasks (setTimeout — 2, 6, 5) each go to the back of the macrotask queue. Nested microtask (4 → queueMicrotask'd 8) would also drain before any remaining macrotask."
 />
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="Predict Log Order"
-  description="Write expected output order for mixed async code."
   code={`console.log(1)
 setTimeout(() => { console.log(2); Promise.resolve().then(() => console.log(3)) }, 0)
 Promise.resolve().then(() => { console.log(4); setTimeout(() => console.log(5), 0) })
 setTimeout(() => console.log(6), 0)
 queueMicrotask(() => { console.log(7); queueMicrotask(() => console.log(8)) })
 console.log(9)
-// Write expected output:`}
+// Expected output: 1, 9, 4, 7, 8, 2, 6, 3, 5`}
   language="javascript"
-  hints={[
-    "Sync first; all microtasks drain before next macrotask",
-    "Nested microtasks also run before next macrotask",
-  ]}
-  previewType="mixed"
+  explanation="Step by step: sync code 1,9 first. Then microtask queue drains: 4, nested queueMicrotask 7, which queues 8 — 8 runs before next macrotask. Macrotasks: first setTimeout logs 2, its microtask logs 3; remaining setTimeout logs 6; last setTimeout logs 5."
 />
 
 ## Lesson Summary

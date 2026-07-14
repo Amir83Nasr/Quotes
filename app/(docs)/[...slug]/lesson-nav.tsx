@@ -17,8 +17,10 @@ export function LessonNav({ navigation }: LessonNavProps) {
   const { isCompleted, markCompleted } = useProgress()
   const completed = isCompleted(pathname)
 
+  const showNav = prev || next
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       {/* Mark Complete button */}
       <div className="flex justify-center">
         <Button
@@ -42,40 +44,45 @@ export function LessonNav({ navigation }: LessonNavProps) {
       </div>
 
       {/* Prev / Next navigation */}
-      {(prev || next) && (
+      {showNav && (
         <nav
-          className="flex items-center justify-between gap-4"
+          className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4"
           aria-label="Lesson navigation"
         >
-          <div>
-            {prev && (
-              <Button variant="ghost" asChild>
-                <Link href={prev.href} className="flex items-center gap-1">
-                  <ChevronLeft className="h-4 w-4" />
-                  <div className="flex flex-col items-start text-left">
-                    <span className="text-xs text-muted-foreground">
-                      Previous
-                    </span>
-                    <span className="text-sm font-medium">{prev.title}</span>
-                  </div>
-                </Link>
-              </Button>
-            )}
-          </div>
+          {prev && (
+            <Button variant="ghost" asChild className="h-auto py-2.5">
+              <Link href={prev.href} className="flex items-center gap-2">
+                <ChevronLeft className="h-5 w-5 shrink-0 text-muted-foreground" />
+                <div className="flex min-w-0 flex-1 flex-col items-start text-left">
+                  <span className="text-[11px] font-medium tracking-wider text-muted-foreground/70 uppercase">
+                    Previous
+                  </span>
+                  <span className="w-full truncate text-sm leading-tight">
+                    {prev.title}
+                  </span>
+                </div>
+              </Link>
+            </Button>
+          )}
 
-          <div>
-            {next && (
-              <Button variant="ghost" asChild>
-                <Link href={next.href} className="flex items-center gap-1">
-                  <div className="flex flex-col items-end text-right">
-                    <span className="text-xs text-muted-foreground">Next</span>
-                    <span className="text-sm font-medium">{next.title}</span>
-                  </div>
-                  <ChevronRight className="h-4 w-4" />
-                </Link>
-              </Button>
-            )}
-          </div>
+          {/* Spacer when only prev exists */}
+          {prev && !next && <div />}
+
+          {next && (
+            <Button variant="ghost" asChild className="h-auto py-2.5">
+              <Link href={next.href} className="flex items-center gap-2">
+                <div className="flex min-w-0 flex-1 flex-col items-start text-left sm:items-end sm:text-right">
+                  <span className="text-[11px] font-medium tracking-wider text-muted-foreground/70 uppercase">
+                    Next
+                  </span>
+                  <span className="w-full truncate text-sm leading-tight">
+                    {next.title}
+                  </span>
+                </div>
+                <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
+              </Link>
+            </Button>
+          )}
         </nav>
       )}
     </div>

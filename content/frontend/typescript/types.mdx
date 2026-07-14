@@ -6,6 +6,17 @@ order: 2
 
 # Types and Interfaces
 
+<LearningObjectives
+  objectives={[
+    "Master TypeScript's primitive and object types",
+    "Use union, intersection, and literal types for precise typing",
+    "Define tuples and enum types for structured data",
+    "Understand type inference and when to add explicit annotations",
+    "Work with optional properties, readonly, and index signatures",
+    "Use type assertions and the non-null assertion operator correctly",
+  ]}
+/>
+
 TypeScript offers two primary ways to define object shapes.
 
 ## Interface
@@ -67,3 +78,13 @@ type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>> // Exclude
 
 - [Generics](/frontend/typescript/generics)
 - [Advanced Types](/frontend/typescript/advanced)
+
+<LessonSummary
+  points={[
+    "TypeScript infers types from values — explicit annotations are needed when inference is insufficient",
+    "Union types (A | B) allow a value to be one of several types; intersection types (A & B) require all properties",
+    "Literal types restrict a variable to specific string/number values, enabling enum-like patterns",
+    "Tuple types ([string, number]) define fixed-length arrays with typed positions",
+    "readonly prevents property reassignment and readonly arrays prevent mutation methods like push",
+  ]}
+/>

@@ -14,6 +14,7 @@ order: 2
     "Recognize SEO benefits of semantic HTML",
     "Replace div soup with meaningful elements",
   ]}
+  preview
 />
 
 ## The Semantic Layout
@@ -177,16 +178,37 @@ Semantic HTML signals content hierarchy to search engines:
 />
 
 <LessonCodeExample
-  mode="challenge"
   title="Refactor Div-Heavy Page to Semantic HTML"
-  description="Convert this div soup into semantic HTML. Use header, nav, main, article, section, aside, footer, time, and proper headings."
-  code={`<div class="page">
-  <div class="top-bar">
-    <div class="nav-links">
-      <span>Home</span>
-      <span>Tutorials</span>
-      <span>Contact</span>
-    </div>
+  code={`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Semantic HTML Demo</title>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/tutorials">Tutorials</a>
+      <a href="/contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <article>
+      <h1>Understanding Semantic HTML</h1>
+      <p>Semantic elements describe meaning, not appearance. They help screen readers, search engines, and developers understand page structure.</p>
+    </article>
+
+    <aside>
+      <h2>Related Topics</h2>
+      <ul>
+        <li>Accessibility Basics</li>
+        <li>ARIA Roles</li>
+      </ul>
+    </aside>
+
+  </main>
   </div>
   <div class="content-area">
     <div class="post">
@@ -206,41 +228,7 @@ Semantic HTML signals content hierarchy to search engines:
   </div>
 </div>`}
   language="html"
-  solution={`<body>
-  <header>
-    <nav>
-      <a href="/">Home</a>
-      <a href="/tutorials">Tutorials</a>
-      <a href="/contact">Contact</a>
-    </nav>
-  </header>
-  <main>
-    <article>
-      <header>
-        <h1>Learning Semantic HTML</h1>
-        <time datetime="2026-07-11">Published: Today</time>
-      </header>
-      <p>Semantic HTML uses elements that describe their meaning.</p>
-    </article>
-    <aside>
-      <h2>Related Articles</h2>
-      <ul>
-        <li><a href="#">CSS Grid Guide</a></li>
-      </ul>
-    </aside>
-  </main>
-  <footer>
-    <p>© 2026 My Site</p>
-  </footer>
-</body>`}
-  hints={[
-    "Replace top-bar with <header>",
-    "Replace nav-links with <nav> and <a> tags",
-    "Use <article> for the post, <aside> for the sidebar",
-    "Add <time> element with datetime attribute",
-    "Wrap page content in <main>",
-  ]}
-  previewType="html"
+ preview
 />
 
 <LessonSummary

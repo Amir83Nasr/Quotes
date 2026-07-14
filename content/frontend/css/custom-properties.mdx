@@ -14,6 +14,7 @@ order: 8
     "Register typed custom properties with @property",
     "Animate custom properties efficiently",
   ]}
+  preview
 />
 
 ## Defining Custom Properties
@@ -159,9 +160,7 @@ Register custom properties with a syntax type, initial value, and inheritance. E
 ```
 
 <LessonCodeExample
-  mode="challenge"
   title="Build a Theme System"
-  description="Create a component that uses custom properties for theming — define light/dark variables and apply them."
   code={`<div class="theme-section">
   <button class="toggle">Switch Theme</button>
   <div class="demo-card">
@@ -170,46 +169,8 @@ Register custom properties with a syntax type, initial value, and inheritance. E
   </div>
 </div>`}
   language="html"
-  solution={`<style>
-  .theme-section {
-    --bg: #ffffff;
-    --text: #1e293b;
-    --accent: #6366f1;
-    --border: #e2e8f0;
-    background: var(--bg);
-    color: var(--text);
-    padding: 1.5rem;
-    border-radius: 8px;
-    transition: 0.3s;
-  }
-  .theme-section.dark {
-    --bg: #0f172a;
-    --text: #e2e8f0;
-    --accent: #818cf8;
-    --border: #334155;
-  }
-  .demo-card {
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1rem;
-    margin-top: 1rem;
-  }
-  .demo-card h3 { color: var(--accent); }
-  .toggle { padding: 0.5rem 1rem; cursor: pointer; margin-bottom: 0.5rem; }
-</style>
-<div class="theme-section" id="theme-root">
-  <button class="toggle" onclick="document.getElementById('theme-root').classList.toggle('dark')">Switch Theme</button>
-  <div class="demo-card">
-    <h3>Themed Card</h3>
-    <p>This card uses CSS custom properties for colors.</p>
-  </div>
-</div>`}
-  hints={[
-    "Define all colors as custom properties on .theme-section",
-    "Use .dark class to override property values",
-    "Apply var() to all color declarations",
-  ]}
-  previewType="html"
+  preview
+  explanation="A toggle button switches CSS custom property values at the container (`theme-section`) level, demonstrating how theming works by overriding property defaults through inheritance."
 />
 
 <LessonSummary

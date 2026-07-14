@@ -6,6 +6,17 @@ order: 1
 
 # JavaScript Introduction
 
+<LearningObjectives
+  objectives={[
+    "Declare variables with const, let, and understand their scope rules",
+    "Master JavaScript data types: primitives and reference types",
+    "Write functions using declarations, expressions, and arrow syntax",
+    "Work with objects and arrays using modern methods",
+    "Understand type coercion and strict equality (===)",
+    "Use template literals and destructuring for cleaner code",
+  ]}
+/>
+
 JavaScript is a dynamic programming language that powers interactivity on the web. It runs in the browser and on servers (Node.js).
 
 ## Variables
@@ -154,3 +165,13 @@ async function fetchData() {
 
 - [TypeScript Introduction](/frontend/typescript/intro) — Type-safe JavaScript
 - [React Introduction](/react/intro) — Build UIs with React
+
+<LessonSummary
+  points={[
+    "const prevents reassignment but objects declared with const can still be mutated",
+    "let is block-scoped and the modern replacement for var, which is function-scoped",
+    "JavaScript has seven primitive types: string, number, boolean, undefined, null, symbol, bigint",
+    "Arrow functions don't have their own 'this' — they inherit it from the enclosing scope",
+    "=== (strict equality) checks value and type, while == (abstract equality) performs type coercion",
+  ]}
+/>

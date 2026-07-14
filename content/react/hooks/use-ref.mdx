@@ -17,6 +17,7 @@ order: 3
     "Forward refs through component boundaries with forwardRef",
     "Avoid common pitfalls like ref overuse on state-driven values",
   ]}
+  preview
 />
 
 ## Basic DOM Access
@@ -179,15 +180,14 @@ export default function Form() {
   </AlertDescription>
 </Alert>
 
-## Interactive Exercise
+## See It In Action
 
 Build a stopwatch with start/stop/reset and lap recording. Store the interval ID in a ref, track elapsed time with state.
 
 <LessonCodeExample
-  mode="challenge"
   title="Stopwatch with Laps"
-  description="Implement a stopwatch. Use useRef for the interval ID and useState for elapsed time. Add a Lap button that records the current time."
   language="tsx"
+  explanation="A stopwatch component using useRef to hold the interval ID across renders without causing re-renders. start() computes the base start time from the current elapsed value, stop() clears the interval, reset() stops and zeros everything, and lap() snapshots the current elapsed into an array."
   code={`"use client"
 
 import { useState, useRef } from "react"
@@ -197,64 +197,32 @@ export default function Stopwatch() {
   const [laps, setLaps] = useState<number[]>([])
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-// TODO: implement start, stop, reset, lap functions
-
-return (
-
-<div>
-<p className="text-3xl font-mono">{elapsed.toFixed(1)}s</p>
-<div className="flex gap-2 mt-2">
-<button className="px-3 py-1 bg-green-500 text-white rounded" onClick={start}>Start</button>
-<button className="px-3 py-1 bg-red-500 text-white rounded" onClick={stop}>Stop</button>
-<button className="px-3 py-1 bg-gray-500 text-white rounded" onClick={reset}>Reset</button>
-<button className="px-3 py-1 bg-blue-500 text-white rounded" onClick={lap}>Lap</button>
-</div>
-{laps.length > 0 && (
-<ul className="mt-4 list-disc list-inside">
-{laps.map((t, i) => <li key={i}>Lap {i + 1}: {t.toFixed(1)}s</li>)}
-</ul>
-)}
-</div>
-)
-}`}
-  solution={`"use client"
-
-import { useState, useRef, useCallback } from "react"
-
-export default function Stopwatch() {
-  const [elapsed, setElapsed] = useState(0)
-  const [laps, setLaps] = useState<number[]>([])
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-
-const start = useCallback(() => {
+const start = () => {
 if (intervalRef.current) return
 const startTime = Date.now() - elapsed \* 1000
 intervalRef.current = setInterval(() => {
 setElapsed((Date.now() - startTime) / 1000)
 }, 100)
-}, [elapsed])
+}
 
-const stop = useCallback(() => {
+const stop = () => {
 if (intervalRef.current) {
 clearInterval(intervalRef.current)
 intervalRef.current = null
 }
-}, [])
+}
 
-const reset = useCallback(() => {
+const reset = () => {
 stop()
 setElapsed(0)
 setLaps([])
-}, [stop])
+}
 
-const lap = useCallback(() => {
-if (intervalRef.current) {
+const lap = () => {
 setLaps((prev) => [...prev, elapsed])
 }
-}, [elapsed])
 
 return (
-
 <div>
 <p className="text-3xl font-mono">{elapsed.toFixed(1)}s</p>
 <div className="flex gap-2 mt-2">
@@ -271,11 +239,7 @@ return (
 </div>
 )
 }`}
-hints={[
-"Use Date.now() and save the start time to compute elapsed accurately",
-"clearInterval + set intervalRef to null in the stop function",
-"The Lap button should copy the current elapsed value into the laps array"
-]}
+preview
 previewType="mixed"
 />
 

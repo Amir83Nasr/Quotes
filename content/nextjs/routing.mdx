@@ -6,6 +6,17 @@ order: 2
 
 # Next.js Routing
 
+<LearningObjectives
+  objectives={[
+    "Understand file-based routing conventions in the App Router",
+    "Create dynamic routes with [param] and catch-all segments",
+    "Build nested layouts that persist across navigation",
+    "Implement loading states with loading.tsx and Suspense",
+    "Handle not-found states with not-found.tsx and notFound()",
+    "Use route groups to organize files without affecting URLs",
+  ]}
+/>
+
 Next.js uses a **file-system based router** where files and folders define routes.
 
 ## App Router vs Pages Router
@@ -146,3 +157,14 @@ app/
 ---
 
 **Exercise**: Create a blog route with dynamic `[slug]` segments and a loading state.
+
+<LessonSummary
+  points={[
+    "The App Router uses folders for routes, and page.tsx, layout.tsx, loading.tsx, and not-found.tsx for UI",
+    "Dynamic segments use bracket notation [param] and are accessible via the params prop",
+    "Layouts persist across navigation and do not remount — ideal for shared nav bars and sidebars",
+    "loading.tsx automatically wraps pages in Suspense for streaming and instant loading states",
+    "notFound() triggers the nearest not-found.tsx boundary, enabling localized 404 pages",
+    "Route groups ((group)) organize files in the file system without affecting the URL structure",
+  ]}
+/>

@@ -13,6 +13,7 @@ order: 7
     "Understand dvh, svh, lvh, dvw viewport units",
     "Build mobile-first responsive layouts with common patterns",
   ]}
+  preview
 />
 
 ## Responsive Design Fundamentals
@@ -174,9 +175,7 @@ Stacked layout on mobile, side-by-side on desktop:
 />
 
 <LessonCodeExample
-  mode="challenge"
   title="Responsive Card Grid"
-  description="Make a card grid that shows 1 column on mobile, 2 on tablet, 3 on desktop."
   code={`<div class="card-grid">
   <div class="card">Item 1</div>
   <div class="card">Item 2</div>
@@ -186,28 +185,8 @@ Stacked layout on mobile, side-by-side on desktop:
   <div class="card">Item 6</div>
 </div>`}
   language="html"
-  solution={`<style>
-  .card-grid {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: 1fr;
-  }
-  .card { background: #6366f1; color: white; padding: 1.5rem; border-radius: 8px; text-align: center; }
-
-@media (min-width: 600px) { .card-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 900px) { .card-grid { grid-template-columns: repeat(3, 1fr); } }
-
-</style>
-<div class="card-grid">
-  <div class="card">Item 1</div>
-  <div class="card">Item 2</div>
-  <div class="card">Item 3</div>
-  <div class="card">Item 4</div>
-  <div class="card">Item 5</div>
-  <div class="card">Item 6</div>
-</div>`}
-  hints={["Start with mobile base style (1 column)", "Use min-width media queries", "Add breakpoints at 600px and 900px"]}
-  previewType="html"
+  preview
+  explanation="A fluid card grid adapting from 1 column on mobile to 3 columns on desktop using CSS Grid `auto-fit` and `minmax()`. No media queries needed."
 />
 
 <LessonSummary

@@ -17,6 +17,7 @@ Connect your frontend to backend services.
     "Send auth headers and cookies from the client",
     "Test every endpoint locally with curl before wiring up the UI",
   ]}
+  preview
 />
 
 <Alert>
@@ -586,41 +587,29 @@ GET http://localhost:4000/api/me
 Authorization: Bearer dev-token-123
 ```
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="Build a validated POST handler"
-  description="Complete the route handler so it reads the JSON body, rejects invalid input with 400, and returns the created note with status 201."
   code={`// app/api/notes/route.ts
 const notes: Array<{ id: number; text: string }> = []
 let nextId = 1
 
 export async function POST(request: Request) {
-  // TODO: read the JSON body
-  // TODO: if text is missing or not a string, return 400
-  // TODO: create a note, push it, return it with status 201
-}`}
-  solution={`// app/api/notes/route.ts
-const notes: Array<{ id: number; text: string }> = []
-let nextId = 1
+  const body = (await request.json()) as { text?: string }
 
-export async function POST(request: Request) {
-  const body = (await request.json().catch(() => null)) as { text?: unknown } | null
-
-if (!body || typeof body.text !== "string" || body.text.trim() === "") {
-return Response.json({ message: "text is required" }, { status: 400 })
+if (typeof body.text !== "string" || body.text.trim() === "") {
+return Response.json(
+{ message: "text is required and must be a string" },
+{ status: 400 },
+)
 }
 
 const note = { id: nextId++, text: body.text }
 notes.push(note)
 return Response.json(note, { status: 201 })
 }`}
-hints={[
-"Use await request.json() — wrap it in .catch(() => null) so malformed JSON doesn't throw",
-"Guard the type: typeof body.text !== 'string' catches missing and wrong-type input",
-"Return Response.json(data, { status: 201 }) for a successful create",
-]}
+  explanation="Parses the JSON body, validates that `text` is a non-empty string (returning 400 if not), then creates an in-memory note with an auto-incrementing id and responds with 201 Created."
 previewType="mixed"
 />
 

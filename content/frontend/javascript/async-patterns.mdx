@@ -12,6 +12,7 @@ order: 7
     "Choose sequential vs parallel execution",
     "Apply timeout and retry patterns",
   ]}
+  preview
 />
 
 ## Async/Await
@@ -121,23 +122,35 @@ async function fetchWithRetry(url, { retries = 3, delay = 1000 } = {}) {
 }
 ```
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="Build fetchWithRetry"
-  description="Fetch with retry, exponential backoff, timeout. Retry 5xx, throw 4xx immediately."
   code={`async function fetchWithRetry(url, options = {}) {
   const { retries = 3, delay = 1000, timeout = 5000 } = options
-  // Use AbortController for timeout
-  // Only retry 5xx, throw 4xx immediately
-}`}
-  language="javascript"
-  hints={[
-    "New AbortController per attempt",
-    "Exponential backoff: delay * 2^attempt",
-  ]}
-  previewType="mixed"
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), timeout)
+
+for (let i = 0; i <= retries; i++) {
+try {
+const res = await fetch(url, { ...options, signal: controller.signal })
+if (!res.ok) {
+if (res.status < 500 || i === retries) throw new Error(\`HTTP \${res.status}\`)
+continue // Retry on 5xx
+}
+return res.json()
+} catch (err) {
+if (i === retries) throw err
+await new Promise(r => setTimeout(r, delay \* 2 \*\* i))
+} finally {
+clearTimeout(timeoutId)
+}
+}
+}
+
+// Usage: fetchWithRetry("/api/data", { retries: 2, timeout: 3000 })`}
+language="javascript"
+explanation="A robust retry wrapper: uses AbortController for timeouts, retries only 5xx responses, and applies exponential backoff between attempts. 4xx errors throw immediately."
 />
 
 ## Lesson Summary

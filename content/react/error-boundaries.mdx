@@ -15,6 +15,7 @@ order: 6
     "Place error boundaries strategically in your component tree",
     "Understand React 19 error handling improvements",
   ]}
+  preview
 />
 
 ## What Error Boundaries Catch
@@ -165,72 +166,47 @@ In React 19, error handling becomes more ergonomic:
 
 For now, class component boundaries + `<Suspense>` is the battle-tested pattern.
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="Wrap a Broken Component with ErrorBoundary"
-  description="Create a component that throws on render and wrap it with ErrorBoundary to handle the crash gracefully."
-  code={`"use client"
+  code={`import { Component, type ReactNode, type ErrorInfo } from "react"
 
-import { Component, type ReactNode, type ErrorInfo } from "react"
+class ErrorBoundary extends Component<
+{ children: ReactNode; fallback?: ReactNode },
+{ hasError: boolean; error?: Error }
 
-// 1. Build an ErrorBoundary class component
-// 2. Create a component that throws when a prop "shouldThrow" is true
-// 3. Show fallback UI when the error is caught
+> {
+> state = { hasError: false }
+> static getDerivedStateFromError(error: Error) {
 
-export default function Exercise() {
-  return null // Your error-boundary-wrapped component here
-}`}
-  language="tsx"
-  solution={`"use client"
+    return { hasError: true, error }
 
-import { Component, type ReactNode, type ErrorInfo } from "react"
-
-interface ErrorBoundaryProps {
-children: ReactNode
-fallback: ReactNode
-}
-interface ErrorBoundaryState {
-hasError: boolean
-}
-
-class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-constructor(props: ErrorBoundaryProps) {
-super(props)
-this.state = { hasError: false }
-}
-static getDerivedStateFromError(): ErrorBoundaryState {
-return { hasError: true }
 }
 componentDidCatch(error: Error, info: ErrorInfo) {
-console.error("Caught:", error, info)
+console.error("Caught:", error, info.componentStack)
 }
 render() {
-if (this.state.hasError) return this.props.fallback
+if (this.state.hasError) {
+return this.props.fallback || <h2>Something went wrong</h2>
+}
 return this.props.children
 }
 }
 
-function Bomb({ shouldThrow }: { shouldThrow: boolean }) {
-if (shouldThrow) throw new Error("💥 Component exploded!")
+function Broken({ shouldThrow }: { shouldThrow: boolean }) {
+if (shouldThrow) throw new Error("💥")
 return <p>All good here</p>
 }
 
-export default function Exercise() {
-  return (
-    <ErrorBoundary fallback={<p className="text-red-500">Oops, something crashed</p>}>
-      <Bomb shouldThrow />
-    </ErrorBoundary>
-  )
-}`}
-  hints={[
-    "ErrorBoundary must be a class component with getDerivedStateFromError",
-    "getDerivedStateFromError returns new state that triggers fallback render",
-    "componentDidCatch receives the error for logging",
-    "The Bomb component uses if(shouldThrow) throw new Error(...)"
-  ]}
-  previewType="mixed"
+// Wrap Broken inside ErrorBoundary - fallback shows instead of crash
+
+<ErrorBoundary fallback={<p>⚠️ Component crashed</p>}>
+  <Broken shouldThrow={true} />
+</ErrorBoundary>`}
+  language="tsx"
+  explanation="ErrorBoundary catches rendering errors via getDerivedStateFromError and shows a fallback UI. Event handler and async errors are NOT caught."
+  preview
 />
 
 <LessonSummary

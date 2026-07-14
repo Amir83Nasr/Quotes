@@ -16,6 +16,7 @@ order: 8
     "Manipulate cookies and request headers",
     "Handle i18n routing with middleware",
   ]}
+  preview
 />
 
 ## Middleware Basics
@@ -154,32 +155,18 @@ export function middleware(request: NextRequest) {
 }
 ```
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="Auth Middleware with Redirect"
-  description="Write middleware that checks for a session cookie and redirects unauthenticated users to /login with the original path as a redirect param."
   code={`// middleware.ts
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
 export function middleware(request: NextRequest) {
-  // TODO: Check for "session" cookie
-  // TODO: If missing and path is /dashboard, redirect to /login?redirect=/dashboard
-  return NextResponse.next()
-}
+  const token = request.cookies.get("session")?.value
 
-export const config = {
-  matcher: [] // TODO: Add matcher
-}`}
-  solution={`import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
-
-export function middleware(request: NextRequest) {
-  const session = request.cookies.get("session")?.value
-
-if (!session) {
+if (!token && request.nextUrl.pathname.startsWith("/dashboard")) {
 const loginUrl = new URL("/login", request.url)
 loginUrl.searchParams.set("redirect", request.nextUrl.pathname)
 return NextResponse.redirect(loginUrl)
@@ -189,10 +176,9 @@ return NextResponse.next()
 }
 
 export const config = {
-  matcher: "/dashboard/:path*",
+  matcher: ["/dashboard/:path*"]
 }`}
-  hints={["Use request.cookies.get() to read cookies", "Redirect to /login with a redirect param so the user goes back after login", "Set matcher to only run on dashboard routes"]}
-  previewType="mixed"
+  explanation="Reads the session cookie. If user has no session and tries /dashboard, redirects to /login with original path as redirect query param. Matcher scopes middleware to dashboard routes only."
 />
 
 ## Lesson Summary

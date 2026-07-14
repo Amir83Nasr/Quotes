@@ -13,6 +13,7 @@ order: 9
     "Understand mutable vs immutable",
     "Use reduce as multi-purpose tool",
   ]}
+  preview
 />
 
 ## Core Methods
@@ -99,25 +100,33 @@ orders
 
 <Alert><AlertTriangle /><AlertTitle>Gotcha</AlertTitle><AlertDescription>`sort()` defaults to string sort: `[1, 10, 2].sort()` → `[1, 10, 2]`. Always pass `(a, b) => a - b`. Also mutates — copy first.</AlertDescription></Alert>
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="Data Pipeline"
-  description="Write `processTransactions` that filters completed, converts USD→EUR (0.92), groups by category with totals."
   code={`const tx = [
-  { id:1,amount:100,currency:"USD",category:"food",status:"completed" },
-  { id:2,amount:50,currency:"EUR",category:"transport",status:"completed" },
+  { id:1, amount:100, currency:"USD", category:"food", status:"completed" },
+  { id:2, amount:50, currency:"EUR", category:"transport", status:"completed" },
+  { id:3, amount:200, currency:"USD", category:"food", status:"pending" },
 ]
+
 function processTransactions(txns, rate = 0.92) {
-  // Return { category: totalEUR }
-}`}
+return txns
+.filter(t => t.status === "completed")
+.map(t => ({
+...t,
+totalEUR: t.currency === "USD" ? t.amount \* rate : t.amount,
+}))
+.reduce((acc, t) => {
+acc[t.category] = (acc[t.category] || 0) + t.totalEUR
+return acc
+}, {} as Record<string, number>)
+}
+
+console.log(processTransactions(tx))
+// { food: 276, transport: 46 }`}
   language="javascript"
-  hints={[
-    "Chain filter → reduce for one-pass",
-    "Use || 0 for accumulator init per category",
-  ]}
-  previewType="mixed"
+  explanation="A data pipeline chains `filter`, `map`, and `reduce` to process transactions: filter only completed ones, convert USD to EUR, then group by category and sum amounts."
 />
 
 ## Lesson Summary

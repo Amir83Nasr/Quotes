@@ -15,6 +15,7 @@ order: 9
     "Apply lazy loading strategies for images",
     "Measure performance benefits of optimized assets",
   ]}
+  preview
 />
 
 ## Next/Image
@@ -175,12 +176,11 @@ const geistMono = localFont({
 })
 ```
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="Build a Gallery with Optimized Images"
-  description="Create a gallery component that displays remote images with next/image, proper sizing, and responsive breakpoints using the fill prop."
+  explanation="Renders a responsive 3-column grid of remote images using next/image with the fill prop and object-cover for consistent aspect ratio. Uses sizes prop for responsive srcset generation."
   code={`import Image from "next/image"
 
 const images = [
@@ -190,41 +190,22 @@ const images = [
 ]
 
 export default function Gallery() {
-  // TODO: Display images in a responsive grid using next/image
-  // Use fill prop and object-cover for consistent sizing
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      {/* map images here */}
-    </div>
-  )
-}`}
-  solution={`import Image from "next/image"
-
-const images = [
-{ id: 1, src: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97", alt: "Code" },
-{ id: 2, src: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6", alt: "Setup" },
-{ id: 3, src: "https://images.unsplash.com/photo-1504639725590-34d0984388bd", alt: "Brain" },
-]
-
-export default function Gallery() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      {images.map((img) => (
-        <div key={img.id} className="relative aspect-[4/3] overflow-hidden rounded-lg">
+      {images.map((image) => (
+        <div key={image.id} className="relative h-64">
           <Image
-            src={img.src}
-            alt={img.alt}
+            src={image.src}
+            alt={image.alt}
             fill
-            className="object-cover"
             sizes="(max-width: 768px) 100vw, 33vw"
+            className="object-cover rounded-lg"
           />
         </div>
       ))}
     </div>
   )
 }`}
-  hints={["The parent div must have position: relative (use relative class) for fill to work", "Use aspect-[4/3] for consistent image proportions", "sizes prop tells the browser which image size to download at different breakpoints"]}
-  previewType="mixed"
 />
 
 ## Lesson Summary

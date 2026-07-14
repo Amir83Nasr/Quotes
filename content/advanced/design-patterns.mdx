@@ -6,6 +6,16 @@ order: 6
 
 # Design Patterns
 
+<LearningObjectives
+  objectives={[
+    "Recognize common frontend design patterns: Observer, Module, Factory, Singleton",
+    "Implement the Observer pattern for event-driven communication",
+    "Use the Module pattern to encapsulate private state",
+    "Understand when each pattern is appropriate and when it adds unnecessary complexity",
+    "Compare JavaScript's module system to classical design pattern implementations",
+  ]}
+/>
+
 Reusable solutions to common problems.
 
 ## Common Patterns
@@ -45,3 +55,13 @@ Tabs.Panel = function Panel({ index, children }: { index: number; children: Reac
 
 - [Testing](/advanced/testing)
 - [State Management](/advanced/state-management)
+
+<LessonSummary
+  points={[
+    "Design patterns provide reusable solutions to common software design problems",
+    "The Observer pattern enables event-driven communication between decoupled components",
+    "The Module pattern encapsulates private state using closures and IIFEs",
+    "Modern JavaScript modules (ESM) replace many classical patterns with native language features",
+    "Patterns are tools, not rules — inappropriate abstraction adds complexity without benefit",
+  ]}
+/>

@@ -6,6 +6,17 @@ order: 5
 
 # Data Fetching
 
+<LearningObjectives
+  objectives={[
+    "Fetch data directly in Server Components with async/await",
+    "Use the fetch API with Next.js caching and revalidation strategies",
+    "Implement incremental static regeneration (ISR) for hybrid pages",
+    "Fetch data on the client with SWR or React Query for real-time UIs",
+    "Stream responses using loading boundaries and Suspense",
+    "Understand the cache hierarchy: data cache, full route cache, and client cache",
+  ]}
+/>
+
 Next.js 16 provides multiple patterns for data fetching.
 
 ## Server Component Fetching
@@ -109,3 +120,13 @@ export async function POST(request: Request) {
 
 - [Server Components](/nextjs/server-components) — RSC deep dive
 - [Full Stack](/fullstack/intro) — Build complete apps
+
+<LessonSummary
+  points={[
+    "Server Components can fetch data directly with async/await — no useEffect, no loading states in the component",
+    "fetch() in Next.js caches responses by default; revalidation controls staleness with time-based or on-demand triggers",
+    "ISR combines static generation with incremental revalidation for pages that are mostly static but need updates",
+    "Client-side fetching with SWR or TanStack Query is appropriate for highly dynamic, user-specific data",
+    "Streaming with Suspense boundaries lets you send HTML progressively as data resolves",
+  ]}
+/>

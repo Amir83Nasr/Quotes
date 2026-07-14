@@ -6,6 +6,17 @@ order: 4
 
 # DOM Manipulation
 
+<LearningObjectives
+  objectives={[
+    "Select DOM elements using querySelector and getElementById",
+    "Traverse the DOM tree with parent, child, and sibling properties",
+    "Manipulate element content, attributes, and CSS classes",
+    "Handle user events with addEventListener and event delegation",
+    "Create and remove elements dynamically",
+    "Understand the DOM event lifecycle: capture, target, bubble",
+  ]}
+/>
+
 The DOM (Document Object Model) represents the page structure as a tree of nodes.
 
 ## Selecting Elements
@@ -67,3 +78,13 @@ list.appendChild(li)
 
 - [React Introduction](/react/intro) — Declarative UI
 - [Async/Await](/frontend/javascript/async) — Async JS
+
+<LessonSummary
+  points={[
+    "document.querySelector and querySelectorAll are the most flexible methods for selecting DOM elements",
+    "The DOM is a tree of nodes — you can navigate it with parentNode, childNodes, nextSibling, etc.",
+    "element.textContent, element.innerHTML, and element.setAttribute() are the primary manipulation methods",
+    "addEventListener attaches handlers that can be removed with removeEventListener for cleanup",
+    "Event delegation uses a single listener on a parent to handle events from multiple children via bubbling",
+  ]}
+/>

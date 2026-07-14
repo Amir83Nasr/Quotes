@@ -7,6 +7,17 @@ order: 5
 
 # useReducer
 
+<LearningObjectives
+  objectives={[
+    "Replace useState with useReducer for complex state logic",
+    "Define reducer functions with explicit action types",
+    "Dispatch actions to trigger state transitions",
+    "Type reducer actions with discriminated unions in TypeScript",
+    "Extract reducer logic for testability outside the component",
+    "Understand when useReducer is better than useState",
+  ]}
+/>
+
 `useReducer` is an alternative to `useState` for state logic that involves multiple sub-values or depends on previous state.
 
 ## Basic Pattern
@@ -58,3 +69,13 @@ For simple values, stick with `useState`.
 
 - [State Management](/advanced/state-management)
 - [useEffect](/react/hooks/use-effect)
+
+<LessonSummary
+  points={[
+    "useReducer takes a reducer function (state, action) => newState and an initial state value",
+    "Reducer actions are typically objects with a type property and optional payload for additional data",
+    "Dispatch sends actions to the reducer — the component never calls the reducer directly",
+    "TypeScript discriminated unions type-check action types and payloads together for safety",
+    "Reducer logic is pure and testable outside React — the same input always produces the same output state",
+  ]}
+/>

@@ -7,6 +7,17 @@ order: 3
 
 # Build a Blog
 
+<LearningObjectives
+  objectives={[
+    "Structure a Next.js project for a content-driven site",
+    "Fetch and render markdown content from a headless CMS",
+    "Implement dynamic routing for individual blog posts",
+    "Add search functionality with client-side filtering",
+    "Build an RSS feed for content syndication",
+    "Optimize blog pages for SEO with metadata and structured data",
+  ]}
+/>
+
 Create a blog that reads Markdown files and renders them as pages.
 
 ## Requirements
@@ -36,3 +47,13 @@ export async function getStaticProps({ params }) {
 
 - [Authentication System](/practice/auth)
 - [Kanban Board](/practice/kanban)
+
+<LessonSummary
+  points={[
+    "A headless CMS (Contentful, Sanity, or local MDX) separates content management from presentation",
+    "Dynamic [...slug] routing creates individual blog post pages from a content collection",
+    "Client-side filtering provides instant search results without additional server requests",
+    "RSS feeds use XML with standard <channel> and <item> elements for content syndication",
+    "Metadata and structured data (JSON-LD) improve SEO by helping search engines understand page content",
+  ]}
+/>

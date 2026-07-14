@@ -209,7 +209,7 @@ export default function HomePage() {
                 <h3 className="font-semibold">Learn by Doing</h3>
                 <p className="text-sm text-muted-foreground">
                   Every concept comes with code examples, live previews, and
-                  challenges. Write code, not just read.
+                  hands-on exercises. Write code, not just read.
                 </p>
               </div>
               <div className="space-y-2">

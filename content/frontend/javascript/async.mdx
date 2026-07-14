@@ -6,6 +6,17 @@ order: 6
 
 # Async/Await
 
+<LearningObjectives
+  objectives={[
+    "Understand synchronous vs asynchronous execution in JavaScript",
+    "Use callbacks and recognize callback hell patterns",
+    "Master Promises with .then() and .catch() chains",
+    "Write async/await syntax for cleaner asynchronous code",
+    "Handle errors in async operations with try/catch",
+    "Run multiple async operations in parallel with Promise.all",
+  ]}
+/>
+
 JavaScript is single-threaded. Async/await handles asynchronous operations without blocking.
 
 ## Callbacks → Promises → Async/Await
@@ -68,3 +79,13 @@ async function safeFetch(url: string) {
 
 - [TypeScript Introduction](/frontend/typescript/intro)
 - [Data Fetching in Next.js](/nextjs/data-fetching)
+
+<LessonSummary
+  points={[
+    "JavaScript is single-threaded and uses an event loop to handle asynchronous operations",
+    "Promises represent values that may not be available yet and can be chained with .then()",
+    "async/await provides synchronous-looking syntax for Promise-based code",
+    "Error handling in async code requires try/catch blocks or .catch() on promises",
+    "Promise.all runs multiple promises in parallel and fails fast on any rejection",
+  ]}
+/>

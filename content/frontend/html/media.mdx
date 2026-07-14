@@ -14,6 +14,7 @@ order: 4
     "Write srcset and sizes attributes for resolution switching",
     "Understand native lazy loading behavior",
   ]}
+  preview
 />
 
 ## The `<img>` Element — Modern Attributes
@@ -175,9 +176,7 @@ Native `loading="lazy"` defers off-screen images. Browser fetches them when the 
 />
 
 <LessonCodeExample
-  mode="challenge"
   title="Build Responsive Image Gallery"
-  description="Create a responsive image gallery grid using <picture> elements and srcset for different screen sizes. Use placeholders for images."
   code={`<div class="gallery-grid">
   <div class="gallery-card">
     <h3>Gallery Item 1</h3>
@@ -185,62 +184,8 @@ Native `loading="lazy"` defers off-screen images. Browser fetches them when the 
   </div>
 </div>`}
   language="html"
-  solution={`<style>
-  .gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 1rem;
-  }
-  .gallery-card {
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    overflow: hidden;
-    background: white;
-  }
-  .image-placeholder {
-    width: 100%;
-    height: 120px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 600;
-  }
-  .gallery-card h3 { margin: 0.5rem; font-size: 1rem; }
-  .gallery-card p { margin: 0 0.5rem 0.5rem; font-size: 0.8rem; color: #64748b; }
-</style>
-<div class="gallery-grid">
-  <div class="gallery-card">
-    <picture>
-      <source media="(min-width: 768px)" srcset="" />
-      <div class="image-placeholder" style="background: #6366f1">Photo 1</div>
-    </picture>
-    <h3>Mountain Views</h3>
-    <p>A scenic mountain landscape</p>
-  </div>
-  <div class="gallery-card">
-    <div class="image-placeholder" style="background: #8b5cf6">Photo 2</div>
-    <h3>City Lights</h3>
-    <p>Urban skyline at dusk</p>
-  </div>
-  <div class="gallery-card">
-    <div class="image-placeholder" style="background: #a78bfa">Photo 3</div>
-    <h3>Ocean Waves</h3>
-    <p>Coastal sunset view</p>
-  </div>
-  <div class="gallery-card">
-    <div class="image-placeholder" style="background: #c4b5fd">Photo 4</div>
-    <h3>Forest Path</h3>
-    <p>Trail through redwoods</p>
-  </div>
-</div>`}
-  hints={[
-    "Use grid-template-columns: repeat(auto-fill, minmax(180px, 1fr))",
-    "Wrap images in <picture> with <source> elements",
-    "Use inline background colors as placeholder images",
-    "Add alt text to each image",
-  ]}
-  previewType="html"
+  preview
+  explanation="A responsive image gallery using `<picture>` and `<source>` elements for art direction and format fallbacks. The browser picks the optimal image for each viewport."
 />
 
 <LessonSummary

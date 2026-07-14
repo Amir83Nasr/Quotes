@@ -246,118 +246,83 @@ pnpm -r run build
 Set up a basic workspace with a shared types package consumed by two apps.
 
 <LessonCodeExample
-  mode="challenge"
   title="Basic Monorepo Setup"
-  description="Create a pnpm workspace with shared types between a web app and API"
   language="ts"
-  code={`// Step 1: Create pnpm-workspace.yaml
-// packages: ["packages/*"]
+  explanation="A pnpm workspace monorepo: @my-project/shared exports a User type. Two consumer packages (web, api) import and use it — web renders user data, api returns a mock list and lookup. Root package.json uses Turborepo to orchestrate dev/build."
+  code={`// ── pnpm-workspace.yaml ──
+packages:
+  - "packages/*"
 
-// Step 2: Create packages/shared/src/types.ts
+// ── packages/shared/src/index.ts ──
 export type User = {
 id: string
 name: string
 email: string
 }
 
-// Step 3: Create packages/shared/package.json
-// name: "@my-project/shared"
-// main: "./src/index.ts"
-// types: "./src/index.ts"
-
-// Step 4: Create packages/web/src/app.ts
-// Import User type from @my-project/shared
-// Display user name
-
-// Step 5: Create packages/api/src/handler.ts
-// Import User type from @my-project/shared
-// Create a mock user list
-
-// Step 6: Wire deps — pnpm add @my-project/shared --filter @my-project/web
-// Step 7: Wire deps — pnpm add @my-project/shared --filter @my-project/api
-
-// Write the implementation below:
-// ──────────────────────────────────
-
-// packages/shared/src/types.ts
-export type User = {
-id: string
-name: string
-email: string
+// ── packages/shared/package.json ──
+{
+"name": "@my-project/shared",
+"version": "0.0.0",
+"main": "./src/index.ts",
+"types": "./src/index.ts",
+"devDependencies": {
+"typescript": "^5.5.0"
+}
 }
 
-// packages/web/src/app.ts — TODO: import User and render
+// ── packages/web/src/app.ts ──
+import type { User } from "@my-project/shared"
 
-// packages/api/src/handler.ts — TODO: import User and return list
-
-// Root package.json scripts:
-// "dev": "turbo dev"
-// "build": "turbo build"`}
-  solution={`// packages/shared/src/index.ts
-export type User = {
-id: string
-name: string
-email: string
+const currentUser: User = {
+id: "user-1",
+name: "Alice Johnson",
+email: "alice@example.com",
 }
 
-export type ApiResponse<T> = {
-  data: T
-  error: string | null
+function renderUser(user: User): string {
+return \`<div class="user-card">
+<h2>\${user.name}</h2>
+<p>\${user.email}</p>
+
+  </div>\`
 }
 
-// packages/web/src/app.ts
-import { User } from "@my-project/shared"
+console.log(renderUser(currentUser))
 
-const users: User[] = [
+// ── packages/api/src/handler.ts ──
+import type { User } from "@my-project/shared"
+
+const mockUsers: User[] = [
 { id: "1", name: "Alice", email: "alice@example.com" },
 { id: "2", name: "Bob", email: "bob@example.com" },
+{ id: "3", name: "Carol", email: "carol@example.com" },
 ]
 
-export default function UserList() {
-  return (
-    <ul>
-      {users.map((user) => (
-        <li key={user.id}>
-          {user.name} ({user.email})
-        </li>
-      ))}
-    </ul>
-  )
+export function getUsers(): User[] {
+  return mockUsers
 }
 
-// packages/api/src/handler.ts
-import { User, ApiResponse } from "@my-project/shared"
-
-const users: User[] = [
-{ id: "1", name: "Alice", email: "alice@example.com" },
-]
-
-export function getUsers(): ApiResponse<User[]> {
-  return { data: users, error: null }
+export function getUserById(id: string): User | undefined {
+  return mockUsers.find((u) => u.id === id)
 }
 
-// pnpm-workspace.yaml
-// packages:
-// - "packages/\*"
-
-// turbo.json
-{
-"tasks": {
-"build": { "dependsOn": ["^build"], "outputs": ["dist/**"] },
-"dev": { "cache": false, "persistent": true }
-}
-}
-
-// Usage:
+// ── Wire deps ──
 // pnpm add @my-project/shared --filter @my-project/web
 // pnpm add @my-project/shared --filter @my-project/api
-// pnpm build # Builds shared first, then web+api in parallel`}
-hints={[
-"pnpm-workspace.yaml declares which directories contain packages",
-"Each workspace package needs its own package.json with a name",
-"Use --filter to install a workspace dependency into another package",
-"Turborepo dependsOn: ['^build'] means 'build dependencies first'",
-]}
+
+// ── Root package.json ──
+{
+"name": "my-project",
+"private": true,
+"scripts": {
+"dev": "turbo dev",
+"build": "turbo build"
+},
+"devDependencies": {
+"turbo": "^2.0.0"
+}
+}`}
 />
 
 <LessonSummary

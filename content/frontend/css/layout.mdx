@@ -6,6 +6,17 @@ order: 4
 
 # CSS Layout
 
+<LearningObjectives
+  objectives={[
+    "Understand the four layout modes: normal flow, flex, grid, and positioning",
+    "Use display: block, inline, inline-block, and none correctly",
+    "Control positioning with static, relative, absolute, fixed, and sticky",
+    "Stack elements with z-index and understand stacking contexts",
+    "Create multi-column layouts without a framework using float and clearfix",
+    "Choose the right layout strategy for different design goals",
+  ]}
+/>
+
 Modern CSS provides several layout approaches.
 
 ## Layout Strategies
@@ -53,3 +64,13 @@ Modern CSS provides several layout approaches.
 
 - [Flexbox](/frontend/css/flexbox)
 - [Grid](/frontend/css/grid)
+
+<LessonSummary
+  points={[
+    "Normal flow is the default layout mode where block elements stack vertically and inline elements sit side by side",
+    "Flexbox and Grid are modern layout modes that replace float-based hacks for most use cases",
+    "Positioned layout (relative, absolute, fixed, sticky) removes elements from normal flow for specific placement",
+    "z-index only works on positioned elements and creates stacking contexts that nest hierarchically",
+    "The display property is the primary switch between layout modes: block, inline, inline-block, flex, grid",
+  ]}
+/>

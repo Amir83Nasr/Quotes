@@ -4,7 +4,7 @@
 
 # Quotes
 
-Interactive learning platform for web development. Quotes takes you from fundamentals to production-ready skills across frontend, fullstack, git, and modern frameworks — with hands-on MDX lessons, live code editors, interactive challenges, and playground demos for React 19 features.
+Interactive learning platform for web development. Quotes takes you from fundamentals to production-ready skills across frontend, fullstack, git, and modern frameworks — with hands-on MDX lessons, live code editors, interactive exercises, and playground demos for React 19 features.
 
 Built with Next.js (App Router), TypeScript, Tailwind CSS, and shadcn/ui. Over 120+ MDX lessons across 11 categories covering HTML/CSS, JavaScript, TypeScript, React, Next.js, Node.js, databases, testing, git, and more.
 

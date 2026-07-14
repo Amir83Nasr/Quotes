@@ -13,6 +13,7 @@ order: 5
     "Choose between all, allSettled, race, any",
     "Implement Promise.all from scratch",
   ]}
+  preview
 />
 
 ## Promise States
@@ -121,7 +122,7 @@ fs.readFile("data.txt", "utf-8", (err, data) =>
 await promise
 ```
 
-## Try It Yourself
+## See It In Action
 
 See promise chaining in action — each `.then` receives the previous return value:
 
@@ -134,28 +135,42 @@ See promise chaining in action — each `.then` receives the previous return val
   .catch(console.error)`}
   language="javascript"
   title="Promise Chaining"
-  executable
-  showLineNumbers
   explanation="Each `.then()` transforms the value and passes it to the next. Return a value (not a promise) and the next `.then()` receives it immediately. This is how you build sequential async pipelines."
 />
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="Implement Promise.all"
-  description="Write `myPromiseAll(iterable)` that resolves with results array in order, rejects on first failure."
   code={`function myPromiseAll(iterable) {
-  // Return single promise
-  // Resolve with results array in input order
-  // Reject immediately if any promise rejects
-}`}
+  const promises = Array.from(iterable)
+  const results = new Array(promises.length)
+  let settled = 0
+
+return new Promise((resolve, reject) => {
+promises.forEach((p, i) => {
+Promise.resolve(p)
+.then((val) => {
+results[i] = val
+settled++
+if (settled === promises.length) resolve(results)
+})
+.catch(reject) // Reject immediately on first failure
+})
+})
+}
+
+// Usage — resolves with [1, 2, 3]
+const p1 = Promise.resolve(1)
+const p2 = Promise.resolve(2)
+const p3 = Promise.resolve(3)
+myPromiseAll([p1, p2, p3]).then(console.log)
+
+// Usage — rejects immediately
+const failing = Promise.reject("oops")
+myPromiseAll([p1, failing, p3]).catch((err) => console.error("Caught:", err))`}
   language="javascript"
-  hints={[
-    "Use Promise.resolve() to wrap non-thenables",
-    "Track results by index, use counter for completion",
-  ]}
-  previewType="mixed"
+  explanation="`myPromiseAll`mirrors`Promise.all`: wraps each value with `Promise.resolve`, collects results in input order, resolves the outer promise when all complete, and rejects immediately on the first rejection — a classic fail-fast pattern."
 />
 
 ## Lesson Summary

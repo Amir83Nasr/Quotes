@@ -14,6 +14,7 @@ order: 5
     "Understand Suspense as a boundary for async operations",
     "Apply useTransition for deferring non-urgent updates",
   ]}
+  preview
 />
 
 ## Portals with createPortal
@@ -147,77 +148,40 @@ function SearchPage() {
 
 `isPending` is `true` while the transition is pending. The old results stay visible.
 
-## Interactive Exercise: Portal Modal with Lazy Load
+## See It In Action: Portal Modal with Lazy Load
 
 <LessonCodeExample
-  mode="challenge"
   title="Modal with Portal + Lazy Component"
-  description="Build a modal using createPortal. Inside the modal, lazy-load a heavy content component with Suspense."
-  code={`"use client"
-
-// Build:
-// 1. Modal component using createPortal(document.body)
-// 2. A lazy-loaded <ExpensiveContent /> that simulates a delay
-// 3. Suspense fallback inside the modal
-// 4. Modal trigger button
-
-export default function Exercise() {
-  // Your code here
-  return null
-}`}
-  language="tsx"
-  solution={`"use client"
-
-import { useState, lazy, Suspense } from "react"
+  code={`import { useState } from "react"
 import { createPortal } from "react-dom"
 
-const ExpensiveContent = lazy(async () => {
-// Simulate a 2s network load
-await new Promise((r) => setTimeout(r, 2000))
-return {
-default: () => (
-
-<div>
-<h3 className="font-bold text-lg">Expensive Content</h3>
-<p>This was lazy-loaded inside a portal!</p>
-</div>
-),
-}
-})
-
-function Modal({ open, onClose }: { open: boolean; onClose: () => void }) {
-if (!open) return null
+function Modal({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
 return createPortal(
-
-<div className="fixed inset-0 z-50 flex items-center justify-center">
-<div className="fixed inset-0 bg-black/50" onClick={onClose} />
-<div className="relative bg-white rounded-lg p-6 shadow-xl min-w-[400px]">
-<button onClick={onClose} className="absolute top-2 right-2">X</button>
-<Suspense fallback={<div className="h-20 animate-pulse bg-gray-100 rounded" />}>
-<ExpensiveContent />
-</Suspense>
+<div style={{
+      position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+    }}>
+<div style={{ background: "white", padding: 24, borderRadius: 8, minWidth: 300 }}>
+{children}
+<button onClick={onClose}>Close</button>
 </div>
 </div>,
 document.body
 )
 }
 
-export default function Exercise() {
-  const [open, setOpen] = useState(false)
-  return (
-    <div>
-      <button onClick={() => setOpen(true)}>Open Modal</button>
-      <Modal open={open} onClose={() => setOpen(false)} />
-    </div>
-  )
+function App() {
+const [open, setOpen] = useState(false)
+return (
+<>
+<button onClick={() => setOpen(true)}>Open Modal</button>
+{open && <Modal onClose={() => setOpen(false)}><p>Rendered via portal</p></Modal>}
+</>
+)
 }`}
-  hints={[
-    "Use React.lazy(() => import(...)) for the lazy component",
-    "createPortal(children, document.body) for the modal",
-    "Wrap the lazy component in <Suspense> with a fallback",
-    "Click on the overlay (not the modal content) to close"
-  ]}
-  previewType="mixed"
+language="tsx"
+explanation="The Modal uses createPortal to render into document.body - escaping parent overflow or z-index constraints. React context still flows through normally."
+preview
 />
 
 <LessonSummary

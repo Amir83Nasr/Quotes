@@ -15,6 +15,7 @@ order: 3
     "Use intercepting routes with (...) syntax",
     "Organize routes with route groups for shared layouts",
   ]}
+  preview
 />
 
 ## Root Layout
@@ -167,50 +168,55 @@ app/
            └── page.tsx  → /dashboard
 ```
 
-## Interactive Exercise
+## See It In Action
 
 <LessonCodeExample
-  mode="challenge"
   title="Build Nested Layouts with Sidebar"
-  description="Create a dashboard layout structure with a persistent sidebar, account settings page, and an analytics page using route groups."
-  code={`// app/dashboard/layout.tsx — Create a layout with a persistent sidebar
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  // TODO: Add sidebar that persists across dashboard sub-pages
-  return (
-    <div>
-      <nav>{/* sidebar links */}</nav>
-      <main>{children}</main>
-    </div>
-  )
-}`}
-  solution={`// app/dashboard/layout.tsx
+  code={`// app/dashboard/layout.tsx — Persistent sidebar across dashboard sub-pages
+"use client"
+
 import Link from "next/link"
+import { usePathname } from "next/navigation"
+
+const sidebarLinks = [
+{ href: "/dashboard", label: "Home" },
+{ href: "/dashboard/settings", label: "Settings" },
+{ href: "/dashboard/analytics", label: "Analytics" },
+]
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  return (
-    <div className="flex h-screen">
-      <nav className="w-64 bg-gray-50 p-4 border-r">
-        <h2 className="font-bold mb-4">Dashboard</h2>
-        <ul className="space-y-2">
-          <li><Link href="/dashboard">Overview</Link></li>
-          <li><Link href="/dashboard/settings">Settings</Link></li>
-          <li><Link href="/dashboard/analytics">Analytics</Link></li>
-        </ul>
-      </nav>
-      <main className="flex-1 p-6">{children}</main>
-    </div>
-  )
+  const pathname = usePathname()
+
+return (
+<div className="flex min-h-screen">
+<nav className="flex w-64 flex-col gap-2 border-r bg-gray-50 p-4 dark:bg-gray-900">
+<h2 className="mb-4 text-lg font-semibold">Dashboard</h2>
+{sidebarLinks.map((link) => {
+const isActive = pathname === link.href
+return (
+<Link
+key={link.href}
+href={link.href}
+className={`rounded-md px-3 py-2 text-sm transition-colors ${
+                isActive
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-800"
+              }`} >
+{link.label}
+</Link>
+)
+})}
+</nav>
+<main className="flex-1 p-6">{children}</main>
+</div>
+)
 }`}
-  hints={["Layout persists — don't use 'use client' unless you need interactivity in the sidebar", "Accept children as a prop in the layout component", "Use Link component for client-side navigation between dashboard pages"]}
-  previewType="mixed"
+explanation="This layout renders a persistent sidebar with navigation links using Next.js Link components and the usePathname hook for active-link highlighting. The sidebar stays mounted — and its state (active link, scroll position) survives — as the user navigates between /dashboard, /dashboard/settings, and /dashboard/analytics. Only the <main> content re-renders, demonstrating layout persistence."
+preview
 />
 
 ## Lesson Summary

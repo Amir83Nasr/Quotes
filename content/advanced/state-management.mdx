@@ -6,6 +6,17 @@ order: 1
 
 # State Management
 
+<LearningObjectives
+  objectives={[
+    "Understand when local state is sufficient vs when global state is needed",
+    "Compare Context, Redux, Zustand, and Jotai for different scale needs",
+    "Implement a Zustand store for simple global state",
+    "Structure Redux with slices, selectors, and middleware for complex state",
+    "Recognize common anti-patterns: over-centralization, mutable updates, selector inefficiency",
+    "Use URL state and server state as first-class state sources",
+  ]}
+/>
+
 State management is about **where** and **how** your data lives as the user interacts with your app.
 
 ## Types of State
@@ -137,3 +148,14 @@ function Toolbar() {
 ---
 
 **Exercise**: Build a todo app using `useReducer` with add, toggle, and delete actions.
+
+<LessonSummary
+  points={[
+    "Local state (useState) should be the default — global state is only needed when multiple distant components share data",
+    "React Context is built-in but causes unnecessary re-renders when the value object changes frequently",
+    "Zustand provides minimal boilerplate global state with automatic render optimization via selectors",
+    "Redux scales well for large apps but requires disciplined patterns: slices, selectors, immutable updates",
+    "Server state (data from APIs) is fundamentally different from UI state and benefits from dedicated tools like TanStack Query",
+    "URL state is often the best place for filter, sort, and pagination state — it survives refreshes and is shareable",
+  ]}
+/>

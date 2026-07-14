@@ -6,6 +6,17 @@ order: 1
 
 # TypeScript Introduction
 
+<LearningObjectives
+  objectives={[
+    "Understand TypeScript's role as a typed superset of JavaScript",
+    "Annotate variables, function parameters, and return types",
+    "Define custom types with interfaces and type aliases",
+    "Use union and intersection types for flexible typing",
+    "Enable strict mode and understand its benefits",
+    "Compile TypeScript and configure tsconfig.json",
+  ]}
+/>
+
 TypeScript is a typed superset of JavaScript that compiles to plain JavaScript. It adds static type checking to catch errors before runtime.
 
 ## Why TypeScript?
@@ -146,3 +157,13 @@ type PageMap = Record<string, Todo>
 
 - [Advanced Types](/frontend/typescript/advanced) — Deep dive into TypeScript
 - [React with TypeScript](/react/intro) — Use TS with React
+
+<LessonSummary
+  points={[
+    "TypeScript is JavaScript with type checking — it compiles to plain JS and doesn't change runtime behavior",
+    "Type annotations use colon syntax (variable: type, parameter: type, return: type)",
+    "Interfaces and type aliases define object shapes and can be extended or intersected",
+    "Strict mode enables all type-checking options and is strongly recommended for production code",
+    "The TypeScript compiler (tsc) reads tsconfig.json for compiler options and project settings",
+  ]}
+/>

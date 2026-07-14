@@ -6,6 +6,17 @@ order: 1
 
 # Full Stack Introduction
 
+<LearningObjectives
+  objectives={[
+    "Understand the difference between frontend and backend responsibilities",
+    "Learn how client and server communicate over HTTP",
+    "Build a simple API endpoint that serves JSON data",
+    "Connect a frontend form to a backend API with fetch",
+    "Understand the request-response lifecycle end to end",
+    "Deploy a full-stack application to production",
+  ]}
+/>
+
 Full stack development covers both frontend (UI) and backend (server, database, APIs). This section covers the skills needed to build complete web applications.
 
 ## Architecture Overview
@@ -91,3 +102,13 @@ npm start
 - [Backend Integration](/fullstack/backend) — Connect frontend to APIs
 - [Authentication](/fullstack/authentication) — Secure your app
 - [Deployment](/fullstack/deployment) — Ship to production
+
+<LessonSummary
+  points={[
+    "The frontend handles UI rendering and user interaction; the backend handles data, auth, and business logic",
+    "HTTP requests consist of a method (GET/POST/PUT/DELETE), URL, headers, and optional body",
+    "REST APIs organize endpoints around resources (/users, /posts) with standard HTTP methods",
+    "The fetch API is the modern native way to make HTTP requests from the browser",
+    "A full-stack request flows: browser → API route → database → API response → browser render",
+  ]}
+/>
