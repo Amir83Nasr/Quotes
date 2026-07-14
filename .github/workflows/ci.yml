@@ -67,7 +67,7 @@ jobs:
       - name: TypeScript type check
         run: make typecheck
 
-  # ── Build: production build (Next.js static export) ──────────────────────
+  # ── Build: Next.js production build ──────────────────────────────────────
   # Depends on lint + typecheck passing — fail-fast, no wasted build time.
   build:
     name: Build

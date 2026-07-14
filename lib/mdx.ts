@@ -4,7 +4,7 @@ import rehypeHighlight from "rehype-highlight"
 import type { MDXComponents } from "mdx/types"
 import type { Frontmatter } from "@/types/content"
 import type { Root as MdastRoot } from "mdast"
-import type { Root as HastRoot, Element, ElementContent, Text } from "hast"
+import type { Root as HastRoot, ElementContent } from "hast"
 import { slugify } from "@/lib/utils"
 /**
  * Tiny remark plugin: drop the lesson's leading H1.
