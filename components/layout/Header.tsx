@@ -30,7 +30,7 @@ export function Header({ navItems }: HeaderProps) {
   const mounted = useMounted()
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-blur:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 pt-[env(safe-area-inset-top)] backdrop-blur supports-backdrop-blur:bg-background/60">
       <div className="flex h-14 items-center gap-4 px-4 lg:px-6">
         <Button
           variant="ghost"

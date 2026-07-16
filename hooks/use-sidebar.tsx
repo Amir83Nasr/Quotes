@@ -4,9 +4,11 @@ import {
   createContext,
   useContext,
   useSyncExternalStore,
-  useState,
   useCallback,
   useMemo,
+  useRef,
+  useEffect,
+  useState,
 } from "react"
 import type { SidebarState } from "@/types/navigation"
 
@@ -20,8 +22,8 @@ type SidebarContextType = {
 const SidebarContext = createContext<SidebarContextType | null>(null)
 
 /**
- * Synchronous media query check — avoids the flash caused by
- * useState(false) → useEffect(fire) on mobile.
+ * Media query hook — uses useSyncExternalStore for tear-free reads.
+ * Server fallback assumes desktop (matchClient = false).
  */
 function useIsMobile() {
   return useSyncExternalStore(
@@ -38,21 +40,29 @@ function useIsMobile() {
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const isMobile = useIsMobile()
-  const [userWantsOpen, setUserWantsOpen] = useState(!isMobile)
+  // Start with sidebar open as SSR default (desktop assumption).
+  // A ref prevents the mount-effect from overriding explicit user toggles
+  // on subsequent resize events.
+  const [userWantsOpen, setUserWantsOpen] = useState(true)
+  const initialized = useRef(false)
 
-  // `useState(!isMobile)` handles the default per device:
-  //   desktop → open (userWantsOpen = true)
-  //   mobile  → closed (userWantsOpen = false)
-  // The toggle/close/open callbacks let the user override at any time.
-  const isOpen = userWantsOpen
+  // On mount (post-hydration), sync to actual device.
+  // On subsequent isMobile changes (resize), no-op once initialized —
+  // user's explicit toggle must be respected.
+  useEffect(() => {
+    if (!initialized.current) {
+      initialized.current = true
+      setUserWantsOpen(!isMobile)
+    }
+  }, [isMobile])
 
   const toggle = useCallback(() => setUserWantsOpen((v) => !v), [])
   const open = useCallback(() => setUserWantsOpen(true), [])
   const close = useCallback(() => setUserWantsOpen(false), [])
 
   const state: SidebarState = useMemo(
-    () => ({ isOpen, isCollapsed: false }),
-    [isOpen]
+    () => ({ isOpen: userWantsOpen, isCollapsed: false }),
+    [userWantsOpen]
   )
 
   return (

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useSidebar } from "@/hooks/use-sidebar"
 import { usePathname } from "next/navigation"
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import type { NavItem } from "@/types/navigation"
 import { ProgressBadge } from "./ProgressBadge"
 import { useProgress } from "@/hooks/use-progress"
@@ -141,6 +141,13 @@ export function Sidebar({ groups }: SidebarProps) {
     ...g,
     items: enrichActiveState(g.items, pathname),
   }))
+
+  // Auto-close mobile sidebar on navigation (pathname change)
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      close()
+    }
+  }, [pathname, close])
 
   return (
     <>
