@@ -18,6 +18,8 @@ patterns=(
 
 found=0
 for file in "$@"; do
+  # Skip binary files
+  if [[ "$(file -b --mime-type "$file")" != text/* ]]; then continue; fi
   # Skip our own hook scripts
   if [[ "$file" == *scripts/hooks/* ]]; then
     continue

@@ -9,6 +9,9 @@ fi
 
 fixed=0
 for file in "$@"; do
+  if [ ! -f "$file" ]; then continue; fi
+  # Skip binary files
+  if [[ "$(file -b --mime-type "$file")" != text/* ]]; then continue; fi
   if [ -s "$file" ] && [ "$(tail -c 1 "$file" | wc -l)" -eq 0 ]; then
     echo "" >> "$file"
     ((fixed++))
