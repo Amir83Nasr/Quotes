@@ -1,11 +1,24 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Geist_Mono, Inter } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register"
+import { OfflineIndicator } from "@/components/pwa/offline-indicator"
 import { cn } from "@/lib/utils"
 import { SITE_CONFIG } from "@/constants/site"
 
+// ── PWA / Viewport ────────────────────────────────────────────────────
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+  ],
+  width: "device-width",
+  initialScale: 1,
+}
+
+// ── Metadata ───────────────────────────────────────────────────────────
 export const metadata: Metadata = {
   title: {
     default: SITE_CONFIG.title,
@@ -16,6 +29,15 @@ export const metadata: Metadata = {
   applicationName: SITE_CONFIG.name,
   authors: [{ name: SITE_CONFIG.name }],
   creator: SITE_CONFIG.name,
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: SITE_CONFIG.name,
+    statusBarStyle: "black-translucent",
+  },
+  formatDetection: {
+    telephone: false,
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -54,9 +76,17 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: "/icon.svg",
+    apple: [{ url: "/logo.svg" }],
+    other: [
+      {
+        rel: "mask-icon",
+        url: "/logo.svg",
+      },
+    ],
   },
 }
 
+// ── Fonts ──────────────────────────────────────────────────────────────
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
 const fontMono = Geist_Mono({
@@ -64,6 +94,7 @@ const fontMono = Geist_Mono({
   variable: "--font-mono",
 })
 
+// ── Root Layout ────────────────────────────────────────────────────────
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -81,7 +112,11 @@ export default function RootLayout({
       )}
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          <ServiceWorkerRegister />
+          <OfflineIndicator />
+        </ThemeProvider>
       </body>
     </html>
   )
